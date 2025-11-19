@@ -1,0 +1,14 @@
+Valdi
+.vscode
+.idea
+.DS_Store
+node_modules
+dist
+build
+.env
+.env.local
+.env.production
+.env.development
+logs
+*.log
+*.zip
