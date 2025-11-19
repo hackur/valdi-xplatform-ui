@@ -1,19 +1,20 @@
-# Root BUILD file for Valdi Kitchen Sink demo app
-# This file can be used if integrated into the main Valdi workspace
+load("@valdi//bzl/valdi:valdi_application.bzl", "valdi_application")
 
-# Note: This kitchen sink demo is designed to be a standalone reference.
-# To build as a Valdi application, this would need to be integrated into
-# the main Valdi workspace or a properly configured Valdi project workspace.
-
-# Example integration (when in Valdi workspace):
-# load("//bzl/valdi:valdi_application.bzl", "valdi_application")
-#
-# valdi_application(
-#     name = "kitchen_sink",
-#     ios_bundle_id = "com.valdi.kitchensink",
-#     ios_families = ["iphone"],
-#     root_component_path = "App@main_app/src/App",
-#     title = "Valdi Kitchen Sink",
-#     version = "1.0.0",
-#     deps = ["//modules/main_app"],
-# )
+valdi_application(
+    name = "kitchen_sink",
+    android_activity_theme_name = "Theme.ValdiKitchenSink.Launch",
+    android_app_icon_name = "app_icon",
+    ios_bundle_id = "com.valdi.kitchensink",
+    ios_families = ["iphone"],
+    root_component_path = "App@main_app/src/App",
+    title = "Valdi Kitchen Sink",
+    version = "1.0.0",
+    deps = [
+        "//modules/main_app",
+        "//modules/common",
+        "//modules/layouts_demo",
+        "//modules/text_demo",
+        "//modules/state_demo",
+        "//modules/animation_demo",
+    ],
+)
