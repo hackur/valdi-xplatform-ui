@@ -270,49 +270,396 @@ import { Colors, Fonts, Spacing } from '../common/src/index';
 </view>
 ```
 
-## Building the App
+## Building and Running the App Locally
 
-This kitchen sink demo is designed as a reference and requires integration into a Valdi workspace:
+This guide provides step-by-step instructions to build and run the Valdi Kitchen Sink app on local simulators.
 
-### Option 1: Within Valdi Workspace
+### Prerequisites
 
-If you have Valdi installed, you can integrate this as part of the main Valdi workspace:
+Before you begin, ensure you have:
+
+1. **Valdi Framework** installed (see [Valdi Installation Guide](../Valdi/docs/start-install.md))
+2. **Bazel** build tool installed
+3. **Node.js** and **npm** (for dependencies)
+4. **Xcode** (for iOS, macOS only) with Command Line Tools
+5. **Android Studio** (for Android) with SDK and emulator
+
+### Step 1: Set Up the Valdi Workspace
+
+Since this is in the `valdi-xplatform-ui` repository alongside the Valdi framework:
 
 ```bash
-# Copy to Valdi apps directory
-cp -r valdi-kitchen-sink /path/to/Valdi/apps/
+# Navigate to the Valdi directory
+cd /Users/sarda/valdi-xplatform-ui/Valdi
 
-# Build with Bazel (requires BUILD.bazel configuration)
-cd /path/to/Valdi
+# Run Valdi setup (if not already done)
+valdi dev_setup
+```
+
+### Step 2: Create BUILD.bazel Files for Each Module
+
+You need to create `BUILD.bazel` files for each module. Here's how:
+
+#### Common Module BUILD.bazel
+
+Create `/Users/sarda/valdi-xplatform-ui/valdi-kitchen-sink/modules/common/BUILD.bazel`:
+
+```python
+load("@valdi//bzl/valdi:valdi_module.bzl", "valdi_module")
+
+valdi_module(
+    name = "common",
+    srcs = glob([
+        "src/**/*.ts",
+        "src/**/*.tsx",
+    ]),
+    visibility = ["//visibility:public"],
+    deps = [
+        "@valdi//src/valdi_modules/src/valdi/valdi_core",
+        "@valdi//src/valdi_modules/src/valdi/valdi_tsx",
+    ],
+)
+```
+
+#### Main App Module BUILD.bazel
+
+Create `/Users/sarda/valdi-xplatform-ui/valdi-kitchen-sink/modules/main_app/BUILD.bazel`:
+
+```python
+load("@valdi//bzl/valdi:valdi_module.bzl", "valdi_module")
+
+valdi_module(
+    name = "main_app",
+    srcs = glob([
+        "src/**/*.ts",
+        "src/**/*.tsx",
+    ]),
+    visibility = ["//visibility:public"],
+    deps = [
+        "@valdi//src/valdi_modules/src/valdi/valdi_core",
+        "@valdi//src/valdi_modules/src/valdi/valdi_tsx",
+        "@valdi//src/valdi_modules/src/valdi/valdi_navigation",
+        "//modules/common",
+    ],
+)
+```
+
+#### Demo Modules BUILD.bazel
+
+Create similar files for each demo module (`layouts_demo`, `text_demo`, `state_demo`, `animation_demo`):
+
+```python
+load("@valdi//bzl/valdi:valdi_module.bzl", "valdi_module")
+
+valdi_module(
+    name = "layouts_demo",  # Change this for each module
+    srcs = glob([
+        "src/**/*.ts",
+        "src/**/*.tsx",
+    ]),
+    visibility = ["//visibility:public"],
+    deps = [
+        "@valdi//src/valdi_modules/src/valdi/valdi_core",
+        "@valdi//src/valdi_modules/src/valdi/valdi_tsx",
+        "@valdi//src/valdi_modules/src/valdi/valdi_navigation",
+        "//modules/common",
+    ],
+)
+```
+
+### Step 3: Update Root BUILD.bazel
+
+Update `/Users/sarda/valdi-xplatform-ui/valdi-kitchen-sink/BUILD.bazel`:
+
+```python
+load("@valdi//bzl/valdi:valdi_application.bzl", "valdi_application")
+
+valdi_application(
+    name = "kitchen_sink",
+    android_activity_theme_name = "Theme.ValdiKitchenSink.Launch",
+    android_app_icon_name = "app_icon",
+    ios_bundle_id = "com.valdi.kitchensink",
+    ios_families = ["iphone"],
+    root_component_path = "App@main_app/src/App",
+    title = "Valdi Kitchen Sink",
+    version = "1.0.0",
+    deps = [
+        "//modules/main_app",
+        "//modules/common",
+        "//modules/layouts_demo",
+        "//modules/text_demo",
+        "//modules/state_demo",
+        "//modules/animation_demo",
+    ],
+)
+```
+
+### Step 4: Create WORKSPACE File
+
+If the kitchen sink directory needs its own WORKSPACE, create `/Users/sarda/valdi-xplatform-ui/valdi-kitchen-sink/WORKSPACE`:
+
+```python
+workspace(name = "valdi_kitchen_sink")
+
+local_repository(
+    name = "valdi",
+    path = "../Valdi",
+)
+
+load("@valdi//bzl:workspace_prepare.bzl", "valdi_prepare_workspace")
+valdi_prepare_workspace(__workspace_dir__)
+
+load("@valdi//bzl:workspace_preinit.bzl", "valdi_preinitialize_workspace")
+valdi_preinitialize_workspace()
+
+# Follow the same pattern as Valdi's main WORKSPACE
+# (See /Users/sarda/valdi-xplatform-ui/Valdi/WORKSPACE for full setup)
+```
+
+### Step 5: Install Dependencies
+
+```bash
+# From the kitchen sink directory
+cd /Users/sarda/valdi-xplatform-ui/valdi-kitchen-sink
+
+# Install npm dependencies
+npm install
+```
+
+### Step 6: Build the App
+
+```bash
+# From the kitchen sink directory
+cd /Users/sarda/valdi-xplatform-ui/valdi-kitchen-sink
+
+# Build for iOS
+bazel build //:kitchen_sink
+
+# Or build from Valdi root if integrated there
+cd /Users/sarda/valdi-xplatform-ui/Valdi
 bazel build //apps/valdi-kitchen-sink:kitchen_sink
 ```
 
-### Option 2: Standalone Reference
+### Step 7: Run on iOS Simulator
 
-Use this as a code reference without building:
+```bash
+# Install for iOS (creates Xcode project)
+valdi install ios --app=//:kitchen_sink
+
+# Open in Xcode
+open bazel-bin/kitchen_sink.xcodeproj
+
+# Or run directly from command line
+xcodebuild -project bazel-bin/kitchen_sink.xcodeproj \
+  -scheme kitchen_sink \
+  -destination 'platform=iOS Simulator,name=iPhone 15' \
+  build
+
+# Launch simulator
+xcrun simctl boot "iPhone 15"
+xcrun simctl install booted bazel-bin/kitchen_sink.app
+xcrun simctl launch booted com.valdi.kitchensink
+```
+
+### Step 8: Run on Android Emulator
+
+```bash
+# Install for Android
+valdi install android --app=//:kitchen_sink
+
+# Build APK
+bazel build //:kitchen_sink_android
+
+# Start Android emulator
+emulator -avd Pixel_7_API_34 &
+
+# Install and run
+adb install -r bazel-bin/kitchen_sink.apk
+adb shell am start -n com.valdi.kitchensink/.MainActivity
+```
+
+### Step 9: Enable Hot Reload for Development
+
+Hot reload allows you to see changes instantly without rebuilding:
+
+```bash
+# Start hot reload server
+valdi hotreload
+
+# In a separate terminal, run your app
+# Changes to TypeScript files will automatically reload
+```
+
+## Quick Start (If Integrated into Valdi Workspace)
+
+If the kitchen sink is already set up in the Valdi workspace:
+
+```bash
+# Navigate to Valdi directory
+cd /Users/sarda/valdi-xplatform-ui/Valdi
+
+# Install for iOS
+valdi install ios --app=//apps/valdi-kitchen-sink:kitchen_sink
+
+# Run on iOS Simulator
+open bazel-bin/apps/valdi-kitchen-sink/kitchen_sink.xcodeproj
+
+# OR for Android
+valdi install android --app=//apps/valdi-kitchen-sink:kitchen_sink
+adb install -r bazel-bin/apps/valdi-kitchen-sink/kitchen_sink.apk
+```
+
+## Development Workflow
+
+### Using Hot Reload
+
+1. Start hot reload:
+   ```bash
+   valdi hotreload
+   ```
+
+2. Make changes to any `.tsx` or `.ts` file
+
+3. Save the file - changes appear instantly in the running app
+
+4. Check console for any errors
+
+### Debugging
+
+#### iOS Debugging
+
+```bash
+# View iOS logs
+xcrun simctl spawn booted log stream --predicate 'process == "kitchen_sink"'
+
+# Or use Xcode's console
+# Product > Run (or Cmd+R) in Xcode
+```
+
+#### Android Debugging
+
+```bash
+# View Android logs
+adb logcat | grep -i valdi
+
+# Or use Android Studio's Logcat
+```
+
+## Troubleshooting
+
+### Build Errors
+
+**Issue**: `Module not found` errors
+
+**Solution**: Ensure all BUILD.bazel files are created and paths are correct
+
+```bash
+# Verify BUILD files exist
+ls -la modules/*/BUILD.bazel
+
+# Clean and rebuild
+bazel clean
+bazel build //:kitchen_sink
+```
+
+**Issue**: `valdi command not found`
+
+**Solution**: Install Valdi CLI
+
+```bash
+cd /Users/sarda/valdi-xplatform-ui/Valdi/npm_modules/cli/
+npm run cli:install
+```
+
+### iOS Simulator Issues
+
+**Issue**: Simulator not starting
+
+**Solution**: Reset simulator
+
+```bash
+# List available simulators
+xcrun simctl list devices
+
+# Erase simulator
+xcrun simctl erase "iPhone 15"
+
+# Reboot
+xcrun simctl shutdown "iPhone 15"
+xcrun simctl boot "iPhone 15"
+```
+
+**Issue**: App not appearing on simulator
+
+**Solution**: Reinstall the app
+
+```bash
+# Uninstall
+xcrun simctl uninstall booted com.valdi.kitchensink
+
+# Reinstall
+xcrun simctl install booted bazel-bin/kitchen_sink.app
+```
+
+### Android Emulator Issues
+
+**Issue**: Emulator not starting
+
+**Solution**: Check AVD configuration
+
+```bash
+# List available emulators
+emulator -list-avds
+
+# Start specific emulator
+emulator -avd YOUR_AVD_NAME -no-snapshot-load
+```
+
+**Issue**: ADB connection issues
+
+**Solution**: Restart ADB server
+
+```bash
+adb kill-server
+adb start-server
+adb devices
+```
+
+### Hot Reload Not Working
+
+**Issue**: Changes not appearing
+
+**Solution**:
+1. Restart hot reload server
+2. Check file watcher limits (Linux/macOS)
+3. Verify file is in watched directory
+4. Reload app manually (Cmd+R on iOS, R+R on Android)
+
+## Performance Tips
+
+1. **Use Release Builds for Testing Performance**
+   ```bash
+   bazel build -c opt //:kitchen_sink
+   ```
+
+2. **Profile with Instruments (iOS)**
+   ```bash
+   # Build with profiling enabled
+   bazel build --copt=-DPROFILE_BUILD //:kitchen_sink
+   ```
+
+3. **Monitor Memory Usage**
+   - iOS: Use Xcode Instruments
+   - Android: Use Android Studio Profiler
+
+## Alternative: Standalone Reference
+
+If you prefer not to build, use this as a code reference:
 
 1. Explore the modules to understand Valdi patterns
 2. Copy components and patterns into your own Valdi project
 3. Reference the design system (colors, fonts, spacing)
 4. Study the demo pages for implementation examples
-
-## Running the App
-
-Once integrated into a Valdi workspace with proper BUILD.bazel configuration:
-
-```bash
-# Install for iOS
-valdi install ios
-
-# Install for Android
-valdi install android
-
-# Enable hot reload for development
-valdi hotreload
-
-# Run on simulator/emulator
-# (Platform-specific commands via Xcode or Android Studio)
-```
 
 ## Module Dependencies
 
