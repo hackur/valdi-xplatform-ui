@@ -1,0 +1,14 @@
+{
+  "appName": "Valdi Kitchen Sink",
+  "version": "1.0.0",
+  "description": "Comprehensive demonstration of Valdi framework features",
+  "bundleId": {
+    "ios": "com.valdi.kitchensink",
+    "android": "com.valdi.kitchensink"
+  },
+  "platforms": ["ios", "android"],
+  "minSdkVersion": {
+    "ios": "13.0",
+    "android": "21"
+  }
+}
