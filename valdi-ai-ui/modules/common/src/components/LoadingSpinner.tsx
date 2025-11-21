@@ -9,7 +9,8 @@
 import { Component } from 'valdi_core/src/Component';
 import { StatefulComponent } from 'valdi_core/src/Component';
 import { Style } from 'valdi_core/src/Style';
-import { View } from 'valdi_tsx/src/NativeTemplateElements';
+import { systemFont } from 'valdi_core/src/SystemFont';
+import { View, Label } from 'valdi_tsx/src/NativeTemplateElements';
 import { Colors, Fonts, Spacing } from '../theme';
 
 /**
@@ -134,6 +135,13 @@ export class LoadingSpinner extends StatefulComponent<LoadingSpinnerProps, Loadi
     }
   }
 
+  private getTextLabelStyle(fontSize: number): Style<Label> {
+    return new Style<Label>({
+      font: systemFont(fontSize),
+      color: Colors.textPrimary,
+    });
+  }
+
   private getDotsText(): string {
     const { dots } = this.state;
     return '.'.repeat(dots);
@@ -149,7 +157,7 @@ export class LoadingSpinner extends StatefulComponent<LoadingSpinnerProps, Loadi
     });
   }
 
-  private getOuterCircleStyle(size: number, color: string, rotation: number): Style<View> {
+  private getOuterCircleStyle(size: number, color: string): Style<View> {
     return new Style<View>({
       width: size,
       height: size,
@@ -157,7 +165,7 @@ export class LoadingSpinner extends StatefulComponent<LoadingSpinnerProps, Loadi
       borderWidth: size / 10,
       borderColor: color,
       opacity: 0.8,
-      transform: [{ rotate: `${rotation}deg` }],
+      // Note: transform property not supported in Valdi - rotation animation disabled
     });
   }
 
@@ -174,17 +182,18 @@ export class LoadingSpinner extends StatefulComponent<LoadingSpinnerProps, Loadi
 
   private renderSpinner(): unknown {
     const { color } = this.viewModel;
-    const { rotation, dots } = this.state;
+    const { dots } = this.state;
     const size = this.getSize();
 
     const spinnerContainerStyle = this.getSpinnerContainerStyle(size);
-    const outerCircleStyle = this.getOuterCircleStyle(size, color, rotation);
+    const outerCircleStyle = this.getOuterCircleStyle(size, color);
     const innerDotStyle = this.getInnerDotStyle(size, color, dots);
 
     // Create multiple rotating circles for a more complex spinner
+    // Note: Rotation animation disabled due to Valdi transform limitations
     return (
       <view style={spinnerContainerStyle}>
-        {/* Outer rotating circle */}
+        {/* Outer circle */}
         <view style={outerCircleStyle} />
 
         {/* Inner pulsing dot */}
@@ -197,6 +206,7 @@ export class LoadingSpinner extends StatefulComponent<LoadingSpinnerProps, Loadi
     const { showText, text } = this.viewModel;
     const fontSize = this.getFontSize();
     const dotsText = this.getDotsText();
+    const textLabelStyle = this.getTextLabelStyle(fontSize);
 
     return (
       <view style={styles.contentContainer}>
@@ -208,12 +218,7 @@ export class LoadingSpinner extends StatefulComponent<LoadingSpinnerProps, Loadi
           <view style={styles.textContainer}>
             <label
               value={`${text}${dotsText}`}
-              style={{
-                ...Fonts.body,
-                fontSize,
-                color: Colors.textPrimary,
-                fontWeight: '500',
-              }}
+              style={textLabelStyle}
             />
           </view>
         )}

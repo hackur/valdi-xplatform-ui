@@ -7,7 +7,8 @@
 
 import { Component } from 'valdi_core/src/Component';
 import { Style } from 'valdi_core/src/Style';
-import { View } from 'valdi_tsx/src/NativeTemplateElements';
+import { systemBoldFont } from 'valdi_core/src/SystemFont';
+import { View, Label } from 'valdi_tsx/src/NativeTemplateElements';
 import { Colors, Fonts, BorderRadius, Shadows } from '../theme';
 
 /**
@@ -165,6 +166,13 @@ export class Avatar extends Component<AvatarProps> {
     });
   }
 
+  private getLabelStyle(fontSize: number, textColor: string): Style<Label> {
+    return new Style<Label>({
+      font: systemBoldFont(fontSize),
+      color: textColor,
+    });
+  }
+
   onRender() {
     const { imageUrl, elevated, onTap, style: customStyle } = this.viewModel;
 
@@ -176,6 +184,7 @@ export class Avatar extends Component<AvatarProps> {
 
     const containerStyle = this.getContainerStyle(size, backgroundColor, elevated, customStyle);
     const imageStyle = this.getImageStyle(size);
+    const labelStyle = this.getLabelStyle(fontSize, textColor);
 
     return (
       <view
@@ -190,11 +199,7 @@ export class Avatar extends Component<AvatarProps> {
         ) : (
           <label
             value={initials}
-            style={{
-              ...Fonts.bodySemibold,
-              fontSize,
-              color: textColor,
-            }}
+            style={labelStyle}
           />
         )}
       </view>

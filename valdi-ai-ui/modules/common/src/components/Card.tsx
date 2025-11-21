@@ -82,17 +82,17 @@ export class Card extends Component<CardProps> {
 
   private getCardStyle(
     backgroundColor: string | undefined,
-    borderRadius: number,
-    padding: number,
-    bordered: boolean,
+    borderRadius: number | undefined,
+    padding: number | undefined,
+    bordered: boolean | undefined,
     shadowStyle: Record<string, unknown>,
     customStyle?: Record<string, unknown>
   ): Style<View> {
     return new Style<View>({
       ...styles.container,
       backgroundColor: backgroundColor ?? Colors.surface,
-      borderRadius,
-      padding,
+      borderRadius: borderRadius ?? BorderRadius.md,
+      padding: padding ?? Spacing.base,
       borderWidth: bordered ? 1 : 0,
       borderColor: bordered ? Colors.border : Colors.transparent,
       ...shadowStyle,
@@ -128,6 +128,5 @@ export class Card extends Component<CardProps> {
 const styles = {
   container: new Style<View>({
     width: '100%',
-    overflow: 'hidden',
   }),
 };

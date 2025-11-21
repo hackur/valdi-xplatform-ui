@@ -7,7 +7,8 @@
 
 import { Component } from 'valdi_core/src/Component';
 import { Style } from 'valdi_core/src/Style';
-import { View } from 'valdi_tsx/src/NativeTemplateElements';
+import { systemBoldFont } from 'valdi_core/src/SystemFont';
+import { View, Label } from 'valdi_tsx/src/NativeTemplateElements';
 import { Colors, Fonts, Spacing, SemanticShadows, BorderRadius } from '../theme';
 
 /**
@@ -154,16 +155,16 @@ export class Button extends Component<ButtonProps> {
     }
   }
 
-  private getFontStyle() {
+  private getFontSize(): number {
     const { size } = this.viewModel;
 
     switch (size) {
       case 'small':
-        return Fonts.buttonSmall;
+        return 14;
       case 'large':
-        return Fonts.buttonLarge;
+        return 18;
       default:
-        return Fonts.button;
+        return 16;
     }
   }
 
@@ -194,6 +195,13 @@ export class Button extends Component<ButtonProps> {
     });
   }
 
+  private getLabelStyle(fontSize: number, textColor: string): Style<Label> {
+    return new Style<Label>({
+      font: systemBoldFont(fontSize),
+      color: textColor,
+    });
+  }
+
   onRender() {
     const {
       title,
@@ -206,9 +214,10 @@ export class Button extends Component<ButtonProps> {
     const textColor = this.getTextColor();
     const borderColor = this.getBorderColor();
     const padding = this.getPadding();
-    const fontStyle = this.getFontStyle();
+    const fontSize = this.getFontSize();
 
     const containerStyle = this.getContainerStyle(backgroundColor, borderColor, padding, fullWidth, customStyle);
+    const labelStyle = this.getLabelStyle(fontSize, textColor);
 
     return (
       <view
@@ -219,19 +228,13 @@ export class Button extends Component<ButtonProps> {
           <view style={styles.loadingContainer}>
             <label
               value="..."
-              style={{
-                ...fontStyle,
-                color: textColor,
-              }}
+              style={labelStyle}
             />
           </view>
         ) : (
           <label
             value={title}
-            style={{
-              ...fontStyle,
-              color: textColor,
-            }}
+            style={labelStyle}
           />
         )}
       </view>
