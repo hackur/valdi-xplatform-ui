@@ -25,44 +25,52 @@ Valdi AI UI is a production-quality, open-source AI chat client that demonstrate
 
 ### Prerequisites
 
-- Valdi Framework installed (see [Valdi Installation](../Valdi/docs/start-install.md))
-- Node.js 18+ and npm
-- Bazel build tool
+- Node.js 18+ and npm 9+
+- Bazel 7.0.0 (via Bazelisk recommended)
+- Valdi CLI (installed via npm)
 - iOS: Xcode 15+ (macOS only)
 - Android: Android Studio with SDK 24+
+
+See **[STANDALONE_BUILD.md](STANDALONE_BUILD.md)** for detailed setup instructions.
 
 ### Installation
 
 ```bash
 # Clone repository (if not already cloned)
-cd /Users/sarda/valdi-xplatform-ui/valdi-ai-ui
+cd /path/to/valdi-ai-ui
 
 # Install dependencies
 npm install
 
 # Set up API keys
 cp .env.example .env
-# Edit .env and add your API keys
+# Edit .env and add your API keys (OpenAI, Anthropic, etc.)
 ```
 
 ### Build & Run
 
-**iOS**:
+**Standalone Mode** (recommended for independent development):
+
 ```bash
-# From Valdi directory
-cd ../Valdi
-bazel build //apps/valdi-ai-ui:valdi_ai_ui
-valdi install ios --app=//apps/valdi-ai-ui:valdi_ai_ui
-open bazel-bin/apps/valdi-ai-ui/valdi_ai_ui.xcodeproj
+# Build application
+npm run build
+
+# iOS
+npm run build:ios
+
+# Android
+npm run build:android
 ```
 
-**Android**:
+**With Parent Valdi Workspace** (for framework development):
+
+See [STANDALONE_BUILD.md](STANDALONE_BUILD.md) for switching between modes.
+
 ```bash
-# From Valdi directory
+# From valdi-ai-ui directory (ensure local_path_override is enabled)
 cd ../Valdi
-bazel build //apps/valdi-ai-ui:valdi_ai_ui_android
-valdi install android --app=//apps/valdi-ai-ui:valdi_ai_ui
-adb install -r bazel-bin/apps/valdi-ai-ui/valdi_ai_ui.apk
+bazel build //apps/valdi_ai_ui:valdi_ai_ui
+valdi install ios --app=//apps/valdi_ai_ui:valdi_ai_ui
 ```
 
 ## Project Structure
@@ -87,7 +95,10 @@ valdi-ai-ui/
 
 ## Documentation
 
+- **[Standalone Build Guide](STANDALONE_BUILD.md)** - Build independently without parent workspace
+- **[Quick Start](QUICK_START.md)** - Fast setup and getting started
 - **[Project Plan](PROJECT_PLAN.md)** - Comprehensive development plan
+- **[Implementation Status](IMPLEMENTATION_STATUS.md)** - Current progress
 - **[Architecture](ARCHITECTURE.md)** - System design and patterns (coming soon)
 - **[Contributing](CONTRIBUTING.md)** - Contribution guidelines (coming soon)
 - **[API Reference](docs/API.md)** - API documentation (coming soon)
