@@ -5,7 +5,9 @@
  * Supports primary, secondary, outline, and ghost styles.
  */
 
-import { Component, Style, View } from '@valdi/valdi_core';
+import { Component } from 'valdi_core/src/Component';
+import { Style } from 'valdi_core/src/Style';
+import { View } from 'valdi_tsx/src/NativeTemplateElements';
 import { Colors, Fonts, Spacing, SemanticShadows, BorderRadius } from '../theme';
 
 /**
@@ -67,7 +69,7 @@ export class Button extends Component<ButtonProps> {
   };
 
   private getBackgroundColor(): string {
-    const { variant, disabled } = this.props;
+    const { variant, disabled } = this.viewModel;
 
     if (disabled) {
       return Colors.gray300;
@@ -90,7 +92,7 @@ export class Button extends Component<ButtonProps> {
   }
 
   private getTextColor(): string {
-    const { variant, disabled } = this.props;
+    const { variant, disabled } = this.viewModel;
 
     if (disabled) {
       return Colors.textTertiary;
@@ -111,7 +113,7 @@ export class Button extends Component<ButtonProps> {
   }
 
   private getBorderColor(): string {
-    const { variant, disabled } = this.props;
+    const { variant, disabled } = this.viewModel;
 
     if (disabled) {
       return Colors.gray300;
@@ -126,7 +128,7 @@ export class Button extends Component<ButtonProps> {
   }
 
   private getPadding(): { paddingHorizontal: number; paddingVertical: number } {
-    const { size } = this.props;
+    const { size } = this.viewModel;
 
     switch (size) {
       case 'small':
@@ -153,7 +155,7 @@ export class Button extends Component<ButtonProps> {
   }
 
   private getFontStyle() {
-    const { size } = this.props;
+    const { size } = this.viewModel;
 
     switch (size) {
       case 'small':
@@ -166,12 +168,31 @@ export class Button extends Component<ButtonProps> {
   }
 
   private handleTap = (): void => {
-    const { disabled, loading, onTap } = this.props;
+    const { disabled, loading, onTap } = this.viewModel;
 
     if (!disabled && !loading && onTap) {
       onTap();
     }
   };
+
+  private getContainerStyle(
+    backgroundColor: string,
+    borderColor: string,
+    padding: { paddingHorizontal: number; paddingVertical: number },
+    fullWidth: boolean,
+    customStyle?: Record<string, unknown>
+  ): Style<View> {
+    return new Style<View>({
+      ...styles.container,
+      backgroundColor,
+      borderColor,
+      borderWidth: borderColor !== Colors.transparent ? 2 : 0,
+      ...padding,
+      width: fullWidth ? '100%' : undefined,
+      ...SemanticShadows.button,
+      ...customStyle,
+    });
+  }
 
   onRender() {
     const {
@@ -179,7 +200,7 @@ export class Button extends Component<ButtonProps> {
       loading,
       fullWidth,
       style: customStyle,
-    } = this.props;
+    } = this.viewModel;
 
     const backgroundColor = this.getBackgroundColor();
     const textColor = this.getTextColor();
@@ -187,18 +208,11 @@ export class Button extends Component<ButtonProps> {
     const padding = this.getPadding();
     const fontStyle = this.getFontStyle();
 
+    const containerStyle = this.getContainerStyle(backgroundColor, borderColor, padding, fullWidth, customStyle);
+
     return (
       <view
-        style={{
-          ...styles.container,
-          backgroundColor,
-          borderColor,
-          borderWidth: borderColor !== Colors.transparent ? 2 : 0,
-          ...padding,
-          width: fullWidth ? '100%' : undefined,
-          ...SemanticShadows.button,
-          ...customStyle,
-        }}
+        style={containerStyle}
         onTap={this.handleTap}
       >
         {loading ? (

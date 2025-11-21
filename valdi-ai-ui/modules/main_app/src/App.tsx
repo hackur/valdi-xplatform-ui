@@ -5,8 +5,8 @@
  * Sets up navigation and renders the main application structure.
  */
 
-import { Component } from '@valdi/valdi_core';
-import { NavigationRoot } from '@valdi/valdi_navigation';
+import { Component } from 'valdi_core/src/Component';
+import { NavigationRoot } from 'valdi_navigation/src/NavigationController';
 import { HomePage } from './HomePage';
 
 /**

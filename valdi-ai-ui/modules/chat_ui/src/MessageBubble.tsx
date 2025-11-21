@@ -5,7 +5,9 @@
  * Displays user or AI messages with appropriate styling.
  */
 
-import { Component, Style, View } from '@valdi/valdi_core';
+import { Component } from 'valdi_core/src/Component';
+import { Style } from 'valdi_core/src/Style';
+import { View } from 'valdi_tsx/src/NativeTemplateElements';
 import {
   Colors,
   Fonts,
@@ -30,12 +32,12 @@ export interface MessageBubbleProps {
  */
 export class MessageBubble extends Component<MessageBubbleProps> {
   private getMessageText(): string {
-    const { message } = this.props;
+    const { message } = this.viewModel;
     return typeof message.content === 'string' ? message.content : '';
   }
 
   onRender() {
-    const { message } = this.props;
+    const { message } = this.viewModel;
     const isUser = MessageTypeGuards.isUserMessage(message);
     const text = this.getMessageText();
 

@@ -5,7 +5,9 @@
  * Handles user text input and message sending.
  */
 
-import { StatefulComponent, Style, View } from '@valdi/valdi_core';
+import { StatefulComponent } from 'valdi_core/src/Component';
+import { Style } from 'valdi_core/src/Style';
+import { View } from 'valdi_tsx/src/NativeTemplateElements';
 import {
   Colors,
   Fonts,
@@ -51,7 +53,7 @@ export class InputBar extends StatefulComponent<InputBarProps, InputBarState> {
 
   private handleSend = (): void => {
     const { text } = this.state;
-    const { onSend, disabled } = this.props;
+    const { onSend, disabled } = this.viewModel;
 
     if (!text.trim() || disabled) {
       return;
@@ -62,7 +64,7 @@ export class InputBar extends StatefulComponent<InputBarProps, InputBarState> {
   };
 
   onRender() {
-    const { disabled, placeholder } = this.props;
+    const { disabled, placeholder } = this.viewModel;
     const { text } = this.state;
 
     const canSend = text.trim().length > 0 && !disabled;

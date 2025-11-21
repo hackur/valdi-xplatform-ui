@@ -5,7 +5,9 @@
  * Used for grouping related content.
  */
 
-import { Component, Style, View } from '@valdi/valdi_core';
+import { Component } from 'valdi_core/src/Component';
+import { Style } from 'valdi_core/src/Style';
+import { View } from 'valdi_tsx/src/NativeTemplateElements';
 import { Colors, Spacing, SemanticShadows, ShadowKey, Shadows, BorderRadius } from '../theme';
 
 /**
@@ -55,7 +57,7 @@ export class Card extends Component<CardProps> {
   };
 
   private getShadowStyle() {
-    const { elevation } = this.props;
+    const { elevation } = this.viewModel;
 
     switch (elevation) {
       case 'none':
@@ -72,11 +74,31 @@ export class Card extends Component<CardProps> {
   }
 
   private handleTap = (): void => {
-    const { onTap } = this.props;
+    const { onTap } = this.viewModel;
     if (onTap) {
       onTap();
     }
   };
+
+  private getCardStyle(
+    backgroundColor: string,
+    borderRadius: number,
+    padding: number,
+    bordered: boolean,
+    shadowStyle: Record<string, unknown>,
+    customStyle?: Record<string, unknown>
+  ): Style<View> {
+    return new Style<View>({
+      ...styles.container,
+      backgroundColor,
+      borderRadius,
+      padding,
+      borderWidth: bordered ? 1 : 0,
+      borderColor: bordered ? Colors.border : Colors.transparent,
+      ...shadowStyle,
+      ...customStyle,
+    });
+  }
 
   onRender() {
     const {
@@ -87,22 +109,14 @@ export class Card extends Component<CardProps> {
       bordered,
       onTap,
       style: customStyle,
-    } = this.props;
+    } = this.viewModel;
 
     const shadowStyle = this.getShadowStyle();
+    const cardStyle = this.getCardStyle(backgroundColor, borderRadius, padding, bordered, shadowStyle, customStyle);
 
     return (
       <view
-        style={{
-          ...styles.container,
-          backgroundColor,
-          borderRadius,
-          padding,
-          borderWidth: bordered ? 1 : 0,
-          borderColor: bordered ? Colors.border : Colors.transparent,
-          ...shadowStyle,
-          ...customStyle,
-        }}
+        style={cardStyle}
         onTap={onTap ? this.handleTap : undefined}
       >
         {children}

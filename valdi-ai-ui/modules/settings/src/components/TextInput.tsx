@@ -4,7 +4,9 @@
  * A styled text input component with support for secure text entry.
  */
 
-import { Component, Style, View } from '@valdi/valdi_core';
+import { Component } from 'valdi_core/src/Component';
+import { Style } from 'valdi_core/src/Style';
+import { View } from 'valdi_tsx/src/NativeTemplateElements';
 import { Colors, Fonts, Spacing, BorderRadius } from '@common';
 
 /**
@@ -69,7 +71,7 @@ export class TextInput extends Component<TextInputProps, TextInputState> {
   }
 
   private handleChange = (event: any): void => {
-    const { onChangeText } = this.props;
+    const { onChangeText } = this.viewModel;
     if (onChangeText) {
       const value = event.target?.value || '';
       onChangeText(value);
@@ -78,20 +80,20 @@ export class TextInput extends Component<TextInputProps, TextInputState> {
 
   private handleFocus = (): void => {
     this.setState({ isFocused: true });
-    if (this.props.onFocus) {
-      this.props.onFocus();
+    if (this.viewModel.onFocus) {
+      this.viewModel.onFocus();
     }
   };
 
   private handleBlur = (): void => {
     this.setState({ isFocused: false });
-    if (this.props.onBlur) {
-      this.props.onBlur();
+    if (this.viewModel.onBlur) {
+      this.viewModel.onBlur();
     }
   };
 
   private getDisplayValue = (): string => {
-    const { value, secureTextEntry } = this.props;
+    const { value, secureTextEntry } = this.viewModel;
 
     if (secureTextEntry && value) {
       return '•'.repeat(value.length);
@@ -108,7 +110,7 @@ export class TextInput extends Component<TextInputProps, TextInputState> {
       multiline,
       numberOfLines,
       style: customStyle,
-    } = this.props;
+    } = this.viewModel;
 
     const { isFocused } = this.state;
 

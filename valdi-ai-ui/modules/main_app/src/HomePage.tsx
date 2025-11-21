@@ -5,8 +5,10 @@
  * Displays navigation options to different features.
  */
 
-import { NavigationPageComponent, Style, View } from '@valdi/valdi_core';
-import { NavigationController } from '@valdi/valdi_navigation';
+import { NavigationPageComponent } from 'valdi_core/src/Component';
+import { Style } from 'valdi_core/src/Style';
+import { View } from 'valdi_tsx/src/NativeTemplateElements';
+import { NavigationController } from 'valdi_navigation/src/NavigationController';
 import {
   Colors,
   Fonts,
@@ -16,6 +18,16 @@ import {
   Button,
   Card,
 } from '@common';
+
+// Screen Imports
+import { ChatView } from '@chat_ui/ChatView';
+import { ConversationList } from '@chat_ui/ConversationList';
+import { ToolsDemoScreen } from '@tools_demo/ToolsDemoScreen';
+import { WorkflowDemoScreen } from '@workflow_demo/WorkflowDemoScreen';
+import { SettingsScreen } from '@settings/SettingsScreen';
+
+// Store Imports
+import { conversationStore } from '@chat_core/ConversationStore';
 
 /**
  * HomePage Props
@@ -84,12 +96,116 @@ export class HomePage extends NavigationPageComponent<HomePageProps> {
     },
   ];
 
-  private handleFeatureTap = (feature: FeatureCard): void => {
-    // TODO: Navigate to feature page when implemented
+  private handleFeatureTap = async (feature: FeatureCard): Promise<void> => {
     console.log(`Navigate to: ${feature.route}`);
 
-    // For now, show alert
-    // this.props.navigationController.push(/* feature page */);
+    switch (feature.id) {
+      case 'chat':
+        // Create a new conversation and navigate to ChatView
+        await this.navigateToNewChat();
+        break;
+
+      case 'conversations':
+        // Navigate to ConversationList
+        await this.navigateToConversationList();
+        break;
+
+      case 'tools':
+        // Navigate to ToolsDemoScreen
+        this.navigateToToolsDemo();
+        break;
+
+      case 'workflows':
+        // Navigate to WorkflowDemoScreen
+        this.navigateToWorkflowsDemo();
+        break;
+
+      case 'settings':
+        // Navigate to SettingsScreen
+        this.navigateToSettings();
+        break;
+
+      case 'agents':
+        // TODO: Navigate to AI Agents screen when implemented
+        console.log('AI Agents screen not yet implemented');
+        break;
+
+      default:
+        console.warn(`Unknown feature: ${feature.id}`);
+    }
+  };
+
+  /**
+   * Navigate to a new chat conversation
+   */
+  private navigateToNewChat = async (): Promise<void> => {
+    try {
+      // Create a new conversation
+      const conversation = await conversationStore.createConversation({
+        title: 'New Conversation',
+        modelConfig: {
+          provider: 'openai',
+          modelId: 'gpt-4-turbo',
+          temperature: 0.7,
+          maxTokens: 4096,
+        },
+      });
+
+      // Navigate to ChatView with the new conversation ID
+      this.viewModel.navigationController.push(ChatView, {
+        navigationController: this.viewModel.navigationController,
+        conversationId: conversation.id,
+      });
+    } catch (error) {
+      console.error('Failed to create new conversation:', error);
+    }
+  };
+
+  /**
+   * Navigate to ConversationList
+   */
+  private navigateToConversationList = async (): Promise<void> => {
+    try {
+      // Get all conversations from the store
+      const conversations = conversationStore.getAllConversations();
+
+      // Navigate to ConversationList with conversations
+      this.viewModel.navigationController.push(ConversationList, {
+        conversations,
+        onConversationPress: (conversationId: string) => {
+          // Navigate to ChatView when a conversation is selected
+          this.viewModel.navigationController.push(ChatView, {
+            navigationController: this.viewModel.navigationController,
+            conversationId,
+          });
+        },
+      });
+    } catch (error) {
+      console.error('Failed to navigate to conversation list:', error);
+    }
+  };
+
+  /**
+   * Navigate to ToolsDemoScreen
+   */
+  private navigateToToolsDemo = (): void => {
+    this.viewModel.navigationController.push(ToolsDemoScreen, {});
+  };
+
+  /**
+   * Navigate to WorkflowDemoScreen
+   */
+  private navigateToWorkflowsDemo = (): void => {
+    this.viewModel.navigationController.push(WorkflowDemoScreen, {});
+  };
+
+  /**
+   * Navigate to SettingsScreen
+   */
+  private navigateToSettings = (): void => {
+    this.viewModel.navigationController.push(SettingsScreen, {
+      navigationController: this.viewModel.navigationController,
+    });
   };
 
   private renderFeatureCard = (feature: FeatureCard) => {

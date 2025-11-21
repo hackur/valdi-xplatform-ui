@@ -5,7 +5,9 @@
  * Supports initials, images, and icon representations.
  */
 
-import { Component, Style, View } from '@valdi/valdi_core';
+import { Component } from 'valdi_core/src/Component';
+import { Style } from 'valdi_core/src/Style';
+import { View } from 'valdi_tsx/src/NativeTemplateElements';
 import { Colors, Fonts, BorderRadius, Shadows } from '../theme';
 
 /**
@@ -61,7 +63,7 @@ export class Avatar extends Component<AvatarProps> {
   };
 
   private getSize(): number {
-    const { size } = this.props;
+    const { size } = this.viewModel;
 
     switch (size) {
       case 'small':
@@ -78,7 +80,7 @@ export class Avatar extends Component<AvatarProps> {
   }
 
   private getBackgroundColor(): string {
-    const { type, backgroundColor } = this.props;
+    const { type, backgroundColor } = this.viewModel;
 
     if (backgroundColor) {
       return backgroundColor;
@@ -97,12 +99,12 @@ export class Avatar extends Component<AvatarProps> {
   }
 
   private getTextColor(): string {
-    const { textColor } = this.props;
+    const { textColor } = this.viewModel;
     return textColor || Colors.textInverse;
   }
 
   private getInitials(): string {
-    const { type, initials } = this.props;
+    const { type, initials } = this.viewModel;
 
     if (initials) {
       return initials.substring(0, 2).toUpperCase();
@@ -121,7 +123,7 @@ export class Avatar extends Component<AvatarProps> {
   }
 
   private getFontSize(): number {
-    const { size } = this.props;
+    const { size } = this.viewModel;
 
     switch (size) {
       case 'small':
@@ -138,14 +140,33 @@ export class Avatar extends Component<AvatarProps> {
   }
 
   private handleTap = (): void => {
-    const { onTap } = this.props;
+    const { onTap } = this.viewModel;
     if (onTap) {
       onTap();
     }
   };
 
+  private getContainerStyle(size: number, backgroundColor: string, elevated: boolean, customStyle?: Record<string, unknown>): Style<View> {
+    return new Style<View>({
+      ...styles.container,
+      width: size,
+      height: size,
+      backgroundColor,
+      ...(elevated ? Shadows.sm : {}),
+      ...customStyle,
+    });
+  }
+
+  private getImageStyle(size: number): Style<View> {
+    return new Style<View>({
+      width: size,
+      height: size,
+      borderRadius: BorderRadius.full,
+    });
+  }
+
   onRender() {
-    const { imageUrl, elevated, onTap, style: customStyle } = this.props;
+    const { imageUrl, elevated, onTap, style: customStyle } = this.viewModel;
 
     const size = this.getSize();
     const backgroundColor = this.getBackgroundColor();
@@ -153,26 +174,18 @@ export class Avatar extends Component<AvatarProps> {
     const initials = this.getInitials();
     const fontSize = this.getFontSize();
 
+    const containerStyle = this.getContainerStyle(size, backgroundColor, elevated, customStyle);
+    const imageStyle = this.getImageStyle(size);
+
     return (
       <view
-        style={{
-          ...styles.container,
-          width: size,
-          height: size,
-          backgroundColor,
-          ...(elevated ? Shadows.sm : {}),
-          ...customStyle,
-        }}
+        style={containerStyle}
         onTap={onTap ? this.handleTap : undefined}
       >
         {imageUrl ? (
           <image
             src={imageUrl}
-            style={{
-              width: size,
-              height: size,
-              borderRadius: BorderRadius.full,
-            }}
+            style={imageStyle}
           />
         ) : (
           <label

@@ -5,11 +5,18 @@
  * Displays messages and handles user input.
  */
 
-import { NavigationPageComponent, StatefulComponent, Style, View } from '@valdi/valdi_core';
-import { NavigationController } from '@valdi/valdi_navigation';
-import { Colors, Spacing, SemanticSpacing, Message } from '@common';
+import { NavigationPageComponent } from 'valdi_core/src/Component';
+import { StatefulComponent } from 'valdi_core/src/Component';
+import { Style } from 'valdi_core/src/Style';
+import { View } from 'valdi_tsx/src/NativeTemplateElements';
+import { NavigationController } from 'valdi_navigation/src/NavigationController';
+import { Colors, Spacing, SemanticSpacing, Message, Conversation } from '@common';
 import { MessageBubble } from './MessageBubble';
 import { InputBar } from './InputBar';
+import { ChatService } from '@chat_core/src/ChatService';
+import { MessageStore, messageStore } from '@chat_core/src/MessageStore';
+import { ConversationStore, conversationStore } from '@chat_core/src/ConversationStore';
+import { MessageStoreState, StreamEvent, ChatServiceConfig } from '@chat_core/src/types';
 
 /**
  * ChatView Props
@@ -17,6 +24,7 @@ import { InputBar } from './InputBar';
 export interface ChatViewProps {
   navigationController: NavigationController;
   conversationId: string;
+  chatService?: ChatService; // Optional override for testing
 }
 
 /**
@@ -25,33 +33,185 @@ export interface ChatViewProps {
 interface ChatViewState {
   messages: Message[];
   isLoading: boolean;
+  isStreaming: boolean;
+  error?: string;
 }
 
 /**
  * ChatView Component
  *
- * TODO: Integrate with ChatService and MessageStore
+ * Fully integrated with ChatService and MessageStore for real-time chat functionality.
  */
 export class ChatView extends NavigationPageComponent<ChatViewProps, ChatViewState> {
+  // Stores and Services
+  private messageStore: MessageStore;
+  private conversationStore: ConversationStore;
+  private chatService: ChatService;
+  private unsubscribeMessageStore?: () => void;
+
   state: ChatViewState = {
     messages: [],
     isLoading: false,
+    isStreaming: false,
+    error: undefined,
   };
 
+  constructor(props: ChatViewProps) {
+    super(props);
+
+    // Initialize stores
+    this.messageStore = messageStore;
+    this.conversationStore = conversationStore;
+
+    // Initialize ChatService (use provided or create new one)
+    if (props.chatService) {
+      this.chatService = props.chatService;
+    } else {
+      // Default configuration - in production, this should come from settings
+      const config: ChatServiceConfig = {
+        apiKeys: {
+          openai: process.env.OPENAI_API_KEY || '',
+          anthropic: process.env.ANTHROPIC_API_KEY || '',
+          google: process.env.GOOGLE_API_KEY || '',
+        },
+        defaultModelConfig: {
+          provider: 'openai',
+          modelId: 'gpt-4-turbo',
+          temperature: 0.7,
+          maxTokens: 4096,
+        },
+        debug: false,
+      };
+      this.chatService = new ChatService(config, this.messageStore);
+    }
+  }
+
   onCreate() {
-    // TODO: Load messages from MessageStore
-    // TODO: Subscribe to message updates
+    // Load initial messages from store
+    this.loadMessages();
+
+    // Subscribe to message store updates
+    this.unsubscribeMessageStore = this.messageStore.subscribe(
+      (state: MessageStoreState) => {
+        this.handleMessageStoreUpdate(state);
+      }
+    );
   }
 
   onDestroy() {
-    // TODO: Unsubscribe from MessageStore
+    // Unsubscribe from message store
+    if (this.unsubscribeMessageStore) {
+      this.unsubscribeMessageStore();
+      this.unsubscribeMessageStore = undefined;
+    }
   }
 
-  private handleSendMessage = (text: string): void => {
-    console.log('Send message:', text);
-    // TODO: Use ChatService to send message
-    // const chatService = new ChatService(config, messageStore);
-    // chatService.sendMessageStreaming({ conversationId, message: text }, callback);
+  /**
+   * Load messages from store
+   */
+  private loadMessages(): void {
+    const messages = this.messageStore.getMessages(this.viewModel.conversationId);
+    this.setState({
+      messages,
+      isStreaming: this.messageStore.isStreaming(),
+    });
+  }
+
+  /**
+   * Handle message store updates
+   */
+  private handleMessageStoreUpdate(state: MessageStoreState): void {
+    const messages = state.messagesByConversation[this.viewModel.conversationId] || [];
+    const isStreaming = state.streamingStatus === 'streaming';
+
+    this.setState({
+      messages,
+      isStreaming,
+      isLoading: false,
+    });
+  }
+
+  /**
+   * Handle sending a message
+   */
+  private handleSendMessage = async (text: string): Promise<void> => {
+    if (!text.trim()) {
+      return;
+    }
+
+    // Get conversation to get system prompt and model config
+    const conversation = this.conversationStore.getConversation(this.viewModel.conversationId);
+
+    // Set loading state
+    this.setState({
+      isLoading: true,
+      error: undefined,
+    });
+
+    try {
+      // Send message with streaming
+      await this.chatService.sendMessageStreaming(
+        {
+          conversationId: this.viewModel.conversationId,
+          message: text,
+          modelConfig: conversation?.modelConfig,
+          systemPrompt: conversation?.systemPrompt,
+          toolsEnabled: conversation?.toolsEnabled || false,
+          maxSteps: 5,
+        },
+        this.handleStreamEvent
+      );
+
+      // Update conversation message count
+      this.conversationStore.incrementMessageCount(this.viewModel.conversationId);
+
+      // Clear loading state (streaming state is managed by store)
+      this.setState({
+        isLoading: false,
+        error: undefined,
+      });
+    } catch (error) {
+      console.error('Failed to send message:', error);
+      this.setState({
+        isLoading: false,
+        isStreaming: false,
+        error: error instanceof Error ? error.message : 'Failed to send message',
+      });
+    }
+  };
+
+  /**
+   * Handle streaming events
+   */
+  private handleStreamEvent = (event: StreamEvent): void => {
+    switch (event.type) {
+      case 'start':
+        console.log('Stream started:', event.messageId);
+        this.setState({ isStreaming: true });
+        break;
+
+      case 'chunk':
+        // Message updates are handled by the message store subscription
+        // No need to manually update state here
+        break;
+
+      case 'tool-call':
+        console.log('Tool call:', event.toolCall);
+        break;
+
+      case 'complete':
+        console.log('Stream completed:', event.messageId);
+        this.setState({ isStreaming: false });
+        break;
+
+      case 'error':
+        console.error('Stream error:', event.error);
+        this.setState({
+          isStreaming: false,
+          error: event.error,
+        });
+        break;
+    }
   };
 
   private renderMessage = (message: Message) => {
@@ -64,7 +224,7 @@ export class ChatView extends NavigationPageComponent<ChatViewProps, ChatViewSta
   };
 
   onRender() {
-    const { messages, isLoading } = this.state;
+    const { messages, isLoading, isStreaming, error } = this.state;
 
     return (
       <view style={styles.container}>
@@ -78,7 +238,30 @@ export class ChatView extends NavigationPageComponent<ChatViewProps, ChatViewSta
               color: Colors.textPrimary,
             }}
           />
+          {isStreaming && (
+            <label
+              value="AI is typing..."
+              style={{
+                fontSize: 12,
+                color: Colors.textSecondary,
+                marginLeft: Spacing.sm,
+              }}
+            />
+          )}
         </view>
+
+        {/* Error Message */}
+        {error && (
+          <view style={styles.errorContainer}>
+            <label
+              value={`Error: ${error}`}
+              style={{
+                fontSize: 14,
+                color: Colors.error,
+              }}
+            />
+          </view>
+        )}
 
         {/* Messages List */}
         <scrollview style={styles.messagesList}>
@@ -102,7 +285,7 @@ export class ChatView extends NavigationPageComponent<ChatViewProps, ChatViewSta
         {/* Input Bar */}
         <InputBar
           onSend={this.handleSendMessage}
-          disabled={isLoading}
+          disabled={isLoading || isStreaming}
         />
       </view>
     );
@@ -121,6 +304,12 @@ const styles = {
     borderBottomWidth: 1,
     borderBottomColor: Colors.border,
     backgroundColor: Colors.surface,
+  }),
+
+  errorContainer: new Style<View>({
+    paddingHorizontal: SemanticSpacing.screenPaddingHorizontal,
+    paddingVertical: Spacing.sm,
+    backgroundColor: Colors.errorBackground || '#ffebee',
   }),
 
   messagesList: new Style<View>({

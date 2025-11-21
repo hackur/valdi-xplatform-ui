@@ -4,7 +4,9 @@
  * A toggle switch component for boolean settings.
  */
 
-import { Component, Style, View } from '@valdi/valdi_core';
+import { Component } from 'valdi_core/src/Component';
+import { Style } from 'valdi_core/src/Style';
+import { View } from 'valdi_tsx/src/NativeTemplateElements';
 import { Colors, BorderRadius } from '@common';
 
 /**
@@ -34,7 +36,7 @@ export class Switch extends Component<SwitchProps> {
   };
 
   private handleToggle = (): void => {
-    const { disabled, value, onValueChange } = this.props;
+    const { disabled, value, onValueChange } = this.viewModel;
 
     if (!disabled && onValueChange) {
       onValueChange(!value);
@@ -42,7 +44,7 @@ export class Switch extends Component<SwitchProps> {
   };
 
   onRender() {
-    const { value, disabled, style: customStyle } = this.props;
+    const { value, disabled, style: customStyle } = this.viewModel;
 
     const trackColor = value
       ? disabled

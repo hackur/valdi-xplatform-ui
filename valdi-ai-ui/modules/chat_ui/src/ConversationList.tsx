@@ -5,7 +5,9 @@
  * search, and pull-to-refresh functionality.
  */
 
-import { StatefulComponent, Style, View } from '@valdi/valdi_core';
+import { StatefulComponent } from 'valdi_core/src/Component';
+import { Style } from 'valdi_core/src/Style';
+import { View } from 'valdi_tsx/src/NativeTemplateElements';
 import {
   Colors,
   Fonts,
@@ -86,7 +88,7 @@ export class ConversationList extends StatefulComponent<ConversationListProps, C
   };
 
   state: ConversationListState = {
-    filter: this.props.initialFilter || 'all',
+    filter: this.viewModel.initialFilter || 'all',
     searchQuery: '',
     filteredConversations: [],
   };
@@ -98,15 +100,15 @@ export class ConversationList extends StatefulComponent<ConversationListProps, C
   onUpdate(prevProps: ConversationListProps) {
     // Update filtered list when conversations or filter changes
     if (
-      prevProps.conversations !== this.props.conversations ||
-      prevProps.initialFilter !== this.props.initialFilter
+      prevProps.conversations !== this.viewModel.conversations ||
+      prevProps.initialFilter !== this.viewModel.initialFilter
     ) {
       this.updateFilteredConversations();
     }
   }
 
   private updateFilteredConversations(): void {
-    const { conversations } = this.props;
+    const { conversations } = this.viewModel;
     const { filter, searchQuery } = this.state;
 
     let filtered = [...conversations];
@@ -153,7 +155,7 @@ export class ConversationList extends StatefulComponent<ConversationListProps, C
   private handleFilterChange = (filter: ConversationFilter): void => {
     this.setState({ filter }, () => {
       this.updateFilteredConversations();
-      const { onFilterChange } = this.props;
+      const { onFilterChange } = this.viewModel;
       if (onFilterChange) {
         onFilterChange(filter);
       }
@@ -163,7 +165,7 @@ export class ConversationList extends StatefulComponent<ConversationListProps, C
   private handleSearchChange = (query: string): void => {
     this.setState({ searchQuery: query }, () => {
       this.updateFilteredConversations();
-      const { onSearchChange } = this.props;
+      const { onSearchChange } = this.viewModel;
       if (onSearchChange) {
         onSearchChange(query);
       }
@@ -171,7 +173,7 @@ export class ConversationList extends StatefulComponent<ConversationListProps, C
   };
 
   private handleRefresh = (): void => {
-    const { onRefresh } = this.props;
+    const { onRefresh } = this.viewModel;
     if (onRefresh) {
       onRefresh();
     }
@@ -257,7 +259,7 @@ export class ConversationList extends StatefulComponent<ConversationListProps, C
       onConversationPress,
       onConversationLongPress,
       style: customStyle,
-    } = this.props;
+    } = this.viewModel;
 
     const { filter, searchQuery, filteredConversations } = this.state;
 

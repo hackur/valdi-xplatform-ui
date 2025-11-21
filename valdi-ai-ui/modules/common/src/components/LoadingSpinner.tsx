@@ -6,7 +6,10 @@
  * Supports fullscreen overlay mode with optional text label.
  */
 
-import { Component, StatefulComponent, Style, View } from '@valdi/valdi_core';
+import { Component } from 'valdi_core/src/Component';
+import { StatefulComponent } from 'valdi_core/src/Component';
+import { Style } from 'valdi_core/src/Style';
+import { View } from 'valdi_tsx/src/NativeTemplateElements';
 import { Colors, Fonts, Spacing } from '../theme';
 
 /**
@@ -73,8 +76,8 @@ export class LoadingSpinner extends StatefulComponent<LoadingSpinnerProps, Loadi
     rotation: 0,
   };
 
-  private dotsInterval?: NodeJS.Timeout;
-  private rotationInterval?: NodeJS.Timeout;
+  private dotsInterval?: number;
+  private rotationInterval?: number;
 
   onCreate() {
     // Animate dots (1, 2, 3, repeat)
@@ -102,7 +105,7 @@ export class LoadingSpinner extends StatefulComponent<LoadingSpinnerProps, Loadi
   }
 
   private getSize(): number {
-    const { size } = this.props;
+    const { size } = this.viewModel;
 
     switch (size) {
       case 'small':
@@ -117,7 +120,7 @@ export class LoadingSpinner extends StatefulComponent<LoadingSpinnerProps, Loadi
   }
 
   private getFontSize(): number {
-    const { size } = this.props;
+    const { size } = this.viewModel;
 
     switch (size) {
       case 'small':
@@ -136,54 +139,64 @@ export class LoadingSpinner extends StatefulComponent<LoadingSpinnerProps, Loadi
     return '.'.repeat(dots);
   }
 
+  private getSpinnerContainerStyle(size: number): Style<View> {
+    return new Style<View>({
+      width: size,
+      height: size,
+      position: 'relative',
+      alignItems: 'center',
+      justifyContent: 'center',
+    });
+  }
+
+  private getOuterCircleStyle(size: number, color: string, rotation: number): Style<View> {
+    return new Style<View>({
+      width: size,
+      height: size,
+      borderRadius: size / 2,
+      borderWidth: size / 10,
+      borderColor: color,
+      borderTopColor: Colors.transparent,
+      borderRightColor: Colors.transparent,
+      opacity: 0.8,
+      transform: [{ rotate: `${rotation}deg` }],
+    });
+  }
+
+  private getInnerDotStyle(size: number, color: string, dots: number): Style<View> {
+    return new Style<View>({
+      position: 'absolute',
+      width: size / 3,
+      height: size / 3,
+      backgroundColor: color,
+      borderRadius: size / 6,
+      opacity: 0.6 + (dots * 0.1),
+    });
+  }
+
   private renderSpinner(): unknown {
-    const { color } = this.props;
-    const { rotation } = this.state;
+    const { color } = this.viewModel;
+    const { rotation, dots } = this.state;
     const size = this.getSize();
+
+    const spinnerContainerStyle = this.getSpinnerContainerStyle(size);
+    const outerCircleStyle = this.getOuterCircleStyle(size, color, rotation);
+    const innerDotStyle = this.getInnerDotStyle(size, color, dots);
 
     // Create multiple rotating circles for a more complex spinner
     return (
-      <view
-        style={{
-          width: size,
-          height: size,
-          position: 'relative',
-          alignItems: 'center',
-          justifyContent: 'center',
-        }}
-      >
+      <view style={spinnerContainerStyle}>
         {/* Outer rotating circle */}
-        <view
-          style={{
-            width: size,
-            height: size,
-            borderRadius: size / 2,
-            borderWidth: size / 10,
-            borderColor: color,
-            borderTopColor: Colors.transparent,
-            borderRightColor: Colors.transparent,
-            opacity: 0.8,
-            transform: [{ rotate: `${rotation}deg` }],
-          }}
-        />
+        <view style={outerCircleStyle} />
 
         {/* Inner pulsing dot */}
-        <view
-          style={{
-            position: 'absolute',
-            width: size / 3,
-            height: size / 3,
-            backgroundColor: color,
-            borderRadius: size / 6,
-            opacity: 0.6 + (this.state.dots * 0.1),
-          }}
-        />
+        <view style={innerDotStyle} />
       </view>
     );
   }
 
   private renderContent(): unknown {
-    const { showText, text } = this.props;
+    const { showText, text } = this.viewModel;
     const fontSize = this.getFontSize();
     const dotsText = this.getDotsText();
 
@@ -216,7 +229,7 @@ export class LoadingSpinner extends StatefulComponent<LoadingSpinnerProps, Loadi
       overlayColor,
       overlayOpacity,
       style: customStyle,
-    } = this.props;
+    } = this.viewModel;
 
     if (fullscreen) {
       // Fullscreen overlay mode

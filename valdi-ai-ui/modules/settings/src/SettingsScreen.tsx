@@ -9,8 +9,10 @@
  * - About section
  */
 
-import { NavigationPageComponent, Style, View } from '@valdi/valdi_core';
-import { NavigationController } from '@valdi/valdi_navigation';
+import { NavigationPageComponent } from 'valdi_core/src/Component';
+import { Style } from 'valdi_core/src/Style';
+import { View } from 'valdi_tsx/src/NativeTemplateElements';
+import { NavigationController } from 'valdi_navigation/src/NavigationController';
 import {
   Colors,
   Fonts,

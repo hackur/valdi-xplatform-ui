@@ -4,7 +4,9 @@
  * A dropdown/select component for choosing from a list of options.
  */
 
-import { Component, Style, View } from '@valdi/valdi_core';
+import { Component } from 'valdi_core/src/Component';
+import { Style } from 'valdi_core/src/Style';
+import { View } from 'valdi_tsx/src/NativeTemplateElements';
 import { Colors, Fonts, Spacing, BorderRadius } from '@common';
 
 /**
@@ -62,13 +64,13 @@ export class Dropdown extends Component<DropdownProps, DropdownState> {
   }
 
   private toggleDropdown = (): void => {
-    if (!this.props.disabled) {
+    if (!this.viewModel.disabled) {
       this.setState({ isOpen: !this.state.isOpen });
     }
   };
 
   private handleSelect = (value: string): void => {
-    const { onValueChange } = this.props;
+    const { onValueChange } = this.viewModel;
 
     this.setState({ isOpen: false });
 
@@ -78,14 +80,14 @@ export class Dropdown extends Component<DropdownProps, DropdownState> {
   };
 
   private getSelectedLabel = (): string => {
-    const { options, selectedValue, placeholder } = this.props;
+    const { options, selectedValue, placeholder } = this.viewModel;
 
     const selected = options.find((opt) => opt.value === selectedValue);
     return selected ? selected.label : placeholder || '';
   };
 
   onRender() {
-    const { options, selectedValue, disabled, style: customStyle } = this.props;
+    const { options, selectedValue, disabled, style: customStyle } = this.viewModel;
     const { isOpen } = this.state;
 
     return (

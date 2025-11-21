@@ -5,7 +5,9 @@
  * Displays conversation title, preview, timestamp, and status indicators.
  */
 
-import { Component, Style, View } from '@valdi/valdi_core';
+import { Component } from 'valdi_core/src/Component';
+import { Style } from 'valdi_core/src/Style';
+import { View } from 'valdi_tsx/src/NativeTemplateElements';
 import {
   Colors,
   Fonts,
@@ -49,21 +51,21 @@ export class ConversationListItem extends Component<ConversationListItemProps> {
   };
 
   private handlePress = (): void => {
-    const { conversation, onPress } = this.props;
+    const { conversation, onPress } = this.viewModel;
     if (onPress) {
       onPress(conversation.id);
     }
   };
 
   private handleLongPress = (): void => {
-    const { conversation, onLongPress } = this.props;
+    const { conversation, onLongPress } = this.viewModel;
     if (onLongPress) {
       onLongPress(conversation.id);
     }
   };
 
   private getPreviewText(): string {
-    const { lastMessagePreview } = this.props;
+    const { lastMessagePreview } = this.viewModel;
     if (lastMessagePreview) {
       // Truncate to 60 characters
       return lastMessagePreview.length > 60
@@ -74,7 +76,7 @@ export class ConversationListItem extends Component<ConversationListItemProps> {
   }
 
   private getTimeDisplay(): string {
-    const { conversation } = this.props;
+    const { conversation } = this.viewModel;
     const date = conversation.lastMessageAt || conversation.updatedAt;
     const now = new Date();
     const diff = now.getTime() - date.getTime();
@@ -98,7 +100,7 @@ export class ConversationListItem extends Component<ConversationListItemProps> {
   }
 
   private getProviderIcon(): string {
-    const { conversation } = this.props;
+    const { conversation } = this.viewModel;
     const provider = conversation.modelConfig.provider;
 
     switch (provider) {
@@ -116,7 +118,7 @@ export class ConversationListItem extends Component<ConversationListItemProps> {
   }
 
   onRender() {
-    const { conversation, unreadCount, style: customStyle } = this.props;
+    const { conversation, unreadCount, style: customStyle } = this.viewModel;
 
     const previewText = this.getPreviewText();
     const timeDisplay = this.getTimeDisplay();
