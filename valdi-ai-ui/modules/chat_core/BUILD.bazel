@@ -9,7 +9,7 @@ valdi_module(
     visibility = ["//visibility:public"],
     deps = [
         "@valdi//src/valdi_modules/src/valdi/valdi_core",
-        "//modules/common",
+        "//apps/valdi_ai_ui/modules/common",
         # Note: AI SDK dependencies are installed via npm
         # and will be available at runtime
     ],

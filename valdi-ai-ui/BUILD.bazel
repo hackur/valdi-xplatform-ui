@@ -10,9 +10,9 @@ valdi_application(
     title = "Valdi AI UI",
     version = "1.0.0",
     deps = [
-        "//modules/main_app",
-        "//modules/common",
-        "//modules/chat_core",
-        "//modules/chat_ui",
+        "//apps/valdi_ai_ui/modules/main_app",
+        "//apps/valdi_ai_ui/modules/common",
+        "//apps/valdi_ai_ui/modules/chat_core",
+        "//apps/valdi_ai_ui/modules/chat_ui",
     ],
 )

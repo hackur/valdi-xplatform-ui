@@ -1,0 +1,4 @@
+name: chat_core
+dependencies:
+  - valdi_core@valdi
+  - common@apps/valdi_ai_ui/modules
