@@ -1,6 +1,0 @@
-name: main_app
-dependencies:
-  - valdi_core@valdi
-  - valdi_tsx@valdi
-  - valdi_navigation@valdi
-  - common@apps/valdi_ai_ui/modules

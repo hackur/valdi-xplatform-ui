@@ -1,0 +1,16 @@
+load("@valdi//bzl/valdi:valdi_module.bzl", "valdi_module")
+
+valdi_module(
+    name = "settings",
+    srcs = glob([
+        "src/**/*.ts",
+        "src/**/*.tsx",
+    ]),
+    visibility = ["//visibility:public"],
+    deps = [
+        "@valdi//src/valdi_modules/src/valdi/valdi_core",
+        "@valdi//src/valdi_modules/src/valdi/valdi_tsx",
+        "@valdi//src/valdi_modules/src/valdi/valdi_navigation",
+        "//apps/valdi_ai_ui/modules/common",
+    ],
+)

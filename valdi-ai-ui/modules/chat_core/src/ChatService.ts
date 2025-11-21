@@ -5,7 +5,7 @@
  * Handles message sending, streaming, and provider management.
  */
 
-import { streamText, generateText } from 'ai';
+import { streamText, generateText, CoreTool } from 'ai';
 import { openai } from '@ai-sdk/openai';
 import { anthropic } from '@ai-sdk/anthropic';
 import { google } from '@ai-sdk/google';
@@ -24,6 +24,8 @@ import {
   StreamCallback,
   StreamEvent,
 } from './types';
+import { ToolExecutor, ToolCallInput, ToolCallResult } from './ToolExecutor';
+import { getAllTools } from './ToolDefinitions';
 
 /**
  * ChatService Class
@@ -33,10 +35,13 @@ import {
 export class ChatService {
   private config: ChatServiceConfig;
   private messageStore: MessageStore;
+  private toolExecutor: ToolExecutor;
 
   constructor(config: ChatServiceConfig, messageStore: MessageStore) {
     this.config = config;
     this.messageStore = messageStore;
+    // Initialize with default tools
+    this.toolExecutor = new ToolExecutor(getAllTools());
   }
 
   /**
@@ -67,6 +72,23 @@ export class ChatService {
         role: message.role,
         content: MessageUtils.getTextContent(message),
       }));
+  }
+
+  /**
+   * Get tools for the current request
+   */
+  private getTools(options: ChatRequestOptions): Record<string, CoreTool> | undefined {
+    if (!options.toolsEnabled) {
+      return undefined;
+    }
+
+    // If specific tools are provided, use them
+    if (options.tools) {
+      return options.tools as Record<string, CoreTool>;
+    }
+
+    // Otherwise, use all available tools
+    return getAllTools();
   }
 
   /**
@@ -117,6 +139,9 @@ export class ChatService {
         }
       );
 
+      // Get tools if enabled
+      const tools = this.getTools(options);
+
       // Stream the response
       const result = await streamText({
         model,
@@ -125,7 +150,11 @@ export class ChatService {
         temperature: modelConfig?.temperature ?? 0.7,
         maxTokens: modelConfig?.maxTokens ?? 4096,
         maxSteps,
+        tools,
       });
+
+      // Track tool calls
+      const toolCalls: ToolCallResult[] = [];
 
       // Process stream chunks
       for await (const chunk of result.textStream) {
@@ -138,6 +167,41 @@ export class ChatService {
           messageId: assistantMsg.id,
           content: this.messageStore.getMessage(conversationId, assistantMsg.id)?.content as string || '',
           delta: chunk,
+        });
+      }
+
+      // Handle tool calls if any
+      if (result.toolCalls && result.toolCalls.length > 0) {
+        const toolCallInputs: ToolCallInput[] = result.toolCalls.map((tc) => ({
+          toolCallId: tc.toolCallId,
+          toolName: tc.toolName,
+          args: tc.args as Record<string, unknown>,
+        }));
+
+        // Execute tool calls
+        const results = await this.toolExecutor.executeToolCalls(toolCallInputs);
+        toolCalls.push(...results);
+
+        // Emit tool call events
+        for (const result of results) {
+          callback({
+            type: 'tool-call',
+            messageId: assistantMsg.id,
+            toolCall: result,
+          });
+        }
+
+        // Append tool results to message metadata
+        this.messageStore.updateMessage(conversationId, assistantMsg.id, {
+          metadata: {
+            ...this.messageStore.getMessage(conversationId, assistantMsg.id)?.metadata,
+            toolCalls: results.map((r) => ({
+              id: r.toolCallId,
+              name: r.toolName,
+              arguments: toolCallInputs.find((tc) => tc.toolCallId === r.toolCallId)?.args || {},
+              result: r.result,
+            })),
+          },
         });
       }
 
@@ -210,6 +274,9 @@ export class ChatService {
         }
       );
 
+      // Get tools if enabled
+      const tools = this.getTools(options);
+
       // Generate response
       const result = await generateText({
         model,
@@ -218,10 +285,24 @@ export class ChatService {
         temperature: modelConfig?.temperature ?? 0.7,
         maxTokens: modelConfig?.maxTokens ?? 4096,
         maxSteps,
+        tools,
       });
 
       // Mark user message as completed
       this.messageStore.updateMessage(conversationId, userMsg.id, { status: 'completed' });
+
+      // Handle tool calls if any
+      let toolCallResults: ToolCallResult[] = [];
+      if (result.toolCalls && result.toolCalls.length > 0) {
+        const toolCallInputs: ToolCallInput[] = result.toolCalls.map((tc) => ({
+          toolCallId: tc.toolCallId,
+          toolName: tc.toolName,
+          args: tc.args as Record<string, unknown>,
+        }));
+
+        // Execute tool calls
+        toolCallResults = await this.toolExecutor.executeToolCalls(toolCallInputs);
+      }
 
       // Create assistant message
       const assistantMsg: Message = {
@@ -239,6 +320,14 @@ export class ChatService {
             total: result.usage?.totalTokens,
           },
           finishReason: result.finishReason,
+          ...(toolCallResults.length > 0 && {
+            toolCalls: toolCallResults.map((r, idx) => ({
+              id: r.toolCallId,
+              name: r.toolName,
+              arguments: result.toolCalls?.[idx]?.args || {},
+              result: r.result,
+            })),
+          }),
         },
       };
 
@@ -246,6 +335,12 @@ export class ChatService {
 
       return {
         message: assistantMsg,
+        toolCalls: toolCallResults.length > 0 ? toolCallResults.map((r, idx) => ({
+          id: r.toolCallId,
+          name: r.toolName,
+          arguments: result.toolCalls?.[idx]?.args as Record<string, unknown> || {},
+          result: r.result,
+        })) : undefined,
         finishReason: result.finishReason,
         usage: {
           promptTokens: result.usage?.promptTokens || 0,
@@ -280,5 +375,40 @@ export class ChatService {
    */
   updateConfig(config: Partial<ChatServiceConfig>): void {
     this.config = { ...this.config, ...config };
+  }
+
+  /**
+   * Get the tool executor instance
+   */
+  getToolExecutor(): ToolExecutor {
+    return this.toolExecutor;
+  }
+
+  /**
+   * Update available tools
+   */
+  updateTools(tools: Record<string, CoreTool>): void {
+    this.toolExecutor.updateTools(tools);
+  }
+
+  /**
+   * Add a tool to the executor
+   */
+  addTool(name: string, tool: CoreTool): void {
+    this.toolExecutor.addTool(name, tool);
+  }
+
+  /**
+   * Remove a tool from the executor
+   */
+  removeTool(name: string): void {
+    this.toolExecutor.removeTool(name);
+  }
+
+  /**
+   * Get available tool names
+   */
+  getAvailableToolNames(): string[] {
+    return this.toolExecutor.getAvailableToolNames();
   }
 }

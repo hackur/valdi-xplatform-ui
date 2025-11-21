@@ -1,4 +1,0 @@
-name: common
-dependencies:
-  - valdi_core@valdi
-  - valdi_tsx@valdi
