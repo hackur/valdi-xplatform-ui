@@ -1,0 +1,58 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "lib": ["ES2022"],
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "jsx": "react",
+    "jsxFactory": "$createElement",
+    "jsxFragmentFactory": "$Fragment",
+
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "noEmit": true,
+
+    "strictNullChecks": true,
+    "strictFunctionTypes": true,
+    "strictBindCallApply": true,
+    "strictPropertyInitialization": true,
+    "noImplicitThis": true,
+    "noImplicitAny": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true,
+
+    "allowSyntheticDefaultImports": true,
+    "declaration": true,
+    "declarationMap": true,
+    "sourceMap": true,
+
+    "baseUrl": ".",
+    "paths": {
+      "@common/*": ["./modules/common/src/*"],
+      "@chat_core/*": ["./modules/chat_core/src/*"],
+      "@chat_ui/*": ["./modules/chat_ui/src/*"],
+      "@agent_manager/*": ["./modules/agent_manager/src/*"],
+      "@conversation_manager/*": ["./modules/conversation_manager/src/*"],
+      "@model_config/*": ["./modules/model_config/src/*"],
+      "@tools_demo/*": ["./modules/tools_demo/src/*"],
+      "@workflow_demo/*": ["./modules/workflow_demo/src/*"],
+      "@settings/*": ["./modules/settings/src/*"]
+    }
+  },
+  "include": [
+    "modules/**/*.ts",
+    "modules/**/*.tsx"
+  ],
+  "exclude": [
+    "node_modules",
+    "bazel-*",
+    "**/*.test.ts",
+    "**/*.test.tsx"
+  ]
+}

@@ -1,0 +1,50 @@
+{
+  "name": "valdi-ai-ui",
+  "version": "1.0.0",
+  "description": "Open Source Cross-Platform AI Chat Client built with Valdi and Vercel AI SDK v5",
+  "private": true,
+  "scripts": {
+    "build": "bazel build //:valdi_ai_ui",
+    "build:ios": "valdi install ios --app=//:valdi_ai_ui",
+    "build:android": "valdi install android --app=//:valdi_ai_ui",
+    "test": "bazel test //...",
+    "lint": "eslint . --ext .ts,.tsx",
+    "lint:fix": "eslint . --ext .ts,.tsx --fix",
+    "type-check": "tsc --noEmit"
+  },
+  "keywords": [
+    "valdi",
+    "ai",
+    "chatbot",
+    "ai-sdk",
+    "cross-platform",
+    "mobile",
+    "ios",
+    "android",
+    "typescript",
+    "react-native-alternative"
+  ],
+  "author": "Your Name",
+  "license": "MIT",
+  "dependencies": {
+    "@ai-sdk/openai": "^1.0.0",
+    "@ai-sdk/anthropic": "^1.0.0",
+    "@ai-sdk/google": "^1.0.0",
+    "ai": "^5.0.0",
+    "zod": "^3.24.1",
+    "date-fns": "^4.1.0",
+    "uuid": "^11.0.3"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.0",
+    "@types/uuid": "^10.0.0",
+    "@typescript-eslint/eslint-plugin": "^8.16.0",
+    "@typescript-eslint/parser": "^8.16.0",
+    "eslint": "^8.57.1",
+    "typescript": "^5.7.2"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=9.0.0"
+  }
+}
