@@ -146,13 +146,13 @@ export class Avatar extends Component<AvatarProps> {
     }
   };
 
-  private getContainerStyle(size: number, backgroundColor: string, elevated: boolean, customStyle?: Record<string, unknown>): Style<View> {
+  private getContainerStyle(size: number, backgroundColor: string, elevated: boolean | undefined, customStyle?: Record<string, unknown>): Style<View> {
     return new Style<View>({
       ...styles.container,
       width: size,
       height: size,
       backgroundColor,
-      ...(elevated ? Shadows.sm : {}),
+      ...((elevated ?? false) ? Shadows.sm : {}),
       ...customStyle,
     });
   }

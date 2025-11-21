@@ -81,7 +81,7 @@ export class Card extends Component<CardProps> {
   };
 
   private getCardStyle(
-    backgroundColor: string,
+    backgroundColor: string | undefined,
     borderRadius: number,
     padding: number,
     bordered: boolean,
@@ -90,7 +90,7 @@ export class Card extends Component<CardProps> {
   ): Style<View> {
     return new Style<View>({
       ...styles.container,
-      backgroundColor,
+      backgroundColor: backgroundColor ?? Colors.surface,
       borderRadius,
       padding,
       borderWidth: bordered ? 1 : 0,

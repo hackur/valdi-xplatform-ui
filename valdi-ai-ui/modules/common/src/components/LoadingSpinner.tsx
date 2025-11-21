@@ -156,8 +156,6 @@ export class LoadingSpinner extends StatefulComponent<LoadingSpinnerProps, Loadi
       borderRadius: size / 2,
       borderWidth: size / 10,
       borderColor: color,
-      borderTopColor: Colors.transparent,
-      borderRightColor: Colors.transparent,
       opacity: 0.8,
       transform: [{ rotate: `${rotation}deg` }],
     });
@@ -223,6 +221,21 @@ export class LoadingSpinner extends StatefulComponent<LoadingSpinnerProps, Loadi
     );
   }
 
+  private getFullscreenOverlayStyle(overlayColor: string, overlayOpacity: number): Style<View> {
+    return new Style<View>({
+      ...styles.fullscreenOverlay,
+      backgroundColor: overlayColor,
+      opacity: overlayOpacity,
+    });
+  }
+
+  private getContainerStyle(customStyle?: Record<string, unknown>): Style<View> {
+    return new Style<View>({
+      ...styles.container,
+      ...customStyle,
+    });
+  }
+
   onRender() {
     const {
       fullscreen,
@@ -233,14 +246,10 @@ export class LoadingSpinner extends StatefulComponent<LoadingSpinnerProps, Loadi
 
     if (fullscreen) {
       // Fullscreen overlay mode
+      const fullscreenOverlayStyle = this.getFullscreenOverlayStyle(overlayColor, overlayOpacity);
+
       return (
-        <view
-          style={{
-            ...styles.fullscreenOverlay,
-            backgroundColor: overlayColor,
-            opacity: overlayOpacity,
-          }}
-        >
+        <view style={fullscreenOverlayStyle}>
           <view style={styles.fullscreenContent}>
             {this.renderContent()}
           </view>
@@ -249,13 +258,10 @@ export class LoadingSpinner extends StatefulComponent<LoadingSpinnerProps, Loadi
     }
 
     // Standard inline mode
+    const containerStyle = this.getContainerStyle(customStyle);
+
     return (
-      <view
-        style={{
-          ...styles.container,
-          ...customStyle,
-        }}
-      >
+      <view style={containerStyle}>
         {this.renderContent()}
       </view>
     );

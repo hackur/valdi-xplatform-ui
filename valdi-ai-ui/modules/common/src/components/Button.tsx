@@ -179,7 +179,7 @@ export class Button extends Component<ButtonProps> {
     backgroundColor: string,
     borderColor: string,
     padding: { paddingHorizontal: number; paddingVertical: number },
-    fullWidth: boolean,
+    fullWidth: boolean | undefined,
     customStyle?: Record<string, unknown>
   ): Style<View> {
     return new Style<View>({
@@ -188,7 +188,7 @@ export class Button extends Component<ButtonProps> {
       borderColor,
       borderWidth: borderColor !== Colors.transparent ? 2 : 0,
       ...padding,
-      width: fullWidth ? '100%' : undefined,
+      width: (fullWidth ?? false) ? '100%' : undefined,
       ...SemanticShadows.button,
       ...customStyle,
     });
