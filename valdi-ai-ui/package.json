@@ -5,12 +5,14 @@
   "private": true,
   "scripts": {
     "build": "bazel build //:valdi_ai_ui",
-    "build:ios": "valdi install ios --app=//:valdi_ai_ui",
-    "build:android": "valdi install android --app=//:valdi_ai_ui",
+    "build:ios": "bazel build //:valdi_ai_ui && valdi install ios --app=//:valdi_ai_ui",
+    "build:android": "bazel build //:valdi_ai_ui_android && valdi install android --app=//:valdi_ai_ui",
     "test": "bazel test //...",
     "lint": "eslint . --ext .ts,.tsx",
     "lint:fix": "eslint . --ext .ts,.tsx --fix",
-    "type-check": "tsc --noEmit"
+    "type-check": "tsc --noEmit",
+    "clean": "bazel clean",
+    "clean:full": "bazel clean --expunge"
   },
   "keywords": [
     "valdi",
