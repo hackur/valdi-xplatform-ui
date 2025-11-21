@@ -9,7 +9,6 @@ import { Component } from 'valdi_core/src/Component';
 import { Style } from 'valdi_core/src/Style';
 import { View } from 'valdi_tsx/src/NativeTemplateElements';
 import { Colors, Spacing, SemanticShadows, Shadows, BorderRadius } from '../theme';
-import { getShadowStyle, createBorder, conditionalStyle } from '../utils/StyleHelpers';
 
 /**
  * Card Elevation Level
@@ -57,15 +56,21 @@ export class Card extends Component<CardProps> {
     bordered: false,
   };
 
-  private getElevationStyle() {
+  private getElevationStyle(): Record<string, unknown> {
     const { elevation } = this.viewModel;
 
-    // Map 'sm' to SemanticShadows.card, otherwise use getShadowStyle
-    if (elevation === 'sm') {
-      return SemanticShadows.card;
+    switch (elevation) {
+      case 'none':
+        return {};
+      case 'sm':
+        return SemanticShadows.card;
+      case 'md':
+        return Shadows.md;
+      case 'lg':
+        return Shadows.lg;
+      default:
+        return SemanticShadows.card;
     }
-
-    return getShadowStyle(elevation || 'sm');
   }
 
   private handleTap = (): void => {
@@ -83,16 +88,15 @@ export class Card extends Component<CardProps> {
     shadowStyle: Record<string, unknown>,
     customStyle?: Record<string, unknown>
   ): Style<View> {
-    const borderStyle = bordered
-      ? createBorder(1, Colors.border)
-      : {};
-
     return new Style<View>({
       ...styles.container,
       backgroundColor: backgroundColor ?? Colors.surface,
       borderRadius: borderRadius ?? BorderRadius.md,
       padding: padding ?? Spacing.base,
-      ...borderStyle,
+      ...(bordered ? {
+        borderWidth: 1,
+        borderColor: Colors.border,
+      } : {}),
       ...shadowStyle,
       ...customStyle,
     });

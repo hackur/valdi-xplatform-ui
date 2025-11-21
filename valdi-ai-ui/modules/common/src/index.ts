@@ -5,7 +5,6 @@
  * - Theme (colors, fonts, spacing, shadows)
  * - Types (Message, Conversation)
  * - Components (Button, Card, Avatar, LoadingSpinner)
- * - Utils (StyleHelpers and other utilities)
  */
 
 // Theme exports
@@ -16,6 +15,3 @@ export * from './types';
 
 // Component exports
 export * from './components';
-
-// Utility exports
-export * from './utils';

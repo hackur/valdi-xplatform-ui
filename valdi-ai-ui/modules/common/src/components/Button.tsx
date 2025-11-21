@@ -8,13 +8,8 @@
 import { Component } from 'valdi_core/src/Component';
 import { Style } from 'valdi_core/src/Style';
 import { View, Label } from 'valdi_tsx/src/NativeTemplateElements';
+import { systemBoldFont } from 'valdi_core/src/SystemFont';
 import { Colors, Spacing, SemanticShadows, BorderRadius } from '../theme';
-import {
-  getSizeValue,
-  createHVPadding,
-  createLabelStyle,
-  createBorder,
-} from '../utils/StyleHelpers';
 
 /**
  * Button Variants
@@ -135,12 +130,26 @@ export class Button extends Component<ButtonProps> {
 
   private getPadding(): { paddingHorizontal: number; paddingVertical: number } {
     const { size } = this.viewModel;
-    return createHVPadding(size || 'medium');
+    switch (size) {
+      case 'small':
+        return { paddingHorizontal: Spacing.sm, paddingVertical: Spacing.xs };
+      case 'medium':
+        return { paddingHorizontal: Spacing.base, paddingVertical: Spacing.sm };
+      case 'large':
+        return { paddingHorizontal: Spacing.lg, paddingVertical: Spacing.base };
+      default:
+        return { paddingHorizontal: Spacing.base, paddingVertical: Spacing.sm };
+    }
   }
 
   private getFontSize(): number {
     const { size } = this.viewModel;
-    return getSizeValue(size || 'medium', [14, 16, 18]);
+    switch (size) {
+      case 'small': return 14;
+      case 'medium': return 16;
+      case 'large': return 18;
+      default: return 16;
+    }
   }
 
   private handleTap = (): void => {
@@ -158,14 +167,13 @@ export class Button extends Component<ButtonProps> {
     fullWidth: boolean | undefined,
     customStyle?: Record<string, unknown>
   ): Style<View> {
-    const borderStyle = borderColor !== Colors.transparent
-      ? createBorder(2, borderColor)
-      : {};
-
     return new Style<View>({
       ...styles.container,
       backgroundColor,
-      ...borderStyle,
+      ...(borderColor !== Colors.transparent ? {
+        borderWidth: 2,
+        borderColor: borderColor,
+      } : {}),
       ...padding,
       width: (fullWidth ?? false) ? '100%' : undefined,
       ...SemanticShadows.button,
@@ -174,7 +182,10 @@ export class Button extends Component<ButtonProps> {
   }
 
   private getLabelStyle(fontSize: number, textColor: string): Style<Label> {
-    return createLabelStyle(fontSize, textColor, true);
+    return new Style<Label>({
+      font: systemBoldFont(fontSize),
+      color: textColor,
+    });
   }
 
   onRender() {

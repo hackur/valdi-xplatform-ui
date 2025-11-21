@@ -10,12 +10,8 @@ import { Component } from 'valdi_core/src/Component';
 import { StatefulComponent } from 'valdi_core/src/Component';
 import { Style } from 'valdi_core/src/Style';
 import { View, Label } from 'valdi_tsx/src/NativeTemplateElements';
+import { systemFont } from 'valdi_core/src/SystemFont';
 import { Colors, Spacing } from '../theme';
-import {
-  getSizeValue,
-  createLabelStyle,
-  createCenteredContainerStyle,
-} from '../utils/StyleHelpers';
 
 /**
  * LoadingSpinner Size
@@ -111,16 +107,29 @@ export class LoadingSpinner extends StatefulComponent<LoadingSpinnerProps, Loadi
 
   private getSize(): number {
     const { size } = this.viewModel;
-    return getSizeValue(size || 'medium', [24, 40, 56]);
+    switch (size) {
+      case 'small': return 24;
+      case 'medium': return 40;
+      case 'large': return 56;
+      default: return 40;
+    }
   }
 
   private getFontSize(): number {
     const { size } = this.viewModel;
-    return getSizeValue(size || 'medium', [12, 14, 16]);
+    switch (size) {
+      case 'small': return 12;
+      case 'medium': return 14;
+      case 'large': return 16;
+      default: return 14;
+    }
   }
 
   private getTextLabelStyle(fontSize: number): Style<Label> {
-    return createLabelStyle(fontSize, Colors.textPrimary);
+    return new Style<Label>({
+      font: systemFont(fontSize),
+      color: Colors.textPrimary,
+    });
   }
 
   private getDotsText(): string {
@@ -130,7 +139,10 @@ export class LoadingSpinner extends StatefulComponent<LoadingSpinnerProps, Loadi
 
   private getSpinnerContainerStyle(size: number): Style<View> {
     return new Style<View>({
-      ...createCenteredContainerStyle(size, size),
+      width: size,
+      height: size,
+      alignItems: 'center',
+      justifyContent: 'center',
       position: 'relative',
     });
   }
@@ -204,17 +216,28 @@ export class LoadingSpinner extends StatefulComponent<LoadingSpinnerProps, Loadi
     );
   }
 
-  private getFullscreenOverlayStyle(overlayColor: string, overlayOpacity: number): Style<View> {
+  private getFullscreenOverlayStyle(overlayColor: string | undefined, overlayOpacity: number | undefined): Style<View> {
     return new Style<View>({
-      ...styles.fullscreenOverlay,
-      backgroundColor: overlayColor,
-      opacity: overlayOpacity,
+      position: 'absolute',
+      top: 0,
+      left: 0,
+      right: 0,
+      bottom: 0,
+      width: '100%',
+      height: '100%',
+      alignItems: 'center',
+      justifyContent: 'center',
+      zIndex: 9999,
+      backgroundColor: overlayColor ?? Colors.background,
+      opacity: overlayOpacity ?? 0.9,
     });
   }
 
   private getContainerStyle(customStyle?: Record<string, unknown>): Style<View> {
     return new Style<View>({
-      ...styles.container,
+      flexDirection: 'column',
+      alignItems: 'center',
+      justifyContent: 'center',
       ...customStyle,
     });
   }
@@ -262,7 +285,6 @@ const styles = {
     flexDirection: 'column',
     alignItems: 'center',
     justifyContent: 'center',
-    gap: Spacing.md,
   }),
 
   textContainer: new Style<View>({
@@ -285,15 +307,9 @@ const styles = {
 
   fullscreenContent: new Style<View>({
     backgroundColor: Colors.surface,
-    paddingHorizontal: Spacing.xxl,
-    paddingVertical: Spacing.xl,
+    padding: Spacing.xl,
     borderRadius: 12,
     alignItems: 'center',
     justifyContent: 'center',
-    shadowColor: Colors.shadow,
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 8,
-    elevation: 8,
   }),
 };
