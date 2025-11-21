@@ -9,9 +9,13 @@
 import { Component } from 'valdi_core/src/Component';
 import { StatefulComponent } from 'valdi_core/src/Component';
 import { Style } from 'valdi_core/src/Style';
-import { systemFont } from 'valdi_core/src/SystemFont';
 import { View, Label } from 'valdi_tsx/src/NativeTemplateElements';
-import { Colors, Fonts, Spacing } from '../theme';
+import { Colors, Spacing } from '../theme';
+import {
+  getSizeValue,
+  createLabelStyle,
+  createCenteredContainerStyle,
+} from '../utils/StyleHelpers';
 
 /**
  * LoadingSpinner Size
@@ -107,39 +111,16 @@ export class LoadingSpinner extends StatefulComponent<LoadingSpinnerProps, Loadi
 
   private getSize(): number {
     const { size } = this.viewModel;
-
-    switch (size) {
-      case 'small':
-        return 24;
-      case 'medium':
-        return 40;
-      case 'large':
-        return 56;
-      default:
-        return 40;
-    }
+    return getSizeValue(size || 'medium', [24, 40, 56]);
   }
 
   private getFontSize(): number {
     const { size } = this.viewModel;
-
-    switch (size) {
-      case 'small':
-        return 12;
-      case 'medium':
-        return 14;
-      case 'large':
-        return 16;
-      default:
-        return 14;
-    }
+    return getSizeValue(size || 'medium', [12, 14, 16]);
   }
 
   private getTextLabelStyle(fontSize: number): Style<Label> {
-    return new Style<Label>({
-      font: systemFont(fontSize),
-      color: Colors.textPrimary,
-    });
+    return createLabelStyle(fontSize, Colors.textPrimary);
   }
 
   private getDotsText(): string {
@@ -149,32 +130,29 @@ export class LoadingSpinner extends StatefulComponent<LoadingSpinnerProps, Loadi
 
   private getSpinnerContainerStyle(size: number): Style<View> {
     return new Style<View>({
-      width: size,
-      height: size,
+      ...createCenteredContainerStyle(size, size),
       position: 'relative',
-      alignItems: 'center',
-      justifyContent: 'center',
     });
   }
 
-  private getOuterCircleStyle(size: number, color: string): Style<View> {
+  private getOuterCircleStyle(size: number, color: string | undefined): Style<View> {
     return new Style<View>({
       width: size,
       height: size,
       borderRadius: size / 2,
       borderWidth: size / 10,
-      borderColor: color,
+      borderColor: color ?? Colors.primary,
       opacity: 0.8,
       // Note: transform property not supported in Valdi - rotation animation disabled
     });
   }
 
-  private getInnerDotStyle(size: number, color: string, dots: number): Style<View> {
+  private getInnerDotStyle(size: number, color: string | undefined, dots: number): Style<View> {
     return new Style<View>({
       position: 'absolute',
       width: size / 3,
       height: size / 3,
-      backgroundColor: color,
+      backgroundColor: color ?? Colors.primary,
       borderRadius: size / 6,
       opacity: 0.6 + (dots * 0.1),
     });

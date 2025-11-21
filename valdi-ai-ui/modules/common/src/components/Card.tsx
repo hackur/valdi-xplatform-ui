@@ -8,7 +8,8 @@
 import { Component } from 'valdi_core/src/Component';
 import { Style } from 'valdi_core/src/Style';
 import { View } from 'valdi_tsx/src/NativeTemplateElements';
-import { Colors, Spacing, SemanticShadows, ShadowKey, Shadows, BorderRadius } from '../theme';
+import { Colors, Spacing, SemanticShadows, Shadows, BorderRadius } from '../theme';
+import { getShadowStyle, createBorder, conditionalStyle } from '../utils/StyleHelpers';
 
 /**
  * Card Elevation Level
@@ -56,21 +57,15 @@ export class Card extends Component<CardProps> {
     bordered: false,
   };
 
-  private getShadowStyle() {
+  private getElevationStyle() {
     const { elevation } = this.viewModel;
 
-    switch (elevation) {
-      case 'none':
-        return Shadows.none;
-      case 'sm':
-        return SemanticShadows.card;
-      case 'md':
-        return Shadows.md;
-      case 'lg':
-        return Shadows.lg;
-      default:
-        return SemanticShadows.card;
+    // Map 'sm' to SemanticShadows.card, otherwise use getShadowStyle
+    if (elevation === 'sm') {
+      return SemanticShadows.card;
     }
+
+    return getShadowStyle(elevation || 'sm');
   }
 
   private handleTap = (): void => {
@@ -88,13 +83,16 @@ export class Card extends Component<CardProps> {
     shadowStyle: Record<string, unknown>,
     customStyle?: Record<string, unknown>
   ): Style<View> {
+    const borderStyle = bordered
+      ? createBorder(1, Colors.border)
+      : {};
+
     return new Style<View>({
       ...styles.container,
       backgroundColor: backgroundColor ?? Colors.surface,
       borderRadius: borderRadius ?? BorderRadius.md,
       padding: padding ?? Spacing.base,
-      borderWidth: bordered ? 1 : 0,
-      borderColor: bordered ? Colors.border : Colors.transparent,
+      ...borderStyle,
       ...shadowStyle,
       ...customStyle,
     });
@@ -111,7 +109,7 @@ export class Card extends Component<CardProps> {
       style: customStyle,
     } = this.viewModel;
 
-    const shadowStyle = this.getShadowStyle();
+    const shadowStyle = this.getElevationStyle();
     const cardStyle = this.getCardStyle(backgroundColor, borderRadius, padding, bordered, shadowStyle, customStyle);
 
     return (

@@ -1,7 +1,12 @@
 module(name = "valdi_ai_ui", version = "1.0.0")
 
-# Reference the local Valdi installation
-bazel_dep(name = "valdi")
+# Valdi framework dependency
+# NOTE: For local development with parent Valdi workspace, uncomment the override below
+# and comment out the bazel_dep line
+bazel_dep(name = "valdi", version = "1.0.0")
+
+# Local development override (comment out for standalone usage)
+# Uncomment these lines when developing alongside the parent Valdi workspace:
 local_path_override(
     module_name = "valdi",
     path = "../Valdi",

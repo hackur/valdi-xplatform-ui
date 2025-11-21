@@ -7,9 +7,15 @@
 
 import { Component } from 'valdi_core/src/Component';
 import { Style } from 'valdi_core/src/Style';
-import { systemBoldFont } from 'valdi_core/src/SystemFont';
 import { View, Label } from 'valdi_tsx/src/NativeTemplateElements';
-import { Colors, Fonts, BorderRadius, Shadows } from '../theme';
+import { Colors, BorderRadius, Shadows } from '../theme';
+import {
+  getExtendedSizeValue,
+  createCircleStyle,
+  createCircleImageStyle,
+  createLabelStyle,
+  conditionalStyle,
+} from '../utils/StyleHelpers';
 
 /**
  * Avatar Size
@@ -65,19 +71,7 @@ export class Avatar extends Component<AvatarProps> {
 
   private getSize(): number {
     const { size } = this.viewModel;
-
-    switch (size) {
-      case 'small':
-        return 32;
-      case 'medium':
-        return 40;
-      case 'large':
-        return 48;
-      case 'xlarge':
-        return 64;
-      default:
-        return 40;
-    }
+    return getExtendedSizeValue(size || 'medium', [32, 40, 48, 64]);
   }
 
   private getBackgroundColor(): string {
@@ -125,19 +119,7 @@ export class Avatar extends Component<AvatarProps> {
 
   private getFontSize(): number {
     const { size } = this.viewModel;
-
-    switch (size) {
-      case 'small':
-        return 14;
-      case 'medium':
-        return 16;
-      case 'large':
-        return 18;
-      case 'xlarge':
-        return 24;
-      default:
-        return 16;
-    }
+    return getExtendedSizeValue(size || 'medium', [14, 16, 18, 24]);
   }
 
   private handleTap = (): void => {
@@ -150,27 +132,18 @@ export class Avatar extends Component<AvatarProps> {
   private getContainerStyle(size: number, backgroundColor: string, elevated: boolean | undefined, customStyle?: Record<string, unknown>): Style<View> {
     return new Style<View>({
       ...styles.container,
-      width: size,
-      height: size,
-      backgroundColor,
-      ...((elevated ?? false) ? Shadows.sm : {}),
+      ...createCircleStyle(size, backgroundColor),
+      ...conditionalStyle(elevated ?? false, Shadows.sm),
       ...customStyle,
     });
   }
 
   private getImageStyle(size: number): Style<View> {
-    return new Style<View>({
-      width: size,
-      height: size,
-      borderRadius: BorderRadius.full,
-    });
+    return createCircleImageStyle(size);
   }
 
   private getLabelStyle(fontSize: number, textColor: string): Style<Label> {
-    return new Style<Label>({
-      font: systemBoldFont(fontSize),
-      color: textColor,
-    });
+    return createLabelStyle(fontSize, textColor, true);
   }
 
   onRender() {
@@ -209,9 +182,6 @@ export class Avatar extends Component<AvatarProps> {
 
 const styles = {
   container: new Style<View>({
-    borderRadius: BorderRadius.full,
-    alignItems: 'center',
-    justifyContent: 'center',
-    overflow: 'hidden',
+    // Note: overflow property not supported in Valdi Style
   }),
 };

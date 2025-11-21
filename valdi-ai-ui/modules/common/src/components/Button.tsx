@@ -7,9 +7,14 @@
 
 import { Component } from 'valdi_core/src/Component';
 import { Style } from 'valdi_core/src/Style';
-import { systemBoldFont } from 'valdi_core/src/SystemFont';
 import { View, Label } from 'valdi_tsx/src/NativeTemplateElements';
-import { Colors, Fonts, Spacing, SemanticShadows, BorderRadius } from '../theme';
+import { Colors, Spacing, SemanticShadows, BorderRadius } from '../theme';
+import {
+  getSizeValue,
+  createHVPadding,
+  createLabelStyle,
+  createBorder,
+} from '../utils/StyleHelpers';
 
 /**
  * Button Variants
@@ -130,42 +135,12 @@ export class Button extends Component<ButtonProps> {
 
   private getPadding(): { paddingHorizontal: number; paddingVertical: number } {
     const { size } = this.viewModel;
-
-    switch (size) {
-      case 'small':
-        return {
-          paddingHorizontal: Spacing.base,
-          paddingVertical: Spacing.sm,
-        };
-      case 'medium':
-        return {
-          paddingHorizontal: Spacing.xl,
-          paddingVertical: Spacing.md,
-        };
-      case 'large':
-        return {
-          paddingHorizontal: Spacing.xxl,
-          paddingVertical: Spacing.base,
-        };
-      default:
-        return {
-          paddingHorizontal: Spacing.xl,
-          paddingVertical: Spacing.md,
-        };
-    }
+    return createHVPadding(size || 'medium');
   }
 
   private getFontSize(): number {
     const { size } = this.viewModel;
-
-    switch (size) {
-      case 'small':
-        return 14;
-      case 'large':
-        return 18;
-      default:
-        return 16;
-    }
+    return getSizeValue(size || 'medium', [14, 16, 18]);
   }
 
   private handleTap = (): void => {
@@ -183,11 +158,14 @@ export class Button extends Component<ButtonProps> {
     fullWidth: boolean | undefined,
     customStyle?: Record<string, unknown>
   ): Style<View> {
+    const borderStyle = borderColor !== Colors.transparent
+      ? createBorder(2, borderColor)
+      : {};
+
     return new Style<View>({
       ...styles.container,
       backgroundColor,
-      borderColor,
-      borderWidth: borderColor !== Colors.transparent ? 2 : 0,
+      ...borderStyle,
       ...padding,
       width: (fullWidth ?? false) ? '100%' : undefined,
       ...SemanticShadows.button,
@@ -196,10 +174,7 @@ export class Button extends Component<ButtonProps> {
   }
 
   private getLabelStyle(fontSize: number, textColor: string): Style<Label> {
-    return new Style<Label>({
-      font: systemBoldFont(fontSize),
-      color: textColor,
-    });
+    return createLabelStyle(fontSize, textColor, true);
   }
 
   onRender() {
