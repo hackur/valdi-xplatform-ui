@@ -1,0 +1,18 @@
+load("@valdi//bzl/valdi:valdi_application.bzl", "valdi_application")
+
+valdi_application(
+    name = "valdi_ai_ui",
+    android_activity_theme_name = "Theme.ValdiAIUI.Launch",
+    android_app_icon_name = "app_icon",
+    ios_bundle_id = "com.valdi.aiui",
+    ios_families = ["iphone", "ipad"],
+    root_component_path = "App@main_app/src/App",
+    title = "Valdi AI UI",
+    version = "1.0.0",
+    deps = [
+        "//modules/main_app",
+        "//modules/common",
+        "//modules/chat_core",
+        "//modules/chat_ui",
+    ],
+)
