@@ -1,8 +1,0 @@
-module(name = "valdi_kitchen_sink", version = "1.0.0")
-
-# Reference the local Valdi installation
-bazel_dep(name = "valdi")
-local_path_override(
-    module_name = "valdi",
-    path = "../Valdi",
-)
