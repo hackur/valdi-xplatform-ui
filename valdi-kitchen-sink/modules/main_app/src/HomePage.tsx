@@ -12,6 +12,19 @@ import { View, Label, Layout, ScrollView } from 'valdi_tsx/src/NativeTemplateEle
 
 import { Colors, Fonts, Spacing, BorderRadius, Shadows } from '../../common/src/index';
 
+// Demo imports
+import { LayoutsDemo } from '../../layouts_demo/src/index';
+import { TextDemo } from '../../text_demo/src/index';
+import { ImagesDemo } from '../../images_demo/src/index';
+import { ScrollingDemo } from '../../scrolling_demo/src/index';
+import { GesturesDemo } from '../../gestures_demo/src/index';
+import { StylingDemo } from '../../styling_demo/src/index';
+import { StateDemo } from '../../state_demo/src/index';
+import { AnimationDemo } from '../../animation_demo/src/index';
+import { ShapesDemo } from '../../shapes_demo/src/index';
+import { FormsDemo } from '../../forms_demo/src/index';
+import { ListsDemo } from '../../lists_demo/src/index';
+
 export interface HomePageViewModel {
   navigationController: NavigationController;
 }
@@ -171,9 +184,25 @@ export class HomePage extends NavigationPageComponent<HomePageViewModel> {
   }
 
   private navigateToDemo(demoId: string) {
-    // TODO: Navigate to specific demo page when implemented
-    // For now, just log the demo ID
-    // this.navigationController.push(DemoPage, { demoId }, {});
+    const navigationMap: Record<string, typeof Component> = {
+      'layouts': LayoutsDemo,
+      'text': TextDemo,
+      'media': ImagesDemo,
+      'scroll': ScrollingDemo,
+      'gestures': GesturesDemo,
+      'styling': StylingDemo,
+      'state': StateDemo,
+      'animations': AnimationDemo,
+      'shapes': ShapesDemo,
+      'slots': StateDemo, // TODO: Replace with SlotsDemo when implemented
+      'forms': FormsDemo,
+      'lists': ListsDemo,
+    };
+
+    const DemoComponent = navigationMap[demoId];
+    if (DemoComponent) {
+      this.viewModel.navigationController.push(DemoComponent, { navigationController: this.viewModel.navigationController }, {});
+    }
   }
 }
 

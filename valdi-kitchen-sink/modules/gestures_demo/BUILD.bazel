@@ -1,7 +1,7 @@
 load("@valdi//bzl/valdi:valdi_module.bzl", "valdi_module")
 
 valdi_module(
-    name = "main_app",
+    name = "gestures_demo",
     srcs = glob([
         "src/**/*.ts",
         "src/**/*.tsx",
@@ -12,16 +12,5 @@ valdi_module(
         "@valdi//src/valdi_modules/src/valdi/valdi_tsx",
         "@valdi//src/valdi_modules/src/valdi/valdi_navigation",
         "//modules/common",
-        "//modules/layouts_demo",
-        "//modules/text_demo",
-        "//modules/images_demo",
-        "//modules/scrolling_demo",
-        "//modules/gestures_demo",
-        "//modules/styling_demo",
-        "//modules/state_demo",
-        "//modules/animation_demo",
-        "//modules/shapes_demo",
-        "//modules/forms_demo",
-        "//modules/lists_demo",
     ],
 )
