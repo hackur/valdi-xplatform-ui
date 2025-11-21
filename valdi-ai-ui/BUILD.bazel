@@ -10,15 +10,12 @@ valdi_application(
     title = "Valdi AI UI",
     version = "1.0.0",
     deps = [
-        # Paths relative to valdi-ai-ui workspace root
-        # For standalone builds, use //modules/...
-        # For parent workspace builds, use //apps/valdi_ai_ui/modules/...
-        "//modules/main_app",
-        "//modules/common",
-        "//modules/chat_core",
-        "//modules/chat_ui",
-        "//modules/tools_demo",
-        "//modules/workflow_demo",
-        "//modules/settings",
+        "//apps/valdi_ai_ui/modules/main_app",
+        "//apps/valdi_ai_ui/modules/common",
+        "//apps/valdi_ai_ui/modules/chat_core",
+        "//apps/valdi_ai_ui/modules/chat_ui",
+        "//apps/valdi_ai_ui/modules/tools_demo",
+        "//apps/valdi_ai_ui/modules/workflow_demo",
+        "//apps/valdi_ai_ui/modules/settings",
     ],
 )
