@@ -4,4 +4,7 @@
  * Exports all utility functions and helpers used across the application.
  */
 
-// Currently empty - add utility exports here as needed
+// Error handling
+export * from './ErrorBoundary';
+export * from './NetworkRetry';
+export * from './ErrorMessages';
