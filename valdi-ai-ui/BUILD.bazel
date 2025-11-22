@@ -17,5 +17,8 @@ valdi_application(
         "//apps/valdi_ai_ui/modules/tools_demo",
         "//apps/valdi_ai_ui/modules/workflow_demo",
         "//apps/valdi_ai_ui/modules/settings",
+        "//apps/valdi_ai_ui/modules/agent_manager",
+        "//apps/valdi_ai_ui/modules/conversation_manager",
+        "//apps/valdi_ai_ui/modules/model_config",
     ],
 )

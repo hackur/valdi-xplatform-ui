@@ -1,0 +1,12 @@
+node_modules
+bazel-*
+dist
+coverage
+*.md
+*.log
+package-lock.json
+.env
+.env.*
+BUILD.bazel
+MODULE.bazel
+WORKSPACE
