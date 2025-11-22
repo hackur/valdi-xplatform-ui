@@ -90,7 +90,7 @@ export class ToolExecutionCard extends Component<ToolExecutionCardProps> {
   }
 
   onRender() {
-    const { result } = this.viewModel;
+    const { result } = this.props;
 
     return (
       <Card elevation="md" style={styles.container}>

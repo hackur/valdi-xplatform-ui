@@ -19,6 +19,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - SearchBar component with debounced search
   - ConversationCard component for list display
   - Export to JSON, Markdown, TXT, and HTML formats
+- **Model Config Module** - Model configuration and custom provider support
+  - ModelRegistry managing built-in providers (OpenAI, Anthropic, Google)
+  - CustomProviderStore for OpenAI-compatible API configurations
+  - Support for custom endpoints (Azure OpenAI, LM Studio, Ollama, etc.)
+  - User-defined provider names and configurations
+  - ModelSelectorView for choosing models
+  - AddCustomProviderView for adding/editing custom providers
+  - ProviderSettingsView for managing custom providers
+  - Provider connection testing and validation
+  - Import/export of custom provider configurations
 - **Testing Infrastructure** - Complete Jest testing framework
   - Jest configuration with ts-jest and module path mapping
   - Valdi-specific test utilities
