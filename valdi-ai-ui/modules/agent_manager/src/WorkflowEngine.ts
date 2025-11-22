@@ -15,7 +15,7 @@ import {
 } from './types';
 import { AgentRegistry } from './AgentRegistry';
 import { ChatService } from '@chat_core/ChatService';
-import { MessageUtils } from '@common';
+import { MessageUtils } from '@common/types';
 
 /**
  * Workflow Engine Class
@@ -56,7 +56,9 @@ export class WorkflowEngine {
     this.activeWorkflows.set(workflowId, state);
 
     try {
-      console.log(`[WorkflowEngine] Starting workflow: ${config.name} (${config.type})`);
+      console.log(
+        `[WorkflowEngine] Starting workflow: ${config.name} (${config.type})`,
+      );
 
       // Execute based on workflow type
       switch (config.type) {
@@ -126,7 +128,9 @@ export class WorkflowEngine {
         throw new Error(`Agent not found: ${agentId}`);
       }
 
-      console.log(`[WorkflowEngine] Executing agent: ${agent.name} (step ${state.currentStep + 1})`);
+      console.log(
+        `[WorkflowEngine] Executing agent: ${agent.name} (step ${state.currentStep + 1})`,
+      );
 
       const result = await this.executeAgent(agent, currentContext);
       state.results.push(result);
@@ -160,7 +164,9 @@ export class WorkflowEngine {
   ): Promise<void> {
     const { config } = state;
 
-    console.log(`[WorkflowEngine] Executing ${config.agents.length} agents in parallel`);
+    console.log(
+      `[WorkflowEngine] Executing ${config.agents.length} agents in parallel`,
+    );
 
     const agentPromises = config.agents.map((agentId) => {
       const agent = this.registry.get(agentId);
@@ -230,7 +236,9 @@ export class WorkflowEngine {
     const { config } = state;
 
     if (config.agents.length < 2) {
-      throw new Error('Evaluator-optimizer workflow requires at least 2 agents');
+      throw new Error(
+        'Evaluator-optimizer workflow requires at least 2 agents',
+      );
     }
 
     const generatorAgentId = config.agents[0];
@@ -239,7 +247,9 @@ export class WorkflowEngine {
     const maxIterations = config.maxSteps || 3;
 
     for (let iteration = 0; iteration < maxIterations; iteration++) {
-      console.log(`[WorkflowEngine] Iteration ${iteration + 1}/${maxIterations}`);
+      console.log(
+        `[WorkflowEngine] Iteration ${iteration + 1}/${maxIterations}`,
+      );
 
       // Generate
       const generatorAgent = this.registry.get(generatorAgentId);
@@ -262,7 +272,10 @@ export class WorkflowEngine {
         messages: [...context.messages, ...generateResult.messages],
       };
 
-      const evaluateResult = await this.executeAgent(evaluatorAgent, evaluateContext);
+      const evaluateResult = await this.executeAgent(
+        evaluatorAgent,
+        evaluateContext,
+      );
       state.results.push(evaluateResult);
       state.currentStep++;
 

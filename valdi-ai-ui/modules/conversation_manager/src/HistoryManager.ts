@@ -4,7 +4,7 @@
  * Manages conversation history with filtering, search, and export capabilities.
  */
 
-import { Conversation, ConversationUtils } from '@common';
+import { Conversation, ConversationUtils } from '@common/types';
 import { ConversationStore } from '@chat_core/ConversationStore';
 import { ExportService } from '@chat_core/ExportService';
 import {

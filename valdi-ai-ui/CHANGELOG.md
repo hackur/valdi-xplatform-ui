@@ -29,6 +29,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - ProviderSettingsView for managing custom providers
   - Provider connection testing and validation
   - Import/export of custom provider configurations
+- **Chat Integration Layer** - SOLID/DRY/KISS integration service
+  - ChatIntegrationService coordinating all chat operations
+  - ConversationListConnected with reactive store updates
+  - ChatViewStreaming with real-time AI streaming responses
+  - Clean separation of concerns following SOLID principles
+  - Observer pattern for reactive UI updates
+  - Dependency injection for testability
 - **Testing Infrastructure** - Complete Jest testing framework
   - Jest configuration with ts-jest and module path mapping
   - Valdi-specific test utilities
@@ -59,6 +66,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Dependency conflicts in package.json
 - BUILD.bazel path configurations
 - Module path aliases in tsconfig
+- Import path errors in agent_manager module (2 files)
+- Import path errors in conversation_manager module (2 files)
+- Duplicate function implementation in ConversationStore
+- Model Config BUILD.bazel incorrect dependencies
+- ToolExecutionCard component bug (this.viewModel → this.props)
 
 ## [0.1.0] - 2024-11-21
 

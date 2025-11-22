@@ -514,20 +514,6 @@ export class ConversationStore {
   }
 
   /**
-   * Reset entire store
-   */
-  reset(): void {
-    this.state = {
-      conversations: {},
-      activeConversationId: undefined,
-      isLoading: false,
-      error: undefined,
-    };
-
-    this.notify();
-  }
-
-  /**
    * Bulk import conversations
    */
   importConversations(conversations: Conversation[]): void {
