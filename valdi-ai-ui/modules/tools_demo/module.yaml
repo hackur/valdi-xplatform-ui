@@ -1,0 +1,11 @@
+name: tools_demo
+description: Demonstration of AI tool calling and execution
+version: 1.0.0
+
+dependencies:
+  # Valdi core dependencies
+  valdi_core: "^1.0.0"
+
+  # Application modules
+  common: "1.0.0"
+  chat_core: "1.0.0"

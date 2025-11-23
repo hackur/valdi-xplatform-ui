@@ -1,0 +1,11 @@
+name: agent_manager
+description: AI agent workflow management and execution engine
+version: 1.0.0
+
+dependencies:
+  # Valdi core dependencies
+  valdi_core: "^1.0.0"
+
+  # Application modules
+  common: "1.0.0"
+  chat_core: "1.0.0"

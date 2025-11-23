@@ -12,8 +12,7 @@
 import { Component } from 'valdi_core/src/Component';
 import { Style } from 'valdi_core/src/Style';
 import { View } from 'valdi_tsx/src/NativeTemplateElements';
-import { Card } from '@common';
-import { Colors, Fonts, Spacing, BorderRadius } from '@common/theme';
+import { Card, Colors, Fonts, Spacing, BorderRadius } from '@common';
 
 /**
  * Tool Execution Result

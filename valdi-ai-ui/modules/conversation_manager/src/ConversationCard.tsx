@@ -7,7 +7,7 @@
 import { Component } from 'valdi_core/src/Component';
 import { Style } from 'valdi_core/src/Style';
 import { View, Label, Image } from 'valdi_tsx/src/NativeTemplateElements';
-import { Colors, Fonts, Spacing, Shadows } from '@common/theme';
+import { Colors, Fonts, Spacing, Shadows } from '@common';
 import { ConversationListItemData } from './types';
 
 /**
