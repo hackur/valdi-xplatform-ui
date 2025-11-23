@@ -115,7 +115,7 @@ export class ProviderSettingsView extends StatefulComponent<
                 />
               </view>
             ) : (
-              <ScrollView style={styles.scrollView}>
+              <scrollView style={styles.scrollView}>
                 <view style={styles.list}>
                   {providers.map((provider) => (
                     <Card key={provider.id} style={styles.providerCard}>
@@ -212,7 +212,7 @@ export class ProviderSettingsView extends StatefulComponent<
                     </Card>
                   ))}
                 </view>
-              </ScrollView>
+              </scrollView>
             )}
           </view>
         )}

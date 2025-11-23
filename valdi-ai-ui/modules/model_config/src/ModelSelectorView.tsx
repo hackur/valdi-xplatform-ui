@@ -113,7 +113,7 @@ export class ModelSelectorView extends StatefulComponent<
             />
           </view>
         ) : (
-          <ScrollView style={styles.scrollView}>
+          <scrollView style={styles.scrollView}>
             <view style={styles.content}>
               {Array.from(modelsByProvider.entries()).map(([providerName, providerModels]) => (
                 <view key={providerName} style={styles.providerSection}>
@@ -206,7 +206,7 @@ export class ModelSelectorView extends StatefulComponent<
                 </view>
               ))}
             </view>
-          </ScrollView>
+          </scrollView>
         )}
       </view>
     );

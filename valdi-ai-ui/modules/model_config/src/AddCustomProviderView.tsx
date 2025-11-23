@@ -130,7 +130,7 @@ export class AddCustomProviderView extends StatefulComponent<
       saveError,
     } = this.state;
 
-    const { existingProvider } = this.props;
+    const { existingProvider } = this.viewModel;
     const isEditing = !!existingProvider;
 
     return (
@@ -386,7 +386,7 @@ export class AddCustomProviderView extends StatefulComponent<
 
     try {
       const config = this.buildProviderConfig();
-      const result = await this.props.customProviderStore.testProviderConfig(config);
+      const result = await this.viewModel.customProviderStore.testProviderConfig(config);
       this.setState({ testResult: result });
     } catch (error) {
       this.setState({
@@ -415,7 +415,7 @@ export class AddCustomProviderView extends StatefulComponent<
     const config = this.buildProviderConfig();
 
     // Validate
-    const validation = this.props.customProviderStore.validateProvider(config);
+    const validation = this.viewModel.customProviderStore.validateProvider(config);
 
     if (!validation.isValid) {
       const errors = new Map<string, string>();
@@ -431,24 +431,24 @@ export class AddCustomProviderView extends StatefulComponent<
     try {
       let savedProvider: CustomProviderConfig;
 
-      if (this.props.existingProvider) {
+      if (this.viewModel.existingProvider) {
         // Update existing
-        savedProvider = await this.props.customProviderStore.updateProvider(
-          this.props.existingProvider.id,
+        savedProvider = await this.viewModel.customProviderStore.updateProvider(
+          this.viewModel.existingProvider.id,
           config,
         );
       } else {
         // Add new
-        savedProvider = await this.props.customProviderStore.addProvider(config);
+        savedProvider = await this.viewModel.customProviderStore.addProvider(config);
       }
 
       // Callback
-      if (this.props.onSaved) {
-        this.props.onSaved(savedProvider);
+      if (this.viewModel.onSaved) {
+        this.viewModel.onSaved(savedProvider);
       }
 
       // Navigate back
-      this.props.navigationController.pop();
+      this.viewModel.navigationController.pop();
     } catch (error) {
       this.setState({
         saveError: error instanceof Error ? error.message : 'Failed to save provider',
@@ -461,7 +461,7 @@ export class AddCustomProviderView extends StatefulComponent<
    * Handle cancel
    */
   private handleCancel = (): void => {
-    this.props.navigationController.pop();
+    this.viewModel.navigationController.pop();
   };
 
   /**
@@ -482,7 +482,7 @@ export class AddCustomProviderView extends StatefulComponent<
     } = this.state;
 
     return {
-      id: this.props.existingProvider?.id || '',
+      id: this.viewModel.existingProvider?.id || '',
       type: 'custom-openai-compatible',
       name: name.trim(),
       baseUrl: baseUrl.trim(),
@@ -495,7 +495,7 @@ export class AddCustomProviderView extends StatefulComponent<
       supportsStreaming,
       supportsFunctionCalling,
       isEnabled: true,
-      createdAt: this.props.existingProvider?.createdAt || new Date(),
+      createdAt: this.viewModel.existingProvider?.createdAt || new Date(),
       updatedAt: new Date(),
     };
   }
