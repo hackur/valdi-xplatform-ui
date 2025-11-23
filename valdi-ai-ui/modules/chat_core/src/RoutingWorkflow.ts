@@ -564,8 +564,10 @@ export function createRoutingWorkflow(
   routes: RouteDefinition[],
   options?: Partial<RoutingWorkflowConfig>
 ): RoutingWorkflowConfig {
+  const routeAgents = routes.map(r => r.agent);
   return {
     type: 'routing',
+    agents: [routerAgent, ...routeAgents],
     routerAgent,
     routes,
     ...options,

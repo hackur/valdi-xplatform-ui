@@ -14,6 +14,7 @@ import { HistoryManager } from './HistoryManager';
 import { ConversationCard } from './ConversationCard';
 import { SearchBar } from './SearchBar';
 import { LoadingSpinner } from '@common/components/LoadingSpinner';
+import { ConfirmDialog } from '@common/components/ConfirmDialog';
 
 /**
  * ConversationListView Props
@@ -50,6 +51,9 @@ export interface ConversationListViewState {
 
   /** View mode */
   viewMode: 'all' | 'active' | 'archived';
+
+  /** Show delete confirmation dialog */
+  showDeleteConfirm: boolean;
 }
 
 /**
@@ -69,6 +73,7 @@ export class ConversationListView extends StatefulComponent<
     searchQuery: '',
     selectedIds: new Set(),
     viewMode: 'all',
+    showDeleteConfirm: false,
   };
 
   async componentDidMount(): Promise<void> {
@@ -192,6 +197,18 @@ export class ConversationListView extends StatefulComponent<
             </view>
           </view>
         )}
+
+        {/* Delete Confirmation Dialog */}
+        <ConfirmDialog
+          isVisible={this.state.showDeleteConfirm}
+          title="Delete Conversations"
+          message={`Are you sure you want to delete ${this.state.selectedIds.size} conversation${this.state.selectedIds.size !== 1 ? 's' : ''}? This action cannot be undone.`}
+          confirmText="Delete"
+          cancelText="Cancel"
+          confirmColor="danger"
+          onConfirm={this.confirmDeleteSelected}
+          onCancel={this.cancelDeleteConfirmation}
+        />
       </view>
     );
   }
@@ -309,15 +326,29 @@ export class ConversationListView extends StatefulComponent<
   /**
    * Handle delete selected
    */
-  private handleDeleteSelected = async (): Promise<void> => {
+  private handleDeleteSelected = (): void => {
+    // Show confirmation dialog before deleting
+    this.setState({ showDeleteConfirm: true });
+  };
+
+  /**
+   * Confirm delete selected conversations
+   */
+  private confirmDeleteSelected = async (): Promise<void> => {
     const { historyManager } = this.props;
     const ids = Array.from(this.state.selectedIds);
 
-    // TODO: Show confirmation dialog
-
+    this.setState({ showDeleteConfirm: false });
     await historyManager.deleteConversations(ids);
     this.setState({ selectedIds: new Set() });
     await this.loadConversations();
+  };
+
+  /**
+   * Cancel delete confirmation
+   */
+  private cancelDeleteConfirmation = (): void => {
+    this.setState({ showDeleteConfirm: false });
   };
 
   /**

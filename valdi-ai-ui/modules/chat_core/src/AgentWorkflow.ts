@@ -5,7 +5,7 @@
  * Provides base classes and types for orchestrating multiple AI agents.
  */
 
-import { Message, ModelConfig } from '@common';
+import { Message, ModelConfig } from 'common/src/types';
 import { ChatService } from './ChatService';
 import { MessageStore } from './MessageStore';
 import { StreamCallback } from './types';
@@ -328,7 +328,13 @@ export abstract class WorkflowExecutor {
         : JSON.stringify(response.content);
 
       step.executionTime = Date.now() - startTime;
-      step.tokensUsed = response.metadata?.tokens;
+      if (response.metadata?.tokens) {
+        step.tokensUsed = {
+          prompt: response.metadata.tokens.prompt || 0,
+          completion: response.metadata.tokens.completion || 0,
+          total: response.metadata.tokens.total || 0,
+        };
+      }
 
       // Emit step complete event
       if (onProgress) {

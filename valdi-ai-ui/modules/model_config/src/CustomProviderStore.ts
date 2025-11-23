@@ -4,7 +4,7 @@
  * Manages custom OpenAI-compatible provider configurations with persistence.
  */
 
-import { StorageProvider } from '@common/services/StorageProvider';
+import { StorageProvider } from 'common/src/services/StorageProvider';
 import {
   CustomProviderConfig,
   ProviderTestResult,

@@ -94,6 +94,13 @@ export const ErrorMessages = {
     action: 'Your API quota has been exceeded. Please check your provider dashboard',
   },
 
+  API_FORBIDDEN: {
+    code: 'API_005',
+    message: 'Permission denied',
+    category: ErrorCategory.PERMISSION,
+    action: 'You do not have permission to access this resource',
+  },
+
   // Chat Errors
   CHAT_SEND_FAILED: {
     code: 'CHAT_001',
@@ -283,7 +290,7 @@ export function getErrorFromHttpStatus(status: number): ErrorMessage {
     case 401:
       return ErrorMessages.API_KEY_INVALID;
     case 403:
-      return ErrorMessages.PERMISSION;
+      return ErrorMessages.API_FORBIDDEN;
     case 404:
       return ErrorMessages.CONV_NOT_FOUND;
     case 408:

@@ -13,10 +13,10 @@ import { NavigationController } from 'valdi_navigation/src/NavigationController'
 import { Colors, Spacing, SemanticSpacing, Message, Conversation } from '@common';
 import { MessageBubble } from './MessageBubble';
 import { InputBar } from './InputBar';
-import { ChatService } from '@chat_core/src/ChatService';
-import { MessageStore, messageStore } from '@chat_core/src/MessageStore';
-import { ConversationStore, conversationStore } from '@chat_core/src/ConversationStore';
-import { MessageStoreState, StreamEvent, ChatServiceConfig } from '@chat_core/src/types';
+import { ChatService } from 'chat_core/src/ChatService';
+import { MessageStore, messageStore } from 'chat_core/src/MessageStore';
+import { ConversationStore, conversationStore } from 'chat_core/src/ConversationStore';
+import { MessageStoreState, StreamEvent, ChatServiceConfig } from 'chat_core/src/types';
 
 /**
  * ChatView Props

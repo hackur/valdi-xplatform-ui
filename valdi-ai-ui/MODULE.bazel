@@ -1,13 +1,62 @@
-module(name = "valdi_ai_ui", version = "1.0.0")
+module(
+    name = "valdi_ai_ui",
+    version = "1.0.0",
+)
 
-# Valdi framework dependency
-# NOTE: For local development with parent Valdi workspace, uncomment the override below
-# and comment out the bazel_dep line
+# Valdi framework dependency from parent workspace
 bazel_dep(name = "valdi", version = "1.0.0")
 
-# Local development override (comment out for standalone usage)
-# Uncomment these lines when developing alongside the parent Valdi workspace:
+# Use parent Valdi workspace - working configuration
 local_path_override(
     module_name = "valdi",
     path = "../Valdi",
+)
+
+# Override Valdi's local dependencies (required for transitive resolution)
+bazel_dep(name = "android_macros", version = "0.0.0")
+local_path_override(
+    module_name = "android_macros",
+    path = "../Valdi/bzl/macros",
+)
+
+bazel_dep(name = "snap_macros", version = "0.0.0")
+local_path_override(
+    module_name = "snap_macros",
+    path = "../Valdi/bzl/valdi/snap_macros",
+)
+
+bazel_dep(name = "snap_client_toolchains", version = "0.0.0")
+local_path_override(
+    module_name = "snap_client_toolchains",
+    path = "../Valdi/bzl/toolchains",
+)
+
+bazel_dep(name = "snap_platforms", version = "0.0.0")
+local_path_override(
+    module_name = "snap_platforms",
+    path = "../Valdi/bzl/platforms",
+)
+
+bazel_dep(name = "skia_user_config", version = "0.0.0")
+local_path_override(
+    module_name = "skia_user_config",
+    path = "../Valdi/third-party/skia_user_config",
+)
+
+bazel_dep(name = "rules_hdrs", version = "0.0.0")
+local_path_override(
+    module_name = "rules_hdrs",
+    path = "../Valdi/third-party/rules_hdrs",
+)
+
+bazel_dep(name = "valdi_toolchain", version = "0.0.0")
+local_path_override(
+    module_name = "valdi_toolchain",
+    path = "../Valdi/bin",
+)
+
+bazel_dep(name = "resvg_libs", version = "0.0.0")
+local_path_override(
+    module_name = "resvg_libs",
+    path = "../Valdi/third-party/resvg/resvg_libs",
 )

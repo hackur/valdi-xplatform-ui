@@ -199,16 +199,21 @@ export class ParallelWorkflow extends WorkflowExecutor {
             new Promise<any[]>((_, reject) =>
               setTimeout(() => reject(new Error('Max wait time exceeded')), this.config.maxWaitTime)
             ),
-          ]).catch(() => {
+          ]).catch(async () => {
             // On timeout, get results from completed promises
             if (this.config.debug) {
               console.log('[ParallelWorkflow] Max wait time exceeded, using partial results');
             }
-            return Promise.allSettled(agentPromises).then(settled =>
-              settled
-                .filter((r): r is PromiseFulfilledResult<any> => r.status === 'fulfilled')
-                .map(r => r.value)
+            // Manual implementation of Promise.allSettled for ES2015 compatibility
+            const settled = await Promise.all(
+              agentPromises.map(p =>
+                p.then(value => ({ status: 'fulfilled' as const, value }))
+                 .catch(reason => ({ status: 'rejected' as const, reason }))
+              )
             );
+            return settled
+              .filter((r): r is { status: 'fulfilled'; value: any } => r.status === 'fulfilled')
+              .map(r => r.value);
           });
         } else {
           // Wait for all without timeout
@@ -235,12 +240,14 @@ export class ParallelWorkflow extends WorkflowExecutor {
 
       // Add all successful steps to state
       successfulResults.forEach(result => {
-        this.addStep(result.step);
+        if (result.step) {
+          this.addStep(result.step);
+        }
       });
 
       // Aggregate results
-      const outputs = successfulResults.map(r => r.step.output);
-      const steps = successfulResults.map(r => r.step);
+      const outputs = successfulResults.filter(r => r.step).map(r => r.step!.output);
+      const steps = successfulResults.filter(r => r.step).map(r => r.step!);
 
       let aggregatedResult = this.aggregateOutputs(outputs, steps);
 

@@ -26,8 +26,11 @@ module.exports = {
     },
   },
   moduleNameMapper: {
+    '^@common$': '<rootDir>/modules/common/src/index.ts',
     '^@common/(.*)$': '<rootDir>/modules/common/src/$1',
+    '^@chat_core$': '<rootDir>/modules/chat_core/src/index.ts',
     '^@chat_core/(.*)$': '<rootDir>/modules/chat_core/src/$1',
+    '^@chat_ui$': '<rootDir>/modules/chat_ui/src/index.ts',
     '^@chat_ui/(.*)$': '<rootDir>/modules/chat_ui/src/$1',
     '^@main_app/(.*)$': '<rootDir>/modules/main_app/src/$1',
     '^@settings/(.*)$': '<rootDir>/modules/settings/src/$1',

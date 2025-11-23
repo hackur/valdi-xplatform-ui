@@ -13,9 +13,9 @@ import {
   TextInput,
 } from 'valdi_tsx/src/NativeTemplateElements';
 import { NavigationController } from 'valdi_navigation/src/NavigationController';
-import { Colors, Fonts, Spacing } from '@common/theme';
-import { Button } from '@common/components/Button';
-import { LoadingSpinner } from '@common/components/LoadingSpinner';
+import { Colors, Fonts, Spacing } from 'common/src/theme';
+import { Button } from 'common/src/components/Button';
+import { LoadingSpinner } from 'common/src/components/LoadingSpinner';
 import { CustomProviderStore } from './CustomProviderStore';
 import { CustomProviderConfig, ProviderTestResult, ValidationResult } from './types';
 

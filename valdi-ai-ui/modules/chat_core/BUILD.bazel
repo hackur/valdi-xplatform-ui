@@ -2,15 +2,27 @@ load("@valdi//bzl/valdi:valdi_module.bzl", "valdi_module")
 
 valdi_module(
     name = "chat_core",
-    srcs = glob([
-        "src/**/*.ts",
-        "src/**/*.tsx",
-    ]),
+    srcs = glob(
+        [
+            "src/**/*.ts",
+            "src/**/*.tsx",
+        ],
+        exclude = [
+            "**/__tests__/**",
+            "**/*.test.ts",
+            "**/*.test.tsx",
+            "**/*.spec.ts",
+            "**/*.spec.tsx",
+            "src/ToolDefinitions.ts",
+            "src/ToolExecutor.ts",
+            "src/ToolDefinitions.test.example.ts",
+            "src/workflows/test-utils.ts",
+        ],
+    ),
     visibility = ["//visibility:public"],
     deps = [
         "@valdi//src/valdi_modules/src/valdi/valdi_core",
+        "@valdi//src/valdi_modules/src/valdi/valdi_http",
         "//apps/valdi_ai_ui/modules/common",
-        # Note: AI SDK dependencies are installed via npm
-        # and will be available at runtime
     ],
 )

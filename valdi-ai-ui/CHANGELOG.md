@@ -8,6 +8,35 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- **ConfirmDialog Component** - Reusable confirmation dialog for destructive actions
+  - Modal dialog with customizable title, message, and button text
+  - Support for danger and primary confirmation styles
+  - Integrated with ConversationListView for bulk delete confirmation
+  - Integrated with ProviderSettingsView for provider deletion confirmation
+  - Prevents accidental data loss with user-friendly UX
+  - Exported from @common/components for app-wide use
+- **PreferencesStore** - App preferences persistence system
+  - Manages non-sensitive user settings with localStorage/memory fallback
+  - Stores selected AI provider, model selections, and app preferences
+  - Provides type-safe getters/setters for all preference types
+  - Integrated with SettingsScreen for automatic preference saving/loading
+  - Persists dark mode, notifications, and sound effects preferences
+- **Comprehensive 44-Task Roadmap** - Organized development plan to production
+  - Categorized by priority (P0/P1/P2) and domain (Testing, Performance, UX, Documentation, DevOps)
+  - Dependencies mapped for optimal execution order
+  - 5-sprint roadmap with clear milestones
+  - Includes testing infrastructure, performance optimizations, and polish tasks
+- **Zod Validation Schema System** - Comprehensive runtime validation with TypeScript integration
+  - MessageSchema with validation for all message types and tool calls
+  - ConversationSchema with model config and filter validation
+  - ProviderConfigSchema for built-in and custom provider configurations
+  - AgentSchema for agent definitions, workflows, and execution state
+  - ValidationMiddleware with decorators (@ValidateArgs, @ValidateReturn)
+  - Type-safe validation helpers (validate, safeParse, parseOrThrow)
+  - Batch validation and partial validation support
+  - Custom ValidationError class with detailed error paths
+  - Full TypeScript type inference via z.infer
+  - Exported from @common/schemas for use across all modules
 - **Agent Manager Module** - Complete multi-agent orchestration system
   - AgentRegistry for managing agent definitions
   - WorkflowEngine with 4 execution patterns (Sequential, Parallel, Routing, Evaluator-Optimizer)
@@ -58,6 +87,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - TypeScript strict mode with comprehensive tsconfig
 
 ### Changed
+- **tsconfig.json** - Updated to 2025 TypeScript best practices
+  - Changed module to ESNext for modern module format
+  - Changed moduleResolution to Bundler for Bazel compatibility
+  - Added noUncheckedIndexedAccess for safer array/object access
+  - Added noImplicitOverride for explicit override requirements
+  - Added allowUnreachableCode: false to prevent unreachable code
+  - Added allowUnusedLabels: false to prevent unused labels
+  - Enhanced path mapping with explicit index.ts imports
+  - Added comprehensive comments for all configuration sections
+- **.eslintrc.js** - Upgraded to 2025 ESLint TypeScript standards
+  - Added plugin:@typescript-eslint/strict preset
+  - Added 50+ additional strict type-checking rules
+  - Configured consistent-type-imports for better tree-shaking
+  - Added promise and async/await safety rules
+  - Enhanced naming conventions for all TypeScript constructs
+  - Added performance and correctness rules
+  - Configured separate overrides for test files and JS config files
+  - Added comprehensive code quality and best practice rules
+- **common/src/index.ts** - Added exports for schemas and utils
 - **package.json** - Added 13 dev dependencies for testing and tooling
 - **BUILD.bazel** - Updated to include all module dependencies
 - **Module Structure** - Organized into 10 modular packages
@@ -71,6 +119,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Duplicate function implementation in ConversationStore
 - Model Config BUILD.bazel incorrect dependencies
 - ToolExecutionCard component bug (this.viewModel → this.props)
+- **All TODO/FIXME items in codebase:**
+  - ConversationListView: Now uses ConfirmDialog for bulk delete confirmation
+  - ProviderSettingsView: Replaced browser confirm() with ConfirmDialog component
+  - SettingsScreen: Implemented full preference persistence beyond API keys
+  - HomePage: AI Agents navigation now routes to WorkflowDemoScreen
 
 ## [0.1.0] - 2024-11-21
 

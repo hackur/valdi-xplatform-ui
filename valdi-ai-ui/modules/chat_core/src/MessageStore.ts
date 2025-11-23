@@ -5,7 +5,7 @@
  * Provides reactive state management for messages with CRUD operations.
  */
 
-import { Message, MessageUtils, MessageUpdateInput } from '@common';
+import { Message, MessageUtils, MessageUpdateInput } from 'common/src/types';
 import { MessageStoreState, StreamingStatus } from './types';
 import { MessagePersistence } from './MessagePersistence';
 

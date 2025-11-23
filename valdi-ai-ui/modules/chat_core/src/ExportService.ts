@@ -5,7 +5,7 @@
  * Supports multiple formats: JSON, Markdown, and plain text.
  */
 
-import { Conversation, Message, MessageUtils, ConversationUtils } from '@common';
+import { Conversation, Message, MessageUtils, ConversationUtils } from 'common/src/types';
 import { MessagePersistence } from './MessagePersistence';
 import { ConversationPersistence } from './ConversationPersistence';
 

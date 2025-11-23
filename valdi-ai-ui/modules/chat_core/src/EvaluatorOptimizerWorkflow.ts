@@ -690,6 +690,7 @@ export function createEvaluatorOptimizerWorkflow(
 ): EvaluatorOptimizerWorkflowConfig {
   return {
     type: 'evaluator-optimizer',
+    agents: [generatorAgent, evaluatorAgent, optimizerAgent],
     generatorAgent,
     evaluatorAgent,
     optimizerAgent,

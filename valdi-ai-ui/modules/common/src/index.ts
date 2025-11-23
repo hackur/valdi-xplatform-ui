@@ -5,6 +5,8 @@
  * - Theme (colors, fonts, spacing, shadows)
  * - Types (Message, Conversation)
  * - Components (Button, Card, Avatar, LoadingSpinner)
+ * - Schemas (Zod validation schemas)
+ * - Utils (Error handling, network retry, validation)
  */
 
 // Theme exports
@@ -15,3 +17,9 @@ export * from './types';
 
 // Component exports
 export * from './components';
+
+// Schema exports
+// export * from './schemas'; // TODO: Re-enable when schema dependencies are available
+
+// Utility exports
+export * from './utils';

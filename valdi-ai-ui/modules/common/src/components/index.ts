@@ -15,3 +15,6 @@ export type { AvatarProps, AvatarSize, AvatarType } from './Avatar';
 
 export { LoadingSpinner } from './LoadingSpinner';
 export type { LoadingSpinnerProps, SpinnerSize } from './LoadingSpinner';
+
+export { ConfirmDialog } from './ConfirmDialog';
+export type { ConfirmDialogProps } from './ConfirmDialog';

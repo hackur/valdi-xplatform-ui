@@ -23,6 +23,7 @@ import {
   Card,
 } from '@common';
 import { ApiKeyStore, AIProvider } from './ApiKeyStore';
+import { PreferencesStore } from './PreferencesStore';
 import { TextInput } from './components/TextInput';
 import { Switch } from './components/Switch';
 import { Dropdown } from './components/Dropdown';
@@ -74,11 +75,13 @@ export class SettingsScreen extends NavigationPageComponent<
   SettingsScreenState
 > {
   private apiKeyStore: ApiKeyStore;
+  private preferencesStore: PreferencesStore;
 
   constructor(props: SettingsScreenProps) {
     super(props);
 
     this.apiKeyStore = new ApiKeyStore();
+    this.preferencesStore = new PreferencesStore();
 
     // Initialize state
     this.state = {
@@ -111,10 +114,20 @@ export class SettingsScreen extends NavigationPageComponent<
       const anthropicKey = await this.apiKeyStore.getApiKey('anthropic');
       const googleKey = await this.apiKeyStore.getApiKey('google');
 
+      // Load preferences
+      const preferences = await this.preferencesStore.getPreferences();
+
       this.setState({
         openAiKey: openAiKey || '',
         anthropicKey: anthropicKey || '',
         googleKey: googleKey || '',
+        selectedProvider: preferences.selectedProvider || 'openai',
+        openAiModel: preferences.openAiModel || 'gpt-4-turbo-preview',
+        anthropicModel: preferences.anthropicModel || 'claude-3-opus-20240229',
+        googleModel: preferences.googleModel || 'gemini-pro',
+        darkMode: preferences.darkMode ?? false,
+        enableNotifications: preferences.enableNotifications ?? true,
+        enableSoundEffects: preferences.enableSoundEffects ?? true,
       });
     } catch (error) {
       console.error('Failed to load settings:', error);
@@ -182,7 +195,16 @@ export class SettingsScreen extends NavigationPageComponent<
         await this.apiKeyStore.setApiKey('google', this.state.googleKey);
       }
 
-      // TODO: Save other preferences to persistent storage
+      // Save preferences to persistent storage
+      await this.preferencesStore.savePreferences({
+        selectedProvider: this.state.selectedProvider,
+        openAiModel: this.state.openAiModel,
+        anthropicModel: this.state.anthropicModel,
+        googleModel: this.state.googleModel,
+        darkMode: this.state.darkMode,
+        enableNotifications: this.state.enableNotifications,
+        enableSoundEffects: this.state.enableSoundEffects,
+      });
 
       this.setState({
         isSaving: false,

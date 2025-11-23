@@ -12,9 +12,9 @@ import {
   ScrollView,
 } from 'valdi_tsx/src/NativeTemplateElements';
 import { NavigationController } from 'valdi_navigation/src/NavigationController';
-import { Colors, Fonts, Spacing } from '@common/theme';
-import { Card } from '@common/components/Card';
-import { LoadingSpinner } from '@common/components/LoadingSpinner';
+import { Colors, Fonts, Spacing } from 'common/src/theme';
+import { Card } from 'common/src/components/Card';
+import { LoadingSpinner } from 'common/src/components/LoadingSpinner';
 import { ModelRegistry } from './ModelRegistry';
 import { ModelDefinition, ModelSelection, ProviderType } from './types';
 

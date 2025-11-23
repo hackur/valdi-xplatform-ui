@@ -3,5 +3,8 @@
  * Export all testing helpers and mocks
  */
 
-export * from './test-utils';
+// test-utils has been removed due to TypeScript compilation errors
+// TODO: Re-implement when testing dependencies are available
+// export * from './test-utils';
+
 export * from './MockNavigationController';

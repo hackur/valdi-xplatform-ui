@@ -126,8 +126,8 @@ export class HomePage extends NavigationPageComponent<HomePageProps> {
         break;
 
       case 'agents':
-        // TODO: Navigate to AI Agents screen when implemented
-        console.log('AI Agents screen not yet implemented');
+        // Navigate to WorkflowDemoScreen (demonstrates AI agent workflows)
+        this.navigateToWorkflowsDemo();
         break;
 
       default:

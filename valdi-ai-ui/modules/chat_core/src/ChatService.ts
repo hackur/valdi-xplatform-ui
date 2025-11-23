@@ -1,21 +1,18 @@
 /**
  * ChatService
  *
- * Core service for managing AI chat interactions using Vercel AI SDK v5.
- * Handles message sending, streaming, and provider management.
+ * Core service for managing AI chat interactions using native HTTP requests.
+ * Uses Valdi's valdi_http module for cross-platform networking.
  */
 
-import { streamText, generateText, CoreTool } from 'ai';
-import { openai } from '@ai-sdk/openai';
-import { anthropic } from '@ai-sdk/anthropic';
-import { google } from '@ai-sdk/google';
+import { HTTPClient } from 'valdi_http/src/HTTPClient';
 import {
   Message,
   MessageUtils,
   Conversation,
   AIProvider,
   ModelConfig,
-} from '@common';
+} from 'common/src/types';
 import { MessageStore } from './MessageStore';
 import {
   ChatRequestOptions,
@@ -24,391 +21,366 @@ import {
   StreamCallback,
   StreamEvent,
 } from './types';
-import { ToolExecutor, ToolCallInput, ToolCallResult } from './ToolExecutor';
-import { getAllTools } from './ToolDefinitions';
+
+/**
+ * API Endpoints for each provider
+ */
+const PROVIDER_ENDPOINTS = {
+  openai: 'https://api.openai.com/v1',
+  anthropic: 'https://api.anthropic.com/v1',
+  google: 'https://generativelanguage.googleapis.com/v1beta',
+} as const;
 
 /**
  * ChatService Class
  *
- * Manages AI chat interactions with streaming support
+ * Manages AI chat interactions using native HTTP requests
+ * Note: Streaming is simulated as Valdi doesn't have native SSE support yet
  */
 export class ChatService {
   private config: ChatServiceConfig;
   private messageStore: MessageStore;
-  private toolExecutor: ToolExecutor;
+  private httpClients: Record<string, HTTPClient>;
 
   constructor(config: ChatServiceConfig, messageStore: MessageStore) {
     this.config = config;
     this.messageStore = messageStore;
-    // Initialize with default tools
-    this.toolExecutor = new ToolExecutor(getAllTools());
+
+    // Initialize HTTP clients for each provider
+    this.httpClients = {
+      openai: new HTTPClient(PROVIDER_ENDPOINTS.openai),
+      anthropic: new HTTPClient(PROVIDER_ENDPOINTS.anthropic),
+      google: new HTTPClient(PROVIDER_ENDPOINTS.google),
+    };
   }
 
   /**
-   * Get AI model instance from configuration
+   * Convert conversation messages to provider-specific format
    */
-  private getModel(modelConfig: ModelConfig) {
-    const { provider, modelId } = modelConfig;
-
-    switch (provider) {
-      case 'openai':
-        return openai(modelId);
-      case 'anthropic':
-        return anthropic(modelId);
-      case 'google':
-        return google(modelId);
-      default:
-        throw new Error(`Unsupported provider: ${provider}`);
-    }
-  }
-
-  /**
-   * Convert conversation messages to AI SDK format
-   */
-  private convertMessages(messages: Message[]) {
-    return messages
+  private convertMessages(messages: Message[], provider: AIProvider) {
+    const converted = messages
       .filter((m) => m.role !== 'system')
       .map((message) => ({
         role: message.role,
         content: MessageUtils.getTextContent(message),
       }));
+
+    // Anthropic uses different role names
+    if (provider === 'anthropic') {
+      return converted.map((m) => ({
+        role: m.role === 'assistant' ? 'assistant' : 'user',
+        content: m.content,
+      }));
+    }
+
+    return converted;
   }
 
   /**
-   * Get tools for the current request
+   * Get system prompt from messages or options
    */
-  private getTools(options: ChatRequestOptions): Record<string, CoreTool> | undefined {
-    if (!options.toolsEnabled) {
-      return undefined;
+  private getSystemPrompt(messages: Message[], options: ChatRequestOptions): string | undefined {
+    if (options.systemPrompt) {
+      return options.systemPrompt;
     }
 
-    // If specific tools are provided, use them
-    if (options.tools) {
-      return options.tools as Record<string, CoreTool>;
-    }
-
-    // Otherwise, use all available tools
-    return getAllTools();
+    const systemMessage = messages.find((m) => m.role === 'system');
+    return systemMessage ? MessageUtils.getTextContent(systemMessage) : undefined;
   }
 
   /**
-   * Send a message and stream the response
+   * Send message to OpenAI
+   */
+  private async sendToOpenAI(
+    messages: Message[],
+    modelConfig: ModelConfig,
+    systemPrompt?: string
+  ): Promise<string> {
+    const apiKey = this.config.apiKeys.openai;
+    if (!apiKey) {
+      throw new Error('OpenAI API key not configured');
+    }
+
+    const requestBody = JSON.stringify({
+      model: modelConfig.modelId,
+      messages: [
+        ...(systemPrompt ? [{ role: 'system', content: systemPrompt }] : []),
+        ...this.convertMessages(messages, 'openai'),
+      ],
+      temperature: modelConfig.temperature ?? 1.0,
+      max_tokens: modelConfig.maxTokens ?? 2000,
+    });
+
+    const encodedBody = new TextEncoder().encode(requestBody);
+
+    try {
+      const response = await this.httpClients.openai.post('/chat/completions', encodedBody, {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${apiKey}`,
+      });
+
+      if (!response.body) {
+        throw new Error('Empty response from OpenAI');
+      }
+
+      const text = new TextDecoder().decode(response.body);
+      const result = JSON.parse(text);
+
+      if (result.error) {
+        throw new Error(result.error.message || 'OpenAI API error');
+      }
+
+      return result.choices?.[0]?.message?.content || '';
+    } catch (error: any) {
+      throw new Error(`OpenAI request failed: ${error.toString()}`);
+    }
+  }
+
+  /**
+   * Send message to Anthropic
+   */
+  private async sendToAnthropic(
+    messages: Message[],
+    modelConfig: ModelConfig,
+    systemPrompt?: string
+  ): Promise<string> {
+    const apiKey = this.config.apiKeys.anthropic;
+    if (!apiKey) {
+      throw new Error('Anthropic API key not configured');
+    }
+
+    const requestBody = JSON.stringify({
+      model: modelConfig.modelId,
+      max_tokens: modelConfig.maxTokens ?? 2000,
+      messages: this.convertMessages(messages, 'anthropic'),
+      ...(systemPrompt ? { system: systemPrompt } : {}),
+      temperature: modelConfig.temperature ?? 1.0,
+    });
+
+    const encodedBody = new TextEncoder().encode(requestBody);
+
+    try {
+      const response = await this.httpClients.anthropic.post('/messages', encodedBody, {
+        'Content-Type': 'application/json',
+        'x-api-key': apiKey,
+        'anthropic-version': '2023-06-01',
+      });
+
+      if (!response.body) {
+        throw new Error('Empty response from Anthropic');
+      }
+
+      const text = new TextDecoder().decode(response.body);
+      const result = JSON.parse(text);
+
+      if (result.error) {
+        throw new Error(result.error.message || 'Anthropic API error');
+      }
+
+      return result.content?.[0]?.text || '';
+    } catch (error: any) {
+      throw new Error(`Anthropic request failed: ${error.toString()}`);
+    }
+  }
+
+  /**
+   * Send message to Google
+   */
+  private async sendToGoogle(
+    messages: Message[],
+    modelConfig: ModelConfig,
+    systemPrompt?: string
+  ): Promise<string> {
+    const apiKey = this.config.apiKeys.google;
+    if (!apiKey) {
+      throw new Error('Google API key not configured');
+    }
+
+    // Google's Gemini API format
+    const contents = this.convertMessages(messages, 'google').map((m) => ({
+      role: m.role === 'assistant' ? 'model' : 'user',
+      parts: [{ text: m.content }],
+    }));
+
+    const requestBody = JSON.stringify({
+      contents,
+      generationConfig: {
+        temperature: modelConfig.temperature ?? 1.0,
+        maxOutputTokens: modelConfig.maxTokens ?? 2000,
+      },
+      ...(systemPrompt
+        ? {
+            systemInstruction: {
+              parts: [{ text: systemPrompt }],
+            },
+          }
+        : {}),
+    });
+
+    const encodedBody = new TextEncoder().encode(requestBody);
+    const endpoint = `/models/${modelConfig.modelId}:generateContent?key=${apiKey}`;
+
+    try {
+      const response = await this.httpClients.google.post(endpoint, encodedBody, {
+        'Content-Type': 'application/json',
+      });
+
+      if (!response.body) {
+        throw new Error('Empty response from Google');
+      }
+
+      const text = new TextDecoder().decode(response.body);
+      const result = JSON.parse(text);
+
+      if (result.error) {
+        throw new Error(result.error.message || 'Google API error');
+      }
+
+      return result.candidates?.[0]?.content?.parts?.[0]?.text || '';
+    } catch (error: any) {
+      throw new Error(`Google request failed: ${error.toString()}`);
+    }
+  }
+
+  /**
+   * Send a message (non-streaming)
+   */
+  async sendMessage(options: ChatRequestOptions): Promise<ChatResponse> {
+    const { conversationId, message: userMessage, modelConfig: overrideConfig } = options;
+
+    // Get messages from conversation
+    const messages = this.messageStore.getMessages(conversationId);
+
+    // Use provided config or default
+    const modelConfig = overrideConfig
+      ? { ...this.config.defaultModelConfig, ...overrideConfig }
+      : this.config.defaultModelConfig;
+
+    if (!modelConfig) {
+      throw new Error('Model configuration not provided');
+    }
+
+    // Get system prompt
+    const systemPrompt = this.getSystemPrompt(messages, options);
+
+    // Add user message
+    const userMsg = MessageUtils.createUserMessage(conversationId, userMessage);
+    await this.messageStore.addMessage(userMsg);
+
+    // Send to appropriate provider
+    let responseText: string;
+    const provider = modelConfig.provider as AIProvider;
+
+    try {
+      switch (provider) {
+        case 'openai':
+          responseText = await this.sendToOpenAI(
+            [...messages, userMsg],
+            modelConfig as ModelConfig,
+            systemPrompt
+          );
+          break;
+        case 'anthropic':
+          responseText = await this.sendToAnthropic(
+            [...messages, userMsg],
+            modelConfig as ModelConfig,
+            systemPrompt
+          );
+          break;
+        case 'google':
+          responseText = await this.sendToGoogle(
+            [...messages, userMsg],
+            modelConfig as ModelConfig,
+            systemPrompt
+          );
+          break;
+        default:
+          throw new Error(`Unsupported provider: ${provider}`);
+      }
+
+      // Create assistant message
+      const now = new Date();
+      const assistantMsg: Message = {
+        id: MessageUtils.generateId(),
+        conversationId,
+        role: 'assistant',
+        content: responseText,
+        createdAt: now,
+        updatedAt: now,
+        status: 'completed',
+      };
+      await this.messageStore.addMessage(assistantMsg);
+
+      return {
+        message: assistantMsg,
+        finishReason: 'stop',
+      };
+    } catch (error: any) {
+      // Create error message
+      const now = new Date();
+      const errorMsg: Message = {
+        id: MessageUtils.generateId(),
+        conversationId,
+        role: 'assistant',
+        content: `Error: ${error.message || error.toString()}`,
+        createdAt: now,
+        updatedAt: now,
+        status: 'error',
+        error: error.message || error.toString(),
+      };
+      await this.messageStore.addMessage(errorMsg);
+
+      return {
+        message: errorMsg,
+        finishReason: 'error',
+      };
+    }
+  }
+
+  /**
+   * Send message with simulated streaming
+   * Note: Valdi doesn't have native SSE support, so we simulate streaming
+   * by sending the complete response in chunks
    */
   async sendMessageStreaming(
     options: ChatRequestOptions,
     callback: StreamCallback
   ): Promise<Message> {
-    const {
-      conversationId,
-      message: userMessage,
-      modelConfig,
-      systemPrompt,
-      maxSteps = 5,
-    } = options;
+    // For now, get the complete response and simulate streaming
+    const messageId = `msg-${Date.now()}`;
 
-    // Add user message to store
-    const userMsg = MessageUtils.createUserMessage(conversationId, userMessage);
-    userMsg.status = 'sending';
-    this.messageStore.addMessage(userMsg);
-
-    // Mark user message as completed
-    this.messageStore.updateMessage(conversationId, userMsg.id, { status: 'completed' });
-
-    // Create assistant message stub for streaming
-    const assistantMsg = MessageUtils.createAssistantMessageStub(conversationId);
-    this.messageStore.addMessage(assistantMsg);
-
-    // Set streaming status
-    this.messageStore.setStreamingStatus('streaming', assistantMsg.id);
-
-    // Emit start event
-    callback({ type: 'start', messageId: assistantMsg.id });
+    callback({ type: 'start', messageId });
 
     try {
-      // Get conversation messages
-      const messages = this.messageStore.getMessages(conversationId);
-      const convertedMessages = this.convertMessages(messages.slice(0, -1)); // Exclude the stub
+      const response = await this.sendMessage(options);
 
-      // Get model
-      const model = this.getModel(
-        modelConfig || this.config.defaultModelConfig || {
-          provider: 'openai',
-          modelId: 'gpt-4-turbo',
-          temperature: 0.7,
-          maxTokens: 4096,
-        }
-      );
+      const content = MessageUtils.getTextContent(response.message);
 
-      // Get tools if enabled
-      const tools = this.getTools(options);
+      // Simulate streaming by sending chunks
+      const chunkSize = 10;
+      let accumulated = '';
 
-      // Stream the response
-      const result = await streamText({
-        model,
-        messages: convertedMessages,
-        system: systemPrompt,
-        temperature: modelConfig?.temperature ?? 0.7,
-        maxTokens: modelConfig?.maxTokens ?? 4096,
-        maxSteps,
-        tools,
-      });
+      for (let i = 0; i < content.length; i += chunkSize) {
+        const delta = content.slice(i, i + chunkSize);
+        accumulated += delta;
 
-      // Track tool calls
-      const toolCalls: ToolCallResult[] = [];
-
-      // Process stream chunks
-      for await (const chunk of result.textStream) {
-        // Append to message
-        this.messageStore.appendContent(conversationId, assistantMsg.id, chunk);
-
-        // Emit chunk event
         callback({
           type: 'chunk',
-          messageId: assistantMsg.id,
-          content: this.messageStore.getMessage(conversationId, assistantMsg.id)?.content as string || '',
-          delta: chunk,
+          messageId,
+          content: accumulated,
+          delta,
         });
+
+        // Small delay to simulate streaming
+        await new Promise((resolve) => setTimeout(resolve, 50));
       }
 
-      // Handle tool calls if any
-      if (result.toolCalls && result.toolCalls.length > 0) {
-        const toolCallInputs: ToolCallInput[] = result.toolCalls.map((tc) => ({
-          toolCallId: tc.toolCallId,
-          toolName: tc.toolName,
-          args: tc.args as Record<string, unknown>,
-        }));
+      callback({ type: 'complete', messageId, message: response.message });
 
-        // Execute tool calls
-        const results = await this.toolExecutor.executeToolCalls(toolCallInputs);
-        toolCalls.push(...results);
-
-        // Emit tool call events
-        for (const result of results) {
-          callback({
-            type: 'tool-call',
-            messageId: assistantMsg.id,
-            toolCall: result,
-          });
-        }
-
-        // Append tool results to message metadata
-        this.messageStore.updateMessage(conversationId, assistantMsg.id, {
-          metadata: {
-            ...this.messageStore.getMessage(conversationId, assistantMsg.id)?.metadata,
-            toolCalls: results.map((r) => ({
-              id: r.toolCallId,
-              name: r.toolName,
-              arguments: toolCallInputs.find((tc) => tc.toolCallId === r.toolCallId)?.args || {},
-              result: r.result,
-            })),
-          },
-        });
-      }
-
-      // Mark as completed
-      this.messageStore.updateMessage(conversationId, assistantMsg.id, {
-        status: 'completed',
-      });
-
-      this.messageStore.setStreamingStatus('completed');
-
-      // Get final message
-      const finalMessage = this.messageStore.getMessage(conversationId, assistantMsg.id);
-
-      if (finalMessage) {
-        callback({ type: 'complete', messageId: assistantMsg.id, message: finalMessage });
-      }
-
-      return finalMessage!;
-    } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-
-      // Mark message as error
-      this.messageStore.updateMessage(conversationId, assistantMsg.id, {
-        status: 'error',
-        error: errorMessage,
-      });
-
-      this.messageStore.setStreamingStatus('error');
-
-      // Emit error event
-      callback({
-        type: 'error',
-        messageId: assistantMsg.id,
-        error: errorMessage,
-      });
-
+      return response.message;
+    } catch (error: any) {
+      callback({ type: 'error', messageId, error: error.message || error.toString() });
       throw error;
     }
-  }
-
-  /**
-   * Send a message and wait for complete response (no streaming)
-   */
-  async sendMessage(options: ChatRequestOptions): Promise<ChatResponse> {
-    const {
-      conversationId,
-      message: userMessage,
-      modelConfig,
-      systemPrompt,
-      maxSteps = 5,
-    } = options;
-
-    // Add user message to store
-    const userMsg = MessageUtils.createUserMessage(conversationId, userMessage);
-    userMsg.status = 'sending';
-    this.messageStore.addMessage(userMsg);
-
-    try {
-      // Get conversation messages
-      const messages = this.messageStore.getMessages(conversationId);
-      const convertedMessages = this.convertMessages(messages);
-
-      // Get model
-      const model = this.getModel(
-        modelConfig || this.config.defaultModelConfig || {
-          provider: 'openai',
-          modelId: 'gpt-4-turbo',
-          temperature: 0.7,
-          maxTokens: 4096,
-        }
-      );
-
-      // Get tools if enabled
-      const tools = this.getTools(options);
-
-      // Generate response
-      const result = await generateText({
-        model,
-        messages: convertedMessages,
-        system: systemPrompt,
-        temperature: modelConfig?.temperature ?? 0.7,
-        maxTokens: modelConfig?.maxTokens ?? 4096,
-        maxSteps,
-        tools,
-      });
-
-      // Mark user message as completed
-      this.messageStore.updateMessage(conversationId, userMsg.id, { status: 'completed' });
-
-      // Handle tool calls if any
-      let toolCallResults: ToolCallResult[] = [];
-      if (result.toolCalls && result.toolCalls.length > 0) {
-        const toolCallInputs: ToolCallInput[] = result.toolCalls.map((tc) => ({
-          toolCallId: tc.toolCallId,
-          toolName: tc.toolName,
-          args: tc.args as Record<string, unknown>,
-        }));
-
-        // Execute tool calls
-        toolCallResults = await this.toolExecutor.executeToolCalls(toolCallInputs);
-      }
-
-      // Create assistant message
-      const assistantMsg: Message = {
-        id: MessageUtils.generateId(),
-        conversationId,
-        role: 'assistant',
-        content: result.text,
-        createdAt: new Date(),
-        updatedAt: new Date(),
-        status: 'completed',
-        metadata: {
-          tokens: {
-            prompt: result.usage?.promptTokens,
-            completion: result.usage?.completionTokens,
-            total: result.usage?.totalTokens,
-          },
-          finishReason: result.finishReason,
-          ...(toolCallResults.length > 0 && {
-            toolCalls: toolCallResults.map((r, idx) => ({
-              id: r.toolCallId,
-              name: r.toolName,
-              arguments: result.toolCalls?.[idx]?.args || {},
-              result: r.result,
-            })),
-          }),
-        },
-      };
-
-      this.messageStore.addMessage(assistantMsg);
-
-      return {
-        message: assistantMsg,
-        toolCalls: toolCallResults.length > 0 ? toolCallResults.map((r, idx) => ({
-          id: r.toolCallId,
-          name: r.toolName,
-          arguments: result.toolCalls?.[idx]?.args as Record<string, unknown> || {},
-          result: r.result,
-        })) : undefined,
-        finishReason: result.finishReason,
-        usage: {
-          promptTokens: result.usage?.promptTokens || 0,
-          completionTokens: result.usage?.completionTokens || 0,
-          totalTokens: result.usage?.totalTokens || 0,
-        },
-      };
-    } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-
-      // Mark user message as error
-      this.messageStore.updateMessage(conversationId, userMsg.id, {
-        status: 'error',
-        error: errorMessage,
-      });
-
-      throw error;
-    }
-  }
-
-  /**
-   * Cancel ongoing stream
-   */
-  cancelStream(): void {
-    if (this.messageStore.isStreaming()) {
-      this.messageStore.setStreamingStatus('idle');
-    }
-  }
-
-  /**
-   * Update configuration
-   */
-  updateConfig(config: Partial<ChatServiceConfig>): void {
-    this.config = { ...this.config, ...config };
-  }
-
-  /**
-   * Get the tool executor instance
-   */
-  getToolExecutor(): ToolExecutor {
-    return this.toolExecutor;
-  }
-
-  /**
-   * Update available tools
-   */
-  updateTools(tools: Record<string, CoreTool>): void {
-    this.toolExecutor.updateTools(tools);
-  }
-
-  /**
-   * Add a tool to the executor
-   */
-  addTool(name: string, tool: CoreTool): void {
-    this.toolExecutor.addTool(name, tool);
-  }
-
-  /**
-   * Remove a tool from the executor
-   */
-  removeTool(name: string): void {
-    this.toolExecutor.removeTool(name);
-  }
-
-  /**
-   * Get available tool names
-   */
-  getAvailableToolNames(): string[] {
-    return this.toolExecutor.getAvailableToolNames();
   }
 }

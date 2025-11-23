@@ -12,10 +12,11 @@ import {
   ScrollView,
 } from 'valdi_tsx/src/NativeTemplateElements';
 import { NavigationController } from 'valdi_navigation/src/NavigationController';
-import { Colors, Fonts, Spacing } from '@common/theme';
-import { Card } from '@common/components/Card';
-import { Button } from '@common/components/Button';
-import { LoadingSpinner } from '@common/components/LoadingSpinner';
+import { Colors, Fonts, Spacing } from 'common/src/theme';
+import { Card } from 'common/src/components/Card';
+import { Button } from 'common/src/components/Button';
+import { LoadingSpinner } from 'common/src/components/LoadingSpinner';
+import { ConfirmDialog } from 'common/src/components/ConfirmDialog';
 import { CustomProviderStore } from './CustomProviderStore';
 import { CustomProviderConfig } from './types';
 import { AddCustomProviderView } from './AddCustomProviderView';
@@ -43,6 +44,12 @@ export interface ProviderSettingsViewState {
 
   /** Error message */
   error?: string;
+
+  /** Show delete confirmation dialog */
+  showDeleteConfirm: boolean;
+
+  /** Provider ID to delete */
+  providerToDelete?: string;
 }
 
 /**
@@ -57,6 +64,7 @@ export class ProviderSettingsView extends StatefulComponent<
   state: ProviderSettingsViewState = {
     providers: [],
     isLoading: true,
+    showDeleteConfirm: false,
   };
 
   async componentDidMount(): Promise<void> {
@@ -208,6 +216,18 @@ export class ProviderSettingsView extends StatefulComponent<
             )}
           </view>
         )}
+
+        {/* Delete Confirmation Dialog */}
+        <ConfirmDialog
+          isVisible={this.state.showDeleteConfirm}
+          title="Delete Provider"
+          message="Are you sure you want to delete this provider? This action cannot be undone."
+          confirmText="Delete"
+          cancelText="Cancel"
+          confirmColor="danger"
+          onConfirm={this.confirmDeleteProvider}
+          onCancel={this.cancelDeleteConfirmation}
+        />
       </view>
     );
   }
@@ -292,20 +312,41 @@ export class ProviderSettingsView extends StatefulComponent<
   /**
    * Handle delete provider
    */
-  private handleDeleteProvider = async (providerId: string): Promise<void> => {
-    // TODO: Show confirmation dialog
-    const confirmed = confirm('Are you sure you want to delete this provider?');
+  private handleDeleteProvider = (providerId: string): void => {
+    this.setState({
+      showDeleteConfirm: true,
+      providerToDelete: providerId,
+    });
+  };
 
-    if (!confirmed) {
+  /**
+   * Confirm delete provider
+   */
+  private confirmDeleteProvider = async (): Promise<void> => {
+    const { providerToDelete } = this.state;
+
+    if (!providerToDelete) {
       return;
     }
 
+    this.setState({ showDeleteConfirm: false, providerToDelete: undefined });
+
     try {
-      await this.props.customProviderStore.deleteProvider(providerId);
+      await this.props.customProviderStore.deleteProvider(providerToDelete);
       await this.loadProviders();
     } catch (error) {
       alert(`Failed to delete provider: ${error instanceof Error ? error.message : 'Unknown error'}`);
     }
+  };
+
+  /**
+   * Cancel delete confirmation
+   */
+  private cancelDeleteConfirmation = (): void => {
+    this.setState({
+      showDeleteConfirm: false,
+      providerToDelete: undefined,
+    });
   };
 
   /**

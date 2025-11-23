@@ -12,5 +12,6 @@ valdi_module(
         "@valdi//src/valdi_modules/src/valdi/valdi_tsx",
         "@valdi//src/valdi_modules/src/valdi/valdi_navigation",
         "//apps/valdi_ai_ui/modules/common",
+        "//apps/valdi_ai_ui/modules/chat_core",
     ],
 )

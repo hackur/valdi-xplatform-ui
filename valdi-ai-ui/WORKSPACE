@@ -1,0 +1,7 @@
+workspace(name = "valdi_ai_ui")
+
+# Reference parent Valdi workspace
+local_repository(
+    name = "valdi",
+    path = "../Valdi",
+)

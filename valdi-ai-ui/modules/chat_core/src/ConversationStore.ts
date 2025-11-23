@@ -13,9 +13,8 @@ import {
   ConversationSortOptions,
   ConversationListOptions,
   ConversationUtils,
-  ConversationTypeGuards,
   ConversationStatus,
-} from '@common';
+} from 'common/src/types';
 import { ConversationPersistence } from './ConversationPersistence';
 
 /**

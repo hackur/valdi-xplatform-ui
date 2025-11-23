@@ -10,7 +10,7 @@ import {
   ConversationStatus,
   ModelConfig,
   AIProvider,
-} from '@common';
+} from 'common/src/types';
 import { StorageProvider, defaultStorage } from './StorageProvider';
 
 /**
@@ -62,7 +62,7 @@ export class ConversationPersistence {
   private autoPersist: boolean;
   private debounceMs: number;
   private debug: boolean;
-  private debounceTimer?: NodeJS.Timeout;
+  private debounceTimer?: number;
 
   private readonly STORAGE_KEY = 'conversations';
 

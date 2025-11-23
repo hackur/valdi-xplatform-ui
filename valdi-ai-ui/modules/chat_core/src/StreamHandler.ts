@@ -5,7 +5,7 @@
  * Provides helpers for managing stream state and processing chunks.
  */
 
-import { Message } from '@common';
+import { Message } from 'common/src/types';
 import { StreamEvent, StreamCallback, StreamingStatus } from './types';
 
 /**
@@ -156,7 +156,7 @@ export const StreamUtils = {
   ): (delta: string) => void {
     let buffer = '';
     let content = '';
-    let timeout: NodeJS.Timeout | null = null;
+    let timeout: number | null = null;
 
     return (delta: string) => {
       buffer += delta;

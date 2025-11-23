@@ -1,0 +1,31 @@
+# Disable bzlmod to match parent Valdi workspace configuration
+common --noenable_bzlmod
+common --enable_workspace
+
+# Platform-specific configuration
+common --enable_platform_specific_config
+
+# Disable workers for repo fetching to prevent OOM
+common --experimental_worker_for_repo_fetching=off
+
+# Android configuration - required for rules_android providers
+common --experimental_google_legacy_api=true
+common --experimental_enable_android_migration_apis=true
+common --incompatible_java_common_parameters=false
+
+# Java configuration
+build --tool_java_language_version=11
+build --java_language_version=11
+
+# Disable sandboxing for macOS (performance)
+build:macos --spawn_strategy=local
+
+# C++ configuration
+build --cxxopt=-std=c++20
+
+# iOS configuration
+build --apple_platform_type=ios
+build --ios_minimum_os=15.0
+
+# Define web support
+common --define enable_web=true

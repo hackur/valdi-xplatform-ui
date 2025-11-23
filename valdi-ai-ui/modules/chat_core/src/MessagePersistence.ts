@@ -5,7 +5,7 @@
  * Manages serialization, deserialization, and storage operations for messages.
  */
 
-import { Message, MessageRole, MessageStatus, MessageContentPart, ToolCall } from '@common';
+import { Message, MessageRole, MessageStatus, MessageContentPart, ToolCall } from 'common/src/types';
 import { StorageProvider, defaultStorage } from './StorageProvider';
 
 /**
@@ -54,7 +54,7 @@ export class MessagePersistence {
   private autoPersist: boolean;
   private debounceMs: number;
   private debug: boolean;
-  private debounceTimers: Map<string, NodeJS.Timeout> = new Map();
+  private debounceTimers: Map<string, number> = new Map();
 
   constructor(config: MessagePersistenceConfig = {}) {
     this.storage = config.storage || defaultStorage;
