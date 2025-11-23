@@ -10,7 +10,6 @@ import {
   View,
   Label,
   ScrollView,
-  TextInput,
 } from 'valdi_tsx/src/NativeTemplateElements';
 import { NavigationController } from 'valdi_navigation/src/NavigationController';
 import { Colors, Fonts, Spacing } from 'common/src/theme';
@@ -78,20 +77,39 @@ export class AddCustomProviderView extends StatefulComponent<
   AddCustomProviderViewState
 > {
   state: AddCustomProviderViewState = {
-    name: this.props.existingProvider?.name || '',
-    baseUrl: this.props.existingProvider?.baseUrl || '',
-    apiKey: this.props.existingProvider?.apiKey || '',
-    modelId: this.props.existingProvider?.modelId || '',
-    modelName: this.props.existingProvider?.modelName || '',
-    defaultTemperature: this.props.existingProvider?.defaultTemperature?.toString() || '0.7',
-    maxOutputTokens: this.props.existingProvider?.maxOutputTokens?.toString() || '4096',
-    maxContextTokens: this.props.existingProvider?.maxContextTokens?.toString() || '8192',
-    supportsStreaming: this.props.existingProvider?.supportsStreaming ?? true,
-    supportsFunctionCalling: this.props.existingProvider?.supportsFunctionCalling ?? false,
+    name: '',
+    baseUrl: '',
+    apiKey: '',
+    modelId: '',
+    modelName: '',
+    defaultTemperature: '0.7',
+    maxOutputTokens: '4096',
+    maxContextTokens: '8192',
+    supportsStreaming: true,
+    supportsFunctionCalling: false,
     errors: new Map(),
     isTesting: false,
     isSaving: false,
   };
+
+  async componentDidMount(): Promise<void> {
+    // Initialize from existing provider if editing
+    const { existingProvider } = this.viewModel;
+    if (existingProvider) {
+      this.setState({
+        name: existingProvider.name || '',
+        baseUrl: existingProvider.baseUrl || '',
+        apiKey: existingProvider.apiKey || '',
+        modelId: existingProvider.modelId || '',
+        modelName: existingProvider.modelName || '',
+        defaultTemperature: existingProvider.defaultTemperature?.toString() || '0.7',
+        maxOutputTokens: existingProvider.maxOutputTokens?.toString() || '4096',
+        maxContextTokens: existingProvider.maxContextTokens?.toString() || '8192',
+        supportsStreaming: existingProvider.supportsStreaming ?? true,
+        supportsFunctionCalling: existingProvider.supportsFunctionCalling ?? false,
+      });
+    }
+  }
 
   onRender() {
     const {
@@ -272,7 +290,7 @@ export class AddCustomProviderView extends StatefulComponent<
             <view style={styles.testSection}>
               <Button
                 title={isTesting ? 'Testing...' : 'Test Connection'}
-                onPress={this.handleTestConnection}
+                onTap={this.handleTestConnection}
                 variant="secondary"
                 disabled={isTesting || !this.canTest()}
               />
@@ -310,14 +328,14 @@ export class AddCustomProviderView extends StatefulComponent<
         <view style={styles.footer}>
           <Button
             title="Cancel"
-            onPress={this.handleCancel}
+            onTap={this.handleCancel}
             variant="secondary"
             disabled={isSaving}
           />
 
           <Button
             title={isSaving ? 'Saving...' : isEditing ? 'Save Changes' : 'Add Provider'}
-            onPress={this.handleSave}
+            onTap={this.handleSave}
             variant="primary"
             disabled={isSaving || !this.canSave()}
           />

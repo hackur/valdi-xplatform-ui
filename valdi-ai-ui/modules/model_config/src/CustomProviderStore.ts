@@ -45,9 +45,10 @@ export class CustomProviderStore {
     }
 
     try {
-      const data = await this.storageProvider.get<CustomProviderConfig[]>(STORAGE_KEY);
+      const jsonData = await this.storageProvider.getItem(STORAGE_KEY);
 
-      if (data) {
+      if (jsonData) {
+        const data: CustomProviderConfig[] = JSON.parse(jsonData);
         data.forEach((provider) => {
           // Convert date strings back to Date objects
           provider.createdAt = new Date(provider.createdAt);
@@ -396,7 +397,8 @@ export class CustomProviderStore {
    */
   private async save(): Promise<void> {
     const data = Array.from(this.providers.values());
-    await this.storageProvider.set(STORAGE_KEY, data);
+    const jsonData = JSON.stringify(data);
+    await this.storageProvider.setItem(STORAGE_KEY, jsonData);
   }
 
   /**

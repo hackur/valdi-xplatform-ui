@@ -99,7 +99,7 @@ export class ProviderSettingsView extends StatefulComponent<
             <view style={styles.addButtonContainer}>
               <Button
                 title="+ Add Custom Provider"
-                onPress={this.handleAddProvider}
+                onTap={this.handleAddProvider}
                 variant="primary"
               />
             </view>
@@ -115,7 +115,7 @@ export class ProviderSettingsView extends StatefulComponent<
                 />
               </view>
             ) : (
-              <scrollView style={styles.scrollView}>
+              <ScrollView style={styles.scrollView}>
                 <view style={styles.list}>
                   {providers.map((provider) => (
                     <Card key={provider.id} style={styles.providerCard}>
@@ -212,7 +212,7 @@ export class ProviderSettingsView extends StatefulComponent<
                     </Card>
                   ))}
                 </view>
-              </scrollView>
+              </ScrollView>
             )}
           </view>
         )}

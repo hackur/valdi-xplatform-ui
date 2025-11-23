@@ -68,11 +68,20 @@ export class ModelSelectorView extends StatefulComponent<
     models: [],
     modelsByProvider: new Map(),
     isLoading: true,
-    selectedModelId: this.props.currentSelection?.modelId,
-    selectedCustomProviderId: this.props.currentSelection?.customProviderId,
+    selectedModelId: undefined,
+    selectedCustomProviderId: undefined,
   };
 
   async componentDidMount(): Promise<void> {
+    // Initialize selection from props
+    const { currentSelection } = this.viewModel;
+    if (currentSelection) {
+      this.setState({
+        selectedModelId: currentSelection.modelId,
+        selectedCustomProviderId: currentSelection.customProviderId,
+      });
+    }
+
     await this.loadModels();
   }
 
@@ -104,7 +113,7 @@ export class ModelSelectorView extends StatefulComponent<
             />
           </view>
         ) : (
-          <scrollView style={styles.scrollView}>
+          <ScrollView style={styles.scrollView}>
             <view style={styles.content}>
               {Array.from(modelsByProvider.entries()).map(([providerName, providerModels]) => (
                 <view key={providerName} style={styles.providerSection}>
@@ -197,7 +206,7 @@ export class ModelSelectorView extends StatefulComponent<
                 </view>
               ))}
             </view>
-          </scrollView>
+          </ScrollView>
         )}
       </view>
     );
