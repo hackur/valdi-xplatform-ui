@@ -63,14 +63,24 @@ export class ChatIntegrationService {
     onProgress?: StreamProgressCallback,
   ): Promise<void> {
     try {
-      // Get conversation
+      // Get conversation to retrieve model config and system prompt
+      // Fails early if conversation doesn't exist
       const conversation =
         this.conversationStore.getConversation(conversationId);
       if (!conversation) {
         throw new Error(`Conversation not found: ${conversationId}`);
       }
 
-      // Create user message
+      /*
+       * Message creation and storage pattern
+       * 1. Create user message immediately (synchronous)
+       * 2. Create assistant placeholder (status: 'sending')
+       * 3. Stream response and update placeholder
+       * This provides instant UI feedback while waiting for API
+       */
+
+      // Create user message with completed status
+      // User messages are always complete on creation
       const now = new Date();
       const userMessage: Message = {
         id: this.generateMessageId(),
@@ -82,10 +92,11 @@ export class ChatIntegrationService {
         status: 'completed',
       };
 
-      // Add to store
+      // Add to store for immediate UI display
       this.messageStore.addMessage(userMessage);
 
       // Create assistant message placeholder
+      // Placeholder shows loading state in UI
       const assistantNow = new Date();
       const assistantMessage: Message = {
         id: this.generateMessageId(),
@@ -99,7 +110,14 @@ export class ChatIntegrationService {
 
       this.messageStore.addMessage(assistantMessage);
 
-      // Stream response
+      /*
+       * Streaming response handler
+       * Updates message store in real-time as chunks arrive
+       * Event types:
+       * - chunk: Incremental content update
+       * - complete: Stream finished successfully
+       * - error: Stream failed
+       */
       let fullResponse = '';
 
       await this.chatService.sendMessageStreaming(
@@ -111,24 +129,27 @@ export class ChatIntegrationService {
         },
         (event) => {
           if (event.type === 'chunk') {
+            // Accumulate delta into full response
             fullResponse += event.delta;
 
-            // Update message
+            // Update message store for reactive UI updates
+            // This triggers subscriptions and re-renders
             this.messageStore.updateMessage(conversationId, assistantMessage.id, {
               content: fullResponse,
             });
 
-            // Progress callback
+            // Progress callback for additional UI updates
+            // Allows components to react to streaming progress
             if (onProgress) {
               onProgress(event.delta, fullResponse);
             }
           } else if (event.type === 'complete') {
-            // Mark as completed
+            // Mark as completed to remove loading state
             this.messageStore.updateMessage(conversationId, assistantMessage.id, {
               status: 'completed',
             });
           } else if (event.type === 'error') {
-            // Mark as error
+            // Mark as error to show error state in UI
             this.messageStore.updateMessage(conversationId, assistantMessage.id, {
               status: 'error',
               error: event.error,
@@ -149,9 +170,11 @@ export class ChatIntegrationService {
    */
   navigateToConversation(conversationId: string, ChatViewComponent: any): void {
     this.conversationStore.setActiveConversation(conversationId);
-    this.navigationController.push(ChatViewComponent, {
-      conversationId,
-    });
+    this.navigationController.push(
+      ChatViewComponent,
+      { conversationId, navigationController: this.navigationController },
+      {},
+    );
   }
 
   /**
@@ -169,8 +192,17 @@ export class ChatIntegrationService {
       title,
       createdAt: now,
       updatedAt: now,
+      lastMessageAt: now,
       messageCount: 0,
       status: 'active',
+      modelConfig: {
+        provider: 'openai',
+        modelId: 'gpt-4-turbo',
+        temperature: 0.7,
+        maxTokens: 4096,
+      },
+      isPinned: false,
+      tags: [],
     };
 
     await this.conversationStore.createConversation(conversation);
@@ -208,12 +240,19 @@ export class ChatIntegrationService {
   }): Conversation[] {
     let conversations = this.loadAllConversations();
 
-    // Filter by status
+    /*
+     * Multi-criteria filtering with progressive refinement
+     * Each filter reduces the result set sequentially
+     * Order matters: status filter first (cheaper) then text search
+     */
+
+    // Filter by status (simple equality check)
     if (filter.status) {
       conversations = conversations.filter((c) => c.status === filter.status);
     }
 
-    // Filter by search query
+    // Filter by search query (fuzzy text search)
+    // Searches in title and tags for flexibility
     if (filter.searchQuery) {
       const query = filter.searchQuery.toLowerCase();
       conversations = conversations.filter(
@@ -251,6 +290,16 @@ export class ChatIntegrationService {
   subscribeToConversations(
     callback: (conversations: Conversation[]) => void,
   ): () => void {
+    /*
+     * Observer pattern implementation for reactive data flow
+     * Store notifies subscribers on any change
+     * Subscribers receive fresh data snapshot
+     * Returns unsubscribe function for cleanup
+     *
+     * Usage pattern:
+     * const unsubscribe = service.subscribeToConversations(handleUpdate);
+     * // Later: unsubscribe() to prevent memory leaks
+     */
     return this.conversationStore.subscribe(() => {
       const conversations = this.loadAllConversations();
       callback(conversations);
@@ -264,6 +313,11 @@ export class ChatIntegrationService {
     conversationId: string,
     callback: (messages: Message[]) => void,
   ): () => void {
+    /*
+     * Message-level subscription for conversation-specific updates
+     * Filters messages by conversationId before callback
+     * Enables efficient UI updates for single conversation view
+     */
     return this.messageStore.subscribe(() => {
       const messages = this.loadConversationMessages(conversationId);
       callback(messages);

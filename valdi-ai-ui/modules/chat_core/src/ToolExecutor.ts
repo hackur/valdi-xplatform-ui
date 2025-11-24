@@ -54,15 +54,39 @@ export interface ToolCallResult {
 /**
  * Tool Executor Class
  *
- * Executes tool calls and handles errors gracefully
+ * Executes AI-requested tool calls with comprehensive error handling, timing, and
+ * result formatting. Supports both parallel and sequential execution patterns.
+ * Provides detailed execution metadata including timing and success status.
+ *
+ * @example
+ * ```typescript
+ * const executor = new ToolExecutor({
+ *   searchWeb: tool({
+ *     description: 'Search the web',
+ *     parameters: z.object({ query: z.string() }),
+ *     execute: async ({ query }) => {
+ *       return await search(query);
+ *     },
+ *   }),
+ * });
+ *
+ * // Execute a single tool call
+ * const result = await executor.executeToolCall({
+ *   toolCallId: 'call_123',
+ *   toolName: 'searchWeb',
+ *   args: { query: 'TypeScript docs' },
+ * });
+ *
+ * console.log(result.success, result.result);
+ * ```
  */
 export class ToolExecutor {
   private tools: Record<string, Tool>;
 
   /**
-   * Constructor
+   * Creates a new ToolExecutor instance
    *
-   * @param tools - Available tools mapped by name
+   * @param tools - Available tools mapped by name (tool name -> Tool object)
    */
   constructor(tools: Record<string, Tool>) {
     this.tools = tools;
@@ -71,8 +95,27 @@ export class ToolExecutor {
   /**
    * Execute a single tool call
    *
-   * @param toolCall - Tool call to execute
-   * @returns Tool call result
+   * Executes a tool with the provided arguments and returns a detailed result
+   * including success status, execution time, and any errors encountered.
+   * Handles validation, execution, and error formatting automatically.
+   *
+   * @param toolCall - Tool call to execute with ID, name, and arguments
+   * @returns Promise resolving to detailed tool execution result
+   *
+   * @example
+   * ```typescript
+   * const result = await executor.executeToolCall({
+   *   toolCallId: 'call_123',
+   *   toolName: 'calculateExpression',
+   *   args: { expression: '2 + 2' },
+   * });
+   *
+   * if (result.success) {
+   *   console.log('Result:', result.result);
+   * } else {
+   *   console.error('Error:', result.error);
+   * }
+   * ```
    */
   async executeToolCall(toolCall: ToolCallInput): Promise<ToolCallResult> {
     const startTime = Date.now();
@@ -141,8 +184,22 @@ export class ToolExecutor {
   /**
    * Execute multiple tool calls in parallel
    *
+   * Executes all tool calls concurrently for maximum performance.
+   * Returns results in the same order as input. Failed tool calls
+   * return error results but don't stop other executions.
+   *
    * @param toolCalls - Array of tool calls to execute
-   * @returns Array of tool call results
+   * @returns Promise resolving to array of tool call results in input order
+   *
+   * @example
+   * ```typescript
+   * const results = await executor.executeToolCalls([
+   *   { toolCallId: '1', toolName: 'search', args: { query: 'AI' } },
+   *   { toolCallId: '2', toolName: 'calculate', args: { expr: '10*5' } },
+   * ]);
+   *
+   * results.forEach(r => console.log(r.toolName, r.success));
+   * ```
    */
   async executeToolCalls(
     toolCalls: ToolCallInput[],

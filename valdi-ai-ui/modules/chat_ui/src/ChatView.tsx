@@ -13,6 +13,8 @@ import {
   Spacing,
   SemanticSpacing,
   Message,
+  ErrorBoundary,
+  ErrorScreen,
 } from '@common';
 import { MessageBubble } from './MessageBubble';
 import { InputBar } from './InputBar';
@@ -50,7 +52,19 @@ interface ChatViewState {
 /**
  * ChatView Component
  *
- * Fully integrated with ChatService and MessageStore for real-time chat functionality.
+ * Main chat interface component providing full-featured messaging capabilities with
+ * real-time updates, streaming support, error handling, and state management.
+ * Integrates with ChatService for AI interactions and MessageStore for reactive
+ * message updates. Supports message history, loading states, and error recovery.
+ *
+ * @example
+ * ```tsx
+ * <ChatView
+ *   navigationController={navController}
+ *   conversationId="conv_123"
+ *   chatService={chatService}
+ * />
+ * ```
  */
 export class ChatView extends NavigationPageStatefulComponent<
   ChatViewProps,
@@ -244,11 +258,31 @@ export class ChatView extends NavigationPageStatefulComponent<
     return <MessageBubble key={message.id} message={message} />;
   };
 
+  /**
+   * Handle chat-specific errors
+   */
+  private handleChatError = (error: Error): void => {
+    console.error('Chat error:', error);
+    // Could send to monitoring service
+  };
+
   override onRender() {
     const { messages, isLoading, isStreaming, error } = this.state;
 
     return (
-      <view style={styles.container}>
+      <ErrorBoundary
+        fallback={(error: Error) => (
+          <ErrorScreen
+            error={error}
+            title="Chat Error"
+            message="An error occurred while loading the chat. Please try again."
+            showDetails={process.env.NODE_ENV === 'development'}
+            onRetry={() => window.location.reload()}
+          />
+        )}
+        onError={this.handleChatError}
+      >
+        <view style={styles.container}>
         {/* Header */}
         <view style={styles.header}>
           <label
@@ -309,6 +343,7 @@ export class ChatView extends NavigationPageStatefulComponent<
           disabled={isLoading || isStreaming}
         />
       </view>
+      </ErrorBoundary>
     );
   }
 }

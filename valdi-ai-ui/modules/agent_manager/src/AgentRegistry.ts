@@ -27,9 +27,37 @@ export interface AgentRegistryConfig {
 /**
  * Agent Registry Class
  *
- * Centralized registry for AI agents.
- * Manages agent lifecycle and provides access to agent configurations.
- * Supports persistence through storage providers.
+ * Centralized registry for managing AI agent definitions with persistence, validation,
+ * and advanced querying capabilities. Provides agent lifecycle management including
+ * registration, updates, deletion, and bulk operations. Supports capability-based
+ * searching, provider filtering, and import/export functionality.
+ *
+ * @example
+ * ```typescript
+ * const registry = new AgentRegistry({
+ *   storage: storageProvider,
+ *   autoSave: true,
+ *   debug: true,
+ * });
+ *
+ * await registry.initialize();
+ *
+ * // Register an agent
+ * await registry.register({
+ *   id: 'code-agent',
+ *   name: 'Code Expert',
+ *   description: 'Specialized in code generation and review',
+ *   systemPrompt: 'You are an expert programmer...',
+ *   capabilities: ['coding', 'debugging'],
+ *   model: { provider: 'anthropic', modelId: 'claude-3-opus' },
+ * });
+ *
+ * // Find by capability
+ * const coders = registry.findByCapability('coding');
+ *
+ * // Search
+ * const results = registry.search('code', { searchDescription: true });
+ * ```
  */
 export class AgentRegistry {
   private agents: Map<string, AgentDefinition> = new Map();

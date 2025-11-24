@@ -91,7 +91,9 @@ export class TextInput extends Component<TextInputProps, TextInputState> {
     }
   };
 
-  private getDisplayValue = (): string => {
+  // Reserved for future secure text display functionality
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  private _getDisplayValue = (): string => {
     const { value, secureTextEntry } = this.viewModel;
 
     if (secureTextEntry && value) {

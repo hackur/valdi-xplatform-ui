@@ -11,7 +11,36 @@ import { StreamEvent, StreamCallback, StreamingStatus } from './types';
 /**
  * StreamHandler Class
  *
- * Manages the lifecycle and state of streaming AI responses
+ * Manages the lifecycle and state of streaming AI responses with event-based notifications.
+ * Provides buffering, status tracking, and callback management for handling streaming
+ * content delivery. Useful for progressive UI updates and real-time response display.
+ *
+ * @example
+ * ```typescript
+ * const handler = new StreamHandler();
+ *
+ * // Register event listener
+ * const unsubscribe = handler.onEvent((event) => {
+ *   switch (event.type) {
+ *     case 'start':
+ *       console.log('Stream started');
+ *       break;
+ *     case 'chunk':
+ *       console.log('Received:', event.delta);
+ *       updateUI(event.content);
+ *       break;
+ *     case 'complete':
+ *       console.log('Stream complete');
+ *       break;
+ *   }
+ * });
+ *
+ * // Start streaming
+ * handler.start('msg_123');
+ * handler.processChunk('msg_123', 'Hello ');
+ * handler.processChunk('msg_123', 'world!');
+ * handler.complete('msg_123', message);
+ * ```
  */
 export class StreamHandler {
   private status: StreamingStatus = 'idle';
@@ -21,6 +50,11 @@ export class StreamHandler {
 
   /**
    * Register a callback for stream events
+   *
+   * Adds a listener that will be notified of all stream events (start, chunk, complete, error).
+   *
+   * @param callback - Function to call on stream events
+   * @returns Unsubscribe function to remove the callback
    */
   onEvent(callback: StreamCallback): () => void {
     this.callbacks.add(callback);

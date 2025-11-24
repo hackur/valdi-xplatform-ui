@@ -347,9 +347,15 @@ valdi-ai-ui/
 - **[Standalone Build Guide](STANDALONE_BUILD.md)** - Build independently
 - **[Project Plan](PROJECT_PLAN.md)** - Comprehensive 10-week roadmap
 
+### Build Guides
+- **[iOS Build Guide](BUILD_IOS.md)** - Complete iOS build and deployment guide
+- **[Android Build Guide](BUILD_ANDROID.md)** - Complete Android build and deployment guide
+- **[Deployment Guide](DEPLOYMENT.md)** - Production deployment checklist
+
 ### Technical Documentation
 - **[Architecture Guide](ARCHITECTURE.md)** - System design and patterns
-- **[API Reference](API_REFERENCE.md)** - Public APIs and interfaces
+- **[API Reference](API.md)** - Complete API documentation with examples
+- **[Testing Guide](TESTING.md)** - Testing best practices and examples
 - **[Implementation Status](IMPLEMENTATION_STATUS.md)** - Current progress
 
 ### Community

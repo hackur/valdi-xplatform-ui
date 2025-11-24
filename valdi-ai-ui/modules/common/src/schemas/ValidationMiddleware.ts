@@ -292,8 +292,8 @@ export function createTypeSafeValidator<T>(schema: z.ZodSchema<T>) {
  */
 export function ValidateInput<T>(schema: z.ZodSchema<T>) {
   return function (
-    target: unknown,
-    propertyKey: string,
+    _target: unknown,
+    _propertyKey: string,
     descriptor: PropertyDescriptor,
   ) {
     const originalMethod = descriptor.value;

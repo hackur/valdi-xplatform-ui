@@ -126,6 +126,12 @@ export async function retryWithBackoff<T>(
   let lastError: unknown;
   let attempt = 0;
 
+  /*
+   * Exponential backoff retry loop
+   * Delay increases exponentially: 1s, 2s, 4s, 8s, etc.
+   * Prevents overwhelming failing services
+   * Gives transient issues time to resolve
+   */
   while (attempt <= maxRetries) {
     try {
       return await fn();
@@ -133,27 +139,38 @@ export async function retryWithBackoff<T>(
       lastError = error;
       attempt++;
 
-      // Check if we should retry
+      // Check if we should retry based on error type and attempt count
+      // Some errors (e.g., auth failures) shouldn't be retried
       if (attempt > maxRetries || !shouldRetry(error, attempt - 1)) {
         throw error;
       }
 
-      // Calculate delay with exponential backoff
+      /*
+       * Exponential backoff calculation
+       * Formula: min(initialDelay * (multiplier ^ attempt), maxDelay)
+       * Example: 1000 * (2^0) = 1s, 1000 * (2^1) = 2s, 1000 * (2^2) = 4s
+       * maxDelay caps exponential growth to prevent excessive waits
+       */
       const baseDelay = Math.min(
         initialDelay * Math.pow(backoffMultiplier, attempt - 1),
         maxDelay,
       );
 
-      // Add jitter to prevent thundering herd
+      /*
+       * Jitter prevents thundering herd problem
+       * When many clients retry simultaneously, they overwhelm the service
+       * Random jitter spreads retries across time window
+       * Range: baseDelay +/- (baseDelay * jitterFactor)
+       */
       const jitter = baseDelay * jitterFactor * (Math.random() * 2 - 1);
       const delay = Math.max(0, baseDelay + jitter);
 
-      // Call retry callback if provided
+      // Call retry callback for logging/monitoring
       if (onRetry) {
         onRetry(error, attempt, delay);
       }
 
-      // Wait before retry
+      // Wait before retry (backoff period)
       await sleep(delay);
     }
   }
@@ -192,10 +209,11 @@ export async function fallbackToCache<T>(
   } = options;
 
   try {
-    // Try to execute function
+    // Try to execute function (primary path)
     const result = await fn();
 
-    // Cache the result
+    // Cache the result with timestamp for TTL tracking
+    // Success path: cache fresh data for future fallback
     cache.set(key, {
       value: result,
       timestamp: Date.now(),
@@ -203,6 +221,16 @@ export async function fallbackToCache<T>(
 
     return result;
   } catch (error) {
+    /*
+     * Error recovery: attempt to use cached value
+     * Two cache strategies:
+     * 1. Fresh cache (age <= TTL): Safe to use
+     * 2. Stale cache (age > TTL): Use if useStaleOnError is true
+     *
+     * Stale cache is better than no data during outages
+     * Trade-off: old data vs. error state
+     */
+
     // Check if we have a cached value
     const cached = cache.get(key);
 
@@ -210,6 +238,7 @@ export async function fallbackToCache<T>(
       const age = Date.now() - cached.timestamp;
 
       // Use cache if within TTL or if stale is allowed on error
+      // TTL check ensures freshness, stale flag provides outage resilience
       if (age <= ttl || useStaleOnError) {
         console.warn(
           `[ErrorRecovery] Using cached value for "${key}" (age: ${age}ms)`,
@@ -219,7 +248,7 @@ export async function fallbackToCache<T>(
       }
     }
 
-    // No cache available, throw error
+    // No cache available or too stale, throw error
     throw error;
   }
 }
@@ -291,7 +320,15 @@ export class CircuitBreaker {
    * Execute a function with circuit breaker protection
    */
   async execute<T>(fn: () => Promise<T>): Promise<T> {
-    // Check circuit state
+    /*
+     * Circuit breaker state machine
+     * - CLOSED: Normal operation, allow calls
+     * - OPEN: Too many failures, reject calls immediately
+     * - HALF_OPEN: Testing recovery, allow limited calls
+     *
+     * Fast-fail pattern: Immediately reject when circuit is open
+     * Prevents cascading failures and wasted resources
+     */
     if (this.state === CircuitState.OPEN) {
       throw new AppError(
         'Circuit breaker is open',
@@ -308,12 +345,14 @@ export class CircuitBreaker {
     try {
       const result = await fn();
 
-      // Record success
+      // Record success for state management
+      // In HALF_OPEN, successes count toward closing circuit
       this.onSuccess();
 
       return result;
     } catch (error) {
-      // Record failure
+      // Record failure for state management
+      // May trigger circuit opening if threshold reached
       this.onFailure();
 
       throw error;
@@ -340,20 +379,27 @@ export class CircuitBreaker {
   private onFailure(): void {
     const now = Date.now();
 
-    // Add failure timestamp
+    // Add failure timestamp for sliding window tracking
     this.failures.push(now);
 
-    // Remove old failures outside time window
+    /*
+     * Sliding window failure tracking
+     * Only count failures within time window
+     * Old failures automatically expire
+     * This prevents historical failures from affecting current state
+     */
     this.failures = this.failures.filter(
       (timestamp) => now - timestamp <= this.options.timeWindow,
     );
 
-    // Check if we should open circuit
+    // Check if we should open circuit based on failure threshold
+    // Example: 5 failures in 60 seconds -> open circuit
     if (this.failures.length >= this.options.failureThreshold) {
       this.open();
     }
 
-    // Reset consecutive successes
+    // Reset consecutive successes counter
+    // Any failure resets progress toward closing circuit
     this.consecutiveSuccesses = 0;
   }
 
@@ -362,9 +408,15 @@ export class CircuitBreaker {
    */
   private open(): void {
     if (this.state === CircuitState.OPEN) {
-      return;
+      return; // Already open, no action needed
     }
 
+    /*
+     * Circuit opening: Service is unhealthy
+     * Immediately fail all requests (fast-fail)
+     * Schedule automatic recovery attempt after timeout
+     * This gives the service time to recover
+     */
     this.state = CircuitState.OPEN;
     this.options.onOpen();
 
@@ -372,7 +424,8 @@ export class CircuitBreaker {
       `[CircuitBreaker] Circuit opened after ${this.failures.length} failures`,
     );
 
-    // Schedule half-open attempt
+    // Schedule half-open attempt after reset timeout
+    // Timer allows service recovery time before testing
     this.resetTimer = setTimeout(() => {
       this.halfOpen();
     }, this.options.resetTimeout);
@@ -382,6 +435,13 @@ export class CircuitBreaker {
    * Half-open the circuit
    */
   private halfOpen(): void {
+    /*
+     * Half-open state: Testing service recovery
+     * Allow limited requests through
+     * If successful, move to CLOSED
+     * If failed, return to OPEN
+     * This provides cautious recovery mechanism
+     */
     this.state = CircuitState.HALF_OPEN;
     this.consecutiveSuccesses = 0;
     this.options.onHalfOpen();
@@ -393,12 +453,18 @@ export class CircuitBreaker {
    * Close the circuit
    */
   private close(): void {
+    /*
+     * Circuit closing: Service is healthy again
+     * Resume normal operation
+     * Clear failure history to start fresh
+     * Cancel any pending recovery timers
+     */
     this.state = CircuitState.CLOSED;
     this.failures = [];
     this.consecutiveSuccesses = 0;
     this.options.onClose();
 
-    // Clear reset timer
+    // Clear reset timer (no longer needed)
     if (this.resetTimer) {
       clearTimeout(this.resetTimer);
       this.resetTimer = undefined;
@@ -524,13 +590,25 @@ export async function batchRetry<T>(
   const successes: T[] = [];
   const failures: Array<{ index: number; error: unknown }> = [];
 
-  // Use Promise.all with wrapped promises that never reject
+  /*
+   * Batch retry pattern with partial success handling
+   * Each operation retries independently
+   * Promise.all ensures all complete before returning
+   * Wrapped promises never reject to prevent Promise.all short-circuit
+   *
+   * Benefits:
+   * - Parallel execution for performance
+   * - Individual retry logic per operation
+   * - Collect both successes and failures
+   * - No early exit on first failure
+   */
   await Promise.all(
     operations.map(async (op, index) => {
       try {
         const result = await retryWithBackoff(op, options);
         successes.push(result);
       } catch (error) {
+        // Catch and collect failures instead of propagating
         failures.push({ index, error });
       }
     }),

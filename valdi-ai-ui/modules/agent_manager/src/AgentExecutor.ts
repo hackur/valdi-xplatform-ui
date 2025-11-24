@@ -26,8 +26,34 @@ export interface AgentExecutorConfig {
 /**
  * Agent Executor Class
  *
- * Executes agents and manages their interaction with the chat service.
- * Provides consistent error handling and result formatting.
+ * Executes AI agents with comprehensive lifecycle management including timeout handling,
+ * abort support, retry logic, and progress tracking. Integrates with ChatService for
+ * AI interactions and provides detailed execution metadata including token usage and timing.
+ *
+ * @example
+ * ```typescript
+ * const executor = new AgentExecutor({
+ *   chatService,
+ *   defaultTimeout: 60000,
+ *   debug: true,
+ * });
+ *
+ * const result = await executor.execute(
+ *   agentDefinition,
+ *   {
+ *     conversationId: 'conv_123',
+ *     messages: [...],
+ *     maxSteps: 5,
+ *   },
+ *   {
+ *     timeout: 30000,
+ *     onProgress: (step, total) => console.log(`${step}/${total}`),
+ *   }
+ * );
+ *
+ * console.log('Agent output:', result.output);
+ * console.log('Tokens used:', result.metadata.tokens);
+ * ```
  */
 export class AgentExecutor {
   private chatService: ChatService;
@@ -35,6 +61,11 @@ export class AgentExecutor {
   private debug: boolean;
   private activeExecutions = new Set<string>();
 
+  /**
+   * Creates a new AgentExecutor instance
+   *
+   * @param config - Executor configuration including chat service and default settings
+   */
   constructor(config: AgentExecutorConfig) {
     this.chatService = config.chatService;
     this.defaultTimeout = config.defaultTimeout ?? 60000; // 60 seconds default
@@ -42,11 +73,35 @@ export class AgentExecutor {
   }
 
   /**
-   * Execute an agent
-   * @param agent Agent definition
-   * @param context Execution context
-   * @param options Execution options
-   * @returns Execution result
+   * Execute an agent with full lifecycle management
+   *
+   * Runs an agent with timeout protection, abort support, and progress tracking.
+   * Handles agentic loops for tool-calling agents and provides detailed execution metadata.
+   *
+   * @param agent - Agent definition including system prompt, model config, and tools
+   * @param context - Execution context with conversation ID, messages, and shared data
+   * @param options - Optional execution options
+   * @param options.timeout - Custom timeout in milliseconds (overrides default)
+   * @param options.abortSignal - AbortSignal for cancellation support
+   * @param options.onProgress - Callback for step progress updates
+   * @returns Promise resolving to execution result with messages, metadata, and optional output
+   *
+   * @example
+   * ```typescript
+   * const result = await executor.execute(
+   *   {
+   *     id: 'research-agent',
+   *     name: 'Researcher',
+   *     systemPrompt: 'You are a research assistant...',
+   *     tools: ['searchWeb', 'fetchUrl'],
+   *   },
+   *   {
+   *     conversationId: 'conv_123',
+   *     messages: [...],
+   *     maxSteps: 10,
+   *   }
+   * );
+   * ```
    */
   async execute(
     agent: AgentDefinition,

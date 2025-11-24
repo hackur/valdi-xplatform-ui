@@ -41,6 +41,7 @@ module.exports = {
     '^@model_config/(.*)$': '<rootDir>/modules/model_config/src/$1',
     '^valdi_core/(.*)$': '<rootDir>/__mocks__/valdi_core/$1',
     '^valdi_tsx/(.*)$': '<rootDir>/__mocks__/valdi_tsx/$1',
+    '^valdi_http/(.*)$': '<rootDir>/__mocks__/valdi_http/$1',
   },
   modulePathIgnorePatterns: [
     '<rootDir>/bazel-',

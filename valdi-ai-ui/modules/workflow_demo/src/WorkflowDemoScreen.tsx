@@ -11,7 +11,16 @@
 import { Component } from 'valdi_core/src/Component';
 import { Style } from 'valdi_core/src/Style';
 import { View, ScrollView } from 'valdi_tsx/src/NativeTemplateElements';
-import { Card, Button, Colors, Fonts, Spacing, BorderRadius } from '@common';
+import {
+  Card,
+  Button,
+  Colors,
+  Fonts,
+  Spacing,
+  BorderRadius,
+  ErrorBoundary,
+  ErrorScreen,
+} from '@common';
 import { WorkflowCard, WorkflowExecutionState } from './WorkflowCard';
 import {
   runSequentialDemo,
@@ -208,13 +217,31 @@ export class WorkflowDemoScreen extends Component<{}, WorkflowDemoScreenState> {
     });
   };
 
+  /**
+   * Handle workflow execution errors
+   */
+  private handleWorkflowError = (error: Error): void => {
+    console.error('Workflow demo error:', error);
+  };
+
   override onRender() {
     const { selectedTab, executionStates } = this.state;
     const selectedWorkflow = this.workflows.find((w) => w.id === selectedTab)!;
     const executionState = executionStates[selectedTab];
 
     return (
-      <scrollView style={styles.container}>
+      <ErrorBoundary
+        fallback={(error: Error) => (
+          <ErrorScreen
+            error={error}
+            title="Workflow Demo Error"
+            message="An error occurred while running the workflow demo."
+            showDetails={process.env.NODE_ENV === 'development'}
+          />
+        )}
+        onError={this.handleWorkflowError}
+      >
+        <scrollView style={styles.container}>
         {/* Header */}
         <view style={styles.header}>
           <label value="Workflow Patterns Demo" style={Fonts.h1} />
@@ -330,6 +357,7 @@ export class WorkflowDemoScreen extends Component<{}, WorkflowDemoScreenState> {
           />
         </view>
       </scrollView>
+      </ErrorBoundary>
     );
   }
 }

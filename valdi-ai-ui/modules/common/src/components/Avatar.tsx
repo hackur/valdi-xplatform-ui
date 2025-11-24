@@ -150,7 +150,7 @@ export class Avatar extends Component<AvatarProps> {
     backgroundColor: string,
     elevated: boolean | undefined,
     customStyle?: Record<string, unknown>,
-  ): Style<View> {
+  ): Style {
     return new Style({
       ...styles.container,
       width: size,
@@ -164,7 +164,7 @@ export class Avatar extends Component<AvatarProps> {
     });
   }
 
-  private getImageStyle(size: number): Style<View> {
+  private getImageStyle(size: number): Style {
     return new Style({
       width: size,
       height: size,
@@ -172,7 +172,7 @@ export class Avatar extends Component<AvatarProps> {
     });
   }
 
-  private getLabelStyle(fontSize: number, textColor: string): Style<Label> {
+  private getLabelStyle(fontSize: number, textColor: string): Style {
     return new Style({
       font: systemBoldFont(fontSize),
       color: textColor,

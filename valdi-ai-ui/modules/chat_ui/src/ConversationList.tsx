@@ -155,23 +155,21 @@ export class ConversationList extends StatefulComponent<
   }
 
   private handleFilterChange = (filter: ConversationFilter): void => {
-    this.setState({ filter }, () => {
-      this.updateFilteredConversations();
-      const { onFilterChange } = this.viewModel;
-      if (onFilterChange) {
-        onFilterChange(filter);
-      }
-    });
+    this.setState({ filter });
+    this.updateFilteredConversations();
+    const { onFilterChange } = this.viewModel;
+    if (onFilterChange) {
+      onFilterChange(filter);
+    }
   };
 
   private handleSearchChange = (query: string): void => {
-    this.setState({ searchQuery: query }, () => {
-      this.updateFilteredConversations();
-      const { onSearchChange } = this.viewModel;
-      if (onSearchChange) {
-        onSearchChange(query);
-      }
-    });
+    this.setState({ searchQuery: query });
+    this.updateFilteredConversations();
+    const { onSearchChange } = this.viewModel;
+    if (onSearchChange) {
+      onSearchChange(query);
+    }
   };
 
   private handleRefresh = (): void => {

@@ -88,14 +88,14 @@ export class LoadingSpinner extends StatefulComponent<
       this.setState({
         dots: (this.state.dots % 3) + 1,
       });
-    }, 400);
+    }, 400) as unknown as number;
 
     // Animate rotation (smoother animation)
     this.rotationInterval = setInterval(() => {
       this.setState({
         rotation: (this.state.rotation + 45) % 360,
       });
-    }, 150);
+    }, 150) as unknown as number;
   }
 
   override onDestroy() {
@@ -135,7 +135,7 @@ export class LoadingSpinner extends StatefulComponent<
     }
   }
 
-  private getTextLabelStyle(fontSize: number): Style<Label> {
+  private getTextLabelStyle(fontSize: number): Style {
     return new Style({
       font: systemFont(fontSize),
       color: Colors.textPrimary,
@@ -147,7 +147,7 @@ export class LoadingSpinner extends StatefulComponent<
     return '.'.repeat(dots);
   }
 
-  private getSpinnerContainerStyle(size: number): Style<View> {
+  private getSpinnerContainerStyle(size: number): Style {
     return new Style({
       width: size,
       height: size,
@@ -160,7 +160,7 @@ export class LoadingSpinner extends StatefulComponent<
   private getOuterCircleStyle(
     size: number,
     color: string | undefined,
-  ): Style<View> {
+  ): Style {
     return new Style({
       width: size,
       height: size,
@@ -176,7 +176,7 @@ export class LoadingSpinner extends StatefulComponent<
     size: number,
     color: string | undefined,
     dots: number,
-  ): Style<View> {
+  ): Style {
     return new Style({
       position: 'absolute',
       width: size / 3,
@@ -233,7 +233,7 @@ export class LoadingSpinner extends StatefulComponent<
   private getFullscreenOverlayStyle(
     overlayColor: string | undefined,
     overlayOpacity: number | undefined,
-  ): Style<View> {
+  ): Style {
     return new Style({
       position: 'absolute',
       top: 0,
@@ -252,7 +252,7 @@ export class LoadingSpinner extends StatefulComponent<
 
   private getContainerStyle(
     customStyle?: Record<string, unknown>,
-  ): Style<View> {
+  ): Style {
     return new Style({
       flexDirection: 'column',
       alignItems: 'center',

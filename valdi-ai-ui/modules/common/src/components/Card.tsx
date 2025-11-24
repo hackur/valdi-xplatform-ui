@@ -93,7 +93,7 @@ export class Card extends Component<CardProps> {
     bordered: boolean | undefined,
     shadowStyle: Record<string, unknown>,
     customStyle?: Record<string, unknown>,
-  ): Style<View> {
+  ): Style {
     return new Style({
       ...styles.container,
       backgroundColor: backgroundColor ?? Colors.surface,

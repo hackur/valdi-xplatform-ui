@@ -27,4 +27,21 @@ export class SystemFont {
   }
 }
 
+// Export helper functions that are commonly used
+export function systemFont(size: number): string {
+  return `system-font-${size}`;
+}
+
+export function systemBoldFont(size: number): string {
+  return `system-font-bold-${size}`;
+}
+
+export function systemRegularFont(size: number): string {
+  return `system-font-regular-${size}`;
+}
+
+export function systemMediumFont(size: number): string {
+  return `system-font-medium-${size}`;
+}
+
 export default SystemFont;

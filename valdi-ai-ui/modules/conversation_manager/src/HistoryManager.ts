@@ -22,6 +22,8 @@ import {
  */
 export class HistoryManager {
   private conversationStore: ConversationStore;
+  // Reserved for future export functionality
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   private _exportService: ExportService;
 
   constructor(

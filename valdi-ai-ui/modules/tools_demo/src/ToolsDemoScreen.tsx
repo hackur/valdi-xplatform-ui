@@ -9,7 +9,16 @@
 import { Component } from 'valdi_core/src/Component';
 import { Style } from 'valdi_core/src/Style';
 import { View, ScrollView } from 'valdi_tsx/src/NativeTemplateElements';
-import { Card, Button, Colors, Fonts, Spacing, BorderRadius } from '@common';
+import {
+  Card,
+  Button,
+  Colors,
+  Fonts,
+  Spacing,
+  BorderRadius,
+  ErrorBoundary,
+  ErrorScreen,
+} from '@common';
 import { ToolExecutionCard, ToolExecutionResult } from './ToolExecutionCard';
 import { getAllTools } from '@chat_core/ToolDefinitions';
 
@@ -138,11 +147,29 @@ export class ToolsDemoScreen extends Component<{}, ToolsDemoScreenState> {
     });
   };
 
+  /**
+   * Handle tool execution errors
+   */
+  private handleToolError = (error: Error): void => {
+    console.error('Tool demo error:', error);
+  };
+
   override onRender() {
     const { executionResults, currentlyExecuting } = this.state;
 
     return (
-      <scrollView style={styles.container}>
+      <ErrorBoundary
+        fallback={(error: Error) => (
+          <ErrorScreen
+            error={error}
+            title="Tools Demo Error"
+            message="An error occurred while executing tools."
+            showDetails={process.env.NODE_ENV === 'development'}
+          />
+        )}
+        onError={this.handleToolError}
+      >
+        <scrollView style={styles.container}>
         {/* Header */}
         <view style={styles.header}>
           <label value="Tools Demo" style={Fonts.h1} />
@@ -262,6 +289,7 @@ export class ToolsDemoScreen extends Component<{}, ToolsDemoScreenState> {
           </view>
         )}
       </scrollView>
+      </ErrorBoundary>
     );
   }
 }

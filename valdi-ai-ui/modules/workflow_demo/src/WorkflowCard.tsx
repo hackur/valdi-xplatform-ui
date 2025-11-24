@@ -240,7 +240,7 @@ export class WorkflowCard extends Component<WorkflowCardProps> {
   }
 
   override onRender() {
-    const { workflowName, executionState } = this.viewModel;
+    const { executionState } = this.viewModel;
 
     // Don't render if workflow hasn't started
     if (executionState.status === 'idle') {

@@ -63,6 +63,36 @@ export interface ButtonProps {
 
 /**
  * Button Component
+ *
+ * Reusable button component with comprehensive styling options and accessibility support.
+ * Provides multiple variants (primary, secondary, outline, ghost, danger), sizes,
+ * disabled and loading states. Follows design system tokens for consistency.
+ *
+ * @example
+ * ```tsx
+ * // Primary button
+ * <Button
+ *   title="Submit"
+ *   variant="primary"
+ *   onTap={() => handleSubmit()}
+ * />
+ *
+ * // Loading state
+ * <Button
+ *   title="Saving..."
+ *   loading={true}
+ *   disabled={true}
+ * />
+ *
+ * // Full width outline button
+ * <Button
+ *   title="Cancel"
+ *   variant="outline"
+ *   size="large"
+ *   fullWidth={true}
+ *   onTap={() => handleCancel()}
+ * />
+ * ```
  */
 export class Button extends Component<ButtonProps> {
   static defaultProps: Partial<ButtonProps> = {
@@ -175,7 +205,7 @@ export class Button extends Component<ButtonProps> {
     padding: { paddingHorizontal: number; paddingVertical: number },
     fullWidth: boolean | undefined,
     customStyle?: Record<string, unknown>,
-  ): Style<View> {
+  ): Style {
     return new Style({
       ...styles.container,
       backgroundColor,
@@ -192,7 +222,7 @@ export class Button extends Component<ButtonProps> {
     });
   }
 
-  private getLabelStyle(fontSize: number, textColor: string): Style<Label> {
+  private getLabelStyle(fontSize: number, textColor: string): Style {
     return new Style({
       font: systemBoldFont(fontSize),
       color: textColor,

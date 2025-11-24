@@ -17,9 +17,10 @@ import {
   Fonts,
   Spacing,
   SemanticSpacing,
-  BorderRadius,
   Button,
   Card,
+  ErrorBoundary,
+  ErrorScreen,
 } from '@common';
 import { ApiKeyStore, AIProvider } from './ApiKeyStore';
 import { PreferencesStore } from './PreferencesStore';
@@ -698,9 +699,27 @@ export class SettingsScreen extends NavigationPageComponent<
     );
   };
 
+  /**
+   * Handle settings configuration errors
+   */
+  private handleSettingsError = (error: Error): void => {
+    console.error('Settings error:', error);
+  };
+
   onRender() {
     return (
-      <view style={styles.container}>
+      <ErrorBoundary
+        fallback={(error: Error) => (
+          <ErrorScreen
+            error={error}
+            title="Settings Error"
+            message="An error occurred while loading settings. Please try again."
+            showDetails={process.env.NODE_ENV === 'development'}
+          />
+        )}
+        onError={this.handleSettingsError}
+      >
+        <view style={styles.container}>
         {/* Header */}
         <view style={styles.header}>
           <label
@@ -764,6 +783,7 @@ export class SettingsScreen extends NavigationPageComponent<
           </view>
         </view>
       </view>
+      </ErrorBoundary>
     );
   }
 }

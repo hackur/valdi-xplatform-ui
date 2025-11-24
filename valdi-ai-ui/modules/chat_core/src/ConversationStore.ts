@@ -37,9 +37,33 @@ export interface ConversationStoreState {
 /**
  * ConversationStore Class
  *
- * Centralized store for managing conversations.
- * Uses observer pattern for reactive updates.
- * Integrates with ConversationPersistence for automatic data persistence.
+ * Centralized store for managing conversation metadata and state with reactive updates.
+ * Implements observer pattern for UI synchronization, provides advanced filtering and
+ * sorting capabilities, and integrates with ConversationPersistence for automatic storage.
+ * Handles conversation lifecycle including creation, archival, pinning, and tagging.
+ *
+ * @example
+ * ```typescript
+ * const store = new ConversationStore(true);
+ * await store.init();
+ *
+ * // Subscribe to changes
+ * const unsubscribe = store.subscribe((state) => {
+ *   console.log('Active conversations:', state.conversations);
+ * });
+ *
+ * // Create a conversation
+ * const conversation = await store.createConversation({
+ *   title: 'My Chat',
+ *   modelConfig: { provider: 'openai', modelId: 'gpt-4' },
+ * });
+ *
+ * // List with filtering
+ * const pinned = store.listConversations({
+ *   filter: { isPinned: true },
+ *   sort: { field: 'lastMessageAt', order: 'desc' },
+ * });
+ * ```
  */
 export class ConversationStore {
   private state: ConversationStoreState = {
