@@ -6,7 +6,8 @@ local_repository(
     path = "vendor/valdi",
 )
 
-# Define Valdi's internal sub-repositories (normally done by valdi_prepare_workspace)
+# Define Valdi's internal sub-repositories
+# These match the local_path_override entries in MODULE.bazel
 local_repository(
     name = "android_macros",
     path = "vendor/valdi/bzl/macros",
@@ -47,6 +48,5 @@ local_repository(
     path = "vendor/valdi/third-party/resvg/resvg_libs",
 )
 
-# Initialize Valdi workspace dependencies
-load("@valdi//bzl:workspace_init.bzl", "valdi_initialize_workspace")
-valdi_initialize_workspace()
+# Note: Not calling valdi_initialize_workspace() to avoid circular dependencies
+# bzlmod (MODULE.bazel) will handle most external dependencies
