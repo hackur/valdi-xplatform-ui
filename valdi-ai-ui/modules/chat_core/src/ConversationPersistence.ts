@@ -10,7 +10,7 @@ import {
   ConversationStatus,
   ModelConfig,
   AIProvider,
-} from '@common/types';
+} from 'common/types';
 import { StorageProvider, defaultStorage } from './StorageProvider';
 
 /**

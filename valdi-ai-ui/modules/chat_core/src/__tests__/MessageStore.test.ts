@@ -8,7 +8,7 @@
 import { MessageStore } from '../MessageStore';
 import { MessagePersistence } from '../MessagePersistence';
 import { MemoryStorageProvider } from '../StorageProvider';
-import { Message, MessageRole, MessageStatus } from '@common/types';
+import { Message, MessageRole, MessageStatus } from 'common/types';
 
 // Mock console methods to reduce test noise
 const originalConsoleError = console.error;

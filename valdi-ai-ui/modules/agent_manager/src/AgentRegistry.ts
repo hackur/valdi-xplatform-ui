@@ -6,7 +6,7 @@
  */
 
 import { AgentDefinition } from './types';
-import { StorageProvider } from '@common/services/StorageProvider';
+import { StorageProvider } from 'common/services/StorageProvider';
 
 const STORAGE_KEY = 'agent_registry_agents';
 

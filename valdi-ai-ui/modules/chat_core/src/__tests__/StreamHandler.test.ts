@@ -7,7 +7,7 @@
 
 import { StreamHandler, StreamUtils } from '../StreamHandler';
 import { StreamEvent, StreamingStatus } from '../types';
-import { Message, MessageRole, MessageStatus } from '@common/types';
+import { Message, MessageRole, MessageStatus } from 'common/types';
 
 describe('StreamHandler', () => {
   let handler: StreamHandler;

@@ -13,7 +13,7 @@ import {
   ConversationStatus,
   AIProvider,
   ModelConfig,
-} from '@common/types';
+} from 'common/types';
 
 // Mock console methods
 const originalConsoleError = console.error;

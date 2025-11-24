@@ -14,7 +14,7 @@
 import { ChatService } from '@chat_core/ChatService';
 import { MessageStore } from '@chat_core/MessageStore';
 import { ConversationStore } from '@chat_core/ConversationStore';
-import { Message, Conversation } from '@common/types';
+import { Message, Conversation } from 'common/types';
 import { NavigationController } from 'valdi_navigation/src/NavigationController';
 
 /**

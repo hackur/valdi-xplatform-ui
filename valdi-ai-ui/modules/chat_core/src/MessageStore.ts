@@ -5,8 +5,8 @@
  * Provides reactive state management for messages with CRUD operations.
  */
 
-import { Message, MessageUpdateInput } from '@common/types';
-import { StorageError, ErrorCode, handleError } from '@common/errors';
+import { Message, MessageUpdateInput } from 'common/types';
+import { StorageError, ErrorCode, handleError } from 'common/errors';
 import { MessageStoreState, StreamingStatus } from './types';
 import { MessagePersistence } from './MessagePersistence';
 

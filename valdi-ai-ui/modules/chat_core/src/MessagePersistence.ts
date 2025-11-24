@@ -11,7 +11,7 @@ import {
   MessageStatus,
   MessageContentPart,
   ToolCall,
-} from '@common/types';
+} from 'common/types';
 import { StorageProvider, defaultStorage } from './StorageProvider';
 
 /**
