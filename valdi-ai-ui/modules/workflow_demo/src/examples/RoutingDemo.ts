@@ -21,7 +21,7 @@ type StateUpdateCallback = (state: Partial<WorkflowExecutionState>) => void;
  * Simulate routing workflow execution
  */
 export async function runRoutingDemo(
-  onStateUpdate: StateUpdateCallback
+  onStateUpdate: StateUpdateCallback,
 ): Promise<string> {
   const steps: WorkflowStep[] = [
     {
@@ -64,7 +64,8 @@ export async function runRoutingDemo(
 
   // Randomly choose a query type for demo
   const queryTypes = ['technical', 'business', 'general'];
-  const selectedType = queryTypes[Math.floor(Math.random() * queryTypes.length)];
+  const selectedType =
+    queryTypes[Math.floor(Math.random() * queryTypes.length)];
 
   classifierStep.status = 'completed';
   classifierStep.output = `Query classified as: ${selectedType.toUpperCase()}. Confidence: 92%. Routing to ${selectedType} specialist.`;

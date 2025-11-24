@@ -5,7 +5,7 @@
  * Provides helpers for managing stream state and processing chunks.
  */
 
-import { Message } from 'common/src/types';
+import { Message } from '@common/types';
 import { StreamEvent, StreamCallback, StreamingStatus } from './types';
 
 /**
@@ -152,7 +152,7 @@ export const StreamUtils = {
    */
   createDebouncedProcessor(
     callback: (content: string, delta: string) => void,
-    delay: number = 16 // ~60fps
+    delay: number = 16, // ~60fps
   ): (delta: string) => void {
     let buffer = '';
     let content = '';
@@ -187,7 +187,11 @@ export const StreamUtils = {
   /**
    * Calculate streaming stats
    */
-  calculateStats(startTime: Date, endTime: Date, tokenCount: number): {
+  calculateStats(
+    startTime: Date,
+    endTime: Date,
+    tokenCount: number,
+  ): {
     duration: number;
     tokensPerSecond: number;
   } {

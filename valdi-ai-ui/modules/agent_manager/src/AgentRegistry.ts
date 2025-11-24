@@ -43,7 +43,9 @@ export class AgentRegistry {
       });
     }
 
-    console.log(`[AgentRegistry] Registered agent: ${agent.name} (${agent.id})`);
+    console.log(
+      `[AgentRegistry] Registered agent: ${agent.name} (${agent.id})`,
+    );
   }
 
   /**
@@ -214,7 +216,9 @@ export const defaultAgentRegistry = new AgentRegistry();
 /**
  * Register default agents
  */
-export function registerDefaultAgents(registry: AgentRegistry = defaultAgentRegistry): void {
+export function registerDefaultAgents(
+  registry: AgentRegistry = defaultAgentRegistry,
+): void {
   // Research Agent
   registry.register({
     id: 'research-agent',

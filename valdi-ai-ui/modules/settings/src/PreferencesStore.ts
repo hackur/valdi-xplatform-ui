@@ -90,7 +90,7 @@ export class PreferencesStore {
    * Get a specific preference value
    */
   async getPreference<K extends keyof AppPreferences>(
-    key: K
+    key: K,
   ): Promise<AppPreferences[K] | undefined> {
     try {
       const preferences = await this.getPreferences();
@@ -106,7 +106,7 @@ export class PreferencesStore {
    */
   async setPreference<K extends keyof AppPreferences>(
     key: K,
-    value: AppPreferences[K]
+    value: AppPreferences[K],
   ): Promise<void> {
     try {
       await this.updatePreferences({ [key]: value } as Partial<AppPreferences>);
@@ -153,7 +153,10 @@ export class PreferencesStore {
   /**
    * Set model for provider
    */
-  async setModelForProvider(provider: AIProvider, model: string): Promise<void> {
+  async setModelForProvider(
+    provider: AIProvider,
+    model: string,
+  ): Promise<void> {
     const key = `${provider}Model` as keyof AppPreferences;
     return this.setPreference(key, model);
   }

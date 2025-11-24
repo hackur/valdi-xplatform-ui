@@ -137,17 +137,17 @@ export const Shadows = {
  * Meaningful names for specific UI components
  */
 export const SemanticShadows = {
-  card: Shadows.sm,              // Cards
-  cardHover: Shadows.md,         // Cards on hover/press
-  button: Shadows.xs,            // Buttons
-  buttonHover: Shadows.sm,       // Buttons on hover/press
-  messageBubble: Shadows.xs,     // Chat message bubbles
-  inputBar: Shadows.sm,          // Input bar
-  modal: Shadows.xxl,            // Modal dialogs
-  dropdown: Shadows.lg,          // Dropdown menus
-  floatingButton: Shadows.md,    // Floating action button
-  navigationBar: Shadows.base,   // Navigation/app bar
-  overlay: Shadows.max,          // Full-screen overlays
+  card: Shadows.sm, // Cards
+  cardHover: Shadows.md, // Cards on hover/press
+  button: Shadows.xs, // Buttons
+  buttonHover: Shadows.sm, // Buttons on hover/press
+  messageBubble: Shadows.xs, // Chat message bubbles
+  inputBar: Shadows.sm, // Input bar
+  modal: Shadows.xxl, // Modal dialogs
+  dropdown: Shadows.lg, // Dropdown menus
+  floatingButton: Shadows.md, // Floating action button
+  navigationBar: Shadows.base, // Navigation/app bar
+  overlay: Shadows.max, // Full-screen overlays
 } as const;
 
 /**
@@ -202,10 +202,40 @@ export const ColoredShadows = {
 
 /**
  * Shadow utility functions
+ *
+ * Helper functions for creating and manipulating shadow styles.
  */
 export const ShadowUtils = {
   /**
    * Create custom shadow with specific parameters
+   *
+   * Provides fine-grained control over shadow appearance.
+   * Automatically calculates elevation from radius if not provided.
+   *
+   * @param color - The shadow color
+   * @param offsetX - Horizontal offset in pixels
+   * @param offsetY - Vertical offset in pixels
+   * @param opacity - Shadow opacity (0-1)
+   * @param radius - Blur radius in pixels
+   * @param elevation - Android elevation (optional, defaults to radius * 2)
+   * @returns A complete ShadowStyle object
+   *
+   * @example
+   * ```typescript
+   * const customShadow = ShadowUtils.custom(
+   *   Colors.primary,
+   *   0,
+   *   4,
+   *   0.3,
+   *   8,
+   *   4
+   * );
+   *
+   * const style = new Style<View>({
+   *   ...customShadow,
+   *   backgroundColor: Colors.surface
+   * });
+   * ```
    */
   custom(
     color: string,
@@ -213,7 +243,7 @@ export const ShadowUtils = {
     offsetY: number,
     opacity: number,
     radius: number,
-    elevation?: number
+    elevation?: number,
   ): ShadowStyle {
     return {
       shadowColor: color,
@@ -225,7 +255,25 @@ export const ShadowUtils = {
   },
 
   /**
-   * Combine multiple shadow styles (iOS only - Android uses elevation)
+   * Combine multiple shadow styles
+   *
+   * Merges multiple shadows by selecting the most prominent shadow for iOS
+   * and the highest elevation for Android.
+   *
+   * @param shadows - Variable number of ShadowStyle objects to combine
+   * @returns A combined ShadowStyle
+   *
+   * @example
+   * ```typescript
+   * const combined = ShadowUtils.combine(
+   *   Shadows.sm,
+   *   ColoredShadows.primaryGlow
+   * );
+   * ```
+   *
+   * @remarks
+   * Note: iOS only supports one shadow per element, so this selects
+   * the shadow with highest opacity. Android uses the maximum elevation.
    */
   combine(...shadows: ShadowStyle[]): ShadowStyle {
     // For Android, use the highest elevation
@@ -233,7 +281,7 @@ export const ShadowUtils = {
 
     // For iOS, we can only use one shadow, so use the most prominent
     const prominentShadow = shadows.reduce((prev, current) =>
-      (current.shadowOpacity ?? 0) > (prev.shadowOpacity ?? 0) ? current : prev
+      (current.shadowOpacity ?? 0) > (prev.shadowOpacity ?? 0) ? current : prev,
     );
 
     return {
@@ -244,6 +292,23 @@ export const ShadowUtils = {
 
   /**
    * Scale shadow intensity
+   *
+   * Multiplies shadow properties by a factor to increase or decrease intensity.
+   * Useful for hover states or emphasis.
+   *
+   * @param shadow - The base shadow style
+   * @param factor - The scaling factor (e.g., 1.5 for 50% more intense)
+   * @returns A scaled ShadowStyle
+   *
+   * @example
+   * ```typescript
+   * // Create a more intense shadow on hover
+   * const baseButton = Shadows.sm;
+   * const hoverButton = ShadowUtils.scale(baseButton, 1.5);
+   *
+   * // Create a more subtle shadow
+   * const subtleShadow = ShadowUtils.scale(Shadows.md, 0.5);
+   * ```
    */
   scale(shadow: ShadowStyle, factor: number): ShadowStyle {
     return {

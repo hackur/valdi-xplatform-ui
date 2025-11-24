@@ -9,9 +9,9 @@ import { NavigationPageComponent } from 'valdi_core/src/Component';
 import { Style } from 'valdi_core/src/Style';
 import { View, ScrollView, Label } from 'valdi_tsx/src/NativeTemplateElements';
 import { NavigationController } from 'valdi_navigation/src/NavigationController';
-import { Colors, Spacing } from 'common/src/theme';
-import { Message } from 'common/src/types';
-import { LoadingSpinner } from 'common/src/components/LoadingSpinner';
+import { Colors, Spacing } from '@common/theme';
+import { Message } from '@common/types';
+import { LoadingSpinner } from '@common/components';
 import { MessageBubble } from './MessageBubble';
 import { InputBar } from './InputBar';
 import { ChatIntegrationService } from './ChatIntegrationService';
@@ -59,13 +59,14 @@ export class ChatViewStreaming extends NavigationPageComponent<
     await this.loadMessages();
 
     // Subscribe to message updates
-    this.unsubscribeMessages = this.props.integrationService.subscribeToMessages(
-      this.props.conversationId,
-      (messages) => {
-        this.setState({ messages, isLoading: false });
-        this.scrollToBottom();
-      },
-    );
+    this.unsubscribeMessages =
+      this.props.integrationService.subscribeToMessages(
+        this.props.conversationId,
+        (messages) => {
+          this.setState({ messages, isLoading: false });
+          this.scrollToBottom();
+        },
+      );
   }
 
   componentWillUnmount(): void {
@@ -113,7 +114,9 @@ export class ChatViewStreaming extends NavigationPageComponent<
         <InputBar
           onSend={this.handleSend}
           disabled={isStreaming}
-          placeholder={isStreaming ? 'AI is responding...' : 'Type a message...'}
+          placeholder={
+            isStreaming ? 'AI is responding...' : 'Type a message...'
+          }
         />
       </view>
     );
@@ -139,7 +142,8 @@ export class ChatViewStreaming extends NavigationPageComponent<
     } catch (error) {
       console.error('[ChatViewStreaming] Load messages error:', error);
       this.setState({
-        error: error instanceof Error ? error.message : 'Failed to load messages',
+        error:
+          error instanceof Error ? error.message : 'Failed to load messages',
         isLoading: false,
       });
     }
@@ -170,7 +174,8 @@ export class ChatViewStreaming extends NavigationPageComponent<
     } catch (error) {
       console.error('[ChatViewStreaming] Send message error:', error);
       this.setState({
-        error: error instanceof Error ? error.message : 'Failed to send message',
+        error:
+          error instanceof Error ? error.message : 'Failed to send message',
         isStreaming: false,
       });
     }

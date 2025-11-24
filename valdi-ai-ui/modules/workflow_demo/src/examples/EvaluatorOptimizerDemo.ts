@@ -20,7 +20,7 @@ type StateUpdateCallback = (state: Partial<WorkflowExecutionState>) => void;
  * Simulate evaluator-optimizer workflow execution
  */
 export async function runEvaluatorOptimizerDemo(
-  onStateUpdate: StateUpdateCallback
+  onStateUpdate: StateUpdateCallback,
 ): Promise<string> {
   const maxIterations = 2; // Limit iterations for demo
   const steps: WorkflowStep[] = [

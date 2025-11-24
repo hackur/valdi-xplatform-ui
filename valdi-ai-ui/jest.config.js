@@ -39,6 +39,8 @@ module.exports = {
     '^@agent_manager/(.*)$': '<rootDir>/modules/agent_manager/src/$1',
     '^@conversation_manager/(.*)$': '<rootDir>/modules/conversation_manager/src/$1',
     '^@model_config/(.*)$': '<rootDir>/modules/model_config/src/$1',
+    '^valdi_core/(.*)$': '<rootDir>/__mocks__/valdi_core/$1',
+    '^valdi_tsx/(.*)$': '<rootDir>/__mocks__/valdi_tsx/$1',
   },
   modulePathIgnorePatterns: [
     '<rootDir>/bazel-',

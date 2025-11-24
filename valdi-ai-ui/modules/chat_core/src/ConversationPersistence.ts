@@ -10,7 +10,7 @@ import {
   ConversationStatus,
   ModelConfig,
   AIProvider,
-} from 'common/src/types';
+} from '@common/types';
 import { StorageProvider, defaultStorage } from './StorageProvider';
 
 /**
@@ -76,7 +76,9 @@ export class ConversationPersistence {
   /**
    * Serialize a conversation for storage
    */
-  private serializeConversation(conversation: Conversation): SerializedConversation {
+  private serializeConversation(
+    conversation: Conversation,
+  ): SerializedConversation {
     return {
       id: conversation.id,
       title: conversation.title,
@@ -97,7 +99,9 @@ export class ConversationPersistence {
   /**
    * Deserialize a conversation from storage
    */
-  private deserializeConversation(serialized: SerializedConversation): Conversation {
+  private deserializeConversation(
+    serialized: SerializedConversation,
+  ): Conversation {
     return {
       id: serialized.id,
       title: serialized.title,
@@ -105,7 +109,9 @@ export class ConversationPersistence {
       modelConfig: serialized.modelConfig,
       createdAt: new Date(serialized.createdAt),
       updatedAt: new Date(serialized.updatedAt),
-      lastMessageAt: serialized.lastMessageAt ? new Date(serialized.lastMessageAt) : undefined,
+      lastMessageAt: serialized.lastMessageAt
+        ? new Date(serialized.lastMessageAt)
+        : undefined,
       status: serialized.status,
       isPinned: serialized.isPinned,
       tags: serialized.tags,
@@ -126,18 +132,27 @@ export class ConversationPersistence {
       await this.saveConversations(conversations);
 
       if (this.debug) {
-        console.log(`[ConversationPersistence] Saved conversation ${conversation.id}`);
+        console.log(
+          `[ConversationPersistence] Saved conversation ${conversation.id}`,
+        );
       }
     } catch (error) {
-      console.error('[ConversationPersistence] Error saving conversation:', error);
-      throw new Error(`Failed to save conversation: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      console.error(
+        '[ConversationPersistence] Error saving conversation:',
+        error,
+      );
+      throw new Error(
+        `Failed to save conversation: ${error instanceof Error ? error.message : 'Unknown error'}`,
+      );
     }
   }
 
   /**
    * Save all conversations
    */
-  async saveConversations(conversations: Record<string, Conversation>): Promise<void> {
+  async saveConversations(
+    conversations: Record<string, Conversation>,
+  ): Promise<void> {
     try {
       const serialized: Record<string, SerializedConversation> = {};
 
@@ -149,18 +164,27 @@ export class ConversationPersistence {
       await this.storage.setItem(this.STORAGE_KEY, data);
 
       if (this.debug) {
-        console.log(`[ConversationPersistence] Saved ${Object.keys(conversations).length} conversations`);
+        console.log(
+          `[ConversationPersistence] Saved ${Object.keys(conversations).length} conversations`,
+        );
       }
     } catch (error) {
-      console.error('[ConversationPersistence] Error saving conversations:', error);
-      throw new Error(`Failed to save conversations: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      console.error(
+        '[ConversationPersistence] Error saving conversations:',
+        error,
+      );
+      throw new Error(
+        `Failed to save conversations: ${error instanceof Error ? error.message : 'Unknown error'}`,
+      );
     }
   }
 
   /**
    * Save conversations with debouncing (for auto-persist)
    */
-  async saveConversationsDebounced(conversations: Record<string, Conversation>): Promise<void> {
+  async saveConversationsDebounced(
+    conversations: Record<string, Conversation>,
+  ): Promise<void> {
     // Clear existing timer
     if (this.debounceTimer) {
       clearTimeout(this.debounceTimer);
@@ -190,12 +214,15 @@ export class ConversationPersistence {
 
       if (!data) {
         if (this.debug) {
-          console.log('[ConversationPersistence] No conversations found in storage');
+          console.log(
+            '[ConversationPersistence] No conversations found in storage',
+          );
         }
         return {};
       }
 
-      const serialized: Record<string, SerializedConversation> = JSON.parse(data);
+      const serialized: Record<string, SerializedConversation> =
+        JSON.parse(data);
       const conversations: Record<string, Conversation> = {};
 
       Object.entries(serialized).forEach(([id, conv]) => {
@@ -203,12 +230,17 @@ export class ConversationPersistence {
       });
 
       if (this.debug) {
-        console.log(`[ConversationPersistence] Loaded ${Object.keys(conversations).length} conversations`);
+        console.log(
+          `[ConversationPersistence] Loaded ${Object.keys(conversations).length} conversations`,
+        );
       }
 
       return conversations;
     } catch (error) {
-      console.error('[ConversationPersistence] Error loading conversations:', error);
+      console.error(
+        '[ConversationPersistence] Error loading conversations:',
+        error,
+      );
       // Return empty object on error to prevent crashes
       return {};
     }
@@ -222,7 +254,10 @@ export class ConversationPersistence {
       const conversations = await this.loadConversations();
       return conversations[conversationId] || null;
     } catch (error) {
-      console.error('[ConversationPersistence] Error loading conversation:', error);
+      console.error(
+        '[ConversationPersistence] Error loading conversation:',
+        error,
+      );
       return null;
     }
   }
@@ -236,7 +271,9 @@ export class ConversationPersistence {
 
       if (!(conversationId in conversations)) {
         if (this.debug) {
-          console.log(`[ConversationPersistence] Conversation ${conversationId} not found`);
+          console.log(
+            `[ConversationPersistence] Conversation ${conversationId} not found`,
+          );
         }
         return;
       }
@@ -245,11 +282,18 @@ export class ConversationPersistence {
       await this.saveConversations(conversations);
 
       if (this.debug) {
-        console.log(`[ConversationPersistence] Deleted conversation ${conversationId}`);
+        console.log(
+          `[ConversationPersistence] Deleted conversation ${conversationId}`,
+        );
       }
     } catch (error) {
-      console.error('[ConversationPersistence] Error deleting conversation:', error);
-      throw new Error(`Failed to delete conversation: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      console.error(
+        '[ConversationPersistence] Error deleting conversation:',
+        error,
+      );
+      throw new Error(
+        `Failed to delete conversation: ${error instanceof Error ? error.message : 'Unknown error'}`,
+      );
     }
   }
 
@@ -267,11 +311,18 @@ export class ConversationPersistence {
       await this.saveConversations(conversations);
 
       if (this.debug) {
-        console.log(`[ConversationPersistence] Deleted ${conversationIds.length} conversations`);
+        console.log(
+          `[ConversationPersistence] Deleted ${conversationIds.length} conversations`,
+        );
       }
     } catch (error) {
-      console.error('[ConversationPersistence] Error deleting conversations:', error);
-      throw new Error(`Failed to delete conversations: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      console.error(
+        '[ConversationPersistence] Error deleting conversations:',
+        error,
+      );
+      throw new Error(
+        `Failed to delete conversations: ${error instanceof Error ? error.message : 'Unknown error'}`,
+      );
     }
   }
 
@@ -283,11 +334,18 @@ export class ConversationPersistence {
       await this.storage.removeItem(this.STORAGE_KEY);
 
       if (this.debug) {
-        console.log('[ConversationPersistence] Cleared all persisted conversations');
+        console.log(
+          '[ConversationPersistence] Cleared all persisted conversations',
+        );
       }
     } catch (error) {
-      console.error('[ConversationPersistence] Error clearing all conversations:', error);
-      throw new Error(`Failed to clear conversations: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      console.error(
+        '[ConversationPersistence] Error clearing all conversations:',
+        error,
+      );
+      throw new Error(
+        `Failed to clear conversations: ${error instanceof Error ? error.message : 'Unknown error'}`,
+      );
     }
   }
 
@@ -299,7 +357,10 @@ export class ConversationPersistence {
       const conversations = await this.loadConversations();
       return Object.keys(conversations).length;
     } catch (error) {
-      console.error('[ConversationPersistence] Error getting conversation count:', error);
+      console.error(
+        '[ConversationPersistence] Error getting conversation count:',
+        error,
+      );
       return 0;
     }
   }
@@ -312,7 +373,10 @@ export class ConversationPersistence {
       const data = await this.storage.getItem(this.STORAGE_KEY);
       return data !== null;
     } catch (error) {
-      console.error('[ConversationPersistence] Error checking conversations:', error);
+      console.error(
+        '[ConversationPersistence] Error checking conversations:',
+        error,
+      );
       return false;
     }
   }
@@ -331,17 +395,26 @@ export class ConversationPersistence {
 
       return JSON.stringify(serialized, null, 2);
     } catch (error) {
-      console.error('[ConversationPersistence] Error exporting conversations:', error);
-      throw new Error(`Failed to export conversations: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      console.error(
+        '[ConversationPersistence] Error exporting conversations:',
+        error,
+      );
+      throw new Error(
+        `Failed to export conversations: ${error instanceof Error ? error.message : 'Unknown error'}`,
+      );
     }
   }
 
   /**
    * Import conversations from JSON
    */
-  async importConversations(jsonData: string, merge: boolean = false): Promise<number> {
+  async importConversations(
+    jsonData: string,
+    merge: boolean = false,
+  ): Promise<number> {
     try {
-      const serialized: Record<string, SerializedConversation> = JSON.parse(jsonData);
+      const serialized: Record<string, SerializedConversation> =
+        JSON.parse(jsonData);
       const conversations: Record<string, Conversation> = {};
 
       Object.entries(serialized).forEach(([id, conv]) => {
@@ -358,20 +431,32 @@ export class ConversationPersistence {
         return Object.keys(conversations).length;
       }
     } catch (error) {
-      console.error('[ConversationPersistence] Error importing conversations:', error);
-      throw new Error(`Failed to import conversations: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      console.error(
+        '[ConversationPersistence] Error importing conversations:',
+        error,
+      );
+      throw new Error(
+        `Failed to import conversations: ${error instanceof Error ? error.message : 'Unknown error'}`,
+      );
     }
   }
 
   /**
    * Get conversations by status
    */
-  async getConversationsByStatus(status: ConversationStatus): Promise<Conversation[]> {
+  async getConversationsByStatus(
+    status: ConversationStatus,
+  ): Promise<Conversation[]> {
     try {
       const conversations = await this.loadConversations();
-      return Object.values(conversations).filter((conv) => conv.status === status);
+      return Object.values(conversations).filter(
+        (conv) => conv.status === status,
+      );
     } catch (error) {
-      console.error('[ConversationPersistence] Error getting conversations by status:', error);
+      console.error(
+        '[ConversationPersistence] Error getting conversations by status:',
+        error,
+      );
       return [];
     }
   }
@@ -379,12 +464,19 @@ export class ConversationPersistence {
   /**
    * Get conversations by provider
    */
-  async getConversationsByProvider(provider: AIProvider): Promise<Conversation[]> {
+  async getConversationsByProvider(
+    provider: AIProvider,
+  ): Promise<Conversation[]> {
     try {
       const conversations = await this.loadConversations();
-      return Object.values(conversations).filter((conv) => conv.modelConfig.provider === provider);
+      return Object.values(conversations).filter(
+        (conv) => conv.modelConfig.provider === provider,
+      );
     } catch (error) {
-      console.error('[ConversationPersistence] Error getting conversations by provider:', error);
+      console.error(
+        '[ConversationPersistence] Error getting conversations by provider:',
+        error,
+      );
       return [];
     }
   }
@@ -403,7 +495,10 @@ export class ConversationPersistence {
           return bTime - aTime;
         });
     } catch (error) {
-      console.error('[ConversationPersistence] Error getting pinned conversations:', error);
+      console.error(
+        '[ConversationPersistence] Error getting pinned conversations:',
+        error,
+      );
       return [];
     }
   }
@@ -418,11 +513,15 @@ export class ConversationPersistence {
 
       return Object.values(conversations).filter((conv) => {
         const matchesTitle = conv.title.toLowerCase().includes(lowerQuery);
-        const matchesPrompt = conv.systemPrompt?.toLowerCase().includes(lowerQuery) || false;
+        const matchesPrompt =
+          conv.systemPrompt?.toLowerCase().includes(lowerQuery) || false;
         return matchesTitle || matchesPrompt;
       });
     } catch (error) {
-      console.error('[ConversationPersistence] Error searching conversations:', error);
+      console.error(
+        '[ConversationPersistence] Error searching conversations:',
+        error,
+      );
       return [];
     }
   }
@@ -453,13 +552,23 @@ export class ConversationPersistence {
 
       return {
         conversationCount: conversationList.length,
-        totalMessageCount: conversationList.reduce((sum, conv) => sum + conv.messageCount, 0),
-        activeConversations: conversationList.filter((c) => c.status === 'active').length,
-        archivedConversations: conversationList.filter((c) => c.status === 'archived').length,
+        totalMessageCount: conversationList.reduce(
+          (sum, conv) => sum + conv.messageCount,
+          0,
+        ),
+        activeConversations: conversationList.filter(
+          (c) => c.status === 'active',
+        ).length,
+        archivedConversations: conversationList.filter(
+          (c) => c.status === 'archived',
+        ).length,
         pinnedConversations: conversationList.filter((c) => c.isPinned).length,
       };
     } catch (error) {
-      console.error('[ConversationPersistence] Error getting storage stats:', error);
+      console.error(
+        '[ConversationPersistence] Error getting storage stats:',
+        error,
+      );
       return {
         conversationCount: 0,
         totalMessageCount: 0,

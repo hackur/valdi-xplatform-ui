@@ -117,8 +117,8 @@ export class TextInput extends Component<TextInputProps, TextInputState> {
     const borderColor = isFocused
       ? Colors.primary
       : disabled
-      ? Colors.gray300
-      : Colors.border;
+        ? Colors.gray300
+        : Colors.border;
 
     return (
       <view

@@ -6,15 +6,11 @@
 
 import { StatefulComponent } from 'valdi_core/src/Component';
 import { Style } from 'valdi_core/src/Style';
-import {
-  View,
-  Label,
-  ScrollView,
-} from 'valdi_tsx/src/NativeTemplateElements';
+import { View, Label, ScrollView } from 'valdi_tsx/src/NativeTemplateElements';
 import { NavigationController } from 'valdi_navigation/src/NavigationController';
-import { Colors, Fonts, Spacing } from 'common/src/theme';
-import { Card } from 'common/src/components/Card';
-import { LoadingSpinner } from 'common/src/components/LoadingSpinner';
+import { Colors, Fonts, Spacing } from '@common/theme';
+import { Card } from '@common/components';
+import { LoadingSpinner } from '@common/components';
 import { ModelRegistry } from './ModelRegistry';
 import { ModelDefinition, ModelSelection, ProviderType } from './types';
 
@@ -86,8 +82,13 @@ export class ModelSelectorView extends StatefulComponent<
   }
 
   onRender() {
-    const { models, modelsByProvider, isLoading, selectedModelId, selectedCustomProviderId } =
-      this.state;
+    const {
+      models,
+      modelsByProvider,
+      isLoading,
+      selectedModelId,
+      selectedCustomProviderId,
+    } = this.state;
 
     return (
       <view style={styles.container}>
@@ -115,96 +116,127 @@ export class ModelSelectorView extends StatefulComponent<
         ) : (
           <scrollView style={styles.scrollView}>
             <view style={styles.content}>
-              {Array.from(modelsByProvider.entries()).map(([providerName, providerModels]) => (
-                <view key={providerName} style={styles.providerSection}>
-                  {/* Provider Header */}
-                  <label value={providerName} style={styles.providerTitle} />
+              {Array.from(modelsByProvider.entries()).map(
+                ([providerName, providerModels]) => (
+                  <view key={providerName} style={styles.providerSection}>
+                    {/* Provider Header */}
+                    <label value={providerName} style={styles.providerTitle} />
 
-                  {/* Models */}
-                  {providerModels.map((model) => {
-                    const isSelected =
-                      model.id === selectedModelId &&
-                      model.customProviderId === selectedCustomProviderId;
+                    {/* Models */}
+                    {providerModels.map((model) => {
+                      const isSelected =
+                        model.id === selectedModelId &&
+                        model.customProviderId === selectedCustomProviderId;
 
-                    return (
-                      <view
-                        key={`${model.id}_${model.customProviderId || 'builtin'}`}
-                        onTap={() => this.handleModelSelect(model)}
-                      >
-                        <Card style={isSelected ? styles.modelCardSelected : styles.modelCard}>
-                          <view style={styles.modelContent}>
-                            {/* Model Name */}
-                            <view style={styles.modelHeader}>
-                              <label value={model.name} style={styles.modelName} />
-                              {isSelected && <label value="✓" style={styles.selectedIcon} />}
-                            </view>
-
-                            {/* Model ID (for custom providers) */}
-                            {model.customProviderId && (
-                              <label
-                                value={`Model ID: ${model.id}`}
-                                style={styles.modelId}
-                              />
-                            )}
-
-                            {/* Capabilities */}
-                            <view style={styles.capabilities}>
-                              {model.capabilities.streaming && (
-                                <view style={styles.badge}>
-                                  <label value="Streaming" style={styles.badgeText} />
-                                </view>
-                              )}
-                              {model.capabilities.functionCalling && (
-                                <view style={styles.badge}>
-                                  <label value="Tools" style={styles.badgeText} />
-                                </view>
-                              )}
-                              {model.capabilities.vision && (
-                                <view style={styles.badge}>
-                                  <label value="Vision" style={styles.badgeText} />
-                                </view>
-                              )}
-                              {model.capabilities.jsonMode && (
-                                <view style={styles.badge}>
-                                  <label value="JSON" style={styles.badgeText} />
-                                </view>
-                              )}
-                            </view>
-
-                            {/* Model Stats */}
-                            <view style={styles.stats}>
-                              <label
-                                value={`Context: ${this.formatTokens(model.capabilities.maxTokens)}`}
-                                style={styles.statText}
-                              />
-                              {model.maxOutputTokens && (
-                                <label value="•" style={styles.statSeparator} />
-                              )}
-                              {model.maxOutputTokens && (
+                      return (
+                        <view
+                          key={`${model.id}_${model.customProviderId || 'builtin'}`}
+                          onTap={() => this.handleModelSelect(model)}
+                        >
+                          <Card
+                            style={
+                              isSelected
+                                ? styles.modelCardSelected
+                                : styles.modelCard
+                            }
+                          >
+                            <view style={styles.modelContent}>
+                              {/* Model Name */}
+                              <view style={styles.modelHeader}>
                                 <label
-                                  value={`Output: ${this.formatTokens(model.maxOutputTokens)}`}
-                                  style={styles.statText}
+                                  value={model.name}
+                                  style={styles.modelName}
+                                />
+                                {isSelected && (
+                                  <label
+                                    value="✓"
+                                    style={styles.selectedIcon}
+                                  />
+                                )}
+                              </view>
+
+                              {/* Model ID (for custom providers) */}
+                              {model.customProviderId && (
+                                <label
+                                  value={`Model ID: ${model.id}`}
+                                  style={styles.modelId}
                                 />
                               )}
-                            </view>
 
-                            {/* Pricing (for built-in models) */}
-                            {model.costPerInputToken !== undefined &&
-                              model.costPerOutputToken !== undefined && (
-                                <view style={styles.pricing}>
+                              {/* Capabilities */}
+                              <view style={styles.capabilities}>
+                                {model.capabilities.streaming && (
+                                  <view style={styles.badge}>
+                                    <label
+                                      value="Streaming"
+                                      style={styles.badgeText}
+                                    />
+                                  </view>
+                                )}
+                                {model.capabilities.functionCalling && (
+                                  <view style={styles.badge}>
+                                    <label
+                                      value="Tools"
+                                      style={styles.badgeText}
+                                    />
+                                  </view>
+                                )}
+                                {model.capabilities.vision && (
+                                  <view style={styles.badge}>
+                                    <label
+                                      value="Vision"
+                                      style={styles.badgeText}
+                                    />
+                                  </view>
+                                )}
+                                {model.capabilities.jsonMode && (
+                                  <view style={styles.badge}>
+                                    <label
+                                      value="JSON"
+                                      style={styles.badgeText}
+                                    />
+                                  </view>
+                                )}
+                              </view>
+
+                              {/* Model Stats */}
+                              <view style={styles.stats}>
+                                <label
+                                  value={`Context: ${this.formatTokens(model.capabilities.maxTokens)}`}
+                                  style={styles.statText}
+                                />
+                                {model.maxOutputTokens && (
                                   <label
-                                    value={`$${model.costPerInputToken}/1K in • $${model.costPerOutputToken}/1K out`}
-                                    style={styles.pricingText}
+                                    value="•"
+                                    style={styles.statSeparator}
                                   />
-                                </view>
-                              )}
-                          </view>
-                        </Card>
-                      </view>
-                    );
-                  })}
-                </view>
-              ))}
+                                )}
+                                {model.maxOutputTokens && (
+                                  <label
+                                    value={`Output: ${this.formatTokens(model.maxOutputTokens)}`}
+                                    style={styles.statText}
+                                  />
+                                )}
+                              </view>
+
+                              {/* Pricing (for built-in models) */}
+                              {model.costPerInputToken !== undefined &&
+                                model.costPerOutputToken !== undefined && (
+                                  <view style={styles.pricing}>
+                                    <label
+                                      value={`$${model.costPerInputToken}/1K in • $${model.costPerOutputToken}/1K out`}
+                                      style={styles.pricingText}
+                                    />
+                                  </view>
+                                )}
+                            </view>
+                          </Card>
+                        </view>
+                      );
+                    })}
+                  </view>
+                ),
+              )}
             </view>
           </scrollView>
         )}
@@ -236,12 +268,14 @@ export class ModelSelectorView extends StatefulComponent<
           providerName = provider?.name || 'Custom Provider';
         } else {
           // Built-in provider
-          const providerNames: Record<Exclude<ProviderType, 'custom-openai-compatible'>, string> =
-            {
-              openai: 'OpenAI',
-              anthropic: 'Anthropic',
-              google: 'Google AI',
-            };
+          const providerNames: Record<
+            Exclude<ProviderType, 'custom-openai-compatible'>,
+            string
+          > = {
+            openai: 'OpenAI',
+            anthropic: 'Anthropic',
+            google: 'Google AI',
+          };
           providerName = providerNames[model.provider];
         }
 

@@ -14,7 +14,12 @@ import { Colors, Spacing, SemanticShadows, BorderRadius } from '../theme';
 /**
  * Button Variants
  */
-export type ButtonVariant = 'primary' | 'secondary' | 'outline' | 'ghost' | 'danger';
+export type ButtonVariant =
+  | 'primary'
+  | 'secondary'
+  | 'outline'
+  | 'ghost'
+  | 'danger';
 
 /**
  * Button Sizes
@@ -145,10 +150,14 @@ export class Button extends Component<ButtonProps> {
   private getFontSize(): number {
     const { size } = this.viewModel;
     switch (size) {
-      case 'small': return 14;
-      case 'medium': return 16;
-      case 'large': return 18;
-      default: return 16;
+      case 'small':
+        return 14;
+      case 'medium':
+        return 16;
+      case 'large':
+        return 18;
+      default:
+        return 16;
     }
   }
 
@@ -165,15 +174,17 @@ export class Button extends Component<ButtonProps> {
     borderColor: string,
     padding: { paddingHorizontal: number; paddingVertical: number },
     fullWidth: boolean | undefined,
-    customStyle?: Record<string, unknown>
+    customStyle?: Record<string, unknown>,
   ): Style<View> {
     return new Style<View>({
       ...styles.container,
       backgroundColor,
-      ...(borderColor !== Colors.transparent ? {
-        borderWidth: 2,
-        borderColor: borderColor,
-      } : {}),
+      ...(borderColor !== Colors.transparent
+        ? {
+            borderWidth: 2,
+            borderColor: borderColor,
+          }
+        : {}),
       ...padding,
       width: (fullWidth ?? false) ? '100%' : undefined,
       ...SemanticShadows.button,
@@ -189,12 +200,7 @@ export class Button extends Component<ButtonProps> {
   }
 
   onRender() {
-    const {
-      title,
-      loading,
-      fullWidth,
-      style: customStyle,
-    } = this.viewModel;
+    const { title, loading, fullWidth, style: customStyle } = this.viewModel;
 
     const backgroundColor = this.getBackgroundColor();
     const textColor = this.getTextColor();
@@ -202,26 +208,23 @@ export class Button extends Component<ButtonProps> {
     const padding = this.getPadding();
     const fontSize = this.getFontSize();
 
-    const containerStyle = this.getContainerStyle(backgroundColor, borderColor, padding, fullWidth, customStyle);
+    const containerStyle = this.getContainerStyle(
+      backgroundColor,
+      borderColor,
+      padding,
+      fullWidth,
+      customStyle,
+    );
     const labelStyle = this.getLabelStyle(fontSize, textColor);
 
     return (
-      <view
-        style={containerStyle}
-        onTap={this.handleTap}
-      >
+      <view style={containerStyle} onTap={this.handleTap}>
         {loading ? (
           <view style={styles.loadingContainer}>
-            <label
-              value="..."
-              style={labelStyle}
-            />
+            <label value="..." style={labelStyle} />
           </view>
         ) : (
-          <label
-            value={title}
-            style={labelStyle}
-          />
+          <label value={title} style={labelStyle} />
         )}
       </view>
     );

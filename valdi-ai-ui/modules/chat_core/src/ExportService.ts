@@ -5,7 +5,12 @@
  * Supports multiple formats: JSON, Markdown, and plain text.
  */
 
-import { Conversation, Message, MessageUtils, ConversationUtils } from 'common/src/types';
+import {
+  Conversation,
+  Message,
+  MessageUtils,
+  ConversationUtils,
+} from '@common/types';
 import { MessagePersistence } from './MessagePersistence';
 import { ConversationPersistence } from './ConversationPersistence';
 
@@ -80,10 +85,11 @@ export class ExportService {
 
   constructor(
     messagePersistence?: MessagePersistence,
-    conversationPersistence?: ConversationPersistence
+    conversationPersistence?: ConversationPersistence,
   ) {
     this.messagePersistence = messagePersistence || new MessagePersistence();
-    this.conversationPersistence = conversationPersistence || new ConversationPersistence();
+    this.conversationPersistence =
+      conversationPersistence || new ConversationPersistence();
   }
 
   /**
@@ -91,7 +97,7 @@ export class ExportService {
    */
   async exportConversation(
     conversationId: string,
-    options: Partial<ExportOptions> = {}
+    options: Partial<ExportOptions> = {},
   ): Promise<ExportResult> {
     const defaults: ExportOptions = {
       format: 'json',
@@ -105,7 +111,8 @@ export class ExportService {
     const config = { ...defaults, ...options };
 
     // Load conversation and messages
-    const conversation = await this.conversationPersistence.loadConversation(conversationId);
+    const conversation =
+      await this.conversationPersistence.loadConversation(conversationId);
     if (!conversation) {
       throw new Error(`Conversation ${conversationId} not found`);
     }
@@ -153,7 +160,7 @@ export class ExportService {
    */
   async exportConversations(
     conversationIds: string[],
-    options: Partial<ExportOptions> = {}
+    options: Partial<ExportOptions> = {},
   ): Promise<ExportResult> {
     const config: ExportOptions = {
       format: 'json',
@@ -167,10 +174,11 @@ export class ExportService {
 
     const exports = await Promise.all(
       conversationIds.map(async (id) => {
-        const conversation = await this.conversationPersistence.loadConversation(id);
+        const conversation =
+          await this.conversationPersistence.loadConversation(id);
         const messages = await this.messagePersistence.loadMessages(id);
         return { conversation, messages };
-      })
+      }),
     );
 
     const validExports = exports.filter((e) => e.conversation !== null);
@@ -199,9 +207,10 @@ export class ExportService {
         }
       });
 
-      const separator = config.format === 'markdown'
-        ? '\n\n---\n\n'
-        : '\n\n' + '='.repeat(80) + '\n\n';
+      const separator =
+        config.format === 'markdown'
+          ? '\n\n---\n\n'
+          : '\n\n' + '='.repeat(80) + '\n\n';
 
       data = parts.join(separator);
       filename = `valdi-conversations-${Date.now()}.${config.format === 'markdown' ? 'md' : 'txt'}`;
@@ -222,7 +231,7 @@ export class ExportService {
   private exportToJSON(
     conversation: Conversation,
     messages: Message[],
-    options: ExportOptions
+    options: ExportOptions,
   ): string {
     const data: Record<string, unknown> = {
       conversation: {
@@ -242,11 +251,13 @@ export class ExportService {
     };
 
     if (options.includeSystemPrompt && conversation.systemPrompt) {
-      (data.conversation as Record<string, unknown>).systemPrompt = conversation.systemPrompt;
+      (data.conversation as Record<string, unknown>).systemPrompt =
+        conversation.systemPrompt;
     }
 
     if (options.includeModelConfig) {
-      (data.conversation as Record<string, unknown>).modelConfig = conversation.modelConfig;
+      (data.conversation as Record<string, unknown>).modelConfig =
+        conversation.modelConfig;
     }
 
     if (options.includeMetadata) {
@@ -273,7 +284,7 @@ export class ExportService {
   private exportToMarkdown(
     conversation: Conversation,
     messages: Message[],
-    options: ExportOptions
+    options: ExportOptions,
   ): string {
     const lines: string[] = [];
 
@@ -288,7 +299,9 @@ export class ExportService {
       lines.push(`- **Created**: ${conversation.createdAt.toLocaleString()}`);
       lines.push(`- **Updated**: ${conversation.updatedAt.toLocaleString()}`);
       if (conversation.lastMessageAt) {
-        lines.push(`- **Last Message**: ${conversation.lastMessageAt.toLocaleString()}`);
+        lines.push(
+          `- **Last Message**: ${conversation.lastMessageAt.toLocaleString()}`,
+        );
       }
       lines.push(`- **Messages**: ${conversation.messageCount}`);
       lines.push(`- **Status**: ${conversation.status}`);
@@ -305,7 +318,9 @@ export class ExportService {
       lines.push(`- **Provider**: ${conversation.modelConfig.provider}`);
       lines.push(`- **Model**: ${conversation.modelConfig.modelId}`);
       if (conversation.modelConfig.temperature !== undefined) {
-        lines.push(`- **Temperature**: ${conversation.modelConfig.temperature}`);
+        lines.push(
+          `- **Temperature**: ${conversation.modelConfig.temperature}`,
+        );
       }
       if (conversation.modelConfig.maxTokens !== undefined) {
         lines.push(`- **Max Tokens**: ${conversation.modelConfig.maxTokens}`);
@@ -336,7 +351,9 @@ export class ExportService {
         tool: '🔧',
       }[message.role];
 
-      lines.push(`### ${roleEmoji} ${message.role.charAt(0).toUpperCase() + message.role.slice(1)}`);
+      lines.push(
+        `### ${roleEmoji} ${message.role.charAt(0).toUpperCase() + message.role.slice(1)}`,
+      );
       lines.push('');
 
       // Timestamp
@@ -346,9 +363,10 @@ export class ExportService {
       }
 
       // Content
-      const content = typeof message.content === 'string'
-        ? message.content
-        : MessageUtils.getTextContent(message);
+      const content =
+        typeof message.content === 'string'
+          ? message.content
+          : MessageUtils.getTextContent(message);
 
       lines.push(content);
       lines.push('');
@@ -388,7 +406,7 @@ export class ExportService {
   private exportToText(
     conversation: Conversation,
     messages: Message[],
-    options: ExportOptions
+    options: ExportOptions,
   ): string {
     const lines: string[] = [];
 
@@ -441,9 +459,10 @@ export class ExportService {
 
       lines.push('');
 
-      const content = typeof message.content === 'string'
-        ? message.content
-        : MessageUtils.getTextContent(message);
+      const content =
+        typeof message.content === 'string'
+          ? message.content
+          : MessageUtils.getTextContent(message);
 
       lines.push(content);
       lines.push('');
@@ -497,7 +516,8 @@ export class ExportService {
             status: conversation.metadata?.status || 'active',
             isPinned: conversation.metadata?.isPinned || false,
             tags: conversation.metadata?.tags || [],
-            messageCount: conversation.metadata?.messageCount || messages.length,
+            messageCount:
+              conversation.metadata?.messageCount || messages.length,
             tokenCount: conversation.metadata?.tokenCount,
             metadata: conversation.metadata?.custom,
           };
@@ -517,13 +537,20 @@ export class ExportService {
           }));
 
           // Save to persistence
-          await this.conversationPersistence.saveConversation(restoredConversation);
-          await this.messagePersistence.saveMessages(conversation.id, restoredMessages);
+          await this.conversationPersistence.saveConversation(
+            restoredConversation,
+          );
+          await this.messagePersistence.saveMessages(
+            conversation.id,
+            restoredMessages,
+          );
 
           conversationCount++;
           messageCount += restoredMessages.length;
         } catch (error) {
-          errors.push(`Failed to import conversation: ${error instanceof Error ? error.message : 'Unknown error'}`);
+          errors.push(
+            `Failed to import conversation: ${error instanceof Error ? error.message : 'Unknown error'}`,
+          );
         }
       }
 
@@ -536,7 +563,9 @@ export class ExportService {
       return {
         conversationCount: 0,
         messageCount: 0,
-        errors: [`Failed to parse JSON: ${error instanceof Error ? error.message : 'Unknown error'}`],
+        errors: [
+          `Failed to parse JSON: ${error instanceof Error ? error.message : 'Unknown error'}`,
+        ],
       };
     }
   }
@@ -573,7 +602,9 @@ export class ExportService {
       document.body.removeChild(link);
       URL.revokeObjectURL(url);
     } catch (error) {
-      throw new Error(`Failed to download export: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      throw new Error(
+        `Failed to download export: ${error instanceof Error ? error.message : 'Unknown error'}`,
+      );
     }
   }
 
@@ -588,7 +619,9 @@ export class ExportService {
     try {
       await navigator.clipboard.writeText(result.data);
     } catch (error) {
-      throw new Error(`Failed to copy to clipboard: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      throw new Error(
+        `Failed to copy to clipboard: ${error instanceof Error ? error.message : 'Unknown error'}`,
+      );
     }
   }
 }

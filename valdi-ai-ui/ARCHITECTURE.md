@@ -17,6 +17,7 @@ Valdi AI UI follows a modular, layered architecture with strict separation of co
 
 ## System Overview
 
+### Layered Architecture
 ```
 ┌─────────────────────────────────────────────────────────────┐
 │                     Presentation Layer                       │
@@ -42,6 +43,82 @@ Valdi AI UI follows a modular, layered architecture with strict separation of co
 │                 Persistence Layer                            │
 │      (StorageProvider, MessagePersistence, etc.)             │
 └─────────────────────────────────────────────────────────────┘
+```
+
+### System Architecture Diagram
+
+```mermaid
+graph TB
+    subgraph UI["UI Layer (Valdi Native)"]
+        ChatUI["ChatViewStreaming<br/>ConversationListConnected"]
+        SettingsUI["SettingsScreen"]
+        ToolsDemoUI["ToolsDemoScreen"]
+        WorkflowDemoUI["WorkflowDemoScreen"]
+    end
+
+    subgraph Integration["Integration Layer"]
+        ChatIntegration["ChatIntegrationService<br/>SOLID Coordinator"]
+    end
+
+    subgraph Services["Service Layer"]
+        ChatService["ChatService<br/>Streaming & Tool Calling"]
+        AgentRegistry["AgentRegistry<br/>Agent Definitions"]
+        WorkflowEngine["WorkflowEngine<br/>Multi-agent Orchestration"]
+        ModelRegistry["ModelRegistry<br/>Provider Management"]
+    end
+
+    subgraph Storage["Storage Layer"]
+        MessageStore["MessageStore<br/>Observer Pattern"]
+        ConversationStore["ConversationStore<br/>Observer Pattern"]
+        CustomProviderStore["CustomProviderStore"]
+    end
+
+    subgraph Persistence["Persistence Layer"]
+        StorageProvider["StorageProvider Interface<br/>LocalStorage/Memory"]
+        MessagePersistence["MessagePersistence"]
+        ConversationPersistence["ConversationPersistence"]
+    end
+
+    subgraph External["External Services"]
+        OpenAI["OpenAI API"]
+        Anthropic["Anthropic API"]
+        Google["Google API"]
+        ValdiFramework["Valdi Framework<br/>Components & Navigation"]
+    end
+
+    ChatUI --> ChatIntegration
+    SettingsUI --> ChatIntegration
+    ToolsDemoUI --> ChatIntegration
+    WorkflowDemoUI --> ChatIntegration
+
+    ChatIntegration --> ChatService
+    ChatIntegration --> MessageStore
+    ChatIntegration --> ConversationStore
+
+    ChatService --> AgentRegistry
+    ChatService --> ModelRegistry
+    ChatService --> OpenAI
+    ChatService --> Anthropic
+    ChatService --> Google
+
+    AgentRegistry --> WorkflowEngine
+    WorkflowEngine --> ChatService
+
+    MessageStore --> MessagePersistence
+    ConversationStore --> ConversationPersistence
+    MessagePersistence --> StorageProvider
+    ConversationPersistence --> StorageProvider
+
+    UI --> ValdiFramework
+    Integration --> ValdiFramework
+    Services --> ValdiFramework
+
+    style UI fill:#e1f5ff
+    style Integration fill:#fff3e0
+    style Services fill:#f3e5f5
+    style Storage fill:#e8f5e9
+    style Persistence fill:#fce4ec
+    style External fill:#f1f8e9
 ```
 
 ---
@@ -276,6 +353,102 @@ modules/
 └── main_app/              # Main application entry
 ```
 
+### Module Dependencies Graph
+
+```mermaid
+graph LR
+    subgraph valdi["Valdi Framework"]
+        VCore["valdi_core"]
+        VTSX["valdi_tsx"]
+        VNav["valdi_navigation"]
+        VHTTP["valdi_http"]
+    end
+
+    subgraph modules["valdi-ai-ui Modules"]
+        Common["common"]
+        ChatCore["chat_core"]
+        ChatUI["chat_ui"]
+        AgentMgr["agent_manager"]
+        ConvMgr["conversation_manager"]
+        ModelCfg["model_config"]
+        Settings["settings"]
+        ToolsDemo["tools_demo"]
+        WorkflowDemo["workflow_demo"]
+        MainApp["main_app"]
+    end
+
+    subgraph external["External Dependencies"]
+        NPM["npm packages<br/>OpenAI, Anthropic,<br/>Google SDK, etc."]
+    end
+
+    VCore --> VTSX
+    VCore --> VNav
+    VCore --> VHTTP
+
+    Common --> VCore
+    Common --> VTSX
+
+    ChatCore --> VCore
+    ChatCore --> VHTTP
+    ChatCore --> Common
+    ChatCore --> NPM
+
+    ChatUI --> VCore
+    ChatUI --> VTSX
+    ChatUI --> VNav
+    ChatUI --> Common
+    ChatUI --> ChatCore
+
+    AgentMgr --> VCore
+    AgentMgr --> VTSX
+    AgentMgr --> Common
+    AgentMgr --> ChatCore
+
+    ConvMgr --> VCore
+    ConvMgr --> VTSX
+    ConvMgr --> VNav
+    ConvMgr --> Common
+    ConvMgr --> ChatCore
+
+    ModelCfg --> VCore
+    ModelCfg --> VTSX
+    ModelCfg --> VNav
+    ModelCfg --> Common
+
+    Settings --> VCore
+    Settings --> VTSX
+    Settings --> VNav
+    Settings --> Common
+    Settings --> ChatCore
+
+    ToolsDemo --> VCore
+    ToolsDemo --> VTSX
+    ToolsDemo --> Common
+    ToolsDemo --> ChatCore
+
+    WorkflowDemo --> VCore
+    WorkflowDemo --> VTSX
+    WorkflowDemo --> Common
+    WorkflowDemo --> ChatCore
+
+    MainApp --> VCore
+    MainApp --> VTSX
+    MainApp --> VNav
+    MainApp --> Common
+    MainApp --> ChatCore
+    MainApp --> ChatUI
+    MainApp --> Settings
+    MainApp --> ToolsDemo
+    MainApp --> WorkflowDemo
+
+    style valdi fill:#fff9c4
+    style modules fill:#c8e6c9
+    style external fill:#ffccbc
+    style MainApp fill:#ffeb3b,color:#000
+    style Common fill:#81c784,color:#fff
+    style ChatCore fill:#81c784,color:#fff
+```
+
 ---
 
 ## Data Flow
@@ -324,6 +497,47 @@ ChatIntegrationService.navigateToConversation()
     Load messages
         ↓
     Subscribe to updates
+```
+
+### Detailed Message Flow Sequence Diagram
+
+```mermaid
+sequenceDiagram
+    participant User as User
+    participant ChatUI as ChatViewStreaming
+    participant Integration as ChatIntegrationService
+    participant MessageStore as MessageStore
+    participant ChatService as ChatService
+    participant Persistence as MessagePersistence
+    participant API as AI SDK<br/>OpenAI/Anthropic
+
+    User ->> ChatUI: User types & sends message
+    ChatUI ->> Integration: sendMessage(conversationId, content, onProgress)
+
+    Integration ->> MessageStore: addMessage(userMessage)
+    MessageStore ->> Persistence: save(userMessage)
+    Persistence -->> MessageStore: saved
+    MessageStore ->> ChatUI: notify() - Update UI with user message
+    ChatUI ->> ChatUI: Re-render with user message
+
+    Integration ->> ChatService: sendMessageStreaming(messages, onToken)
+    ChatService ->> API: stream request with message
+
+    loop Token Streaming
+        API -->> ChatService: token
+        ChatService ->> ChatService: buffer token
+        ChatService -->> Integration: onToken(token)
+        Integration ->> MessageStore: updateMessage(assistantMessage)
+        MessageStore ->> ChatUI: notify() - Update UI with partial response
+        ChatUI ->> ChatUI: Re-render with streamed content
+    end
+
+    API -->> ChatService: stream complete
+    ChatService ->> MessageStore: finalize message
+    MessageStore ->> Persistence: save(finalMessage)
+    Persistence -->> MessageStore: saved
+    MessageStore ->> ChatUI: notify() - Final update
+    ChatUI ->> ChatUI: Mark message as complete
 ```
 
 ---
@@ -427,6 +641,108 @@ Component Re-render
 Persist to Storage (debounced)
 ```
 
+### State Management Architecture
+
+```mermaid
+graph TB
+    subgraph ComponentLevel["Component Level"]
+        ChatView["ChatViewStreaming<br/>Local State: loading,<br/>errors, UI flags"]
+        ConvList["ConversationListConnected<br/>Local State: selected,<br/>filters"]
+    end
+
+    subgraph StoreLevel["Store Level (Observable)"]
+        MessageStore["MessageStore<br/>State: {<br/>messages: Message[],<br/>observers: Set<br/>}"]
+        ConversationStore["ConversationStore<br/>State: {<br/>conversations: Conversation[],<br/>activeId: string,<br/>observers: Set<br/>}"]
+        CustomProviderStore["CustomProviderStore<br/>State: {<br/>providers: Provider[],<br/>observers: Set<br/>}"]
+    end
+
+    subgraph PersistenceLevel["Persistence Level"]
+        MessagePersistence["MessagePersistence<br/>Debounced writes<br/>300ms timeout"]
+        ConversationPersistence["ConversationPersistence<br/>Debounced writes<br/>300ms timeout"]
+    end
+
+    subgraph StorageLevel["Storage Provider Level"]
+        LocalStorageProvider["LocalStorageProvider<br/>Browser localStorage<br/>iOS: NSUserDefaults<br/>Android: SharedPreferences"]
+        MemoryProvider["MemoryProvider<br/>In-memory fallback<br/>for testing"]
+    end
+
+    ChatView -->|subscribe| MessageStore
+    ChatView -->|subscribe| ConversationStore
+    ConvList -->|subscribe| ConversationStore
+
+    MessageStore -->|persist| MessagePersistence
+    ConversationStore -->|persist| ConversationPersistence
+
+    MessagePersistence -->|write| LocalStorageProvider
+    MessagePersistence -->|fallback| MemoryProvider
+
+    ConversationPersistence -->|write| LocalStorageProvider
+    ConversationPersistence -->|fallback| MemoryProvider
+
+    ChatView -->|setState/notify| MessageStore
+    ConvList -->|setState/notify| ConversationStore
+
+    style ComponentLevel fill:#e0f2f1
+    style StoreLevel fill:#f3e5f5
+    style PersistenceLevel fill:#fff3e0
+    style StorageLevel fill:#fce4ec
+```
+
+### Observer Pattern Implementation
+
+```mermaid
+classDiagram
+    class Observer {
+        <<interface>>
+        update(state: State)*
+    }
+
+    class Store {
+        -state: State
+        -observers: Set~Observer~
+        +subscribe(observer: Observer): UnsubscribeFn
+        +setState(partial: Partial~State~): void
+        -notify(): void
+    }
+
+    class MessageStore {
+        -state: MessageStoreState
+        -observers: Set~Observer~
+        +addMessage(message: Message): void
+        +updateMessage(id: string, content: string): void
+        +deleteMessage(id: string): void
+        +getMessages(conversationId: string): Message[]
+    }
+
+    class ConversationStore {
+        -state: ConversationStoreState
+        -observers: Set~Observer~
+        +addConversation(title: string): Conversation
+        +updateConversation(id: string, data: Partial~Conversation~): void
+        +setActiveConversation(id: string): void
+        +getActiveConversation(): Conversation
+    }
+
+    class Component {
+        -unsubscribe: UnsubscribeFn
+        +componentDidMount(): void
+        +componentWillUnmount(): void
+        -onStoreUpdate(state: State): void
+    }
+
+    Store <|-- MessageStore
+    Store <|-- ConversationStore
+    Observer <|-- Component
+    Store -->|notify| Observer
+    Component -->|subscribe| Store
+
+    style Store fill:#b2dfdb
+    style MessageStore fill:#81c784
+    style ConversationStore fill:#81c784
+    style Observer fill:#ffb74d
+    style Component fill:#64b5f6
+```
+
 ---
 
 ## Design Patterns
@@ -458,6 +774,81 @@ Persist to Storage (debounced)
 ### 7. Singleton Pattern
 **Where:** Global store instances (messageStore, conversationStore)
 **Why:** Single source of truth
+
+### Design Patterns Visualization
+
+```mermaid
+graph TB
+    subgraph ObserverPat["Observer Pattern"]
+        O1["Store"]
+        O2["Component 1"]
+        O3["Component 2"]
+        O1 -->|notify| O2
+        O1 -->|notify| O3
+        O2 -->|subscribe| O1
+        O3 -->|subscribe| O1
+    end
+
+    subgraph DIPattern["Dependency Injection"]
+        DI1["ChatIntegrationService"]
+        DI2["ChatService"]
+        DI3["MessageStore"]
+        DI1 -->|depends on| DI2
+        DI1 -->|depends on| DI3
+    end
+
+    subgraph FactoryPat["Factory Pattern"]
+        F1["ModelRegistry"]
+        F2["Provider 1"]
+        F3["Provider 2"]
+        F1 -->|creates| F2
+        F1 -->|creates| F3
+    end
+
+    subgraph StrategyPat["Strategy Pattern"]
+        S1["WorkflowEngine"]
+        S2["Sequential Strategy"]
+        S3["Parallel Strategy"]
+        S4["Routing Strategy"]
+        S1 -->|executes with| S2
+        S1 -->|executes with| S3
+        S1 -->|executes with| S4
+    end
+
+    subgraph RepositoryPat["Repository Pattern"]
+        R1["MessageStore"]
+        R2["MessagePersistence"]
+        R3["StorageProvider"]
+        R1 -->|persists via| R2
+        R2 -->|writes to| R3
+    end
+
+    subgraph FacadePat["Facade Pattern"]
+        FA1["ChatIntegrationService<br/>Simplified Interface"]
+        FA2["ChatService<br/>Complex Logic"]
+        FA3["MessageStore"]
+        FA4["ConversationStore"]
+        FA1 -->|coordinates| FA2
+        FA1 -->|coordinates| FA3
+        FA1 -->|coordinates| FA4
+    end
+
+    subgraph SingletonPat["Singleton Pattern"]
+        SI1["Global messageStore<br/>Instance"]
+        SI2["Global conversationStore<br/>Instance"]
+        SI3["Various Components"]
+        SI3 -->|uses| SI1
+        SI3 -->|uses| SI2
+    end
+
+    style ObserverPat fill:#e1f5fe
+    style DIPattern fill:#f3e5f5
+    style FactoryPat fill:#e8f5e9
+    style StrategyPat fill:#fff3e0
+    style RepositoryPat fill:#fce4ec
+    style FacadePat fill:#f1f8e9
+    style SingletonPat fill:#ede7f6
+```
 
 ---
 

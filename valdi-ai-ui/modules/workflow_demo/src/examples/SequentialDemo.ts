@@ -18,7 +18,7 @@ type StateUpdateCallback = (state: Partial<WorkflowExecutionState>) => void;
  * Simulate sequential workflow execution
  */
 export async function runSequentialDemo(
-  onStateUpdate: StateUpdateCallback
+  onStateUpdate: StateUpdateCallback,
 ): Promise<string> {
   const steps: WorkflowStep[] = [
     {

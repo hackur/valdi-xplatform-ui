@@ -266,7 +266,9 @@ export class SettingsScreen extends NavigationPageComponent<
           {providers.map((provider) => (
             <Card
               key={provider.id}
-              elevation={this.state.selectedProvider === provider.id ? 'md' : 'sm'}
+              elevation={
+                this.state.selectedProvider === provider.id ? 'md' : 'sm'
+              }
               onTap={() => this.handleProviderChange(provider.id)}
               style={{
                 ...styles.providerCard,
@@ -380,7 +382,9 @@ export class SettingsScreen extends NavigationPageComponent<
               value={this.state.anthropicKey}
               placeholder="sk-ant-..."
               secureTextEntry={!this.state.showAnthropicKey}
-              onChangeText={(value) => this.handleApiKeyChange('anthropic', value)}
+              onChangeText={(value) =>
+                this.handleApiKeyChange('anthropic', value)
+              }
               style={{ marginTop: Spacing.sm }}
             />
 
@@ -505,7 +509,9 @@ export class SettingsScreen extends NavigationPageComponent<
             <Dropdown
               options={anthropicModels}
               selectedValue={this.state.anthropicModel}
-              onValueChange={(value) => this.handleModelChange('anthropic', value)}
+              onValueChange={(value) =>
+                this.handleModelChange('anthropic', value)
+              }
             />
           </view>
         </Card>
@@ -590,7 +596,9 @@ export class SettingsScreen extends NavigationPageComponent<
             </view>
             <Switch
               value={this.state.enableNotifications}
-              onValueChange={(value) => this.setState({ enableNotifications: value })}
+              onValueChange={(value) =>
+                this.setState({ enableNotifications: value })
+              }
             />
           </view>
         </Card>
@@ -616,7 +624,9 @@ export class SettingsScreen extends NavigationPageComponent<
             </view>
             <Switch
               value={this.state.enableSoundEffects}
-              onValueChange={(value) => this.setState({ enableSoundEffects: value })}
+              onValueChange={(value) =>
+                this.setState({ enableSoundEffects: value })
+              }
             />
           </view>
         </Card>

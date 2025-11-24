@@ -12,7 +12,7 @@ import {
   Conversation,
   AIProvider,
   ModelConfig,
-} from 'common/src/types';
+} from '@common/types';
 import { MessageStore } from './MessageStore';
 import {
   ChatRequestOptions,
@@ -79,13 +79,18 @@ export class ChatService {
   /**
    * Get system prompt from messages or options
    */
-  private getSystemPrompt(messages: Message[], options: ChatRequestOptions): string | undefined {
+  private getSystemPrompt(
+    messages: Message[],
+    options: ChatRequestOptions,
+  ): string | undefined {
     if (options.systemPrompt) {
       return options.systemPrompt;
     }
 
     const systemMessage = messages.find((m) => m.role === 'system');
-    return systemMessage ? MessageUtils.getTextContent(systemMessage) : undefined;
+    return systemMessage
+      ? MessageUtils.getTextContent(systemMessage)
+      : undefined;
   }
 
   /**
@@ -94,7 +99,7 @@ export class ChatService {
   private async sendToOpenAI(
     messages: Message[],
     modelConfig: ModelConfig,
-    systemPrompt?: string
+    systemPrompt?: string,
   ): Promise<string> {
     const apiKey = this.config.apiKeys.openai;
     if (!apiKey) {
@@ -114,10 +119,14 @@ export class ChatService {
     const encodedBody = new TextEncoder().encode(requestBody);
 
     try {
-      const response = await this.httpClients.openai.post('/chat/completions', encodedBody, {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${apiKey}`,
-      });
+      const response = await this.httpClients.openai.post(
+        '/chat/completions',
+        encodedBody,
+        {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${apiKey}`,
+        },
+      );
 
       if (!response.body) {
         throw new Error('Empty response from OpenAI');
@@ -142,7 +151,7 @@ export class ChatService {
   private async sendToAnthropic(
     messages: Message[],
     modelConfig: ModelConfig,
-    systemPrompt?: string
+    systemPrompt?: string,
   ): Promise<string> {
     const apiKey = this.config.apiKeys.anthropic;
     if (!apiKey) {
@@ -160,11 +169,15 @@ export class ChatService {
     const encodedBody = new TextEncoder().encode(requestBody);
 
     try {
-      const response = await this.httpClients.anthropic.post('/messages', encodedBody, {
-        'Content-Type': 'application/json',
-        'x-api-key': apiKey,
-        'anthropic-version': '2023-06-01',
-      });
+      const response = await this.httpClients.anthropic.post(
+        '/messages',
+        encodedBody,
+        {
+          'Content-Type': 'application/json',
+          'x-api-key': apiKey,
+          'anthropic-version': '2023-06-01',
+        },
+      );
 
       if (!response.body) {
         throw new Error('Empty response from Anthropic');
@@ -189,7 +202,7 @@ export class ChatService {
   private async sendToGoogle(
     messages: Message[],
     modelConfig: ModelConfig,
-    systemPrompt?: string
+    systemPrompt?: string,
   ): Promise<string> {
     const apiKey = this.config.apiKeys.google;
     if (!apiKey) {
@@ -221,9 +234,13 @@ export class ChatService {
     const endpoint = `/models/${modelConfig.modelId}:generateContent?key=${apiKey}`;
 
     try {
-      const response = await this.httpClients.google.post(endpoint, encodedBody, {
-        'Content-Type': 'application/json',
-      });
+      const response = await this.httpClients.google.post(
+        endpoint,
+        encodedBody,
+        {
+          'Content-Type': 'application/json',
+        },
+      );
 
       if (!response.body) {
         throw new Error('Empty response from Google');
@@ -246,7 +263,11 @@ export class ChatService {
    * Send a message (non-streaming)
    */
   async sendMessage(options: ChatRequestOptions): Promise<ChatResponse> {
-    const { conversationId, message: userMessage, modelConfig: overrideConfig } = options;
+    const {
+      conversationId,
+      message: userMessage,
+      modelConfig: overrideConfig,
+    } = options;
 
     // Get messages from conversation
     const messages = this.messageStore.getMessages(conversationId);
@@ -277,21 +298,21 @@ export class ChatService {
           responseText = await this.sendToOpenAI(
             [...messages, userMsg],
             modelConfig as ModelConfig,
-            systemPrompt
+            systemPrompt,
           );
           break;
         case 'anthropic':
           responseText = await this.sendToAnthropic(
             [...messages, userMsg],
             modelConfig as ModelConfig,
-            systemPrompt
+            systemPrompt,
           );
           break;
         case 'google':
           responseText = await this.sendToGoogle(
             [...messages, userMsg],
             modelConfig as ModelConfig,
-            systemPrompt
+            systemPrompt,
           );
           break;
         default:
@@ -344,7 +365,7 @@ export class ChatService {
    */
   async sendMessageStreaming(
     options: ChatRequestOptions,
-    callback: StreamCallback
+    callback: StreamCallback,
   ): Promise<Message> {
     // For now, get the complete response and simulate streaming
     const messageId = `msg-${Date.now()}`;
@@ -379,7 +400,11 @@ export class ChatService {
 
       return response.message;
     } catch (error: any) {
-      callback({ type: 'error', messageId, error: error.message || error.toString() });
+      callback({
+        type: 'error',
+        messageId,
+        error: error.message || error.toString(),
+      });
       throw error;
     }
   }

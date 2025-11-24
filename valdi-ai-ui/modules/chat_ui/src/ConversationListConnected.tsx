@@ -9,11 +9,11 @@ import { StatefulComponent } from 'valdi_core/src/Component';
 import { Style } from 'valdi_core/src/Style';
 import { View, ScrollView, Label } from 'valdi_tsx/src/NativeTemplateElements';
 import { NavigationController } from 'valdi_navigation/src/NavigationController';
-import { Colors, Fonts, Spacing } from 'common/src/theme';
-import { Conversation } from 'common/src/types';
-import { LoadingSpinner } from 'common/src/components/LoadingSpinner';
-import { Card } from 'common/src/components/Card';
-import { Button } from 'common/src/components/Button';
+import { Colors, Fonts, Spacing } from '@common/theme';
+import { Conversation } from '@common/types';
+import { LoadingSpinner } from '@common/components';
+import { Card } from '@common/components';
+import { Button } from '@common/components';
 import { ChatIntegrationService } from './ChatIntegrationService';
 import { ChatView } from './ChatView';
 
@@ -109,7 +109,9 @@ export class ConversationListConnected extends StatefulComponent<
           >
             <label
               value="Active"
-              style={filter === 'active' ? styles.tabTextActive : styles.tabText}
+              style={
+                filter === 'active' ? styles.tabTextActive : styles.tabText
+              }
             />
           </view>
 
@@ -119,7 +121,9 @@ export class ConversationListConnected extends StatefulComponent<
           >
             <label
               value="Archived"
-              style={filter === 'archived' ? styles.tabTextActive : styles.tabText}
+              style={
+                filter === 'archived' ? styles.tabTextActive : styles.tabText
+              }
             />
           </view>
         </view>
@@ -146,7 +150,10 @@ export class ConversationListConnected extends StatefulComponent<
                   onTap={() => this.handleConversationTap(conversation.id)}
                 >
                   <view style={styles.conversationContent}>
-                    <label value={conversation.title || 'Untitled'} style={styles.title} />
+                    <label
+                      value={conversation.title || 'Untitled'}
+                      style={styles.title}
+                    />
                     <label
                       value={this.formatDate(conversation.updatedAt)}
                       style={styles.date}
@@ -173,10 +180,11 @@ export class ConversationListConnected extends StatefulComponent<
   private async loadConversations(): Promise<void> {
     this.setState({ isLoading: true });
 
-    const conversations = this.props.integrationService.loadConversationsFiltered({
-      status: this.state.filter === 'all' ? undefined : this.state.filter,
-      searchQuery: this.state.searchQuery || undefined,
-    });
+    const conversations =
+      this.props.integrationService.loadConversationsFiltered({
+        status: this.state.filter === 'all' ? undefined : this.state.filter,
+        searchQuery: this.state.searchQuery || undefined,
+      });
 
     this.setState({
       conversations,
@@ -227,7 +235,10 @@ export class ConversationListConnected extends StatefulComponent<
    * Handle conversation tap
    */
   private handleConversationTap = (conversationId: string): void => {
-    this.props.integrationService.navigateToConversation(conversationId, ChatView);
+    this.props.integrationService.navigateToConversation(
+      conversationId,
+      ChatView,
+    );
   };
 
   /**

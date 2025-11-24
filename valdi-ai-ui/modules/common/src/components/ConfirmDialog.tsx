@@ -78,49 +78,29 @@ export class ConfirmDialog extends Component<ConfirmDialogProps> {
   };
 
   onRender() {
-    const {
-      isVisible,
-      title,
-      message,
-      confirmText,
-      cancelText,
-      confirmColor,
-    } = this.viewModel;
+    const { isVisible, title, message, confirmText, cancelText, confirmColor } =
+      this.viewModel;
 
     if (!isVisible) {
       return null;
     }
 
-    const confirmBackgroundColor = confirmColor === 'danger' ? Colors.error : Colors.primary;
+    const confirmBackgroundColor =
+      confirmColor === 'danger' ? Colors.error : Colors.primary;
 
     return (
-      <view
-        style={styles.overlay}
-        onTap={this.handleOverlayTap}
-      >
-        <view
-          style={styles.dialog}
-          onTap={this.handleDialogTap}
-        >
+      <view style={styles.overlay} onTap={this.handleOverlayTap}>
+        <view style={styles.dialog} onTap={this.handleDialogTap}>
           {/* Title */}
-          <label
-            value={title}
-            style={styles.title}
-          />
+          <label value={title} style={styles.title} />
 
           {/* Message */}
-          <label
-            value={message}
-            style={styles.message}
-          />
+          <label value={message} style={styles.message} />
 
           {/* Buttons Container */}
           <view style={styles.buttonsContainer}>
             {/* Cancel Button */}
-            <view
-              style={styles.cancelButton}
-              onTap={this.handleCancel}
-            >
+            <view style={styles.cancelButton} onTap={this.handleCancel}>
               <label
                 value={cancelText ?? 'Cancel'}
                 style={styles.cancelButtonText}
@@ -129,10 +109,12 @@ export class ConfirmDialog extends Component<ConfirmDialogProps> {
 
             {/* Confirm Button */}
             <view
-              style={new Style<View>({
-                ...styles.confirmButton,
-                backgroundColor: confirmBackgroundColor,
-              })}
+              style={
+                new Style<View>({
+                  ...styles.confirmButton,
+                  backgroundColor: confirmBackgroundColor,
+                })
+              }
               onTap={this.handleConfirm}
             >
               <label

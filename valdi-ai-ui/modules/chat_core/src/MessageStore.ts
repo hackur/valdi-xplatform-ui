@@ -5,7 +5,7 @@
  * Provides reactive state management for messages with CRUD operations.
  */
 
-import { Message, MessageUtils, MessageUpdateInput } from 'common/src/types';
+import { Message, MessageUtils, MessageUpdateInput } from '@common/types';
 import { MessageStoreState, StreamingStatus } from './types';
 import { MessagePersistence } from './MessagePersistence';
 
@@ -27,7 +27,10 @@ export class MessageStore {
   private persistence: MessagePersistence;
   private enablePersistence: boolean;
 
-  constructor(enablePersistence: boolean = true, persistence?: MessagePersistence) {
+  constructor(
+    enablePersistence: boolean = true,
+    persistence?: MessagePersistence,
+  ) {
     this.enablePersistence = enablePersistence;
     this.persistence = persistence || new MessagePersistence();
   }
@@ -114,7 +117,7 @@ export class MessageStore {
       try {
         await this.persistence.saveMessagesDebounced(
           message.conversationId,
-          this.getMessages(message.conversationId)
+          this.getMessages(message.conversationId),
         );
       } catch (error) {
         console.error('[MessageStore] Error persisting message:', error);
@@ -125,12 +128,18 @@ export class MessageStore {
   /**
    * Update an existing message
    */
-  async updateMessage(conversationId: string, messageId: string, updates: MessageUpdateInput): Promise<void> {
+  async updateMessage(
+    conversationId: string,
+    messageId: string,
+    updates: MessageUpdateInput,
+  ): Promise<void> {
     const messages = this.getMessages(conversationId);
     const index = messages.findIndex((m) => m.id === messageId);
 
     if (index === -1) {
-      console.warn(`Message ${messageId} not found in conversation ${conversationId}`);
+      console.warn(
+        `Message ${messageId} not found in conversation ${conversationId}`,
+      );
       return;
     }
 
@@ -156,7 +165,10 @@ export class MessageStore {
     // Persist the change
     if (this.enablePersistence) {
       try {
-        await this.persistence.saveMessagesDebounced(conversationId, updatedMessages);
+        await this.persistence.saveMessagesDebounced(
+          conversationId,
+          updatedMessages,
+        );
       } catch (error) {
         console.error('[MessageStore] Error persisting message update:', error);
       }
@@ -166,15 +178,22 @@ export class MessageStore {
   /**
    * Append content to a message (for streaming)
    */
-  appendContent(conversationId: string, messageId: string, delta: string): void {
+  appendContent(
+    conversationId: string,
+    messageId: string,
+    delta: string,
+  ): void {
     const message = this.getMessage(conversationId, messageId);
 
     if (!message) {
-      console.warn(`Message ${messageId} not found in conversation ${conversationId}`);
+      console.warn(
+        `Message ${messageId} not found in conversation ${conversationId}`,
+      );
       return;
     }
 
-    const currentContent = typeof message.content === 'string' ? message.content : '';
+    const currentContent =
+      typeof message.content === 'string' ? message.content : '';
     const newContent = currentContent + delta;
 
     this.updateMessage(conversationId, messageId, {
@@ -185,7 +204,10 @@ export class MessageStore {
   /**
    * Delete a message
    */
-  async deleteMessage(conversationId: string, messageId: string): Promise<void> {
+  async deleteMessage(
+    conversationId: string,
+    messageId: string,
+  ): Promise<void> {
     const messages = this.getMessages(conversationId);
     const filteredMessages = messages.filter((m) => m.id !== messageId);
 
@@ -204,7 +226,10 @@ export class MessageStore {
       try {
         await this.persistence.deleteMessage(conversationId, messageId);
       } catch (error) {
-        console.error('[MessageStore] Error persisting message deletion:', error);
+        console.error(
+          '[MessageStore] Error persisting message deletion:',
+          error,
+        );
       }
     }
   }
@@ -213,7 +238,8 @@ export class MessageStore {
    * Clear all messages for a conversation
    */
   async clearConversation(conversationId: string): Promise<void> {
-    const { [conversationId]: _, ...remaining } = this.state.messagesByConversation;
+    const { [conversationId]: _, ...remaining } =
+      this.state.messagesByConversation;
 
     this.state = {
       ...this.state,
@@ -227,7 +253,10 @@ export class MessageStore {
       try {
         await this.persistence.deleteMessages(conversationId);
       } catch (error) {
-        console.error('[MessageStore] Error persisting conversation clear:', error);
+        console.error(
+          '[MessageStore] Error persisting conversation clear:',
+          error,
+        );
       }
     }
   }
@@ -291,7 +320,10 @@ export class MessageStore {
       try {
         await this.persistence.clearAll();
       } catch (error) {
-        console.error('[MessageStore] Error clearing persisted messages:', error);
+        console.error(
+          '[MessageStore] Error clearing persisted messages:',
+          error,
+        );
       }
     }
   }

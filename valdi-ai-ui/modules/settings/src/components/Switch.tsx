@@ -51,8 +51,8 @@ export class Switch extends Component<SwitchProps> {
         ? Colors.primaryLight
         : Colors.primary
       : disabled
-      ? Colors.gray300
-      : Colors.gray400;
+        ? Colors.gray300
+        : Colors.gray400;
 
     const thumbTranslateX = value ? 20 : 0;
 

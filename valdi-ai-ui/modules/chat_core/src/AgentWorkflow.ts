@@ -5,7 +5,7 @@
  * Provides base classes and types for orchestrating multiple AI agents.
  */
 
-import { Message, ModelConfig } from 'common/src/types';
+import { Message, ModelConfig } from '@common/types';
 import { ChatService } from './ChatService';
 import { MessageStore } from './MessageStore';
 import { StreamCallback } from './types';
@@ -15,9 +15,9 @@ import { StreamCallback } from './types';
  * Defines the execution pattern for multi-agent workflows
  */
 export type WorkflowType =
-  | 'sequential'           // Execute agents one after another
-  | 'parallel'             // Execute agents simultaneously
-  | 'routing'              // Route to specialized agents based on input
+  | 'sequential' // Execute agents one after another
+  | 'parallel' // Execute agents simultaneously
+  | 'routing' // Route to specialized agents based on input
   | 'evaluator-optimizer'; // Generate → Evaluate → Refine loop
 
 /**
@@ -232,7 +232,7 @@ export abstract class WorkflowExecutor {
   constructor(
     config: WorkflowConfig,
     chatService: ChatService,
-    messageStore: MessageStore
+    messageStore: MessageStore,
   ) {
     this.config = config;
     this.chatService = chatService;
@@ -268,7 +268,9 @@ export abstract class WorkflowExecutor {
    *
    * Abstract method to be implemented by specific workflow types
    */
-  abstract execute(options: WorkflowExecutionOptions): Promise<WorkflowExecutionResult>;
+  abstract execute(
+    options: WorkflowExecutionOptions,
+  ): Promise<WorkflowExecutionResult>;
 
   /**
    * Execute a single agent step
@@ -277,7 +279,7 @@ export abstract class WorkflowExecutor {
     agent: AgentDefinition,
     input: string,
     conversationId: string,
-    onProgress?: WorkflowProgressCallback
+    onProgress?: WorkflowProgressCallback,
   ): Promise<WorkflowStep> {
     const stepId = `step_${this.state.steps.length + 1}`;
     const startTime = Date.now();
@@ -319,13 +321,14 @@ export abstract class WorkflowExecutor {
             step.output = event.content;
             onProgress({ type: 'step-progress', step, delta: event.delta });
           }
-        }
+        },
       );
 
       // Update step with results
-      step.output = typeof response.content === 'string'
-        ? response.content
-        : JSON.stringify(response.content);
+      step.output =
+        typeof response.content === 'string'
+          ? response.content
+          : JSON.stringify(response.content);
 
       step.executionTime = Date.now() - startTime;
       if (response.metadata?.tokens) {
@@ -343,7 +346,8 @@ export abstract class WorkflowExecutor {
 
       return step;
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      const errorMessage =
+        error instanceof Error ? error.message : 'Unknown error';
       step.executionTime = Date.now() - startTime;
       step.metadata = { error: errorMessage };
 
@@ -362,7 +366,7 @@ export abstract class WorkflowExecutor {
     agent: AgentDefinition,
     input: string,
     conversationId: string,
-    onProgress?: WorkflowProgressCallback
+    onProgress?: WorkflowProgressCallback,
   ): Promise<WorkflowStep> {
     const retry = this.config.retry;
 
@@ -374,13 +378,21 @@ export abstract class WorkflowExecutor {
 
     for (let attempt = 0; attempt <= retry.maxRetries; attempt++) {
       try {
-        return await this.executeAgent(agent, input, conversationId, onProgress);
+        return await this.executeAgent(
+          agent,
+          input,
+          conversationId,
+          onProgress,
+        );
       } catch (error) {
         lastError = error instanceof Error ? error : new Error(String(error));
 
         // Check if error is retryable
-        const isRetryable = !retry.retryableErrors ||
-          retry.retryableErrors.some(pattern => lastError!.message.includes(pattern));
+        const isRetryable =
+          !retry.retryableErrors ||
+          retry.retryableErrors.some((pattern) =>
+            lastError!.message.includes(pattern),
+          );
 
         if (!isRetryable || attempt === retry.maxRetries) {
           throw lastError;
@@ -388,11 +400,13 @@ export abstract class WorkflowExecutor {
 
         // Wait before retry
         if (retry.retryDelay > 0) {
-          await new Promise(resolve => setTimeout(resolve, retry.retryDelay));
+          await new Promise((resolve) => setTimeout(resolve, retry.retryDelay));
         }
 
         if (this.config.debug) {
-          console.log(`Retrying agent ${agent.name} (attempt ${attempt + 2}/${retry.maxRetries + 1})`);
+          console.log(
+            `Retrying agent ${agent.name} (attempt ${attempt + 2}/${retry.maxRetries + 1})`,
+          );
         }
       }
     }
@@ -421,14 +435,18 @@ export abstract class WorkflowExecutor {
   /**
    * Calculate total tokens used
    */
-  protected calculateTotalTokens(): { prompt: number; completion: number; total: number } {
+  protected calculateTotalTokens(): {
+    prompt: number;
+    completion: number;
+    total: number;
+  } {
     return this.state.steps.reduce(
       (acc, step) => ({
         prompt: acc.prompt + (step.tokensUsed?.prompt || 0),
         completion: acc.completion + (step.tokensUsed?.completion || 0),
         total: acc.total + (step.tokensUsed?.total || 0),
       }),
-      { prompt: 0, completion: 0, total: 0 }
+      { prompt: 0, completion: 0, total: 0 },
     );
   }
 
@@ -468,11 +486,13 @@ export class WorkflowExecutorFactory {
   static create(
     config: WorkflowConfig,
     chatService: ChatService,
-    messageStore: MessageStore
+    messageStore: MessageStore,
   ): WorkflowExecutor {
     // Import specific executors dynamically to avoid circular dependencies
     // Implementation will be in specific workflow files
-    throw new Error(`Workflow executor factory not yet implemented for type: ${config.type}`);
+    throw new Error(
+      `Workflow executor factory not yet implemented for type: ${config.type}`,
+    );
   }
 }
 

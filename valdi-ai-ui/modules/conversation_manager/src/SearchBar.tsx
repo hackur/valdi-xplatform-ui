@@ -42,7 +42,10 @@ export interface SearchBarState {
  *
  * Text input with search icon and clear button.
  */
-export class SearchBar extends StatefulComponent<SearchBarProps, SearchBarState> {
+export class SearchBar extends StatefulComponent<
+  SearchBarProps,
+  SearchBarState
+> {
   private debounceTimer?: NodeJS.Timeout;
 
   state: SearchBarState = {

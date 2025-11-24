@@ -6,7 +6,7 @@
 
 import { ChatService } from '../ChatService';
 import { MessageStore } from '../MessageStore';
-import { Message, MessageUtils } from 'common/src/types';
+import { Message, MessageUtils } from '@common/types';
 import {
   WorkflowExecutionOptions,
   WorkflowProgressEvent,
@@ -31,7 +31,7 @@ export class MockChatService {
    */
   async sendMessageStreaming(
     options: any,
-    callback: (event: any) => void
+    callback: (event: any) => void,
   ): Promise<Message> {
     const agentId = this.extractAgentIdFromPrompt(options.systemPrompt || '');
     const response = this.responses.get(agentId) || 'Mock response';
@@ -59,7 +59,9 @@ export class MockChatService {
     }
 
     // Complete event
-    const message = MessageUtils.createAssistantMessageStub(options.conversationId);
+    const message = MessageUtils.createAssistantMessageStub(
+      options.conversationId,
+    );
     message.content = fullContent.trim();
     message.status = 'completed';
 
@@ -75,7 +77,9 @@ export class MockChatService {
     const agentId = this.extractAgentIdFromPrompt(options.systemPrompt || '');
     const response = this.responses.get(agentId) || 'Mock response';
 
-    const message = MessageUtils.createAssistantMessageStub(options.conversationId);
+    const message = MessageUtils.createAssistantMessageStub(
+      options.conversationId,
+    );
     message.content = response;
     message.status = 'completed';
 
@@ -107,7 +111,7 @@ export class MockChatService {
 export function createTestAgent(
   id: string,
   name: string,
-  role: string = 'test'
+  role: string = 'test',
 ): AgentDefinition {
   return {
     id,
@@ -145,7 +149,7 @@ export class ProgressEventCollector {
    * Get events of specific type
    */
   getEventsByType<T extends WorkflowProgressEvent['type']>(
-    type: T
+    type: T,
   ): Extract<WorkflowProgressEvent, { type: T }>[] {
     return this.events.filter((e) => e.type === type) as any[];
   }
@@ -176,7 +180,7 @@ export class ProgressEventCollector {
    */
   async waitForEvent(
     type: WorkflowProgressEvent['type'],
-    timeout: number = 5000
+    timeout: number = 5000,
   ): Promise<WorkflowProgressEvent> {
     const startTime = Date.now();
 
@@ -195,7 +199,7 @@ export class ProgressEventCollector {
  */
 export function createMockExecutionOptions(
   input: string,
-  conversationId: string = 'test-conv'
+  conversationId: string = 'test-conv',
 ): WorkflowExecutionOptions {
   return {
     conversationId,
@@ -235,7 +239,7 @@ export const WorkflowAssertions = {
     const stepEvents = events.filter((e) => e.type === 'step-complete');
     if (stepEvents.length !== expected) {
       throw new Error(
-        `Expected ${expected} steps, but got ${stepEvents.length}`
+        `Expected ${expected} steps, but got ${stepEvents.length}`,
       );
     }
   },
@@ -245,14 +249,14 @@ export const WorkflowAssertions = {
    */
   assertStepOrder(events: WorkflowProgressEvent[], agentIds: string[]): void {
     const stepEvents = events.filter(
-      (e) => e.type === 'step-complete'
+      (e) => e.type === 'step-complete',
     ) as Extract<WorkflowProgressEvent, { type: 'step-complete' }>[];
 
     const actualOrder = stepEvents.map((e) => e.step.agentId);
 
     if (JSON.stringify(actualOrder) !== JSON.stringify(agentIds)) {
       throw new Error(
-        `Expected step order ${agentIds.join(', ')}, but got ${actualOrder.join(', ')}`
+        `Expected step order ${agentIds.join(', ')}, but got ${actualOrder.join(', ')}`,
       );
     }
   },
@@ -484,9 +488,9 @@ export async function exampleTestUsage() {
 
   // Configure mocks
   suite.configureMocks({
-    'researcher': 'Research findings: AI is transforming healthcare...',
-    'analyst': 'Analysis: Key trends include telemedicine and diagnostics...',
-    'summarizer': 'Summary: AI in healthcare shows promising results...',
+    researcher: 'Research findings: AI is transforming healthcare...',
+    analyst: 'Analysis: Key trends include telemedicine and diagnostics...',
+    summarizer: 'Summary: AI in healthcare shows promising results...',
   });
 
   // Collect events

@@ -87,7 +87,12 @@ export interface Conversation {
   /** Additional metadata */
   metadata?: {
     /** Agent workflow type (if any) */
-    workflowType?: 'sequential' | 'routing' | 'parallel' | 'evaluator' | 'orchestrator';
+    workflowType?:
+      | 'sequential'
+      | 'routing'
+      | 'parallel'
+      | 'evaluator'
+      | 'orchestrator';
 
     /** Custom agents used */
     agents?: string[];
@@ -148,7 +153,12 @@ export interface ConversationFilterOptions {
 /**
  * Conversation Sort Options
  */
-export type ConversationSortField = 'createdAt' | 'updatedAt' | 'lastMessageAt' | 'title' | 'messageCount';
+export type ConversationSortField =
+  | 'createdAt'
+  | 'updatedAt'
+  | 'lastMessageAt'
+  | 'title'
+  | 'messageCount';
 export type ConversationSortOrder = 'asc' | 'desc';
 
 export interface ConversationSortOptions {
@@ -213,17 +223,50 @@ export const ConversationTypeGuards = {
 
 /**
  * Conversation Utility Functions
+ *
+ * Collection of utility functions for creating and manipulating conversations.
  */
 export const ConversationUtils = {
   /**
-   * Generate a new conversation ID
+   * Generate a unique conversation ID
+   *
+   * Creates a unique identifier using timestamp and random string.
+   *
+   * @returns A unique conversation ID in the format 'conv_timestamp_random'
+   *
+   * @example
+   * ```typescript
+   * const id = ConversationUtils.generateId();
+   * console.log(id); // 'conv_1234567890_abc123def'
+   * ```
    */
   generateId(): string {
     return `conv_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
   },
 
   /**
-   * Generate a title from first message
+   * Generate a conversation title from the first message
+   *
+   * Cleans and truncates the first message to create a readable title.
+   * Removes extra whitespace and adds ellipsis if truncated.
+   *
+   * @param firstMessage - The first message content to generate title from
+   * @param maxLength - Maximum length of the title (default: 50)
+   * @returns A cleaned and truncated title string
+   *
+   * @example
+   * ```typescript
+   * const title = ConversationUtils.generateTitle(
+   *   'How do I implement a REST API in Node.js?'
+   * );
+   * console.log(title); // 'How do I implement a REST API in Node.js?'
+   *
+   * const longTitle = ConversationUtils.generateTitle(
+   *   'This is a very long message that exceeds the maximum length',
+   *   20
+   * );
+   * console.log(longTitle); // 'This is a very lon...'
+   * ```
    */
   generateTitle(firstMessage: string, maxLength: number = 50): string {
     const cleaned = firstMessage.trim().replace(/\s+/g, ' ');
@@ -235,6 +278,25 @@ export const ConversationUtils = {
 
   /**
    * Create a new conversation
+   *
+   * Creates a complete Conversation object with generated ID and default values.
+   *
+   * @param input - Conversation creation parameters
+   * @returns A complete Conversation object
+   *
+   * @example
+   * ```typescript
+   * const conversation = ConversationUtils.create({
+   *   title: 'My Chat',
+   *   modelConfig: DefaultModels.anthropic,
+   *   systemPrompt: 'You are a helpful assistant',
+   *   tags: ['work', 'research']
+   * });
+   * console.log(conversation.id); // 'conv_1234567890_abc123def'
+   * console.log(conversation.status); // 'active'
+   * ```
+   *
+   * @see {@link ConversationCreateInput}
    */
   create(input: ConversationCreateInput): Conversation {
     const now = new Date();
@@ -255,8 +317,29 @@ export const ConversationUtils = {
 
   /**
    * Update conversation with new data
+   *
+   * Merges updates into existing conversation, preserving unchanged fields.
+   * Automatically updates the updatedAt timestamp.
+   *
+   * @param conversation - The conversation to update
+   * @param updates - Partial updates to apply
+   * @returns A new conversation object with updates applied
+   *
+   * @example
+   * ```typescript
+   * const updated = ConversationUtils.update(conversation, {
+   *   title: 'Updated Title',
+   *   isPinned: true,
+   *   tags: ['important']
+   * });
+   * console.log(updated.title); // 'Updated Title'
+   * console.log(updated.isPinned); // true
+   * ```
    */
-  update(conversation: Conversation, updates: ConversationUpdateInput): Conversation {
+  update(
+    conversation: Conversation,
+    updates: ConversationUpdateInput,
+  ): Conversation {
     return {
       ...conversation,
       ...updates,

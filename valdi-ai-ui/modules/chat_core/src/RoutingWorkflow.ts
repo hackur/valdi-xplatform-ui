@@ -86,7 +86,7 @@ export interface RoutingWorkflowConfig extends WorkflowConfig {
   selectRoute?: (
     input: string,
     classification: string,
-    routes: RouteDefinition[]
+    routes: RouteDefinition[],
   ) => RouteDefinition | undefined;
 
   /**
@@ -177,7 +177,7 @@ export class RoutingWorkflow extends WorkflowExecutor {
   constructor(
     config: RoutingWorkflowConfig,
     chatService: ChatService,
-    messageStore: MessageStore
+    messageStore: MessageStore,
   ) {
     super(config, chatService, messageStore);
     this.config = config;
@@ -186,7 +186,9 @@ export class RoutingWorkflow extends WorkflowExecutor {
   /**
    * Execute the routing workflow
    */
-  async execute(options: WorkflowExecutionOptions): Promise<WorkflowExecutionResult> {
+  async execute(
+    options: WorkflowExecutionOptions,
+  ): Promise<WorkflowExecutionResult> {
     const { conversationId, input, onProgress, abortSignal } = options;
     const startTime = Date.now();
 
@@ -219,7 +221,7 @@ export class RoutingWorkflow extends WorkflowExecutor {
         this.config.routerAgent,
         classificationPrompt,
         conversationId,
-        onProgress
+        onProgress,
       );
 
       this.addStep(routerStep);
@@ -236,7 +238,9 @@ export class RoutingWorkflow extends WorkflowExecutor {
 
       if (selectedRoutes.length === 0) {
         if (this.config.debug) {
-          console.log('[RoutingWorkflow] No routes matched, using fallback agent');
+          console.log(
+            '[RoutingWorkflow] No routes matched, using fallback agent',
+          );
         }
 
         if (!this.config.fallbackAgent) {
@@ -259,7 +263,7 @@ export class RoutingWorkflow extends WorkflowExecutor {
       if (this.config.debug) {
         console.log(
           `[RoutingWorkflow] Executing ${routesToExecute.length} route(s):`,
-          routesToExecute.map(r => r.name)
+          routesToExecute.map((r) => r.name),
         );
       }
 
@@ -268,13 +272,18 @@ export class RoutingWorkflow extends WorkflowExecutor {
 
       if (this.config.allowMultipleRoutes && routesToExecute.length > 1) {
         // Execute multiple routes in parallel
-        const routePromises = routesToExecute.map(route =>
-          this.executeAgentWithRetry(route.agent, input, conversationId, onProgress)
+        const routePromises = routesToExecute.map((route) =>
+          this.executeAgentWithRetry(
+            route.agent,
+            input,
+            conversationId,
+            onProgress,
+          ),
         );
 
         const routeSteps = await Promise.all(routePromises);
-        routeSteps.forEach(step => this.addStep(step));
-        results = routeSteps.map(step => step.output);
+        routeSteps.forEach((step) => this.addStep(step));
+        results = routeSteps.map((step) => step.output);
       } else {
         // Execute single route
         const route = routesToExecute[0];
@@ -282,7 +291,7 @@ export class RoutingWorkflow extends WorkflowExecutor {
           route.agent,
           input,
           conversationId,
-          onProgress
+          onProgress,
         );
 
         this.addStep(routeStep);
@@ -290,13 +299,14 @@ export class RoutingWorkflow extends WorkflowExecutor {
       }
 
       // Combine results if multiple routes were executed
-      let finalResult = results.length === 1
-        ? results[0]
-        : this.combineRouteResults(results, routesToExecute);
+      let finalResult =
+        results.length === 1
+          ? results[0]
+          : this.combineRouteResults(results, routesToExecute);
 
       // Include routing explanation if requested
       if (this.config.includeRoutingExplanation) {
-        const routeNames = routesToExecute.map(r => r.name).join(', ');
+        const routeNames = routesToExecute.map((r) => r.name).join(', ');
         const explanation = `[Routed to: ${routeNames}]\n\n${finalResult}`;
         finalResult = explanation;
       }
@@ -311,7 +321,7 @@ export class RoutingWorkflow extends WorkflowExecutor {
         metadata: {
           ...this.state.metadata,
           classification: classification,
-          selectedRoutes: routesToExecute.map(r => r.id),
+          selectedRoutes: routesToExecute.map((r) => r.id),
         },
       });
 
@@ -334,7 +344,8 @@ export class RoutingWorkflow extends WorkflowExecutor {
         executionTime,
       };
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      const errorMessage =
+        error instanceof Error ? error.message : 'Unknown error';
 
       this.updateState({
         status: 'error',
@@ -368,7 +379,9 @@ export class RoutingWorkflow extends WorkflowExecutor {
     try {
       const parsed = JSON.parse(trimmed);
       return {
-        routeIds: Array.isArray(parsed.routes) ? parsed.routes : [parsed.route || parsed.category],
+        routeIds: Array.isArray(parsed.routes)
+          ? parsed.routes
+          : [parsed.route || parsed.category],
         reasoning: parsed.reasoning,
         confidence: parsed.confidence,
         raw: output,
@@ -407,10 +420,17 @@ export class RoutingWorkflow extends WorkflowExecutor {
   /**
    * Select routes based on classification
    */
-  private selectRoutes(input: string, classification: ClassificationResult): RouteDefinition[] {
+  private selectRoutes(
+    input: string,
+    classification: ClassificationResult,
+  ): RouteDefinition[] {
     // Use custom selector if provided
     if (this.config.selectRoute) {
-      const selected = this.config.selectRoute(input, classification.raw, this.config.routes);
+      const selected = this.config.selectRoute(
+        input,
+        classification.raw,
+        this.config.routes,
+      );
       return selected ? [selected] : [];
     }
 
@@ -419,7 +439,7 @@ export class RoutingWorkflow extends WorkflowExecutor {
 
     // Find routes matching classification
     for (const routeId of classification.routeIds) {
-      const route = this.config.routes.find(r => r.id === routeId);
+      const route = this.config.routes.find((r) => r.id === routeId);
       if (route) {
         // Check custom condition if provided
         if (route.condition && !route.condition(input, classification)) {
@@ -438,7 +458,10 @@ export class RoutingWorkflow extends WorkflowExecutor {
   /**
    * Combine results from multiple routes
    */
-  private combineRouteResults(results: string[], routes: RouteDefinition[]): string {
+  private combineRouteResults(
+    results: string[],
+    routes: RouteDefinition[],
+  ): string {
     return results
       .map((result, index) => {
         const routeName = routes[index].name;
@@ -451,7 +474,9 @@ export class RoutingWorkflow extends WorkflowExecutor {
    * Get classification result
    */
   getClassification(): ClassificationResult | undefined {
-    return this.state.metadata?.classification as ClassificationResult | undefined;
+    return this.state.metadata?.classification as
+      | ClassificationResult
+      | undefined;
   }
 
   /**
@@ -519,7 +544,11 @@ export class RoutingWorkflowBuilder {
    * Set custom route selector
    */
   customSelector(
-    fn: (input: string, classification: string, routes: RouteDefinition[]) => RouteDefinition | undefined
+    fn: (
+      input: string,
+      classification: string,
+      routes: RouteDefinition[],
+    ) => RouteDefinition | undefined,
   ): this {
     this.config.selectRoute = fn;
     return this;
@@ -551,7 +580,10 @@ export class RoutingWorkflowBuilder {
   /**
    * Build and create executor
    */
-  buildExecutor(chatService: ChatService, messageStore: MessageStore): RoutingWorkflow {
+  buildExecutor(
+    chatService: ChatService,
+    messageStore: MessageStore,
+  ): RoutingWorkflow {
     return new RoutingWorkflow(this.build(), chatService, messageStore);
   }
 }
@@ -562,9 +594,9 @@ export class RoutingWorkflowBuilder {
 export function createRoutingWorkflow(
   routerAgent: RoutingWorkflowConfig['routerAgent'],
   routes: RouteDefinition[],
-  options?: Partial<RoutingWorkflowConfig>
+  options?: Partial<RoutingWorkflowConfig>,
 ): RoutingWorkflowConfig {
-  const routeAgents = routes.map(r => r.agent);
+  const routeAgents = routes.map((r) => r.agent);
   return {
     type: 'routing',
     agents: [routerAgent, ...routeAgents],

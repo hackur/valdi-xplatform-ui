@@ -64,7 +64,10 @@ export class LoopController {
     let currentContext = { ...context };
 
     try {
-      while (this.state.iteration < config.maxIterations && this.state.isRunning) {
+      while (
+        this.state.iteration < config.maxIterations &&
+        this.state.isRunning
+      ) {
         const iterationStart = Date.now();
         this.state.iteration++;
 
@@ -123,7 +126,9 @@ export class LoopController {
 
         // Track iteration time
         const iterationTime = Date.now() - iterationStart;
-        console.log(`[LoopController] Iteration ${this.state.iteration} completed in ${iterationTime}ms`);
+        console.log(
+          `[LoopController] Iteration ${this.state.iteration} completed in ${iterationTime}ms`,
+        );
       }
 
       this.state.isRunning = false;
@@ -147,7 +152,9 @@ export class LoopController {
 
       // Call error callback
       if (config.onError) {
-        config.onError(error instanceof Error ? error : new Error(String(error)));
+        config.onError(
+          error instanceof Error ? error : new Error(String(error)),
+        );
       }
 
       throw error;
@@ -159,7 +166,9 @@ export class LoopController {
    */
   stop(): void {
     if (this.state && this.state.isRunning) {
-      console.log(`[LoopController] Stopping loop at iteration ${this.state.iteration}`);
+      console.log(
+        `[LoopController] Stopping loop at iteration ${this.state.iteration}`,
+      );
       this.state.isRunning = false;
       this.state.isStopped = true;
     }
@@ -182,7 +191,10 @@ export class LoopController {
     return Promise.race([
       fn(),
       new Promise<T>((_, reject) =>
-        setTimeout(() => reject(new Error(`Timeout after ${timeout}ms`)), timeout),
+        setTimeout(
+          () => reject(new Error(`Timeout after ${timeout}ms`)),
+          timeout,
+        ),
       ),
     ]);
   }

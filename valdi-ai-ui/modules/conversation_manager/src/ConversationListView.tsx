@@ -79,8 +79,14 @@ export class ConversationListView extends StatefulComponent<
   }
 
   onRender() {
-    const { conversations, isLoading, error, searchQuery, selectedIds, viewMode } =
-      this.state;
+    const {
+      conversations,
+      isLoading,
+      error,
+      searchQuery,
+      selectedIds,
+      viewMode,
+    } = this.state;
 
     return (
       <view style={styles.container}>
@@ -96,7 +102,9 @@ export class ConversationListView extends StatefulComponent<
             >
               <label
                 value="All"
-                style={viewMode === 'all' ? styles.tabTextActive : styles.tabText}
+                style={
+                  viewMode === 'all' ? styles.tabTextActive : styles.tabText
+                }
               />
             </view>
 
@@ -106,7 +114,9 @@ export class ConversationListView extends StatefulComponent<
             >
               <label
                 value="Active"
-                style={viewMode === 'active' ? styles.tabTextActive : styles.tabText}
+                style={
+                  viewMode === 'active' ? styles.tabTextActive : styles.tabText
+                }
               />
             </view>
 
@@ -117,7 +127,9 @@ export class ConversationListView extends StatefulComponent<
               <label
                 value="Archived"
                 style={
-                  viewMode === 'archived' ? styles.tabTextActive : styles.tabText
+                  viewMode === 'archived'
+                    ? styles.tabTextActive
+                    : styles.tabText
                 }
               />
             </view>
@@ -126,7 +138,10 @@ export class ConversationListView extends StatefulComponent<
 
         {/* Search Bar */}
         <view style={styles.searchContainer}>
-          <SearchBar onSearch={this.handleSearch} onClear={this.handleClearSearch} />
+          <SearchBar
+            onSearch={this.handleSearch}
+            onClear={this.handleClearSearch}
+          />
         </view>
 
         {/* Content */}
@@ -166,7 +181,9 @@ export class ConversationListView extends StatefulComponent<
                     key={conversation.id}
                     conversation={conversation}
                     onTap={() => this.handleConversationTap(conversation.id)}
-                    onLongPress={() => this.handleConversationLongPress(conversation.id)}
+                    onLongPress={() =>
+                      this.handleConversationLongPress(conversation.id)
+                    }
                     isSelected={selectedIds.has(conversation.id)}
                   />
                 ))}
@@ -178,18 +195,30 @@ export class ConversationListView extends StatefulComponent<
         {/* Selection Actions (if any selected) */}
         {selectedIds.size > 0 && (
           <view style={styles.selectionBar}>
-            <label value={`${selectedIds.size} selected`} style={styles.selectionText} />
+            <label
+              value={`${selectedIds.size} selected`}
+              style={styles.selectionText}
+            />
 
             <view style={styles.selectionActions}>
-              <view style={styles.actionButton} onTap={this.handleArchiveSelected}>
+              <view
+                style={styles.actionButton}
+                onTap={this.handleArchiveSelected}
+              >
                 <label value="Archive" style={styles.actionButtonText} />
               </view>
 
-              <view style={styles.actionButton} onTap={this.handleDeleteSelected}>
+              <view
+                style={styles.actionButton}
+                onTap={this.handleDeleteSelected}
+              >
                 <label value="Delete" style={styles.actionButtonText} />
               </view>
 
-              <view style={styles.actionButton} onTap={this.handleClearSelection}>
+              <view
+                style={styles.actionButton}
+                onTap={this.handleClearSelection}
+              >
                 <label value="Cancel" style={styles.actionButtonText} />
               </view>
             </view>
@@ -240,7 +269,10 @@ export class ConversationListView extends StatefulComponent<
     } catch (error) {
       console.error('Failed to load conversations:', error);
       this.setState({
-        error: error instanceof Error ? error.message : 'Failed to load conversations',
+        error:
+          error instanceof Error
+            ? error.message
+            : 'Failed to load conversations',
         isLoading: false,
       });
     }

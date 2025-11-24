@@ -284,8 +284,8 @@ export class WorkflowCard extends Component<WorkflowCardProps> {
               this.renderStep(
                 step,
                 index,
-                index === executionState.steps.length - 1
-              )
+                index === executionState.steps.length - 1,
+              ),
             )}
           </view>
         )}

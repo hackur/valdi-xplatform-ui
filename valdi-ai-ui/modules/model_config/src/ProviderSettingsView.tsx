@@ -6,17 +6,13 @@
 
 import { StatefulComponent } from 'valdi_core/src/Component';
 import { Style } from 'valdi_core/src/Style';
-import {
-  View,
-  Label,
-  ScrollView,
-} from 'valdi_tsx/src/NativeTemplateElements';
+import { View, Label, ScrollView } from 'valdi_tsx/src/NativeTemplateElements';
 import { NavigationController } from 'valdi_navigation/src/NavigationController';
-import { Colors, Fonts, Spacing } from 'common/src/theme';
-import { Card } from 'common/src/components/Card';
-import { Button } from 'common/src/components/Button';
-import { LoadingSpinner } from 'common/src/components/LoadingSpinner';
-import { ConfirmDialog } from 'common/src/components/ConfirmDialog';
+import { Colors, Fonts, Spacing } from '@common/theme';
+import { Card } from '@common/components';
+import { Button } from '@common/components';
+import { LoadingSpinner } from '@common/components';
+import { ConfirmDialog } from '@common/components';
 import { CustomProviderStore } from './CustomProviderStore';
 import { CustomProviderConfig } from './types';
 import { AddCustomProviderView } from './AddCustomProviderView';
@@ -108,7 +104,10 @@ export class ProviderSettingsView extends StatefulComponent<
             {providers.length === 0 ? (
               <view style={styles.emptyContainer}>
                 <label value="🔌" style={styles.emptyIcon} />
-                <label value="No custom providers yet" style={styles.emptyText} />
+                <label
+                  value="No custom providers yet"
+                  style={styles.emptyText}
+                />
                 <label
                   value="Add a custom provider to use local LLMs, Azure OpenAI, or other compatible APIs"
                   style={styles.emptySubtext}
@@ -123,16 +122,28 @@ export class ProviderSettingsView extends StatefulComponent<
                         {/* Provider Header */}
                         <view style={styles.providerHeader}>
                           <view style={styles.providerInfo}>
-                            <label value={provider.name} style={styles.providerName} />
+                            <label
+                              value={provider.name}
+                              style={styles.providerName}
+                            />
                             <view style={styles.providerMeta}>
-                              <label value={provider.baseUrl} style={styles.providerUrl} />
+                              <label
+                                value={provider.baseUrl}
+                                style={styles.providerUrl}
+                              />
                               {provider.isEnabled ? (
                                 <view style={styles.statusBadge}>
-                                  <label value="Enabled" style={styles.statusText} />
+                                  <label
+                                    value="Enabled"
+                                    style={styles.statusText}
+                                  />
                                 </view>
                               ) : (
                                 <view style={styles.statusBadgeDisabled}>
-                                  <label value="Disabled" style={styles.statusTextDisabled} />
+                                  <label
+                                    value="Disabled"
+                                    style={styles.statusTextDisabled}
+                                  />
                                 </view>
                               )}
                             </view>
@@ -157,12 +168,18 @@ export class ProviderSettingsView extends StatefulComponent<
                         <view style={styles.capabilities}>
                           {provider.supportsStreaming && (
                             <view style={styles.capabilityBadge}>
-                              <label value="Streaming" style={styles.capabilityText} />
+                              <label
+                                value="Streaming"
+                                style={styles.capabilityText}
+                              />
                             </view>
                           )}
                           {provider.supportsFunctionCalling && (
                             <view style={styles.capabilityBadge}>
-                              <label value="Function Calling" style={styles.capabilityText} />
+                              <label
+                                value="Function Calling"
+                                style={styles.capabilityText}
+                              />
                             </view>
                           )}
                         </view>
@@ -173,20 +190,29 @@ export class ProviderSettingsView extends StatefulComponent<
                             style={styles.actionButton}
                             onTap={() => this.handleTestProvider(provider.id)}
                           >
-                            <label value="Test" style={styles.actionButtonText} />
+                            <label
+                              value="Test"
+                              style={styles.actionButtonText}
+                            />
                           </view>
 
                           <view
                             style={styles.actionButton}
                             onTap={() => this.handleEditProvider(provider)}
                           >
-                            <label value="Edit" style={styles.actionButtonText} />
+                            <label
+                              value="Edit"
+                              style={styles.actionButtonText}
+                            />
                           </view>
 
                           <view
                             style={styles.actionButton}
                             onTap={() =>
-                              this.handleToggleEnabled(provider.id, !provider.isEnabled)
+                              this.handleToggleEnabled(
+                                provider.id,
+                                !provider.isEnabled,
+                              )
                             }
                           >
                             <label
@@ -199,7 +225,10 @@ export class ProviderSettingsView extends StatefulComponent<
                             style={styles.actionButtonDanger}
                             onTap={() => this.handleDeleteProvider(provider.id)}
                           >
-                            <label value="Delete" style={styles.actionButtonTextDanger} />
+                            <label
+                              value="Delete"
+                              style={styles.actionButtonTextDanger}
+                            />
                           </view>
                         </view>
 
@@ -244,7 +273,8 @@ export class ProviderSettingsView extends StatefulComponent<
     } catch (error) {
       console.error('Failed to load providers:', error);
       this.setState({
-        error: error instanceof Error ? error.message : 'Failed to load providers',
+        error:
+          error instanceof Error ? error.message : 'Failed to load providers',
         isLoading: false,
       });
     }
@@ -280,15 +310,20 @@ export class ProviderSettingsView extends StatefulComponent<
    */
   private handleTestProvider = async (providerId: string): Promise<void> => {
     try {
-      const result = await this.props.customProviderStore.testProvider(providerId);
+      const result =
+        await this.props.customProviderStore.testProvider(providerId);
 
       if (result.success) {
-        alert(`Connection successful!\nResponse time: ${result.responseTime}ms`);
+        alert(
+          `Connection successful!\nResponse time: ${result.responseTime}ms`,
+        );
       } else {
         alert(`Connection failed\n${result.error || 'Unknown error'}`);
       }
     } catch (error) {
-      alert(`Test failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      alert(
+        `Test failed: ${error instanceof Error ? error.message : 'Unknown error'}`,
+      );
     }
   };
 
@@ -305,7 +340,9 @@ export class ProviderSettingsView extends StatefulComponent<
       });
       await this.loadProviders();
     } catch (error) {
-      alert(`Failed to update provider: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      alert(
+        `Failed to update provider: ${error instanceof Error ? error.message : 'Unknown error'}`,
+      );
     }
   };
 
@@ -335,7 +372,9 @@ export class ProviderSettingsView extends StatefulComponent<
       await this.props.customProviderStore.deleteProvider(providerToDelete);
       await this.loadProviders();
     } catch (error) {
-      alert(`Failed to delete provider: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      alert(
+        `Failed to delete provider: ${error instanceof Error ? error.message : 'Unknown error'}`,
+      );
     }
   };
 

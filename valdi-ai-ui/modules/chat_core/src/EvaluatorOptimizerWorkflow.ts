@@ -130,7 +130,7 @@ export interface EvaluatorOptimizerWorkflowConfig extends WorkflowConfig {
   shouldStop?: (
     iteration: number,
     evaluation: EvaluationResult,
-    previousEvaluation?: EvaluationResult
+    previousEvaluation?: EvaluationResult,
   ) => boolean;
 }
 
@@ -181,7 +181,7 @@ export class EvaluatorOptimizerWorkflow extends WorkflowExecutor {
   constructor(
     config: EvaluatorOptimizerWorkflowConfig,
     chatService: ChatService,
-    messageStore: MessageStore
+    messageStore: MessageStore,
   ) {
     super(config, chatService, messageStore);
     this.config = config;
@@ -190,7 +190,9 @@ export class EvaluatorOptimizerWorkflow extends WorkflowExecutor {
   /**
    * Execute the evaluator-optimizer workflow
    */
-  async execute(options: WorkflowExecutionOptions): Promise<WorkflowExecutionResult> {
+  async execute(
+    options: WorkflowExecutionOptions,
+  ): Promise<WorkflowExecutionResult> {
     const { conversationId, input, onProgress, abortSignal } = options;
     const startTime = Date.now();
 
@@ -218,13 +220,19 @@ export class EvaluatorOptimizerWorkflow extends WorkflowExecutor {
         console.log('[EvaluatorOptimizerWorkflow] Generating initial output');
       }
 
-      let currentOutput = await this.generateOutput(input, conversationId, onProgress);
+      let currentOutput = await this.generateOutput(
+        input,
+        conversationId,
+        onProgress,
+      );
       let previousEvaluation: EvaluationResult | undefined;
 
       // Iterative refinement loop
       for (let iteration = 1; iteration <= maxIterations; iteration++) {
         if (this.config.debug) {
-          console.log(`[EvaluatorOptimizerWorkflow] Iteration ${iteration}/${maxIterations}`);
+          console.log(
+            `[EvaluatorOptimizerWorkflow] Iteration ${iteration}/${maxIterations}`,
+          );
         }
 
         // Check for cancellation
@@ -237,12 +245,12 @@ export class EvaluatorOptimizerWorkflow extends WorkflowExecutor {
           currentOutput,
           input,
           conversationId,
-          onProgress
+          onProgress,
         );
 
         if (this.config.debug) {
           console.log(
-            `[EvaluatorOptimizerWorkflow] Evaluation score: ${evaluation.score}/100`
+            `[EvaluatorOptimizerWorkflow] Evaluation score: ${evaluation.score}/100`,
           );
         }
 
@@ -258,7 +266,9 @@ export class EvaluatorOptimizerWorkflow extends WorkflowExecutor {
         this.iterations.push(iterationResult);
 
         // Check stopping conditions
-        if (this.shouldStopIteration(iteration, evaluation, previousEvaluation)) {
+        if (
+          this.shouldStopIteration(iteration, evaluation, previousEvaluation)
+        ) {
           if (this.config.debug) {
             console.log('[EvaluatorOptimizerWorkflow] Stopping condition met');
           }
@@ -266,7 +276,10 @@ export class EvaluatorOptimizerWorkflow extends WorkflowExecutor {
         }
 
         // Don't optimize on last iteration if we've already met threshold
-        if (iteration === maxIterations || evaluation.score >= qualityThreshold) {
+        if (
+          iteration === maxIterations ||
+          evaluation.score >= qualityThreshold
+        ) {
           break;
         }
 
@@ -276,7 +289,7 @@ export class EvaluatorOptimizerWorkflow extends WorkflowExecutor {
           evaluation,
           input,
           conversationId,
-          onProgress
+          onProgress,
         );
 
         previousEvaluation = evaluation;
@@ -322,7 +335,8 @@ export class EvaluatorOptimizerWorkflow extends WorkflowExecutor {
         executionTime,
       };
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      const errorMessage =
+        error instanceof Error ? error.message : 'Unknown error';
 
       this.updateState({
         status: 'error',
@@ -349,13 +363,13 @@ export class EvaluatorOptimizerWorkflow extends WorkflowExecutor {
   private async generateOutput(
     input: string,
     conversationId: string,
-    onProgress?: any
+    onProgress?: any,
   ): Promise<string> {
     const step = await this.executeAgentWithRetry(
       this.config.generatorAgent,
       input,
       conversationId,
-      onProgress
+      onProgress,
     );
 
     this.addStep(step);
@@ -369,7 +383,7 @@ export class EvaluatorOptimizerWorkflow extends WorkflowExecutor {
     output: string,
     originalInput: string,
     conversationId: string,
-    onProgress?: any
+    onProgress?: any,
   ): Promise<EvaluationResult> {
     const evaluationPrompt = this.config.evaluatorAgent.evaluationCriteria
       ? `${this.config.evaluatorAgent.evaluationCriteria}\n\nOriginal Request: ${originalInput}\n\nOutput to Evaluate:\n${output}`
@@ -379,7 +393,7 @@ export class EvaluatorOptimizerWorkflow extends WorkflowExecutor {
       this.config.evaluatorAgent,
       evaluationPrompt,
       conversationId,
-      onProgress
+      onProgress,
     );
 
     this.addStep(step);
@@ -396,7 +410,7 @@ export class EvaluatorOptimizerWorkflow extends WorkflowExecutor {
     evaluation: EvaluationResult,
     originalInput: string,
     conversationId: string,
-    onProgress?: any
+    onProgress?: any,
   ): Promise<string> {
     const optimizationPrompt = `Original Request: ${originalInput}\n\nCurrent Output:\n${output}\n\nEvaluation Feedback (Score: ${evaluation.score}/100):\n${evaluation.feedback}\n\nPlease refine the output to address the feedback and improve quality.`;
 
@@ -404,7 +418,7 @@ export class EvaluatorOptimizerWorkflow extends WorkflowExecutor {
       this.config.optimizerAgent,
       optimizationPrompt,
       conversationId,
-      onProgress
+      onProgress,
     );
 
     this.addStep(step);
@@ -441,7 +455,9 @@ export class EvaluatorOptimizerWorkflow extends WorkflowExecutor {
     }
 
     // Extract feedback
-    const feedbackMatch = output.match(/(?:FEEDBACK|Feedback|feedback):\s*(.+)/is);
+    const feedbackMatch = output.match(
+      /(?:FEEDBACK|Feedback|feedback):\s*(.+)/is,
+    );
     if (feedbackMatch) {
       result.feedback = feedbackMatch[1].trim();
     }
@@ -451,21 +467,25 @@ export class EvaluatorOptimizerWorkflow extends WorkflowExecutor {
     result.acceptable = result.score >= threshold;
 
     // Try to extract issues
-    const issuesMatch = output.match(/(?:ISSUES|Issues|issues):\s*(.+?)(?=\n\n|$)/is);
+    const issuesMatch = output.match(
+      /(?:ISSUES|Issues|issues):\s*(.+?)(?=\n\n|$)/is,
+    );
     if (issuesMatch) {
       result.issues = issuesMatch[1]
         .split('\n')
-        .map(i => i.trim())
-        .filter(i => i.length > 0);
+        .map((i) => i.trim())
+        .filter((i) => i.length > 0);
     }
 
     // Try to extract suggestions
-    const suggestionsMatch = output.match(/(?:SUGGESTIONS|Suggestions|suggestions):\s*(.+?)(?=\n\n|$)/is);
+    const suggestionsMatch = output.match(
+      /(?:SUGGESTIONS|Suggestions|suggestions):\s*(.+?)(?=\n\n|$)/is,
+    );
     if (suggestionsMatch) {
       result.suggestions = suggestionsMatch[1]
         .split('\n')
-        .map(s => s.trim())
-        .filter(s => s.length > 0);
+        .map((s) => s.trim())
+        .filter((s) => s.length > 0);
     }
 
     return result;
@@ -477,7 +497,7 @@ export class EvaluatorOptimizerWorkflow extends WorkflowExecutor {
   private shouldStopIteration(
     iteration: number,
     evaluation: EvaluationResult,
-    previousEvaluation?: EvaluationResult
+    previousEvaluation?: EvaluationResult,
   ): boolean {
     // Use custom stopping condition if provided
     if (this.config.shouldStop) {
@@ -496,7 +516,7 @@ export class EvaluatorOptimizerWorkflow extends WorkflowExecutor {
       if (improvement < this.config.minImprovement && improvement >= 0) {
         if (this.config.debug) {
           console.log(
-            `[EvaluatorOptimizerWorkflow] Insufficient improvement: ${improvement} < ${this.config.minImprovement}`
+            `[EvaluatorOptimizerWorkflow] Insufficient improvement: ${improvement} < ${this.config.minImprovement}`,
           );
         }
         return true;
@@ -511,17 +531,21 @@ export class EvaluatorOptimizerWorkflow extends WorkflowExecutor {
    */
   private formatAllIterations(): string {
     const sections = this.iterations.map((iter, index) => {
-      return `## Iteration ${iter.iteration}\n\n` +
+      return (
+        `## Iteration ${iter.iteration}\n\n` +
         `**Score:** ${iter.evaluation.score}/100\n\n` +
         `**Feedback:** ${iter.evaluation.feedback}\n\n` +
-        `**Output:**\n${iter.output}`;
+        `**Output:**\n${iter.output}`
+      );
     });
 
     const finalIter = this.iterations[this.iterations.length - 1];
 
-    return sections.join('\n\n---\n\n') +
+    return (
+      sections.join('\n\n---\n\n') +
       `\n\n## Final Result (Score: ${finalIter.evaluation.score}/100)\n\n` +
-      finalIter.output;
+      finalIter.output
+    );
   }
 
   /**
@@ -542,7 +566,7 @@ export class EvaluatorOptimizerWorkflow extends WorkflowExecutor {
    * Get score progression
    */
   getScoreProgression(): number[] {
-    return this.iterations.map(iter => iter.evaluation.score);
+    return this.iterations.map((iter) => iter.evaluation.score);
   }
 
   /**
@@ -636,8 +660,8 @@ export class EvaluatorOptimizerWorkflowBuilder {
     condition: (
       iteration: number,
       evaluation: EvaluationResult,
-      previousEvaluation?: EvaluationResult
-    ) => boolean
+      previousEvaluation?: EvaluationResult,
+    ) => boolean,
   ): this {
     this.config.shouldStop = condition;
     return this;
@@ -673,9 +697,13 @@ export class EvaluatorOptimizerWorkflowBuilder {
    */
   buildExecutor(
     chatService: ChatService,
-    messageStore: MessageStore
+    messageStore: MessageStore,
   ): EvaluatorOptimizerWorkflow {
-    return new EvaluatorOptimizerWorkflow(this.build(), chatService, messageStore);
+    return new EvaluatorOptimizerWorkflow(
+      this.build(),
+      chatService,
+      messageStore,
+    );
   }
 }
 
@@ -686,7 +714,7 @@ export function createEvaluatorOptimizerWorkflow(
   generatorAgent: AgentDefinition,
   evaluatorAgent: EvaluatorOptimizerWorkflowConfig['evaluatorAgent'],
   optimizerAgent: AgentDefinition,
-  options?: Partial<EvaluatorOptimizerWorkflowConfig>
+  options?: Partial<EvaluatorOptimizerWorkflowConfig>,
 ): EvaluatorOptimizerWorkflowConfig {
   return {
     type: 'evaluator-optimizer',

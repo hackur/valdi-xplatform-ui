@@ -24,7 +24,7 @@ import {
  */
 export function createContentPipeline(
   chatService: ChatService,
-  messageStore: MessageStore
+  messageStore: MessageStore,
 ): SequentialWorkflow {
   return new SequentialWorkflowBuilder()
     .custom({
@@ -81,7 +81,7 @@ export function createContentPipeline(
  */
 export function createExpertPanel(
   chatService: ChatService,
-  messageStore: MessageStore
+  messageStore: MessageStore,
 ): ParallelWorkflow {
   return new ParallelWorkflowBuilder()
     .addAgent({
@@ -139,7 +139,7 @@ export function createExpertPanel(
  */
 export function createSupportRouter(
   chatService: ChatService,
-  messageStore: MessageStore
+  messageStore: MessageStore,
 ): RoutingWorkflow {
   return new RoutingWorkflowBuilder()
     .router(
@@ -157,7 +157,7 @@ export function createSupportRouter(
       - sales: Pricing, features, upgrades, demos
       - general: General questions, feedback, other inquiries
 
-      Respond with ONLY the category name in lowercase.`
+      Respond with ONLY the category name in lowercase.`,
     )
     .route({
       id: 'billing',
@@ -245,7 +245,7 @@ export function createSupportRouter(
  */
 export function createCodeQualityLoop(
   chatService: ChatService,
-  messageStore: MessageStore
+  messageStore: MessageStore,
 ): EvaluatorOptimizerWorkflow {
   return new EvaluatorOptimizerWorkflowBuilder()
     .generator({
@@ -307,7 +307,7 @@ export function createCodeQualityLoop(
           FEEDBACK:
           [Detailed feedback]`,
       },
-      'Code Quality, Best Practices, Error Handling, Documentation, Testing'
+      'Code Quality, Best Practices, Error Handling, Documentation, Testing',
     )
     .optimizer({
       id: 'code-optimizer',
@@ -339,7 +339,7 @@ export async function createNestedWorkflowExample(
   chatService: ChatService,
   messageStore: MessageStore,
   conversationId: string,
-  input: string
+  input: string,
 ) {
   // Stage 1: Parallel research from multiple perspectives
   const researchWorkflow = new ParallelWorkflowBuilder()
@@ -409,7 +409,7 @@ export async function createNestedWorkflowExample(
  */
 export async function createCustomWorkflowExample(
   chatService: ChatService,
-  messageStore: MessageStore
+  messageStore: MessageStore,
 ) {
   const workflow = new SequentialWorkflow(
     {
@@ -450,7 +450,7 @@ export async function createCustomWorkflowExample(
       debug: true,
     },
     chatService,
-    messageStore
+    messageStore,
   );
 
   return workflow;
@@ -502,7 +502,8 @@ export async function runWorkflowExamples() {
   const codeQualityLoop = createCodeQualityLoop(chatService, messageStore);
   const codeResult = await codeQualityLoop.execute({
     conversationId,
-    input: 'Create a TypeScript function to validate email addresses with RFC 5322 compliance',
+    input:
+      'Create a TypeScript function to validate email addresses with RFC 5322 compliance',
   });
   console.log('Code Result:', codeResult.result);
   console.log('Iterations:', codeQualityLoop.getIterations().length);

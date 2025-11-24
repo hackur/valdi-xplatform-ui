@@ -8,7 +8,13 @@
 import { Component } from 'valdi_core/src/Component';
 import { Style } from 'valdi_core/src/Style';
 import { View } from 'valdi_tsx/src/NativeTemplateElements';
-import { Colors, Spacing, SemanticShadows, Shadows, BorderRadius } from '../theme';
+import {
+  Colors,
+  Spacing,
+  SemanticShadows,
+  Shadows,
+  BorderRadius,
+} from '../theme';
 
 /**
  * Card Elevation Level
@@ -86,17 +92,19 @@ export class Card extends Component<CardProps> {
     padding: number | undefined,
     bordered: boolean | undefined,
     shadowStyle: Record<string, unknown>,
-    customStyle?: Record<string, unknown>
+    customStyle?: Record<string, unknown>,
   ): Style<View> {
     return new Style<View>({
       ...styles.container,
       backgroundColor: backgroundColor ?? Colors.surface,
       borderRadius: borderRadius ?? BorderRadius.md,
       padding: padding ?? Spacing.base,
-      ...(bordered ? {
-        borderWidth: 1,
-        borderColor: Colors.border,
-      } : {}),
+      ...(bordered
+        ? {
+            borderWidth: 1,
+            borderColor: Colors.border,
+          }
+        : {}),
       ...shadowStyle,
       ...customStyle,
     });
@@ -114,13 +122,17 @@ export class Card extends Component<CardProps> {
     } = this.viewModel;
 
     const shadowStyle = this.getElevationStyle();
-    const cardStyle = this.getCardStyle(backgroundColor, borderRadius, padding, bordered, shadowStyle, customStyle);
+    const cardStyle = this.getCardStyle(
+      backgroundColor,
+      borderRadius,
+      padding,
+      bordered,
+      shadowStyle,
+      customStyle,
+    );
 
     return (
-      <view
-        style={cardStyle}
-        onTap={onTap ? this.handleTap : undefined}
-      >
+      <view style={cardStyle} onTap={onTap ? this.handleTap : undefined}>
         {children}
       </view>
     );

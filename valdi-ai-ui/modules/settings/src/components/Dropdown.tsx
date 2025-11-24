@@ -87,7 +87,12 @@ export class Dropdown extends Component<DropdownProps, DropdownState> {
   };
 
   onRender() {
-    const { options, selectedValue, disabled, style: customStyle } = this.viewModel;
+    const {
+      options,
+      selectedValue,
+      disabled,
+      style: customStyle,
+    } = this.viewModel;
     const { isOpen } = this.state;
 
     return (

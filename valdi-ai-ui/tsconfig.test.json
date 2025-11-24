@@ -12,9 +12,5 @@
     "modules/**/__tests__/**/*.tsx",
     "jest.setup.js"
   ],
-  "exclude": [
-    "node_modules",
-    "bazel-*",
-    "dist"
-  ]
+  "exclude": ["node_modules", "bazel-*", "dist"]
 }

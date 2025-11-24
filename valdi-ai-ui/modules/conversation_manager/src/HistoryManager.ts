@@ -25,7 +25,10 @@ export class HistoryManager {
   private conversationStore: ConversationStore;
   private exportService: ExportService;
 
-  constructor(conversationStore: ConversationStore, exportService: ExportService) {
+  constructor(
+    conversationStore: ConversationStore,
+    exportService: ExportService,
+  ) {
     this.conversationStore = conversationStore;
     this.exportService = exportService;
   }
@@ -35,7 +38,9 @@ export class HistoryManager {
    * @param filter Optional filter
    * @returns Array of conversation list items
    */
-  async getConversations(filter?: HistoryFilter): Promise<ConversationListItemData[]> {
+  async getConversations(
+    filter?: HistoryFilter,
+  ): Promise<ConversationListItemData[]> {
     // Get all conversations from store
     const conversations = this.conversationStore.getAllConversations();
 
@@ -246,7 +251,9 @@ export class HistoryManager {
 
     for (const id of conversationIds) {
       try {
-        await this.conversationStore.updateConversation(id, { status: 'archived' });
+        await this.conversationStore.updateConversation(id, {
+          status: 'archived',
+        });
         archived++;
       } catch (error) {
         console.error(`Failed to archive conversation ${id}:`, error);
@@ -264,7 +271,9 @@ export class HistoryManager {
 
     for (const id of conversationIds) {
       try {
-        await this.conversationStore.updateConversation(id, { status: 'active' });
+        await this.conversationStore.updateConversation(id, {
+          status: 'active',
+        });
         restored++;
       } catch (error) {
         console.error(`Failed to restore conversation ${id}:`, error);
@@ -292,7 +301,8 @@ export class HistoryManager {
       filtered = filtered.filter((conv) => {
         const convDate = conv.updatedAt;
         return (
-          convDate >= filter.dateRange!.start && convDate <= filter.dateRange!.end
+          convDate >= filter.dateRange!.start &&
+          convDate <= filter.dateRange!.end
         );
       });
     }
@@ -306,12 +316,16 @@ export class HistoryManager {
 
     // Statuses
     if (filter.statuses && filter.statuses.length > 0) {
-      filtered = filtered.filter((conv) => filter.statuses!.includes(conv.status));
+      filtered = filtered.filter((conv) =>
+        filter.statuses!.includes(conv.status),
+      );
     }
 
     // Min message count
     if (filter.minMessageCount !== undefined) {
-      filtered = filtered.filter((conv) => conv.messageCount >= filter.minMessageCount!);
+      filtered = filtered.filter(
+        (conv) => conv.messageCount >= filter.minMessageCount!,
+      );
     }
 
     return filtered;

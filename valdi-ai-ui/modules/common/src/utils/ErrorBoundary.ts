@@ -61,13 +61,45 @@ export interface ErrorBoundaryConfig {
 /**
  * Error Boundary Class
  *
- * Wraps components to catch and handle errors gracefully.
+ * Wraps components and functions to catch and handle errors gracefully.
+ * Provides configurable error recovery strategies and retry logic.
+ *
+ * @example
+ * ```typescript
+ * const boundary = new ErrorBoundary({
+ *   componentName: 'ChatComponent',
+ *   recovery: 'retry',
+ *   maxRetries: 3,
+ *   onError: (error, info) => {
+ *     console.error('Error in chat:', error);
+ *   }
+ * });
+ *
+ * const safeFetch = boundary.wrapAsync(async () => {
+ *   return await fetchMessages();
+ * });
+ * ```
  */
 export class ErrorBoundary {
   private config: Required<ErrorBoundaryConfig>;
   private errorCount: number = 0;
   private lastError?: Error;
 
+  /**
+   * Create a new ErrorBoundary instance
+   *
+   * @param config - Configuration options for the error boundary
+   *
+   * @example
+   * ```typescript
+   * const boundary = new ErrorBoundary({
+   *   componentName: 'MyComponent',
+   *   recovery: 'fallback',
+   *   fallback: null,
+   *   logErrors: true
+   * });
+   * ```
+   */
   constructor(config: ErrorBoundaryConfig) {
     this.config = {
       componentName: config.componentName,
@@ -81,6 +113,21 @@ export class ErrorBoundary {
 
   /**
    * Wrap a function with error handling
+   *
+   * Wraps a synchronous or promise-returning function with error handling.
+   * Automatically catches and handles errors according to the recovery strategy.
+   *
+   * @param fn - The function to wrap with error handling
+   * @returns The wrapped function with the same signature
+   *
+   * @example
+   * ```typescript
+   * const boundary = new ErrorBoundary({ componentName: 'API' });
+   * const safeParse = boundary.wrap((data: string) => JSON.parse(data));
+   *
+   * const result = safeParse('{"valid": "json"}'); // Works
+   * const failed = safeParse('invalid json'); // Returns fallback value
+   * ```
    */
   wrap<T extends (...args: any[]) => any>(fn: T): T {
     return ((...args: any[]) => {
@@ -154,7 +201,9 @@ export class ErrorBoundary {
     switch (this.config.recovery) {
       case 'retry':
         if (this.errorCount <= this.config.maxRetries) {
-          console.log(`[ErrorBoundary] Retrying... (${this.errorCount}/${this.config.maxRetries})`);
+          console.log(
+            `[ErrorBoundary] Retrying... (${this.errorCount}/${this.config.maxRetries})`,
+          );
           // Caller should implement retry logic
           return undefined;
         }

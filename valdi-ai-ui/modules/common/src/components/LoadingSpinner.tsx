@@ -61,7 +61,10 @@ interface LoadingSpinnerState {
  * Enhanced with fullscreen overlay support and improved animations.
  * Uses animated dots and rotation for better visual feedback.
  */
-export class LoadingSpinner extends StatefulComponent<LoadingSpinnerProps, LoadingSpinnerState> {
+export class LoadingSpinner extends StatefulComponent<
+  LoadingSpinnerProps,
+  LoadingSpinnerState
+> {
   static defaultProps: Partial<LoadingSpinnerProps> = {
     size: 'medium',
     color: Colors.primary,
@@ -108,20 +111,28 @@ export class LoadingSpinner extends StatefulComponent<LoadingSpinnerProps, Loadi
   private getSize(): number {
     const { size } = this.viewModel;
     switch (size) {
-      case 'small': return 24;
-      case 'medium': return 40;
-      case 'large': return 56;
-      default: return 40;
+      case 'small':
+        return 24;
+      case 'medium':
+        return 40;
+      case 'large':
+        return 56;
+      default:
+        return 40;
     }
   }
 
   private getFontSize(): number {
     const { size } = this.viewModel;
     switch (size) {
-      case 'small': return 12;
-      case 'medium': return 14;
-      case 'large': return 16;
-      default: return 14;
+      case 'small':
+        return 12;
+      case 'medium':
+        return 14;
+      case 'large':
+        return 16;
+      default:
+        return 14;
     }
   }
 
@@ -147,7 +158,10 @@ export class LoadingSpinner extends StatefulComponent<LoadingSpinnerProps, Loadi
     });
   }
 
-  private getOuterCircleStyle(size: number, color: string | undefined): Style<View> {
+  private getOuterCircleStyle(
+    size: number,
+    color: string | undefined,
+  ): Style<View> {
     return new Style<View>({
       width: size,
       height: size,
@@ -159,14 +173,18 @@ export class LoadingSpinner extends StatefulComponent<LoadingSpinnerProps, Loadi
     });
   }
 
-  private getInnerDotStyle(size: number, color: string | undefined, dots: number): Style<View> {
+  private getInnerDotStyle(
+    size: number,
+    color: string | undefined,
+    dots: number,
+  ): Style<View> {
     return new Style<View>({
       position: 'absolute',
       width: size / 3,
       height: size / 3,
       backgroundColor: color ?? Colors.primary,
       borderRadius: size / 6,
-      opacity: 0.6 + (dots * 0.1),
+      opacity: 0.6 + dots * 0.1,
     });
   }
 
@@ -206,17 +224,17 @@ export class LoadingSpinner extends StatefulComponent<LoadingSpinnerProps, Loadi
         {/* Loading text with animated dots */}
         {showText && text && (
           <view style={styles.textContainer}>
-            <label
-              value={`${text}${dotsText}`}
-              style={textLabelStyle}
-            />
+            <label value={`${text}${dotsText}`} style={textLabelStyle} />
           </view>
         )}
       </view>
     );
   }
 
-  private getFullscreenOverlayStyle(overlayColor: string | undefined, overlayOpacity: number | undefined): Style<View> {
+  private getFullscreenOverlayStyle(
+    overlayColor: string | undefined,
+    overlayOpacity: number | undefined,
+  ): Style<View> {
     return new Style<View>({
       position: 'absolute',
       top: 0,
@@ -233,7 +251,9 @@ export class LoadingSpinner extends StatefulComponent<LoadingSpinnerProps, Loadi
     });
   }
 
-  private getContainerStyle(customStyle?: Record<string, unknown>): Style<View> {
+  private getContainerStyle(
+    customStyle?: Record<string, unknown>,
+  ): Style<View> {
     return new Style<View>({
       flexDirection: 'column',
       alignItems: 'center',
@@ -252,13 +272,14 @@ export class LoadingSpinner extends StatefulComponent<LoadingSpinnerProps, Loadi
 
     if (fullscreen) {
       // Fullscreen overlay mode
-      const fullscreenOverlayStyle = this.getFullscreenOverlayStyle(overlayColor, overlayOpacity);
+      const fullscreenOverlayStyle = this.getFullscreenOverlayStyle(
+        overlayColor,
+        overlayOpacity,
+      );
 
       return (
         <view style={fullscreenOverlayStyle}>
-          <view style={styles.fullscreenContent}>
-            {this.renderContent()}
-          </view>
+          <view style={styles.fullscreenContent}>{this.renderContent()}</view>
         </view>
       );
     }
@@ -266,11 +287,7 @@ export class LoadingSpinner extends StatefulComponent<LoadingSpinnerProps, Loadi
     // Standard inline mode
     const containerStyle = this.getContainerStyle(customStyle);
 
-    return (
-      <view style={containerStyle}>
-        {this.renderContent()}
-      </view>
-    );
+    return <view style={containerStyle}>{this.renderContent()}</view>;
   }
 }
 

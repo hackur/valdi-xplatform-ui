@@ -106,7 +106,10 @@ export class ToolExecutor {
       };
     } catch (error) {
       // Handle execution errors
-      const errorMessage = error instanceof Error ? error.message : 'Unknown error during tool execution';
+      const errorMessage =
+        error instanceof Error
+          ? error.message
+          : 'Unknown error during tool execution';
 
       return {
         toolCallId: toolCall.toolCallId,
@@ -125,13 +128,17 @@ export class ToolExecutor {
    * @param toolCalls - Array of tool calls to execute
    * @returns Array of tool call results
    */
-  async executeToolCalls(toolCalls: ToolCallInput[]): Promise<ToolCallResult[]> {
+  async executeToolCalls(
+    toolCalls: ToolCallInput[],
+  ): Promise<ToolCallResult[]> {
     if (toolCalls.length === 0) {
       return [];
     }
 
     // Execute all tool calls in parallel
-    const resultPromises = toolCalls.map((toolCall) => this.executeToolCall(toolCall));
+    const resultPromises = toolCalls.map((toolCall) =>
+      this.executeToolCall(toolCall),
+    );
 
     return Promise.all(resultPromises);
   }
@@ -144,7 +151,9 @@ export class ToolExecutor {
    * @param toolCalls - Array of tool calls to execute
    * @returns Array of tool call results
    */
-  async executeToolCallsSequentially(toolCalls: ToolCallInput[]): Promise<ToolCallResult[]> {
+  async executeToolCallsSequentially(
+    toolCalls: ToolCallInput[],
+  ): Promise<ToolCallResult[]> {
     const results: ToolCallResult[] = [];
 
     for (const toolCall of toolCalls) {
@@ -267,6 +276,8 @@ export class ToolExecutor {
  * @param tools - Available tools
  * @returns ToolExecutor instance
  */
-export function createToolExecutor(tools: Record<string, CoreTool>): ToolExecutor {
+export function createToolExecutor(
+  tools: Record<string, CoreTool>,
+): ToolExecutor {
   return new ToolExecutor(tools);
 }

@@ -4,7 +4,7 @@
  * Manages custom OpenAI-compatible provider configurations with persistence.
  */
 
-import { StorageProvider } from 'common/src/services/StorageProvider';
+import { StorageProvider } from '@common/utils';
 import {
   CustomProviderConfig,
   ProviderTestResult,
@@ -68,7 +68,10 @@ export class CustomProviderStore {
    * Add a new custom provider
    */
   async addProvider(
-    config: Omit<CustomProviderConfig, 'id' | 'type' | 'createdAt' | 'updatedAt'>,
+    config: Omit<
+      CustomProviderConfig,
+      'id' | 'type' | 'createdAt' | 'updatedAt'
+    >,
   ): Promise<CustomProviderConfig> {
     // Validate configuration
     const validationResult = this.validateProvider({
@@ -111,7 +114,9 @@ export class CustomProviderStore {
    */
   async updateProvider(
     id: string,
-    updates: Partial<Omit<CustomProviderConfig, 'id' | 'type' | 'createdAt' | 'updatedAt'>>,
+    updates: Partial<
+      Omit<CustomProviderConfig, 'id' | 'type' | 'createdAt' | 'updatedAt'>
+    >,
   ): Promise<CustomProviderConfig> {
     const existing = this.providers.get(id);
 
@@ -193,7 +198,9 @@ export class CustomProviderStore {
   /**
    * Test a provider configuration (without saving)
    */
-  async testProviderConfig(config: CustomProviderConfig): Promise<ProviderTestResult> {
+  async testProviderConfig(
+    config: CustomProviderConfig,
+  ): Promise<ProviderTestResult> {
     const startTime = Date.now();
 
     try {

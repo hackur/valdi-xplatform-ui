@@ -14,7 +14,7 @@ import {
   ConversationListOptions,
   ConversationUtils,
   ConversationStatus,
-} from 'common/src/types';
+} from '@common/types';
 import { ConversationPersistence } from './ConversationPersistence';
 
 /**
@@ -53,7 +53,10 @@ export class ConversationStore {
   private persistence: ConversationPersistence;
   private enablePersistence: boolean;
 
-  constructor(enablePersistence: boolean = true, persistence?: ConversationPersistence) {
+  constructor(
+    enablePersistence: boolean = true,
+    persistence?: ConversationPersistence,
+  ) {
     this.enablePersistence = enablePersistence;
     this.persistence = persistence || new ConversationPersistence();
   }
@@ -77,7 +80,10 @@ export class ConversationStore {
       };
       this.notify();
     } catch (error) {
-      console.error('[ConversationStore] Error loading persisted conversations:', error);
+      console.error(
+        '[ConversationStore] Error loading persisted conversations:',
+        error,
+      );
       this.setError('Failed to load conversations');
       this.setLoading(false);
     }
@@ -112,7 +118,9 @@ export class ConversationStore {
   /**
    * Create a new conversation
    */
-  async createConversation(input: ConversationCreateInput): Promise<Conversation> {
+  async createConversation(
+    input: ConversationCreateInput,
+  ): Promise<Conversation> {
     const conversation = ConversationUtils.create(input);
 
     this.state = {
@@ -129,9 +137,14 @@ export class ConversationStore {
     // Persist the change
     if (this.enablePersistence) {
       try {
-        await this.persistence.saveConversationsDebounced(this.state.conversations);
+        await this.persistence.saveConversationsDebounced(
+          this.state.conversations,
+        );
       } catch (error) {
-        console.error('[ConversationStore] Error persisting conversation:', error);
+        console.error(
+          '[ConversationStore] Error persisting conversation:',
+          error,
+        );
       }
     }
 
@@ -155,7 +168,10 @@ export class ConversationStore {
   /**
    * Update an existing conversation
    */
-  async updateConversation(conversationId: string, updates: ConversationUpdateInput): Promise<void> {
+  async updateConversation(
+    conversationId: string,
+    updates: ConversationUpdateInput,
+  ): Promise<void> {
     const conversation = this.getConversation(conversationId);
 
     if (!conversation) {
@@ -178,9 +194,14 @@ export class ConversationStore {
     // Persist the change
     if (this.enablePersistence) {
       try {
-        await this.persistence.saveConversationsDebounced(this.state.conversations);
+        await this.persistence.saveConversationsDebounced(
+          this.state.conversations,
+        );
       } catch (error) {
-        console.error('[ConversationStore] Error persisting conversation update:', error);
+        console.error(
+          '[ConversationStore] Error persisting conversation update:',
+          error,
+        );
       }
     }
   }
@@ -207,7 +228,10 @@ export class ConversationStore {
       try {
         await this.persistence.deleteConversation(conversationId);
       } catch (error) {
-        console.error('[ConversationStore] Error persisting conversation deletion:', error);
+        console.error(
+          '[ConversationStore] Error persisting conversation deletion:',
+          error,
+        );
       }
     }
   }
@@ -245,7 +269,7 @@ export class ConversationStore {
    */
   private filterConversations(
     conversations: Conversation[],
-    filter: ConversationFilterOptions
+    filter: ConversationFilterOptions,
   ): Conversation[] {
     return conversations.filter((conv) => {
       // Filter by status
@@ -257,7 +281,9 @@ export class ConversationStore {
 
       // Filter by tags
       if (filter.tags && filter.tags.length > 0) {
-        const hasMatchingTag = filter.tags.some((tag) => conv.tags.includes(tag));
+        const hasMatchingTag = filter.tags.some((tag) =>
+          conv.tags.includes(tag),
+        );
         if (!hasMatchingTag) {
           return false;
         }
@@ -281,7 +307,8 @@ export class ConversationStore {
       if (filter.searchQuery) {
         const query = filter.searchQuery.toLowerCase();
         const matchesTitle = conv.title.toLowerCase().includes(query);
-        const matchesPrompt = conv.systemPrompt?.toLowerCase().includes(query) || false;
+        const matchesPrompt =
+          conv.systemPrompt?.toLowerCase().includes(query) || false;
         if (!matchesTitle && !matchesPrompt) {
           return false;
         }
@@ -311,7 +338,7 @@ export class ConversationStore {
    */
   private sortConversations(
     conversations: Conversation[],
-    sort: ConversationSortOptions
+    sort: ConversationSortOptions,
   ): Conversation[] {
     return [...conversations].sort((a, b) => {
       let comparison = 0;
@@ -345,7 +372,9 @@ export class ConversationStore {
    */
   setActiveConversation(conversationId: string): void {
     if (!this.getConversation(conversationId)) {
-      console.warn(`Cannot set active conversation: ${conversationId} not found`);
+      console.warn(
+        `Cannot set active conversation: ${conversationId} not found`,
+      );
       return;
     }
 
@@ -398,7 +427,9 @@ export class ConversationStore {
   togglePin(conversationId: string): void {
     const conversation = this.getConversation(conversationId);
     if (conversation) {
-      this.updateConversation(conversationId, { isPinned: !conversation.isPinned });
+      this.updateConversation(conversationId, {
+        isPinned: !conversation.isPinned,
+      });
     }
   }
 
@@ -432,7 +463,8 @@ export class ConversationStore {
   incrementMessageCount(conversationId: string): void {
     const conversation = this.getConversation(conversationId);
     if (conversation) {
-      const updatedConversation = ConversationUtils.incrementMessageCount(conversation);
+      const updatedConversation =
+        ConversationUtils.incrementMessageCount(conversation);
       this.state = {
         ...this.state,
         conversations: {
@@ -521,7 +553,7 @@ export class ConversationStore {
         acc[conv.id] = conv;
         return acc;
       },
-      {} as Record<string, Conversation>
+      {} as Record<string, Conversation>,
     );
 
     this.state = {
@@ -561,7 +593,10 @@ export class ConversationStore {
       try {
         await this.persistence.deleteConversations(conversationIds);
       } catch (error) {
-        console.error('[ConversationStore] Error persisting bulk deletion:', error);
+        console.error(
+          '[ConversationStore] Error persisting bulk deletion:',
+          error,
+        );
       }
     }
   }
@@ -584,7 +619,10 @@ export class ConversationStore {
       try {
         await this.persistence.clearAll();
       } catch (error) {
-        console.error('[ConversationStore] Error clearing persisted conversations:', error);
+        console.error(
+          '[ConversationStore] Error clearing persisted conversations:',
+          error,
+        );
       }
     }
   }
@@ -630,9 +668,15 @@ export class ConversationStore {
     const conversations = Object.values(this.state.conversations);
     return {
       conversationCount: conversations.length,
-      totalMessageCount: conversations.reduce((sum, c) => sum + c.messageCount, 0),
-      activeConversations: conversations.filter((c) => c.status === 'active').length,
-      archivedConversations: conversations.filter((c) => c.status === 'archived').length,
+      totalMessageCount: conversations.reduce(
+        (sum, c) => sum + c.messageCount,
+        0,
+      ),
+      activeConversations: conversations.filter((c) => c.status === 'active')
+        .length,
+      archivedConversations: conversations.filter(
+        (c) => c.status === 'archived',
+      ).length,
       pinnedConversations: conversations.filter((c) => c.isPinned).length,
     };
   }

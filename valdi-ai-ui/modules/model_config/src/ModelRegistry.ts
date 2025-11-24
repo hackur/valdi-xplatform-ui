@@ -210,7 +210,8 @@ const GOOGLE_MODELS: ModelDefinition[] = [
  * Manages all available models from built-in and custom providers.
  */
 export class ModelRegistry {
-  private builtInProviders: Map<ProviderType, BuiltInProviderConfig> = new Map();
+  private builtInProviders: Map<ProviderType, BuiltInProviderConfig> =
+    new Map();
   private customProviderStore: CustomProviderStore;
 
   constructor(customProviderStore: CustomProviderStore) {
@@ -253,7 +254,10 @@ export class ModelRegistry {
   /**
    * Set API key for a built-in provider
    */
-  setApiKey(providerType: Exclude<ProviderType, 'custom-openai-compatible'>, apiKey: string): void {
+  setApiKey(
+    providerType: Exclude<ProviderType, 'custom-openai-compatible'>,
+    apiKey: string,
+  ): void {
     const provider = this.builtInProviders.get(providerType);
 
     if (!provider) {
@@ -342,7 +346,10 @@ export class ModelRegistry {
   /**
    * Get a specific model
    */
-  getModel(modelId: string, customProviderId?: string): ModelDefinition | undefined {
+  getModel(
+    modelId: string,
+    customProviderId?: string,
+  ): ModelDefinition | undefined {
     // Check custom providers first
     if (customProviderId) {
       const provider = this.customProviderStore.getProvider(customProviderId);
@@ -396,7 +403,9 @@ export class ModelRegistry {
   /**
    * Convert custom provider to model definition
    */
-  private customProviderToModel(provider: CustomProviderConfig): ModelDefinition {
+  private customProviderToModel(
+    provider: CustomProviderConfig,
+  ): ModelDefinition {
     return {
       id: provider.modelId,
       name: provider.modelName || provider.modelId,

@@ -5,10 +5,13 @@
  * in various scenarios.
  */
 
-import { messageStore, conversationStore } from './src/MessageStore';
-import { exportService } from './src/ExportService';
-import { MessagePersistence, ConversationPersistence } from './src';
-import { StorageFactory, MemoryStorageProvider } from './src/StorageProvider';
+import { messageStore, conversationStore } from '@chat_core/MessageStore';
+import { exportService } from '@chat_core/ExportService';
+import { MessagePersistence, ConversationPersistence } from '@chat_core';
+import {
+  StorageFactory,
+  MemoryStorageProvider,
+} from '@chat_core/StorageProvider';
 import { DefaultModels } from '@common';
 
 // ============================================================================
@@ -20,10 +23,7 @@ export async function initializeApp() {
 
   try {
     // Load persisted data from storage
-    await Promise.all([
-      conversationStore.init(),
-      messageStore.init(),
-    ]);
+    await Promise.all([conversationStore.init(), messageStore.init()]);
 
     // Check what was loaded
     const stats = await conversationStore.getStorageStats();
@@ -167,7 +167,7 @@ export async function importConversationFromJSON(jsonData: string) {
 export async function exportAllConversations() {
   // Get all conversation IDs
   const conversations = conversationStore.getAllConversations();
-  const conversationIds = conversations.map(c => c.id);
+  const conversationIds = conversations.map((c) => c.id);
 
   console.log(`Exporting ${conversationIds.length} conversations...`);
 
@@ -193,7 +193,7 @@ export async function searchConversations(query: string) {
 
   console.log(`Found ${results.length} conversations matching "${query}"`);
 
-  results.forEach(conv => {
+  results.forEach((conv) => {
     console.log(`- ${conv.title} (${conv.messageCount} messages)`);
   });
 
@@ -320,8 +320,14 @@ export function togglePersistence(enabled: boolean) {
 }
 
 export function checkPersistenceStatus() {
-  console.log('Message Store Persistence:', messageStore.isPersistenceEnabled());
-  console.log('Conversation Store Persistence:', conversationStore.isPersistenceEnabled());
+  console.log(
+    'Message Store Persistence:',
+    messageStore.isPersistenceEnabled(),
+  );
+  console.log(
+    'Conversation Store Persistence:',
+    conversationStore.isPersistenceEnabled(),
+  );
 }
 
 // ============================================================================
@@ -353,10 +359,7 @@ export async function clearAllData() {
 
   console.log('Clearing all data...');
 
-  await Promise.all([
-    messageStore.reset(),
-    conversationStore.reset(),
-  ]);
+  await Promise.all([messageStore.reset(), conversationStore.reset()]);
 
   console.log('All data cleared');
   return true;

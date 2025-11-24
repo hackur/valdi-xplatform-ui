@@ -92,7 +92,7 @@ export class SequentialWorkflow extends WorkflowExecutor {
   constructor(
     config: SequentialWorkflowConfig,
     chatService: ChatService,
-    messageStore: MessageStore
+    messageStore: MessageStore,
   ) {
     super(config, chatService, messageStore);
     this.config = config;
@@ -101,7 +101,9 @@ export class SequentialWorkflow extends WorkflowExecutor {
   /**
    * Execute the sequential workflow
    */
-  async execute(options: WorkflowExecutionOptions): Promise<WorkflowExecutionResult> {
+  async execute(
+    options: WorkflowExecutionOptions,
+  ): Promise<WorkflowExecutionResult> {
     const { conversationId, input, onProgress, abortSignal } = options;
     const startTime = Date.now();
 
@@ -142,8 +144,12 @@ export class SequentialWorkflow extends WorkflowExecutor {
         const agent = this.config.agents[i];
 
         if (this.config.debug) {
-          console.log(`[SequentialWorkflow] Executing agent ${i + 1}/${this.config.agents.length}: ${agent.name}`);
-          console.log(`[SequentialWorkflow] Input: ${currentInput.substring(0, 100)}...`);
+          console.log(
+            `[SequentialWorkflow] Executing agent ${i + 1}/${this.config.agents.length}: ${agent.name}`,
+          );
+          console.log(
+            `[SequentialWorkflow] Input: ${currentInput.substring(0, 100)}...`,
+          );
         }
 
         // Execute the agent with retry logic
@@ -151,7 +157,7 @@ export class SequentialWorkflow extends WorkflowExecutor {
           agent,
           currentInput,
           conversationId,
-          onProgress
+          onProgress,
         );
 
         // Add step to state
@@ -166,7 +172,9 @@ export class SequentialWorkflow extends WorkflowExecutor {
         // Check early stopping condition
         if (this.config.shouldStop && this.config.shouldStop(output, i)) {
           if (this.config.debug) {
-            console.log(`[SequentialWorkflow] Early stopping condition met at step ${i + 1}`);
+            console.log(
+              `[SequentialWorkflow] Early stopping condition met at step ${i + 1}`,
+            );
           }
           currentInput = output;
           break;
@@ -219,7 +227,8 @@ export class SequentialWorkflow extends WorkflowExecutor {
         executionTime,
       };
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      const errorMessage =
+        error instanceof Error ? error.message : 'Unknown error';
 
       this.updateState({
         status: 'error',
@@ -251,14 +260,14 @@ export class SequentialWorkflow extends WorkflowExecutor {
    * Get all step outputs
    */
   getAllOutputs(): string[] {
-    return this.state.steps.map(step => step.output);
+    return this.state.steps.map((step) => step.output);
   }
 
   /**
    * Get step by agent ID
    */
-  getStepByAgentId(agentId: string): typeof this.state.steps[0] | undefined {
-    return this.state.steps.find(step => step.agentId === agentId);
+  getStepByAgentId(agentId: string): (typeof this.state.steps)[0] | undefined {
+    return this.state.steps.find((step) => step.agentId === agentId);
   }
 }
 
@@ -276,7 +285,10 @@ export class SequentialWorkflowBuilder {
   /**
    * Add a research agent
    */
-  research(systemPrompt: string, modelConfig?: AgentDefinition['modelConfig']): this {
+  research(
+    systemPrompt: string,
+    modelConfig?: AgentDefinition['modelConfig'],
+  ): this {
     this.agents.push({
       id: 'researcher',
       name: 'Researcher',
@@ -290,7 +302,10 @@ export class SequentialWorkflowBuilder {
   /**
    * Add an analysis agent
    */
-  analyze(systemPrompt: string, modelConfig?: AgentDefinition['modelConfig']): this {
+  analyze(
+    systemPrompt: string,
+    modelConfig?: AgentDefinition['modelConfig'],
+  ): this {
     this.agents.push({
       id: 'analyst',
       name: 'Analyst',
@@ -304,7 +319,10 @@ export class SequentialWorkflowBuilder {
   /**
    * Add a summarization agent
    */
-  summarize(systemPrompt: string, modelConfig?: AgentDefinition['modelConfig']): this {
+  summarize(
+    systemPrompt: string,
+    modelConfig?: AgentDefinition['modelConfig'],
+  ): this {
     this.agents.push({
       id: 'summarizer',
       name: 'Summarizer',
@@ -373,7 +391,10 @@ export class SequentialWorkflowBuilder {
   /**
    * Build and create executor
    */
-  buildExecutor(chatService: ChatService, messageStore: MessageStore): SequentialWorkflow {
+  buildExecutor(
+    chatService: ChatService,
+    messageStore: MessageStore,
+  ): SequentialWorkflow {
     return new SequentialWorkflow(this.build(), chatService, messageStore);
   }
 }
@@ -383,7 +404,7 @@ export class SequentialWorkflowBuilder {
  */
 export function createSequentialWorkflow(
   agents: AgentDefinition[],
-  options?: Partial<SequentialWorkflowConfig>
+  options?: Partial<SequentialWorkflowConfig>,
 ): SequentialWorkflowConfig {
   return {
     type: 'sequential',

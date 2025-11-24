@@ -55,16 +55,15 @@ export class MessageBubble extends Component<MessageBubbleProps> {
           }}
         >
           {/* Avatar */}
-          <Avatar
-            type={isUser ? 'user' : 'ai'}
-            size="small"
-          />
+          <Avatar type={isUser ? 'user' : 'ai'} size="small" />
 
           {/* Message Bubble */}
           <view
             style={{
               ...styles.bubble,
-              backgroundColor: isUser ? Colors.userMessageBg : Colors.aiMessageBg,
+              backgroundColor: isUser
+                ? Colors.userMessageBg
+                : Colors.aiMessageBg,
               borderRadius: ChatBorderRadius.messageBubble,
               ...SemanticShadows.messageBubble,
             }}

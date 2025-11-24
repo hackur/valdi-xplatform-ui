@@ -102,7 +102,10 @@ export class NetworkRetry {
         lastError = error as Error;
 
         // Check if we should retry
-        if (attempt < this.config.maxRetries && this.shouldRetry(error as Error)) {
+        if (
+          attempt < this.config.maxRetries &&
+          this.shouldRetry(error as Error)
+        ) {
           const delay = this.calculateDelay(attempt);
 
           // Call retry callback
@@ -131,7 +134,10 @@ export class NetworkRetry {
     return this.execute(async () => {
       const response = await fetch(url, options);
 
-      if (!response.ok && this.config.retryStatusCodes.includes(response.status)) {
+      if (
+        !response.ok &&
+        this.config.retryStatusCodes.includes(response.status)
+      ) {
         throw new Error(`HTTP ${response.status}: ${response.statusText}`);
       }
 
@@ -166,7 +172,9 @@ export class NetworkRetry {
    * Calculate delay with exponential backoff
    */
   private calculateDelay(attempt: number): number {
-    const delay = this.config.initialDelay * Math.pow(this.config.backoffMultiplier, attempt);
+    const delay =
+      this.config.initialDelay *
+      Math.pow(this.config.backoffMultiplier, attempt);
     return Math.min(delay, this.config.maxDelay);
   }
 
@@ -268,7 +276,11 @@ export const networkRetry = createNetworkRetry();
 export function withRetry(config?: RetryConfig) {
   const retry = createNetworkRetry(config);
 
-  return function (target: any, propertyKey: string, descriptor: PropertyDescriptor) {
+  return function (
+    target: any,
+    propertyKey: string,
+    descriptor: PropertyDescriptor,
+  ) {
     const originalMethod = descriptor.value;
 
     descriptor.value = async function (...args: any[]) {

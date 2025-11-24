@@ -205,7 +205,7 @@ export class MemoryStorageProvider implements StorageProvider {
     try {
       // Only clear items with our prefix
       const keys = Array.from(this.storage.keys()).filter((key) =>
-        key.startsWith(this.prefix)
+        key.startsWith(this.prefix),
       );
       keys.forEach((key) => this.storage.delete(key));
     } catch (error) {
@@ -260,7 +260,7 @@ export class StorageFactory {
    */
   static create(
     prefix: string = 'valdi_',
-    preferredType: 'local' | 'memory' = 'local'
+    preferredType: 'local' | 'memory' = 'local',
   ): StorageProvider {
     // Try localStorage if preferred and available
     if (preferredType === 'local' && LocalStorageProvider.isAvailable()) {

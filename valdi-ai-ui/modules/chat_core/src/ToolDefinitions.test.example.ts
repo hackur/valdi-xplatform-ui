@@ -6,7 +6,12 @@
  */
 
 import { ToolExecutor, ToolCallInput } from './ToolExecutor';
-import { getWeather, calculateExpression, searchWeb, getAllTools } from './ToolDefinitions';
+import {
+  getWeather,
+  calculateExpression,
+  searchWeb,
+  getAllTools,
+} from './ToolDefinitions';
 
 // Example 1: Test individual tool execution
 async function testWeatherTool() {
@@ -20,7 +25,10 @@ async function testWeatherTool() {
 
   console.log('Weather tool result:', result);
   console.assert(result.success === true, 'Weather tool should succeed');
-  console.assert(result.result !== undefined, 'Weather tool should return data');
+  console.assert(
+    result.result !== undefined,
+    'Weather tool should return data',
+  );
 }
 
 // Example 2: Test calculator with valid expression
@@ -37,7 +45,7 @@ async function testCalculatorValid() {
   console.assert(result.success === true, 'Calculator should succeed');
   console.assert(
     (result.result as any)?.result === 30,
-    'Calculator should return correct result'
+    'Calculator should return correct result',
   );
 }
 
@@ -52,10 +60,13 @@ async function testCalculatorInvalid() {
   });
 
   console.log('Calculator invalid result:', result);
-  console.assert(result.success === false, 'Calculator should fail on invalid input');
+  console.assert(
+    result.success === false,
+    'Calculator should fail on invalid input',
+  );
   console.assert(
     (result.result as any)?.error !== undefined,
-    'Should return error message'
+    'Should return error message',
   );
 }
 
@@ -73,7 +84,7 @@ async function testSearchTool() {
   console.assert(result.success === true, 'Search should succeed');
   console.assert(
     (result.result as any)?.results?.length > 0,
-    'Search should return results'
+    'Search should return results',
   );
 }
 
@@ -124,7 +135,7 @@ async function testParallelExecution() {
   console.assert(results.length === 3, 'Should execute all three tools');
   console.assert(
     results.every((r) => r.success),
-    'All tools should succeed'
+    'All tools should succeed',
   );
 }
 
@@ -151,7 +162,7 @@ async function testSequentialExecution() {
   console.assert(results.length === 2, 'Should execute both tools');
   console.assert(
     results[0].timestamp < results[1].timestamp,
-    'Should execute in order'
+    'Should execute in order',
   );
 }
 
@@ -180,7 +191,7 @@ async function testToolManagement() {
   console.log('Initial tools:', executor.getAvailableToolNames());
   console.assert(
     executor.hasToolAvailable('getWeather'),
-    'Should have weather tool'
+    'Should have weather tool',
   );
 
   // Add a tool
@@ -188,7 +199,7 @@ async function testToolManagement() {
   console.log('After adding calculator:', executor.getAvailableToolNames());
   console.assert(
     executor.hasToolAvailable('calculateExpression'),
-    'Should have calculator tool'
+    'Should have calculator tool',
   );
 
   // Remove a tool
@@ -196,7 +207,7 @@ async function testToolManagement() {
   console.log('After removing weather:', executor.getAvailableToolNames());
   console.assert(
     !executor.hasToolAvailable('getWeather'),
-    'Should not have weather tool'
+    'Should not have weather tool',
   );
 }
 
@@ -211,7 +222,10 @@ async function testExecutionTime() {
   });
 
   console.log('Execution time:', result.executionTime, 'ms');
-  console.assert(result.executionTime >= 0, 'Execution time should be non-negative');
+  console.assert(
+    result.executionTime >= 0,
+    'Execution time should be non-negative',
+  );
   console.assert(result.timestamp !== undefined, 'Should have timestamp');
 }
 

@@ -166,7 +166,9 @@ export class ApiKeyStore {
   /**
    * Import configuration with API keys
    */
-  async importConfig(config: Partial<Record<AIProvider, string>>): Promise<void> {
+  async importConfig(
+    config: Partial<Record<AIProvider, string>>,
+  ): Promise<void> {
     for (const [provider, key] of Object.entries(config)) {
       if (key && this.validateKey(provider as AIProvider, key)) {
         await this.setApiKey(provider as AIProvider, key);

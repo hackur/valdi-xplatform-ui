@@ -76,10 +76,7 @@
       "@settings/*": ["./modules/settings/src/*"]
     }
   },
-  "include": [
-    "modules/**/*.ts",
-    "modules/**/*.tsx"
-  ],
+  "include": ["modules/**/*.ts", "modules/**/*.tsx"],
   "exclude": [
     "node_modules",
     "bazel-*",

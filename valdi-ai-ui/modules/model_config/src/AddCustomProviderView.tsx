@@ -6,17 +6,17 @@
 
 import { StatefulComponent } from 'valdi_core/src/Component';
 import { Style } from 'valdi_core/src/Style';
-import {
-  View,
-  Label,
-  ScrollView,
-} from 'valdi_tsx/src/NativeTemplateElements';
+import { View, Label, ScrollView } from 'valdi_tsx/src/NativeTemplateElements';
 import { NavigationController } from 'valdi_navigation/src/NavigationController';
-import { Colors, Fonts, Spacing } from 'common/src/theme';
-import { Button } from 'common/src/components/Button';
-import { LoadingSpinner } from 'common/src/components/LoadingSpinner';
+import { Colors, Fonts, Spacing } from '@common/theme';
+import { Button } from '@common/components';
+import { LoadingSpinner } from '@common/components';
 import { CustomProviderStore } from './CustomProviderStore';
-import { CustomProviderConfig, ProviderTestResult, ValidationResult } from './types';
+import {
+  CustomProviderConfig,
+  ProviderTestResult,
+  ValidationResult,
+} from './types';
 
 /**
  * AddCustomProviderView Props
@@ -102,11 +102,14 @@ export class AddCustomProviderView extends StatefulComponent<
         apiKey: existingProvider.apiKey || '',
         modelId: existingProvider.modelId || '',
         modelName: existingProvider.modelName || '',
-        defaultTemperature: existingProvider.defaultTemperature?.toString() || '0.7',
+        defaultTemperature:
+          existingProvider.defaultTemperature?.toString() || '0.7',
         maxOutputTokens: existingProvider.maxOutputTokens?.toString() || '4096',
-        maxContextTokens: existingProvider.maxContextTokens?.toString() || '8192',
+        maxContextTokens:
+          existingProvider.maxContextTokens?.toString() || '8192',
         supportsStreaming: existingProvider.supportsStreaming ?? true,
-        supportsFunctionCalling: existingProvider.supportsFunctionCalling ?? false,
+        supportsFunctionCalling:
+          existingProvider.supportsFunctionCalling ?? false,
       });
     }
   }
@@ -177,7 +180,10 @@ export class AddCustomProviderView extends StatefulComponent<
               {errors.has('baseUrl') && (
                 <label value={errors.get('baseUrl')} style={styles.errorText} />
               )}
-              <label value="Examples: http://localhost:11434/v1 (Ollama), http://localhost:1234/v1 (LM Studio)" style={styles.helpText} />
+              <label
+                value="Examples: http://localhost:11434/v1 (Ollama), http://localhost:1234/v1 (LM Studio)"
+                style={styles.helpText}
+              />
             </view>
 
             {/* API Key */}
@@ -191,7 +197,10 @@ export class AddCustomProviderView extends StatefulComponent<
                 autoCapitalize="none"
                 secureTextEntry={true}
               />
-              <label value="Leave empty if your endpoint doesn't require authentication" style={styles.helpText} />
+              <label
+                value="Leave empty if your endpoint doesn't require authentication"
+                style={styles.helpText}
+              />
             </view>
 
             {/* Model ID */}
@@ -216,7 +225,9 @@ export class AddCustomProviderView extends StatefulComponent<
                 value={modelName}
                 placeholder="Friendly name for the model"
                 style={styles.input}
-                onChangeText={(text) => this.handleFieldChange('modelName', text)}
+                onChangeText={(text) =>
+                  this.handleFieldChange('modelName', text)
+                }
               />
             </view>
 
@@ -229,12 +240,21 @@ export class AddCustomProviderView extends StatefulComponent<
               <TextInput
                 value={defaultTemperature}
                 placeholder="0.7"
-                style={errors.has('defaultTemperature') ? styles.inputError : styles.input}
-                onChangeText={(text) => this.handleFieldChange('defaultTemperature', text)}
+                style={
+                  errors.has('defaultTemperature')
+                    ? styles.inputError
+                    : styles.input
+                }
+                onChangeText={(text) =>
+                  this.handleFieldChange('defaultTemperature', text)
+                }
                 keyboardType="decimal-pad"
               />
               {errors.has('defaultTemperature') && (
-                <label value={errors.get('defaultTemperature')} style={styles.errorText} />
+                <label
+                  value={errors.get('defaultTemperature')}
+                  style={styles.errorText}
+                />
               )}
               <label value="Range: 0.0 to 2.0" style={styles.helpText} />
             </view>
@@ -246,7 +266,9 @@ export class AddCustomProviderView extends StatefulComponent<
                 value={maxOutputTokens}
                 placeholder="4096"
                 style={styles.input}
-                onChangeText={(text) => this.handleFieldChange('maxOutputTokens', text)}
+                onChangeText={(text) =>
+                  this.handleFieldChange('maxOutputTokens', text)
+                }
                 keyboardType="number-pad"
               />
             </view>
@@ -258,7 +280,9 @@ export class AddCustomProviderView extends StatefulComponent<
                 value={maxContextTokens}
                 placeholder="8192"
                 style={styles.input}
-                onChangeText={(text) => this.handleFieldChange('maxContextTokens', text)}
+                onChangeText={(text) =>
+                  this.handleFieldChange('maxContextTokens', text)
+                }
                 keyboardType="number-pad"
               />
             </view>
@@ -270,8 +294,16 @@ export class AddCustomProviderView extends StatefulComponent<
               style={styles.checkbox}
               onTap={() => this.handleToggle('supportsStreaming')}
             >
-              <view style={supportsStreaming ? styles.checkboxChecked : styles.checkboxUnchecked}>
-                {supportsStreaming && <label value="✓" style={styles.checkmark} />}
+              <view
+                style={
+                  supportsStreaming
+                    ? styles.checkboxChecked
+                    : styles.checkboxUnchecked
+                }
+              >
+                {supportsStreaming && (
+                  <label value="✓" style={styles.checkmark} />
+                )}
               </view>
               <label value="Supports Streaming" style={styles.checkboxLabel} />
             </view>
@@ -280,10 +312,21 @@ export class AddCustomProviderView extends StatefulComponent<
               style={styles.checkbox}
               onTap={() => this.handleToggle('supportsFunctionCalling')}
             >
-              <view style={supportsFunctionCalling ? styles.checkboxChecked : styles.checkboxUnchecked}>
-                {supportsFunctionCalling && <label value="✓" style={styles.checkmark} />}
+              <view
+                style={
+                  supportsFunctionCalling
+                    ? styles.checkboxChecked
+                    : styles.checkboxUnchecked
+                }
+              >
+                {supportsFunctionCalling && (
+                  <label value="✓" style={styles.checkmark} />
+                )}
               </view>
-              <label value="Supports Function Calling" style={styles.checkboxLabel} />
+              <label
+                value="Supports Function Calling"
+                style={styles.checkboxLabel}
+              />
             </view>
 
             {/* Test Connection */}
@@ -299,7 +342,10 @@ export class AddCustomProviderView extends StatefulComponent<
                 <view style={styles.testResult}>
                   {testResult.success ? (
                     <view>
-                      <label value="✅ Connection successful!" style={styles.successText} />
+                      <label
+                        value="✅ Connection successful!"
+                        style={styles.successText}
+                      />
                       <label
                         value={`Response time: ${testResult.responseTime}ms`}
                         style={styles.helpText}
@@ -307,8 +353,14 @@ export class AddCustomProviderView extends StatefulComponent<
                     </view>
                   ) : (
                     <view>
-                      <label value="❌ Connection failed" style={styles.errorText} />
-                      <label value={testResult.error || 'Unknown error'} style={styles.helpText} />
+                      <label
+                        value="❌ Connection failed"
+                        style={styles.errorText}
+                      />
+                      <label
+                        value={testResult.error || 'Unknown error'}
+                        style={styles.helpText}
+                      />
                     </view>
                   )}
                 </view>
@@ -334,7 +386,13 @@ export class AddCustomProviderView extends StatefulComponent<
           />
 
           <Button
-            title={isSaving ? 'Saving...' : isEditing ? 'Save Changes' : 'Add Provider'}
+            title={
+              isSaving
+                ? 'Saving...'
+                : isEditing
+                  ? 'Save Changes'
+                  : 'Add Provider'
+            }
             onTap={this.handleSave}
             variant="primary"
             disabled={isSaving || !this.canSave()}
@@ -354,7 +412,10 @@ export class AddCustomProviderView extends StatefulComponent<
   /**
    * Handle field change
    */
-  private handleFieldChange(field: keyof AddCustomProviderViewState, value: string): void {
+  private handleFieldChange(
+    field: keyof AddCustomProviderViewState,
+    value: string,
+  ): void {
     this.setState({ [field]: value } as any);
 
     // Clear error for this field
@@ -366,7 +427,9 @@ export class AddCustomProviderView extends StatefulComponent<
   /**
    * Handle toggle
    */
-  private handleToggle(field: 'supportsStreaming' | 'supportsFunctionCalling'): void {
+  private handleToggle(
+    field: 'supportsStreaming' | 'supportsFunctionCalling',
+  ): void {
     this.setState({ [field]: !this.state[field] } as any);
   }
 
@@ -386,7 +449,8 @@ export class AddCustomProviderView extends StatefulComponent<
 
     try {
       const config = this.buildProviderConfig();
-      const result = await this.viewModel.customProviderStore.testProviderConfig(config);
+      const result =
+        await this.viewModel.customProviderStore.testProviderConfig(config);
       this.setState({ testResult: result });
     } catch (error) {
       this.setState({
@@ -405,7 +469,11 @@ export class AddCustomProviderView extends StatefulComponent<
    */
   private canSave(): boolean {
     const { name, baseUrl, modelId } = this.state;
-    return name.trim().length > 0 && baseUrl.trim().length > 0 && modelId.trim().length > 0;
+    return (
+      name.trim().length > 0 &&
+      baseUrl.trim().length > 0 &&
+      modelId.trim().length > 0
+    );
   }
 
   /**
@@ -415,7 +483,8 @@ export class AddCustomProviderView extends StatefulComponent<
     const config = this.buildProviderConfig();
 
     // Validate
-    const validation = this.viewModel.customProviderStore.validateProvider(config);
+    const validation =
+      this.viewModel.customProviderStore.validateProvider(config);
 
     if (!validation.isValid) {
       const errors = new Map<string, string>();
@@ -439,7 +508,8 @@ export class AddCustomProviderView extends StatefulComponent<
         );
       } else {
         // Add new
-        savedProvider = await this.viewModel.customProviderStore.addProvider(config);
+        savedProvider =
+          await this.viewModel.customProviderStore.addProvider(config);
       }
 
       // Callback
@@ -451,7 +521,8 @@ export class AddCustomProviderView extends StatefulComponent<
       this.viewModel.navigationController.pop();
     } catch (error) {
       this.setState({
-        saveError: error instanceof Error ? error.message : 'Failed to save provider',
+        saveError:
+          error instanceof Error ? error.message : 'Failed to save provider',
         isSaving: false,
       });
     }

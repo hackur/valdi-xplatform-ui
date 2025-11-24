@@ -27,10 +27,10 @@ import { MessageStore } from './MessageStore';
  * Result Aggregation Strategy
  */
 export type AggregationStrategy =
-  | 'concatenate'    // Concatenate all outputs
-  | 'vote'           // Vote on most common result
-  | 'first'          // Use first completed result
-  | 'custom';        // Use custom aggregator function
+  | 'concatenate' // Concatenate all outputs
+  | 'vote' // Vote on most common result
+  | 'first' // Use first completed result
+  | 'custom'; // Use custom aggregator function
 
 /**
  * Parallel Workflow Configuration
@@ -123,7 +123,7 @@ export class ParallelWorkflow extends WorkflowExecutor {
   constructor(
     config: ParallelWorkflowConfig,
     chatService: ChatService,
-    messageStore: MessageStore
+    messageStore: MessageStore,
   ) {
     super(config, chatService, messageStore);
     this.config = config;
@@ -132,12 +132,15 @@ export class ParallelWorkflow extends WorkflowExecutor {
   /**
    * Execute the parallel workflow
    */
-  async execute(options: WorkflowExecutionOptions): Promise<WorkflowExecutionResult> {
+  async execute(
+    options: WorkflowExecutionOptions,
+  ): Promise<WorkflowExecutionResult> {
     const { conversationId, input, onProgress, abortSignal } = options;
     const startTime = Date.now();
 
     // Initialize state
-    const totalSteps = this.config.agents.length + (this.config.synthesizerAgent ? 1 : 0);
+    const totalSteps =
+      this.config.agents.length + (this.config.synthesizerAgent ? 1 : 0);
     this.updateState({
       status: 'running',
       startedAt: new Date(),
@@ -169,15 +172,18 @@ export class ParallelWorkflow extends WorkflowExecutor {
             agent,
             input,
             conversationId,
-            onProgress
+            onProgress,
           );
 
           return { success: true, step };
         } catch (error) {
-          const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+          const errorMessage =
+            error instanceof Error ? error.message : 'Unknown error';
 
           if (this.config.debug) {
-            console.error(`[ParallelWorkflow] Agent ${agent.name} failed: ${errorMessage}`);
+            console.error(
+              `[ParallelWorkflow] Agent ${agent.name} failed: ${errorMessage}`,
+            );
           }
 
           return {
@@ -189,7 +195,7 @@ export class ParallelWorkflow extends WorkflowExecutor {
       });
 
       // Wait for agents with timeout if specified
-      let results: Awaited<typeof agentPromises[0]>[];
+      let results: Awaited<(typeof agentPromises)[0]>[];
 
       if (this.config.waitForAll !== false) {
         if (this.config.maxWaitTime) {
@@ -197,23 +203,32 @@ export class ParallelWorkflow extends WorkflowExecutor {
           results = await Promise.race([
             Promise.all(agentPromises),
             new Promise<any[]>((_, reject) =>
-              setTimeout(() => reject(new Error('Max wait time exceeded')), this.config.maxWaitTime)
+              setTimeout(
+                () => reject(new Error('Max wait time exceeded')),
+                this.config.maxWaitTime,
+              ),
             ),
           ]).catch(async () => {
             // On timeout, get results from completed promises
             if (this.config.debug) {
-              console.log('[ParallelWorkflow] Max wait time exceeded, using partial results');
+              console.log(
+                '[ParallelWorkflow] Max wait time exceeded, using partial results',
+              );
             }
             // Manual implementation of Promise.allSettled for ES2015 compatibility
             const settled = await Promise.all(
-              agentPromises.map(p =>
-                p.then(value => ({ status: 'fulfilled' as const, value }))
-                 .catch(reason => ({ status: 'rejected' as const, reason }))
-              )
+              agentPromises.map((p) =>
+                p
+                  .then((value) => ({ status: 'fulfilled' as const, value }))
+                  .catch((reason) => ({ status: 'rejected' as const, reason })),
+              ),
             );
             return settled
-              .filter((r): r is { status: 'fulfilled'; value: any } => r.status === 'fulfilled')
-              .map(r => r.value);
+              .filter(
+                (r): r is { status: 'fulfilled'; value: any } =>
+                  r.status === 'fulfilled',
+              )
+              .map((r) => r.value);
           });
         } else {
           // Wait for all without timeout
@@ -226,7 +241,7 @@ export class ParallelWorkflow extends WorkflowExecutor {
       }
 
       // Filter successful results
-      const successfulResults = results.filter(r => r.success);
+      const successfulResults = results.filter((r) => r.success);
       const failedCount = results.length - successfulResults.length;
 
       // Check minimum successful agents requirement
@@ -234,20 +249,22 @@ export class ParallelWorkflow extends WorkflowExecutor {
       if (successfulResults.length < minRequired) {
         throw new Error(
           `Insufficient successful agents: ${successfulResults.length}/${minRequired} required. ` +
-          `${failedCount} agent(s) failed.`
+            `${failedCount} agent(s) failed.`,
         );
       }
 
       // Add all successful steps to state
-      successfulResults.forEach(result => {
+      successfulResults.forEach((result) => {
         if (result.step) {
           this.addStep(result.step);
         }
       });
 
       // Aggregate results
-      const outputs = successfulResults.filter(r => r.step).map(r => r.step!.output);
-      const steps = successfulResults.filter(r => r.step).map(r => r.step!);
+      const outputs = successfulResults
+        .filter((r) => r.step)
+        .map((r) => r.step!.output);
+      const steps = successfulResults.filter((r) => r.step).map((r) => r.step!);
 
       let aggregatedResult = this.aggregateOutputs(outputs, steps);
 
@@ -261,7 +278,7 @@ export class ParallelWorkflow extends WorkflowExecutor {
           this.config.synthesizerAgent,
           `Please synthesize the following outputs:\n\n${aggregatedResult}`,
           conversationId,
-          onProgress
+          onProgress,
         );
 
         this.addStep(synthesizerStep);
@@ -301,7 +318,8 @@ export class ParallelWorkflow extends WorkflowExecutor {
         executionTime,
       };
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      const errorMessage =
+        error instanceof Error ? error.message : 'Unknown error';
 
       this.updateState({
         status: 'error',
@@ -345,7 +363,7 @@ export class ParallelWorkflow extends WorkflowExecutor {
       case 'vote':
         // Simple voting: find most common output
         const votes = new Map<string, number>();
-        outputs.forEach(output => {
+        outputs.forEach((output) => {
           const normalized = output.trim().toLowerCase();
           votes.set(normalized, (votes.get(normalized) || 0) + 1);
         });
@@ -374,8 +392,8 @@ export class ParallelWorkflow extends WorkflowExecutor {
    */
   getParallelOutputs(): Array<{ agentName: string; output: string }> {
     return this.state.steps
-      .filter(step => step.agentId !== this.config.synthesizerAgent?.id)
-      .map(step => ({
+      .filter((step) => step.agentId !== this.config.synthesizerAgent?.id)
+      .map((step) => ({
         agentName: step.agentName,
         output: step.output,
       }));
@@ -390,7 +408,7 @@ export class ParallelWorkflow extends WorkflowExecutor {
     }
 
     const synthesizerStep = this.state.steps.find(
-      step => step.agentId === this.config.synthesizerAgent!.id
+      (step) => step.agentId === this.config.synthesizerAgent!.id,
     );
 
     return synthesizerStep?.output;
@@ -428,7 +446,9 @@ export class ParallelWorkflowBuilder {
   /**
    * Set custom aggregation function
    */
-  customAggregator(fn: (outputs: string[], steps: WorkflowStep[]) => string): this {
+  customAggregator(
+    fn: (outputs: string[], steps: WorkflowStep[]) => string,
+  ): this {
     this.config.aggregationStrategy = 'custom';
     this.config.aggregateResults = fn;
     return this;
@@ -488,7 +508,10 @@ export class ParallelWorkflowBuilder {
   /**
    * Build and create executor
    */
-  buildExecutor(chatService: ChatService, messageStore: MessageStore): ParallelWorkflow {
+  buildExecutor(
+    chatService: ChatService,
+    messageStore: MessageStore,
+  ): ParallelWorkflow {
     return new ParallelWorkflow(this.build(), chatService, messageStore);
   }
 }
@@ -498,7 +521,7 @@ export class ParallelWorkflowBuilder {
  */
 export function createParallelWorkflow(
   agents: any[],
-  options?: Partial<ParallelWorkflowConfig>
+  options?: Partial<ParallelWorkflowConfig>,
 ): ParallelWorkflowConfig {
   return {
     type: 'parallel',

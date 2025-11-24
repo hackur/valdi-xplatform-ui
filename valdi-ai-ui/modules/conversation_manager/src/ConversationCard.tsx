@@ -53,7 +53,10 @@ export class ConversationCard extends Component<ConversationCardProps> {
         {/* Left: Avatar/Icon */}
         <view style={styles.leftSection}>
           <view style={styles.avatar}>
-            <label value={this.getInitials(conversation.title)} style={styles.avatarText} />
+            <label
+              value={this.getInitials(conversation.title)}
+              style={styles.avatarText}
+            />
           </view>
           {conversation.isPinned && (
             <view style={styles.pinIndicator}>
@@ -65,7 +68,11 @@ export class ConversationCard extends Component<ConversationCardProps> {
         {/* Center: Content */}
         <view style={styles.centerSection}>
           <view style={styles.header}>
-            <label value={conversation.title} style={styles.title} numberOfLines={1} />
+            <label
+              value={conversation.title}
+              style={styles.title}
+              numberOfLines={1}
+            />
             {timeStr && <label value={timeStr} style={styles.time} />}
           </view>
 
@@ -79,9 +86,15 @@ export class ConversationCard extends Component<ConversationCardProps> {
 
           <view style={styles.footer}>
             {conversation.model && (
-              <label value={`Model: ${conversation.model}`} style={styles.metadata} />
+              <label
+                value={`Model: ${conversation.model}`}
+                style={styles.metadata}
+              />
             )}
-            <label value={`${conversation.participantCount} participants`} style={styles.metadata} />
+            <label
+              value={`${conversation.participantCount} participants`}
+              style={styles.metadata}
+            />
           </view>
         </view>
 

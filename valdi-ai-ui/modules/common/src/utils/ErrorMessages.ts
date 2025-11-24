@@ -91,7 +91,8 @@ export const ErrorMessages = {
     code: 'API_004',
     message: 'API quota exceeded',
     category: ErrorCategory.PERMISSION,
-    action: 'Your API quota has been exceeded. Please check your provider dashboard',
+    action:
+      'Your API quota has been exceeded. Please check your provider dashboard',
   },
 
   API_FORBIDDEN: {
@@ -208,7 +209,8 @@ export const ErrorMessages = {
     code: 'MODEL_002',
     message: 'Model not available',
     category: ErrorCategory.PERMISSION,
-    action: 'This model is not currently available. Please select a different model',
+    action:
+      'This model is not currently available. Please select a different model',
   },
 
   // Server Errors
@@ -256,7 +258,19 @@ export const ErrorMessages = {
 export type ErrorMessageKey = keyof typeof ErrorMessages;
 
 /**
- * Get error message
+ * Get error message by key
+ *
+ * Retrieves a standardized error message object by its key.
+ *
+ * @param key - The error message key
+ * @returns The complete error message object
+ *
+ * @example
+ * ```typescript
+ * const error = getErrorMessage('NETWORK_OFFLINE');
+ * console.log(error.message); // 'No internet connection'
+ * console.log(error.action); // 'Please check your internet connection...'
+ * ```
  */
 export function getErrorMessage(key: ErrorMessageKey): ErrorMessage {
   return ErrorMessages[key];
@@ -264,8 +278,29 @@ export function getErrorMessage(key: ErrorMessageKey): ErrorMessage {
 
 /**
  * Format error for user display
+ *
+ * Formats an error message with action and optional details for display to users.
+ * Combines the error message, suggested action, and additional details.
+ *
+ * @param key - The error message key
+ * @param details - Optional additional details to include
+ * @returns A formatted error message string ready for display
+ *
+ * @example
+ * ```typescript
+ * const message = formatErrorForUser('API_KEY_INVALID', 'Key: sk-xxx');
+ * // Returns:
+ * // "Invalid API key
+ * //
+ * // Please check your API key in Settings
+ * //
+ * // Details: Key: sk-xxx"
+ * ```
  */
-export function formatErrorForUser(key: ErrorMessageKey, details?: string): string {
+export function formatErrorForUser(
+  key: ErrorMessageKey,
+  details?: string,
+): string {
   const error = getErrorMessage(key);
   let message = error.message;
 
@@ -282,6 +317,20 @@ export function formatErrorForUser(key: ErrorMessageKey, details?: string): stri
 
 /**
  * Get error message from HTTP status code
+ *
+ * Maps HTTP status codes to appropriate error messages.
+ *
+ * @param status - The HTTP status code
+ * @returns The corresponding error message object
+ *
+ * @example
+ * ```typescript
+ * const error = getErrorFromHttpStatus(404);
+ * console.log(error.message); // 'Conversation not found'
+ *
+ * const rateLimitError = getErrorFromHttpStatus(429);
+ * console.log(rateLimitError.code); // 'API_003'
+ * ```
  */
 export function getErrorFromHttpStatus(status: number): ErrorMessage {
   switch (status) {

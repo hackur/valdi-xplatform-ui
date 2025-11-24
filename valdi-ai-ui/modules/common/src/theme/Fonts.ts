@@ -9,15 +9,15 @@
  * Font Families
  */
 export const FontFamilies = {
-  system: 'System',           // System default (SF Pro on iOS, Roboto on Android)
+  system: 'System', // System default (SF Pro on iOS, Roboto on Android)
   systemBold: 'System-Bold',
   systemSemibold: 'System-Semibold',
   systemMedium: 'System-Medium',
   systemLight: 'System-Light',
 
   // Monospace for code
-  mono: 'Menlo',              // Monospace font for code blocks
-  monoAndroid: 'monospace',   // Android monospace fallback
+  mono: 'Menlo', // Monospace font for code blocks
+  monoAndroid: 'monospace', // Android monospace fallback
 } as const;
 
 /**
@@ -25,15 +25,15 @@ export const FontFamilies = {
  * Based on a modular scale (1.125 ratio)
  */
 export const FontSizes = {
-  xs: 12,      // Extra small
-  sm: 14,      // Small
-  base: 16,    // Base/body text
-  md: 18,      // Medium
-  lg: 20,      // Large
-  xl: 24,      // Extra large
-  xxl: 28,     // 2X large
-  xxxl: 32,    // 3X large
-  huge: 40,    // Huge
+  xs: 12, // Extra small
+  sm: 14, // Small
+  base: 16, // Base/body text
+  md: 18, // Medium
+  lg: 20, // Large
+  xl: 24, // Extra large
+  xxl: 28, // 2X large
+  xxxl: 32, // 3X large
+  huge: 40, // Huge
 } as const;
 
 /**
@@ -52,10 +52,10 @@ export const FontWeights = {
  * Line Heights (multipliers of font size)
  */
 export const LineHeights = {
-  tight: 1.2,     // Tight leading
-  normal: 1.5,    // Normal leading
-  relaxed: 1.75,  // Relaxed leading
-  loose: 2.0,     // Loose leading
+  tight: 1.2, // Tight leading
+  normal: 1.5, // Normal leading
+  relaxed: 1.75, // Relaxed leading
+  loose: 2.0, // Loose leading
 } as const;
 
 /**
@@ -246,6 +246,6 @@ export const Fonts = {
 /**
  * Font utility type
  */
-export type FontStyle = typeof Fonts[keyof typeof Fonts];
+export type FontStyle = (typeof Fonts)[keyof typeof Fonts];
 export type FontSizeKey = keyof typeof FontSizes;
 export type FontWeightKey = keyof typeof FontWeights;

@@ -14,14 +14,20 @@ import { z } from 'zod';
  * Mock weather API that returns simulated weather data for any location.
  */
 export const getWeather = tool({
-  description: 'Get current weather information for a specific location. Returns temperature, conditions, and forecast.',
+  description:
+    'Get current weather information for a specific location. Returns temperature, conditions, and forecast.',
   parameters: z.object({
-    location: z.string().describe('City name or location (e.g., "San Francisco", "New York, NY")'),
+    location: z
+      .string()
+      .describe(
+        'City name or location (e.g., "San Francisco", "New York, NY")',
+      ),
   }),
   execute: async ({ location }) => {
     // Mock weather data - in production, this would call a real weather API
     const conditions = ['Sunny', 'Cloudy', 'Rainy', 'Partly Cloudy', 'Stormy'];
-    const randomCondition = conditions[Math.floor(Math.random() * conditions.length)];
+    const randomCondition =
+      conditions[Math.floor(Math.random() * conditions.length)];
     const randomTemp = Math.floor(Math.random() * 40) + 50; // 50-90°F
 
     const weatherData = {
@@ -52,9 +58,14 @@ export const getWeather = tool({
  * Supports basic arithmetic operations: +, -, *, /, (), and decimal numbers.
  */
 export const calculateExpression = tool({
-  description: 'Calculate the result of a mathematical expression. Supports basic arithmetic: addition (+), subtraction (-), multiplication (*), division (/), and parentheses.',
+  description:
+    'Calculate the result of a mathematical expression. Supports basic arithmetic: addition (+), subtraction (-), multiplication (*), division (/), and parentheses.',
   parameters: z.object({
-    expression: z.string().describe('Mathematical expression to evaluate (e.g., "2 + 2", "(10 * 5) - 3")'),
+    expression: z
+      .string()
+      .describe(
+        'Mathematical expression to evaluate (e.g., "2 + 2", "(10 * 5) - 3")',
+      ),
   }),
   execute: async ({ expression }) => {
     try {
@@ -64,7 +75,8 @@ export const calculateExpression = tool({
       if (sanitized !== expression) {
         return {
           success: false,
-          error: 'Invalid characters in expression. Only numbers, +, -, *, /, (), and . are allowed.',
+          error:
+            'Invalid characters in expression. Only numbers, +, -, *, /, (), and . are allowed.',
         };
       }
 
@@ -75,7 +87,8 @@ export const calculateExpression = tool({
       if (!isFinite(result)) {
         return {
           success: false,
-          error: 'Result is not a finite number. Check for division by zero or overflow.',
+          error:
+            'Result is not a finite number. Check for division by zero or overflow.',
         };
       }
 
@@ -83,12 +96,16 @@ export const calculateExpression = tool({
         success: true,
         expression,
         result,
-        formattedResult: typeof result === 'number' ? result.toFixed(2) : result.toString(),
+        formattedResult:
+          typeof result === 'number' ? result.toFixed(2) : result.toString(),
       };
     } catch (error) {
       return {
         success: false,
-        error: error instanceof Error ? error.message : 'Failed to evaluate expression',
+        error:
+          error instanceof Error
+            ? error.message
+            : 'Failed to evaluate expression',
         expression,
       };
     }
@@ -101,7 +118,8 @@ export const calculateExpression = tool({
  * Mock web search that returns simulated search results.
  */
 export const searchWeb = tool({
-  description: 'Search the web for information on a specific topic or query. Returns relevant search results with titles, URLs, and snippets.',
+  description:
+    'Search the web for information on a specific topic or query. Returns relevant search results with titles, URLs, and snippets.',
   parameters: z.object({
     query: z.string().describe('Search query or keywords to search for'),
   }),
@@ -159,7 +177,7 @@ export type ToolName = keyof typeof availableTools;
  * Helper to get tools by name
  */
 export function getToolsByName(toolNames: ToolName[]) {
-  const tools: Record<string, typeof availableTools[ToolName]> = {};
+  const tools: Record<string, (typeof availableTools)[ToolName]> = {};
 
   for (const name of toolNames) {
     if (name in availableTools) {

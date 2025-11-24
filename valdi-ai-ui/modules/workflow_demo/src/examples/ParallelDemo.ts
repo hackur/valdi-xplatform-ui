@@ -19,7 +19,7 @@ type StateUpdateCallback = (state: Partial<WorkflowExecutionState>) => void;
  * Simulate parallel workflow execution
  */
 export async function runParallelDemo(
-  onStateUpdate: StateUpdateCallback
+  onStateUpdate: StateUpdateCallback,
 ): Promise<string> {
   const steps: WorkflowStep[] = [
     {
@@ -56,7 +56,7 @@ export async function runParallelDemo(
   // Execute first 3 steps in parallel
   const parallelSteps = steps.slice(0, 3);
   const parallelPromises = parallelSteps.map((step, index) =>
-    executeParallelStep(step, index, steps, onStateUpdate)
+    executeParallelStep(step, index, steps, onStateUpdate),
   );
 
   // Wait for all parallel steps to complete
@@ -105,7 +105,7 @@ async function executeParallelStep(
   step: WorkflowStep,
   index: number,
   allSteps: WorkflowStep[],
-  onStateUpdate: StateUpdateCallback
+  onStateUpdate: StateUpdateCallback,
 ): Promise<string> {
   step.status = 'running';
   step.startTime = Date.now();

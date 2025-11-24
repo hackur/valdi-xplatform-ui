@@ -10,18 +10,18 @@
  * Based on 4px grid system
  */
 export const Spacing = {
-  none: 0,       // No spacing
-  xxs: 2,        // Extra extra small
-  xs: 4,         // Extra small
-  sm: 8,         // Small
-  md: 12,        // Medium
-  base: 16,      // Base spacing (most common)
-  lg: 20,        // Large
-  xl: 24,        // Extra large
-  xxl: 32,       // 2X large
-  xxxl: 40,      // 3X large
-  huge: 48,      // Huge
-  massive: 64,   // Massive
+  none: 0, // No spacing
+  xxs: 2, // Extra extra small
+  xs: 4, // Extra small
+  sm: 8, // Small
+  md: 12, // Medium
+  base: 16, // Base spacing (most common)
+  lg: 20, // Large
+  xl: 24, // Extra large
+  xxl: 32, // 2X large
+  xxxl: 40, // 3X large
+  huge: 48, // Huge
+  massive: 64, // Massive
 } as const;
 
 /**
@@ -31,45 +31,45 @@ export const Spacing = {
  */
 export const SemanticSpacing = {
   // Component internal spacing
-  componentPaddingSmall: Spacing.sm,     // 8px
-  componentPadding: Spacing.base,        // 16px
-  componentPaddingLarge: Spacing.xl,     // 24px
+  componentPaddingSmall: Spacing.sm, // 8px
+  componentPadding: Spacing.base, // 16px
+  componentPaddingLarge: Spacing.xl, // 24px
 
   // Element spacing within components
-  elementGapSmall: Spacing.xs,           // 4px
-  elementGap: Spacing.sm,                // 8px
-  elementGapLarge: Spacing.md,           // 12px
+  elementGapSmall: Spacing.xs, // 4px
+  elementGap: Spacing.sm, // 8px
+  elementGapLarge: Spacing.md, // 12px
 
   // Section spacing (between major UI sections)
-  sectionGapSmall: Spacing.base,         // 16px
-  sectionGap: Spacing.xl,                // 24px
-  sectionGapLarge: Spacing.xxxl,         // 40px
+  sectionGapSmall: Spacing.base, // 16px
+  sectionGap: Spacing.xl, // 24px
+  sectionGapLarge: Spacing.xxxl, // 40px
 
   // Screen/Page spacing
   screenPaddingHorizontal: Spacing.base, // 16px
-  screenPaddingVertical: Spacing.lg,     // 20px
-  screenGap: Spacing.base,               // 16px
+  screenPaddingVertical: Spacing.lg, // 20px
+  screenGap: Spacing.base, // 16px
 
   // Card spacing
-  cardPadding: Spacing.base,             // 16px
-  cardPaddingSmall: Spacing.md,          // 12px
-  cardGap: Spacing.md,                   // 12px
+  cardPadding: Spacing.base, // 16px
+  cardPaddingSmall: Spacing.md, // 12px
+  cardGap: Spacing.md, // 12px
 
   // Chat specific
-  messageBubblePadding: Spacing.md,      // 12px
-  messageBubbleGap: Spacing.sm,          // 8px
-  messageGroupGap: Spacing.base,         // 16px
-  inputBarPadding: Spacing.base,         // 16px
+  messageBubblePadding: Spacing.md, // 12px
+  messageBubbleGap: Spacing.sm, // 8px
+  messageGroupGap: Spacing.base, // 16px
+  inputBarPadding: Spacing.base, // 16px
 
   // Button spacing
-  buttonPaddingHorizontal: Spacing.xl,   // 24px
-  buttonPaddingVertical: Spacing.md,     // 12px
-  buttonGap: Spacing.sm,                 // 8px
+  buttonPaddingHorizontal: Spacing.xl, // 24px
+  buttonPaddingVertical: Spacing.md, // 12px
+  buttonGap: Spacing.sm, // 8px
 
   // List spacing
-  listItemPadding: Spacing.base,         // 16px
-  listItemGap: Spacing.xs,               // 4px
-  listSectionGap: Spacing.xl,            // 24px
+  listItemPadding: Spacing.base, // 16px
+  listItemGap: Spacing.xs, // 4px
+  listSectionGap: Spacing.xl, // 24px
 } as const;
 
 /**
@@ -80,33 +80,45 @@ export const BorderRadius = {
   none: 0,
   xs: 2,
   sm: 4,
-  base: 8,     // Default border radius
+  base: 8, // Default border radius
   md: 12,
   lg: 16,
   xl: 20,
   xxl: 24,
-  full: 9999,  // Fully rounded (pill shape)
+  full: 9999, // Fully rounded (pill shape)
 } as const;
 
 /**
  * Chat specific border radius
  */
 export const ChatBorderRadius = {
-  messageBubble: BorderRadius.lg,        // 16px - Message bubbles
-  messageGroupStart: BorderRadius.lg,    // 16px - First message in group
-  messageGroupMiddle: BorderRadius.sm,   // 4px - Middle messages
-  messageGroupEnd: BorderRadius.lg,      // 16px - Last message in group
-  inputBar: BorderRadius.xxl,            // 24px - Input bar (pill-like)
-  card: BorderRadius.md,                 // 12px - Cards
-  avatar: BorderRadius.full,             // Circular avatars
+  messageBubble: BorderRadius.lg, // 16px - Message bubbles
+  messageGroupStart: BorderRadius.lg, // 16px - First message in group
+  messageGroupMiddle: BorderRadius.sm, // 4px - Middle messages
+  messageGroupEnd: BorderRadius.lg, // 16px - Last message in group
+  inputBar: BorderRadius.xxl, // 24px - Input bar (pill-like)
+  card: BorderRadius.md, // 12px - Cards
+  avatar: BorderRadius.full, // Circular avatars
 } as const;
 
 /**
  * Spacing utility functions
+ *
+ * Helper functions for creating spacing-related style objects.
  */
 export const SpacingUtils = {
   /**
    * Multiply spacing value by a factor
+   *
+   * @param spacing - The base spacing value
+   * @param factor - The multiplication factor
+   * @returns The multiplied spacing value
+   *
+   * @example
+   * ```typescript
+   * const doubled = SpacingUtils.multiply(Spacing.base, 2);
+   * console.log(doubled); // 32 (16 * 2)
+   * ```
    */
   multiply(spacing: number, factor: number): number {
     return spacing * factor;
@@ -114,6 +126,15 @@ export const SpacingUtils = {
 
   /**
    * Add multiple spacing values
+   *
+   * @param spacings - Variable number of spacing values to add
+   * @returns The sum of all spacing values
+   *
+   * @example
+   * ```typescript
+   * const total = SpacingUtils.add(Spacing.sm, Spacing.md, Spacing.lg);
+   * console.log(total); // 40 (8 + 12 + 20)
+   * ```
    */
   add(...spacings: number[]): number {
     return spacings.reduce((sum, spacing) => sum + spacing, 0);
@@ -121,6 +142,16 @@ export const SpacingUtils = {
 
   /**
    * Create symmetric padding object
+   *
+   * @param value - The padding value to apply on all sides
+   * @returns A padding style object
+   *
+   * @example
+   * ```typescript
+   * const style = new Style<View>({
+   *   ...SpacingUtils.padding(Spacing.base)
+   * });
+   * ```
    */
   padding(value: number): { padding: number } {
     return { padding: value };
@@ -128,6 +159,16 @@ export const SpacingUtils = {
 
   /**
    * Create horizontal padding object
+   *
+   * @param value - The padding value for left and right
+   * @returns A horizontal padding style object
+   *
+   * @example
+   * ```typescript
+   * const style = new Style<View>({
+   *   ...SpacingUtils.paddingHorizontal(Spacing.lg)
+   * });
+   * ```
    */
   paddingHorizontal(value: number): { paddingHorizontal: number } {
     return { paddingHorizontal: value };
@@ -135,6 +176,16 @@ export const SpacingUtils = {
 
   /**
    * Create vertical padding object
+   *
+   * @param value - The padding value for top and bottom
+   * @returns A vertical padding style object
+   *
+   * @example
+   * ```typescript
+   * const style = new Style<View>({
+   *   ...SpacingUtils.paddingVertical(Spacing.md)
+   * });
+   * ```
    */
   paddingVertical(value: number): { paddingVertical: number } {
     return { paddingVertical: value };
@@ -142,8 +193,33 @@ export const SpacingUtils = {
 
   /**
    * Create custom padding object
+   *
+   * Allows specifying different padding values for each side.
+   *
+   * @param top - Top padding value
+   * @param right - Right padding value
+   * @param bottom - Bottom padding value
+   * @param left - Left padding value
+   * @returns A custom padding style object
+   *
+   * @example
+   * ```typescript
+   * const style = new Style<View>({
+   *   ...SpacingUtils.paddingCustom(
+   *     Spacing.lg,    // top: 20
+   *     Spacing.base,  // right: 16
+   *     Spacing.md,    // bottom: 12
+   *     Spacing.base   // left: 16
+   *   )
+   * });
+   * ```
    */
-  paddingCustom(top: number, right: number, bottom: number, left: number): {
+  paddingCustom(
+    top: number,
+    right: number,
+    bottom: number,
+    left: number,
+  ): {
     paddingTop: number;
     paddingRight: number;
     paddingBottom: number;
@@ -159,6 +235,16 @@ export const SpacingUtils = {
 
   /**
    * Create symmetric margin object
+   *
+   * @param value - The margin value to apply on all sides
+   * @returns A margin style object
+   *
+   * @example
+   * ```typescript
+   * const style = new Style<View>({
+   *   ...SpacingUtils.margin(Spacing.base)
+   * });
+   * ```
    */
   margin(value: number): { margin: number } {
     return { margin: value };
@@ -166,6 +252,19 @@ export const SpacingUtils = {
 
   /**
    * Create gap object for flexbox
+   *
+   * Sets the gap between flex items in a flexbox container.
+   *
+   * @param value - The gap value
+   * @returns A gap style object
+   *
+   * @example
+   * ```typescript
+   * const containerStyle = new Style<View>({
+   *   flexDirection: 'row',
+   *   ...SpacingUtils.gap(Spacing.sm)
+   * });
+   * ```
    */
   gap(value: number): { gap: number } {
     return { gap: value };

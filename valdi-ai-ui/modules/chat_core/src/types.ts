@@ -5,7 +5,7 @@
  * Extends the common Message and Conversation types.
  */
 
-import { Message, Conversation, ModelConfig } from 'common/src/types';
+import { Message, Conversation, ModelConfig } from '@common/types';
 
 /**
  * Chat Request Options
@@ -65,7 +65,12 @@ export interface ChatResponse {
 /**
  * Streaming Status
  */
-export type StreamingStatus = 'idle' | 'connecting' | 'streaming' | 'completed' | 'error';
+export type StreamingStatus =
+  | 'idle'
+  | 'connecting'
+  | 'streaming'
+  | 'completed'
+  | 'error';
 
 /**
  * Stream Event Types

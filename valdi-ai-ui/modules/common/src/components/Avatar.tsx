@@ -66,11 +66,16 @@ export class Avatar extends Component<AvatarProps> {
   private getSize(): number {
     const { size } = this.viewModel;
     switch (size) {
-      case 'small': return 32;
-      case 'medium': return 40;
-      case 'large': return 48;
-      case 'xlarge': return 64;
-      default: return 40;
+      case 'small':
+        return 32;
+      case 'medium':
+        return 40;
+      case 'large':
+        return 48;
+      case 'xlarge':
+        return 64;
+      default:
+        return 40;
     }
   }
 
@@ -120,11 +125,16 @@ export class Avatar extends Component<AvatarProps> {
   private getFontSize(): number {
     const { size } = this.viewModel;
     switch (size) {
-      case 'small': return 14;
-      case 'medium': return 16;
-      case 'large': return 18;
-      case 'xlarge': return 24;
-      default: return 16;
+      case 'small':
+        return 14;
+      case 'medium':
+        return 16;
+      case 'large':
+        return 18;
+      case 'xlarge':
+        return 24;
+      default:
+        return 16;
     }
   }
 
@@ -135,7 +145,12 @@ export class Avatar extends Component<AvatarProps> {
     }
   };
 
-  private getContainerStyle(size: number, backgroundColor: string, elevated: boolean | undefined, customStyle?: Record<string, unknown>): Style<View> {
+  private getContainerStyle(
+    size: number,
+    backgroundColor: string,
+    elevated: boolean | undefined,
+    customStyle?: Record<string, unknown>,
+  ): Style<View> {
     return new Style<View>({
       ...styles.container,
       width: size,
@@ -173,25 +188,21 @@ export class Avatar extends Component<AvatarProps> {
     const initials = this.getInitials();
     const fontSize = this.getFontSize();
 
-    const containerStyle = this.getContainerStyle(size, backgroundColor, elevated, customStyle);
+    const containerStyle = this.getContainerStyle(
+      size,
+      backgroundColor,
+      elevated,
+      customStyle,
+    );
     const imageStyle = this.getImageStyle(size);
     const labelStyle = this.getLabelStyle(fontSize, textColor);
 
     return (
-      <view
-        style={containerStyle}
-        onTap={onTap ? this.handleTap : undefined}
-      >
+      <view style={containerStyle} onTap={onTap ? this.handleTap : undefined}>
         {imageUrl ? (
-          <image
-            src={imageUrl}
-            style={imageStyle}
-          />
+          <image src={imageUrl} style={imageStyle} />
         ) : (
-          <label
-            value={initials}
-            style={labelStyle}
-          />
+          <label value={initials} style={labelStyle} />
         )}
       </view>
     );

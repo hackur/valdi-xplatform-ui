@@ -11,10 +11,10 @@
  * Dependency Inversion: Depends on abstractions, not concretions
  */
 
-import { ChatService } from 'chat_core/src/ChatService';
-import { MessageStore } from 'chat_core/src/MessageStore';
-import { ConversationStore } from 'chat_core/src/ConversationStore';
-import { Message, Conversation } from 'common/src/types';
+import { ChatService } from '@chat_core/ChatService';
+import { MessageStore } from '@chat_core/MessageStore';
+import { ConversationStore } from '@chat_core/ConversationStore';
+import { Message, Conversation } from '@common/types';
 import { NavigationController } from 'valdi_navigation/src/NavigationController';
 
 /**
@@ -64,7 +64,8 @@ export class ChatIntegrationService {
   ): Promise<void> {
     try {
       // Get conversation
-      const conversation = this.conversationStore.getConversation(conversationId);
+      const conversation =
+        this.conversationStore.getConversation(conversationId);
       if (!conversation) {
         throw new Error(`Conversation not found: ${conversationId}`);
       }
@@ -95,49 +96,47 @@ export class ChatIntegrationService {
       this.messageStore.addMessage(assistantMessage);
 
       // Get conversation messages
-      const messages = this.messageStore.getConversationMessages(conversationId);
+      const messages =
+        this.messageStore.getConversationMessages(conversationId);
 
       // Stream response
       let fullResponse = '';
 
-      await this.chatService.sendMessageStreaming(
-        messages,
-        {
-          onToken: (delta: string) => {
-            fullResponse += delta;
+      await this.chatService.sendMessageStreaming(messages, {
+        onToken: (delta: string) => {
+          fullResponse += delta;
 
-            // Update message
-            this.messageStore.updateMessage(assistantMessage.id, {
-              content: fullResponse,
-              status: 'sending',
-            });
+          // Update message
+          this.messageStore.updateMessage(assistantMessage.id, {
+            content: fullResponse,
+            status: 'sending',
+          });
 
-            // Progress callback
-            if (onProgress) {
-              onProgress(delta, fullResponse);
-            }
-          },
-          onComplete: () => {
-            // Mark as sent
-            this.messageStore.updateMessage(assistantMessage.id, {
-              status: 'sent',
-            });
-
-            // Update conversation metadata
-            this.conversationStore.updateConversation(conversationId, {
-              updatedAt: new Date().toISOString(),
-              messageCount: messages.length + 2, // +2 for user and assistant
-            });
-          },
-          onError: (error: Error) => {
-            // Mark as error
-            this.messageStore.updateMessage(assistantMessage.id, {
-              status: 'error',
-              error: error.message,
-            });
-          },
+          // Progress callback
+          if (onProgress) {
+            onProgress(delta, fullResponse);
+          }
         },
-      );
+        onComplete: () => {
+          // Mark as sent
+          this.messageStore.updateMessage(assistantMessage.id, {
+            status: 'sent',
+          });
+
+          // Update conversation metadata
+          this.conversationStore.updateConversation(conversationId, {
+            updatedAt: new Date().toISOString(),
+            messageCount: messages.length + 2, // +2 for user and assistant
+          });
+        },
+        onError: (error: Error) => {
+          // Mark as error
+          this.messageStore.updateMessage(assistantMessage.id, {
+            status: 'error',
+            error: error.message,
+          });
+        },
+      });
     } catch (error) {
       console.error('[ChatIntegrationService] Send message error:', error);
       throw error;

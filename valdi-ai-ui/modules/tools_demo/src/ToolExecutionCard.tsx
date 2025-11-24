@@ -113,10 +113,7 @@ export class ToolExecutionCard extends Component<ToolExecutionCardProps> {
                 }}
               />
             </view>
-            <label
-              value={result.toolName}
-              style={Fonts.h3}
-            />
+            <label value={result.toolName} style={Fonts.h3} />
           </view>
           <view style={styles.headerRight}>
             <label

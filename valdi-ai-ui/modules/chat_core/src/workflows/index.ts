@@ -30,9 +30,7 @@ export {
   createSequentialWorkflow,
 } from '../SequentialWorkflow';
 
-export type {
-  SequentialWorkflowConfig,
-} from '../SequentialWorkflow';
+export type { SequentialWorkflowConfig } from '../SequentialWorkflow';
 
 // Parallel Workflow
 export {
