@@ -6,8 +6,9 @@
   "scripts": {
     "prepare": "husky install",
     "build": "bazel build //:valdi_ai_ui",
-    "build:ios": "bazel build //:valdi_ai_ui && valdi install ios --app=//:valdi_ai_ui",
-    "build:android": "bazel build //:valdi_ai_ui_android && valdi install android --app=//:valdi_ai_ui",
+    "build:ios": "npm run build && node vendor/valdi/npm_modules/cli/dist/index.js install ios --app=//:valdi_ai_ui",
+    "build:android": "npm run build && node vendor/valdi/npm_modules/cli/dist/index.js install android --app=//:valdi_ai_ui",
+    "valdi": "node vendor/valdi/npm_modules/cli/dist/index.js",
     "test": "jest",
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage",

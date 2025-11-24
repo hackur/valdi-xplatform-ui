@@ -1,7 +1,7 @@
 workspace(name = "valdi_ai_ui")
 
-# Reference parent Valdi workspace
+# Reference self-contained Valdi in vendor directory
 local_repository(
     name = "valdi",
-    path = "../Valdi",
+    path = "vendor/valdi",
 )

@@ -1,6 +1,6 @@
-# Disable bzlmod to match parent Valdi workspace configuration
-common --noenable_bzlmod
-common --enable_workspace
+# Enable bzlmod for MODULE.bazel with local_path_override to vendor/valdi
+# common --noenable_bzlmod  # DISABLED - we need bzlmod for @@android_macros etc
+# common --enable_workspace  # DISABLED - using MODULE.bazel instead
 
 # Platform-specific configuration
 common --enable_platform_specific_config
