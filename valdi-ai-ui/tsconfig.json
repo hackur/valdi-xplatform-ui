@@ -51,6 +51,14 @@
     /* Path Mapping */
     "baseUrl": ".",
     "paths": {
+      /* Valdi Framework Mocks */
+      "valdi_core/src/Component": ["./__mocks__/valdi_core/src/Component.ts"],
+      "valdi_core/src/Style": ["./__mocks__/valdi_core/src/Style.ts"],
+      "valdi_core/src/SystemFont": ["./__mocks__/valdi_core/src/SystemFont.ts"],
+      "valdi_tsx/src/NativeTemplateElements": ["./__mocks__/valdi_tsx/src/NativeTemplateElements.ts"],
+      "valdi_navigation/src/NavigationController": ["./__mocks__/valdi_navigation/src/NavigationController.ts"],
+
+      /* Application Modules */
       "@common": ["./modules/common/src/index.ts"],
       "@common/*": ["./modules/common/src/*"],
       "@common/types": ["./modules/common/src/types/index.ts"],
