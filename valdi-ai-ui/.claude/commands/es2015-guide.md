@@ -13,10 +13,10 @@ Valdi compiles TypeScript to native code (iOS/Android) targeting ES2015 (ES6) on
 ### 1. Promise.allSettled (ES2020)
 
 ```typescript
-// ❌ NOT AVAILABLE - ES2020 feature
+// [FAIL] NOT AVAILABLE - ES2020 feature
 const results = await Promise.allSettled(promises);
 
-// ✅ ES2015 ALTERNATIVE - Manual implementation
+// [PASS] ES2015 ALTERNATIVE - Manual implementation
 const results = await Promise.all(
   promises.map(p =>
     p.then(value => ({ status: 'fulfilled' as const, value }))
@@ -38,11 +38,11 @@ const rejected = results
 ### 2. Object.entries / Object.values (ES2017)
 
 ```typescript
-// ❌ NOT AVAILABLE - ES2017 feature
+// [FAIL] NOT AVAILABLE - ES2017 feature
 const entries = Object.entries(obj);
 const values = Object.values(obj);
 
-// ✅ ES2015 ALTERNATIVE - Manual iteration
+// [PASS] ES2015 ALTERNATIVE - Manual iteration
 const entries: [string, any][] = [];
 for (const key in obj) {
   if (obj.hasOwnProperty(key)) {
@@ -65,10 +65,10 @@ const values = Object.keys(obj).map(key => obj[key]);
 ### 3. Optional Chaining (?.) (ES2020)
 
 ```typescript
-// ❌ NOT AVAILABLE - ES2020 feature
+// [FAIL] NOT AVAILABLE - ES2020 feature
 const value = obj?.prop?.nested;
 
-// ✅ ES2015 ALTERNATIVE - Manual null checks
+// [PASS] ES2015 ALTERNATIVE - Manual null checks
 const value = obj && obj.prop && obj.prop.nested;
 
 // Or with ternary
@@ -78,25 +78,25 @@ const value = obj ? (obj.prop ? obj.prop.nested : undefined) : undefined;
 ### 4. Nullish Coalescing (??) (ES2020)
 
 ```typescript
-// ❌ NOT AVAILABLE - ES2020 feature
+// [FAIL] NOT AVAILABLE - ES2020 feature
 const value = input ?? defaultValue;
 
-// ✅ ES2015 ALTERNATIVE - Explicit null/undefined check
+// [PASS] ES2015 ALTERNATIVE - Explicit null/undefined check
 const value = (input !== null && input !== undefined) ? input : defaultValue;
 
-// ⚠️ NOT THE SAME - treats falsy values differently
+// [WARN] NOT THE SAME - treats falsy values differently
 const value = input || defaultValue; // Also replaces 0, '', false
 ```
 
 ### 5. Async Iteration (ES2018)
 
 ```typescript
-// ❌ NOT AVAILABLE - ES2018 feature
+// [FAIL] NOT AVAILABLE - ES2018 feature
 for await (const item of asyncIterable) {
   console.log(item);
 }
 
-// ✅ ES2015 ALTERNATIVE - Promise.all or sequential awaits
+// [PASS] ES2015 ALTERNATIVE - Promise.all or sequential awaits
 const items = await Promise.all(arrayOfPromises);
 for (const item of items) {
   console.log(item);
@@ -112,10 +112,10 @@ for (const promise of arrayOfPromises) {
 ### 6. String.prototype.padStart / padEnd (ES2017)
 
 ```typescript
-// ❌ NOT AVAILABLE - ES2017 feature
+// [FAIL] NOT AVAILABLE - ES2017 feature
 const padded = str.padStart(10, '0');
 
-// ✅ ES2015 ALTERNATIVE - Manual padding
+// [PASS] ES2015 ALTERNATIVE - Manual padding
 function padStart(str: string, targetLength: number, padString: string = ' '): string {
   if (str.length >= targetLength) {
     return str;
@@ -128,10 +128,10 @@ function padStart(str: string, targetLength: number, padString: string = ' '): s
 ### 7. Object.fromEntries (ES2019)
 
 ```typescript
-// ❌ NOT AVAILABLE - ES2019 feature
+// [FAIL] NOT AVAILABLE - ES2019 feature
 const obj = Object.fromEntries(entries);
 
-// ✅ ES2015 ALTERNATIVE - Manual object construction
+// [PASS] ES2015 ALTERNATIVE - Manual object construction
 const obj: Record<string, any> = {};
 for (const [key, value] of entries) {
   obj[key] = value;
@@ -147,11 +147,11 @@ const obj = entries.reduce((acc, [key, value]) => {
 ### 8. Array.prototype.flat / flatMap (ES2019)
 
 ```typescript
-// ❌ NOT AVAILABLE - ES2019 feature
+// [FAIL] NOT AVAILABLE - ES2019 feature
 const flat = nested.flat();
 const mapped = arr.flatMap(x => [x, x * 2]);
 
-// ✅ ES2015 ALTERNATIVE - Manual flattening
+// [PASS] ES2015 ALTERNATIVE - Manual flattening
 const flat: any[] = [];
 for (const item of nested) {
   if (Array.isArray(item)) {
@@ -171,13 +171,13 @@ const mapped = arr.reduce((acc, x) => acc.concat([x, x * 2]), [] as number[]);
 ### 9. Promise.finally (ES2018)
 
 ```typescript
-// ❌ NOT AVAILABLE - ES2018 feature
+// [FAIL] NOT AVAILABLE - ES2018 feature
 promise
   .then(handleSuccess)
   .catch(handleError)
   .finally(cleanup);
 
-// ✅ ES2015 ALTERNATIVE - Manual cleanup in both paths
+// [PASS] ES2015 ALTERNATIVE - Manual cleanup in both paths
 promise
   .then(result => {
     cleanup();
@@ -202,13 +202,13 @@ try {
 ### 10. Async Generators (ES2018)
 
 ```typescript
-// ❌ NOT AVAILABLE - ES2018 feature
+// [FAIL] NOT AVAILABLE - ES2018 feature
 async function* generateValues() {
   yield await fetchValue1();
   yield await fetchValue2();
 }
 
-// ✅ ES2015 ALTERNATIVE - Return array of promises
+// [PASS] ES2015 ALTERNATIVE - Return array of promises
 async function generateValues(): Promise<any[]> {
   return [
     await fetchValue1(),
@@ -256,14 +256,14 @@ Your `tsconfig.json` should specify ES2015 target:
 ### Safe Property Access
 
 ```typescript
-// ✅ Pattern: Guard clauses
+// [PASS] Pattern: Guard clauses
 function getUserEmail(user: User | undefined): string | undefined {
   if (!user) return undefined;
   if (!user.profile) return undefined;
   return user.profile.email;
 }
 
-// ✅ Pattern: Type guards
+// [PASS] Pattern: Type guards
 function hasEmail(user: any): user is { profile: { email: string } } {
   return user && user.profile && typeof user.profile.email === 'string';
 }
@@ -276,27 +276,27 @@ if (hasEmail(user)) {
 ### Default Values
 
 ```typescript
-// ✅ Pattern: Function parameters with defaults
+// [PASS] Pattern: Function parameters with defaults
 function createUser(name: string, role: string = 'user') {
   // role defaults to 'user' if not provided
 }
 
-// ✅ Pattern: Destructuring with defaults
+// [PASS] Pattern: Destructuring with defaults
 function processConfig({ timeout = 5000, retries = 3 } = {}) {
   // Use timeout and retries
 }
 
-// ✅ Pattern: Explicit undefined checks
+// [PASS] Pattern: Explicit undefined checks
 const displayName = (name !== undefined && name !== null) ? name : 'Anonymous';
 ```
 
 ### Array Flattening
 
 ```typescript
-// ✅ Pattern: One-level flatten with spread
+// [PASS] Pattern: One-level flatten with spread
 const flattened = [].concat(...nested);
 
-// ✅ Pattern: Deep flatten with recursion
+// [PASS] Pattern: Deep flatten with recursion
 function flattenDeep(arr: any[]): any[] {
   return arr.reduce(
     (acc, val) => Array.isArray(val)
@@ -310,13 +310,13 @@ function flattenDeep(arr: any[]): any[] {
 ### Object Manipulation
 
 ```typescript
-// ✅ Pattern: Map object with Object.keys
+// [PASS] Pattern: Map object with Object.keys
 const mapped = Object.keys(obj).reduce((acc, key) => {
   acc[key] = transform(obj[key]);
   return acc;
 }, {} as Record<string, any>);
 
-// ✅ Pattern: Filter object properties
+// [PASS] Pattern: Filter object properties
 const filtered = Object.keys(obj).reduce((acc, key) => {
   if (shouldKeep(obj[key])) {
     acc[key] = obj[key];

@@ -16,7 +16,7 @@ Run ESLint code quality checks on the codebase.
 ## Output Format
 
 ```
-🎨 ESLint Code Quality Report
+[STYLE] ESLint Code Quality Report
 ==============================
 
 Errors: X | Warnings: Y
@@ -26,13 +26,13 @@ Files Checked: Z
 - rule-name: N files affected
   └─ Example: file.ts:line
 
-⚠️  Warnings by Rule:
+[WARN]  Warnings by Rule:
 - rule-name: M files affected
 
 🔧 Auto-fixable: K issues
 Run: npx eslint . --fix
 
-✅ Next Steps:
+[PASS] Next Steps:
 - [Priority actions]
 ```
 

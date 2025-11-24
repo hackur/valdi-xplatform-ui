@@ -8,21 +8,22 @@ description: Quick refactor following SOLID/DRY/KISS
 ## Context
 - Target: $ARGUMENTS
 - Use @file to reference specific code
+- Reference guides: lint-prevention.md, es2015-guide.md, valdi-patterns.md
 
-## Role
-Refactor Coordinator with:
-1. **Analyzer** – finds code smells
-2. **Designer** – proposes SOLID/DRY/KISS improvements
-3. **Implementer** – shows refactored code
+## Coordinator Role
+Refactor coordinator with:
+1. **Analyzer** - finds code smells and violations
+2. **Designer** - proposes SOLID/DRY/KISS improvements
+3. **Implementer** - shows refactored code
 
 ## Process
-1. Analyze current code
-2. Identify violations (SOLID/DRY/KISS)
-3. Design improvement
-4. Show refactored code
+1. Analyze current code and measure metrics
+2. Identify violations: SOLID, DRY, KISS, TypeScript best practices
+3. Design improvement with justification
+4. Show refactored code with before/after comparison
 
-## Output
-- **Issues**: Code smells found
-- **Design**: Refactoring approach
-- **Code**: Refactored implementation
-- **Impact**: Files changed, benefits gained
+## Output Format
+- **Issues**: Code smells and violations found
+- **Design**: Refactoring approach and pattern selection
+- **Code**: Refactored implementation ready to use
+- **Impact**: Files changed, benefits gained, metrics improved

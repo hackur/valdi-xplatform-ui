@@ -2,17 +2,17 @@
 description: Quickly analyze and fix a specific error or issue
 ---
 
-Analyze and fix a specific error or issue:
+Analyze and fix a specific TypeScript/Valdi error:
 
 ## Quick Fix Process
 
 ### 1. Error Analysis
 
 Provide the error:
-- Full error message
+- Full error message and error code
 - Stack trace
 - File and line number
-- Context (what were you doing?)
+- What you were doing when error occurred
 
 ### 2. Immediate Investigation
 
@@ -22,39 +22,28 @@ I will:
 - Look for obvious issues
 - Search for similar patterns in codebase
 
-### 3. Common Laravel/Nova Issues
+### 3. Common TypeScript/Valdi Issues
 
-**Check for these common problems**:
-
-**Database/Eloquent**:
-- Missing fillable/guarded
-- Incorrect relationship definitions
-- N+1 query problems
-- Migration not run
-
-**Nova**:
-- Badge field using ::make instead of closure
-- DateTime field with ->asHtml() (doesn't exist)
-- Missing searchableColumns() method
-- Incorrect field types
-
-**State Machine**:
-- Using lowercase state strings instead of State classes
-- Incorrect transition permissions
-- Missing state constants
-
-**Testing**:
-- Missing database setup
-- Incorrect assertions
-- Missing dependencies
+| Category | Common Problems |
+|----------|-----------------|
+| **Type Safety** | Missing explicit types, use of 'any', non-null assertions (!), missing return types |
+| **Promises** | Floating promises, missing await, promise in conditional |
+| **Imports** | Wrong import style, missing 'import type', unused imports, duplicate imports |
+| **Lifecycle** | Missing 'override' keyword, not unsubscribing in onDestroy(), memory leaks |
+| **Component** | Missing navigationController prop, wrong element names (uppercase), missing styles |
+| **Path Aliases** | Invalid paths, missing @ prefix, wrong alias reference, circular imports |
+| **ES2015 Constraints** | Using ES2017+ features (Promise.allSettled, Object.entries, optional chaining) |
+| **Style Properties** | Invalid CSS properties for Valdi, wrong type for style value, missing Style wrapper |
+| **ESLint** | Naming convention violations, console.log in code, non-exhaustive switch, unused variables |
+| **Testing** | Missing test setup, incorrect assertions, uninitialized mocks |
 
 ### 4. Root Cause Identification
 
 Determine:
 - What caused the error?
 - Why did it happen?
-- Is it a code bug or environment issue?
-- Are there related issues?
+- Is it a code bug, type error, or environment issue?
+- Are there related issues in similar code?
 
 ### 5. Fix Implementation
 
@@ -66,13 +55,13 @@ Determine:
 ### 6. Verification
 
 - What tests to run?
-- How to manually verify?
-- What to watch for?
+- How to manually verify the fix?
+- What to watch for in edge cases?
 
 ### 7. Prevention
 
 - How to prevent this in future?
-- What pattern to follow?
-- Any documentation to update?
+- What pattern or guide to follow?
+- Reference relevant guide: lint-prevention.md, es2015-guide.md, or valdi-patterns.md
 
-Provide immediate fix and explanation.
+Provide immediate fix and clear explanation.

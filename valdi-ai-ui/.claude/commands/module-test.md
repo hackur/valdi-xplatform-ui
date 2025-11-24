@@ -24,7 +24,7 @@ MODULE_PATH="modules/${MODULE_NAME}"
 
 # Verify module exists
 if [ ! -d "$MODULE_PATH" ]; then
-  echo "❌ Module not found: $MODULE_NAME"
+  echo "[FAIL] Module not found: $MODULE_NAME"
   exit 1
 fi
 
@@ -68,12 +68,12 @@ STATEMENTS=$(cat coverage/${MODULE_NAME}/coverage-summary.json | jq '.total.stat
 ### 4. Test Quality Checks
 
 Verify:
-- ✅ No skipped tests (.skip)
-- ✅ No focused tests (.only)
-- ✅ All assertions meaningful
-- ✅ Mocks properly configured
-- ✅ Cleanup in afterEach/afterAll
-- ✅ Error cases tested
+- [PASS] No skipped tests (.skip)
+- [PASS] No focused tests (.only)
+- [PASS] All assertions meaningful
+- [PASS] Mocks properly configured
+- [PASS] Cleanup in afterEach/afterAll
+- [PASS] Error cases tested
 
 ### 5. Identify Gaps
 
@@ -185,7 +185,7 @@ describe('ChatBubble', () => {
 ## Output Format
 
 ```
-🧪 Module Test Report: ${MODULE_NAME}
+[TEST] Module Test Report: ${MODULE_NAME}
 =====================================
 
 Module: modules/${MODULE_NAME}
@@ -193,24 +193,24 @@ Test Files: 8
 Tests: 56
 
 Results:
-  ✅ Pass: 54
-  ❌ Fail: 2
+  [PASS] Pass: 54
+  [FAIL] Fail: 2
   ⏭️  Skip: 0
-  ⏱️  Duration: 8.5s
+  [TIME]  Duration: 8.5s
 
 Coverage:
-  Lines:      87.5% ✅ (target: 80%)
-  Branches:   82.3% ✅ (target: 75%)
-  Functions:  91.2% ✅ (target: 80%)
-  Statements: 88.1% ✅ (target: 80%)
+  Lines:      87.5% [PASS] (target: 80%)
+  Branches:   82.3% [PASS] (target: 75%)
+  Functions:  91.2% [PASS] (target: 80%)
+  Statements: 88.1% [PASS] (target: 80%)
 
 Coverage by Type:
-  Services:    92.1% ✅
-  ViewModels:  88.4% ✅
-  Components:  81.2% ✅
-  Utilities:   95.0% ✅
+  Services:    92.1% [PASS]
+  ViewModels:  88.4% [PASS]
+  Components:  81.2% [PASS]
+  Utilities:   95.0% [PASS]
 
-❌ Failing Tests:
+[FAIL] Failing Tests:
   1. ChatService › sendMessage › should retry on network error
      - Expected retry count to be 3, received 2
      - File: __tests__/ChatService.test.ts:45
@@ -219,7 +219,7 @@ Coverage by Type:
      - Expected messages to be empty array
      - File: __tests__/ChatViewModel.test.ts:78
 
-⚠️  Files Without Tests:
+[WARN]  Files Without Tests:
   - src/utils/messageFormatter.ts
   - src/components/ChatInput.tsx
 
@@ -227,13 +227,13 @@ Coverage by Type:
   - ChatService integration tests: 2.3s
   - Message synchronization tests: 1.5s
 
-🎯 Action Items:
+[TARGET] Action Items:
   1. Fix 2 failing tests
   2. Add tests for messageFormatter.ts
   3. Add tests for ChatInput.tsx
   4. Optimize slow integration tests
 
-💡 Recommendations:
+[INFO] Recommendations:
   - Overall health: GOOD
   - Coverage meets targets
   - Test quality is high

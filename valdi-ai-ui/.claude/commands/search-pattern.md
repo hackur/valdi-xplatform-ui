@@ -7,25 +7,28 @@ Search comprehensively for code patterns, terminology, or references:
 ## Search Strategy
 
 ### 1. Pattern Identification
-- What are you searching for? (pattern, term, reference)
-- Where to search? (specific dirs or entire project)
-- File types? (*.php, *.md, *.js, etc.)
+
+| Item | Description |
+|------|-------------|
+| What | Pattern, term, or reference to search |
+| Where | Specific directories or entire project |
+| File types | `.ts`, `.tsx`, `.json`, `.md`, etc. |
 
 ### 2. Multi-Tool Search Approach
 
 **Use Grep for**:
-- Code patterns (`grep -r "pattern" --include="*.php"`)
-- Class/method references
-- String literals
-- Import statements
+- Code patterns in TypeScript/React
+- Component/function references
+- String literals and imports
+- JSDoc tags and comments
 
 **Use Glob for**:
-- File name patterns (`**/*Seeder.php`)
+- File name patterns (e.g., `**/*.tsx`)
 - Directory structures
-- File organization
+- Component organization
 
 **Use Read for**:
-- Examining specific files found
+- Examining specific files
 - Verifying context
 - Detailed analysis
 
@@ -33,13 +36,13 @@ Search comprehensively for code patterns, terminology, or references:
 
 **For Terminology Updates**:
 - Old term (case-insensitive)
-- Variations (plural, past tense, etc.)
+- Variations (plural, past tense)
 - Comments and documentation
-- Variable/method names
+- Variable/function names
 - String literals
 
 **For Refactoring**:
-- All usages of class/method
+- All usages of component/function
 - Import statements
 - Test references
 - Documentation mentions
@@ -52,11 +55,11 @@ Search comprehensively for code patterns, terminology, or references:
 ### 4. Organized Results
 
 Present findings grouped by:
-- **Code Files**: Actual usage in PHP/JS
-- **Documentation**: References in .md files
-- **Tests**: Usage in test files
-- **Configuration**: Config/environment files
-- **Scripts**: Shell script references
+- **Components**: TypeScript/React files (`.ts`, `.tsx`)
+- **Documentation**: References in `.md` files
+- **Tests**: Usage in test files (`.test.ts`, `.test.tsx`)
+- **Configuration**: Config files (`.json`, `.config.ts`)
+- **Styles**: CSS/styles (`.css`, `.scss`)
 
 ### 5. Impact Analysis
 
@@ -64,7 +67,7 @@ For each finding:
 - File path and line number
 - Context (surrounding code)
 - Impact (critical, moderate, low)
-- Suggested action (update, remove, migrate)
+- Suggested action
 
 ### 6. Summary Report
 
@@ -73,5 +76,10 @@ For each finding:
 - Breakdown by category
 - Priority order for updates
 - Estimated effort
+
+## Reference
+
+- See `docs/path-conventions.md` for file organization
+- See `docs/valdi-patterns.md` for component patterns
 
 Provide a comprehensive search report with specific line numbers and context.

@@ -2,57 +2,83 @@
 description: Create a detailed refactoring plan following SOLID/DRY/KISS
 ---
 
-Create a comprehensive refactoring plan for the specified code:
+Create a comprehensive refactoring plan for TypeScript/Valdi code:
 
-## Refactoring Analysis
+## Refactoring Analysis Phases
 
-1. **Current State Assessment**
-   - Read the current code implementation
-   - Identify code smells and anti-patterns
-   - Measure current metrics (lines, complexity, duplication)
-   - Document current behavior
+### 1. Current State Assessment
+- Read current code implementation
+- Identify code smells and anti-patterns
+- Measure metrics: lines, complexity, duplication, cyclomatic complexity
+- Document current behavior and dependencies
 
-2. **SOLID Principles Violations**
-   - **Single Responsibility**: List classes/methods doing too much
-   - **Open/Closed**: Identify hard-to-extend code
-   - **Liskov Substitution**: Check inheritance issues
-   - **Interface Segregation**: Find fat interfaces
-   - **Dependency Inversion**: Locate tight coupling
+### 2. SOLID Principles Analysis
 
-3. **DRY Violations**
-   - Find duplicated code blocks
-   - Identify repeated patterns
-   - Locate copy-paste code
-   - Calculate duplication percentage
+| Principle | Issues to Find |
+|-----------|----------------|
+| **Single Responsibility** | Classes/methods doing too much, mixed concerns |
+| **Open/Closed** | Hard-to-extend code, rigid type definitions |
+| **Liskov Substitution** | Inheritance issues, broken interface contracts |
+| **Interface Segregation** | Fat interfaces with unused methods, bloated types |
+| **Dependency Inversion** | Tight coupling, direct instantiation, missing injection |
 
-4. **KISS Violations**
-   - Find overly complex methods
-   - Identify unnecessary abstractions
-   - Locate convoluted logic
-   - Find premature optimizations
+### 3. DRY (Don't Repeat Yourself) Violations
+- Find duplicated code blocks and patterns
+- Identify repeated component logic
+- Locate copy-paste implementations
+- Calculate duplication percentage
 
-5. **Refactoring Strategy**
-   - Prioritize changes by impact
-   - Break into phases (small, iterative changes)
-   - Identify which patterns to apply (Strategy, Factory, etc.)
-   - Plan for backward compatibility
+### 4. KISS (Keep It Simple, Stupid) Violations
+- Find overly complex methods (>20 lines)
+- Identify unnecessary abstractions
+- Locate convoluted logic and nested callbacks
+- Find premature optimizations
 
-6. **Implementation Plan**
-   - Create 20+ step detailed plan
-   - Specify which files to modify
-   - Define new classes/methods needed
-   - Plan for testing each change
+### 5. TypeScript/Valdi-Specific Issues
+- Missing explicit types (using 'any')
+- Non-null assertions instead of guards
+- Path alias inconsistencies
+- ES2017+ feature usage (breaks ES2015 compilation)
+- Missing 'override' keywords on lifecycle methods
+- Improper Style definitions or invalid CSS properties
+- Unhandled promise chains
+- Memory leaks (not unsubscribing in onDestroy)
 
-7. **Risk Assessment**
-   - Identify breaking changes
-   - List affected code areas
-   - Plan migration strategy
-   - Define rollback plan
+### 6. Refactoring Strategy
+- Prioritize changes by impact (high risk/high reward first)
+- Break into phases (small, testable changes)
+- Identify design patterns to apply (Factory, Observer, Strategy, etc.)
+- Plan migration path for breaking changes
+- Consider backward compatibility requirements
 
-8. **Success Metrics**
-   - Target metrics (lines reduced, complexity lowered)
-   - Code quality improvements
-   - Performance expectations
-   - Maintainability gains
+### 7. Implementation Plan
+- Create 20+ step detailed refactoring plan
+- Specify which files to modify or create
+- Define new classes/methods needed
+- Identify tests to write for each change
+- Plan incremental commits for each logical step
 
-Execute the refactoring following the plan, or present plan for approval first.
+### 8. Risk Assessment
+
+| Risk Type | Mitigation |
+|-----------|-----------|
+| Breaking Changes | Document API changes, plan migration path |
+| Affected Code | List all dependent modules and components |
+| Memory Leaks | Review lifecycle and subscription cleanup |
+| Type Safety | Ensure full TypeScript coverage, check circular dependencies |
+| Performance | Measure impact on render performance and bundle size |
+
+### 9. Success Metrics
+- Target metrics: lines reduced, complexity lowered, duplication eliminated
+- Code quality: ESLint pass rate 100%, zero TypeScript errors
+- Type safety: Full explicit typing, no 'any' usage
+- Maintainability: Clear single responsibilities, documented patterns
+- Performance: No memory leaks, proper cleanup in onDestroy
+- Consistency: Follows valdi-patterns.md and lint-prevention.md
+
+## Reference Guides
+- **lint-prevention.md** - TypeScript/ESLint compliance
+- **es2015-guide.md** - ES2015 constraints for Valdi compilation
+- **valdi-patterns.md** - Component and lifecycle best practices
+
+Present plan for review before implementation, or execute with approval.

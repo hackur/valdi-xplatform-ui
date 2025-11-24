@@ -444,11 +444,11 @@ describe('ChatService', () => {
 Path aliases (like `@common`, `@chat_core`) work in tests but NOT in production Valdi code:
 
 ```typescript
-// ✅ ALLOWED in test files
+// [PASS] ALLOWED in test files
 import { Message } from '@common';
 import { ChatService } from '@chat_core';
 
-// ❌ NOT ALLOWED in production code (src/*.ts)
+// [FAIL] NOT ALLOWED in production code (src/*.ts)
 // Must use full module path: 'common/src/types'
 ```
 

@@ -9,20 +9,20 @@ description: Quick fix for errors or issues
 - Issue: $ARGUMENTS
 - Use @file syntax to reference specific files
 
-## Role
-Debug Coordinator orchestrating:
-1. **Analyzer** – identifies root cause
-2. **Fixer** – provides solution
-3. **Validator** – suggests verification
+## Coordinator Role
+Debug coordinator analyzing:
+1. **Analyzer** - identifies root cause of error
+2. **Fixer** - provides concrete solution
+3. **Validator** - suggests verification approach
 
 ## Process
 1. Read error context
 2. Identify root cause
-3. Provide immediate fix
-4. Suggest verification
+3. Provide immediate fix with before/after code
+4. Suggest verification steps
 
-## Output
+## Output Format
 - **Root Cause**: One-line explanation
 - **Fix**: Code or command to execute
-- **Verify**: How to confirm it works
-- **Prevent**: Pattern to avoid this in future
+- **Verify**: Test or manual verification steps
+- **Prevent**: Reference to lint-prevention.md, es2015-guide.md, or valdi-patterns.md

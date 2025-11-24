@@ -161,6 +161,21 @@ module.exports = {
       },
     ],
 
+    // Valdi Framework Specific Rules
+    // Enforce 'override' keyword for lifecycle methods
+    '@typescript-eslint/no-invalid-this': 'off', // Allow 'this' in arrow functions for Valdi event handlers
+
+    // Prevent common Valdi mistakes
+    'no-restricted-imports': ['error', {
+      patterns: [{
+        group: ['@common', '@common/*', '@chat_core', '@chat_ui', '@agent_manager', '@conversation_manager', '@model_config', '@tools_demo', '@workflow_demo', '@settings'],
+        message: 'Path aliases (@common, etc.) are not supported in Valdi builds. Use full module paths like "common/src/types" instead.',
+      }, {
+        group: ['ai', '@ai-sdk/*', 'zod'],
+        message: 'AI SDK and runtime validation libraries cannot be used in Valdi (no JavaScript runtime). Use valdi_http for API calls.',
+      }],
+    }],
+
     // Performance & Correctness
     'no-await-in-loop': 'warn',
     'no-constant-binary-expression': 'error',

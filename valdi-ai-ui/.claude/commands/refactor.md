@@ -64,19 +64,19 @@ echo "Coverage: $(grep 'All files' /tmp/pre-refactor-tests.log | awk '{print $10
 ### 3. Refactoring Safety Rules
 
 **ALWAYS:**
-- ✅ Run tests before refactoring
-- ✅ Make one change at a time
-- ✅ Run tests after each change
-- ✅ Verify types after each change
-- ✅ Commit after each successful refactor
-- ✅ Keep changes small and focused
+- [PASS] Run tests before refactoring
+- [PASS] Make one change at a time
+- [PASS] Run tests after each change
+- [PASS] Verify types after each change
+- [PASS] Commit after each successful refactor
+- [PASS] Keep changes small and focused
 
 **NEVER:**
-- ❌ Change behavior without tests
-- ❌ Remove tests
-- ❌ Mix refactoring with feature additions
-- ❌ Use `any` type to fix type errors
-- ❌ Skip validation steps
+- [FAIL] Change behavior without tests
+- [FAIL] Remove tests
+- [FAIL] Mix refactoring with feature additions
+- [FAIL] Use `any` type to fix type errors
+- [FAIL] Skip validation steps
 
 ### 4. Validation Loop
 
@@ -182,42 +182,42 @@ diff /tmp/pre-refactor-tests.log /tmp/post-refactor-tests.log
 ## Output Format
 
 ```
-🔄 Refactoring Report
+[REFRESH] Refactoring Report
 =====================
 
 Target: [file or component name]
 Type: [refactoring type]
 
-✅ Pre-Refactoring State:
+[PASS] Pre-Refactoring State:
    - Tests: 143/143 passing
    - Coverage: 87.5%
    - Type Errors: 0
 
 🔧 Refactoring Steps:
-   1. ✅ Extracted method 'validateInput' (15 lines)
-   2. ✅ Removed duplicate code (3 occurrences)
-   3. ✅ Renamed 'tmp' to 'validatedData'
-   4. ✅ Simplified conditional logic
+   1. [PASS] Extracted method 'validateInput' (15 lines)
+   2. [PASS] Removed duplicate code (3 occurrences)
+   3. [PASS] Renamed 'tmp' to 'validatedData'
+   4. [PASS] Simplified conditional logic
 
-📊 Post-Refactoring State:
-   - Tests: 143/143 passing ✅
-   - Coverage: 88.2% (+0.7%) ✅
-   - Type Errors: 0 ✅
+[REPORT] Post-Refactoring State:
+   - Tests: 143/143 passing [PASS]
+   - Coverage: 88.2% (+0.7%) [PASS]
+   - Type Errors: 0 [PASS]
    - Lines Reduced: -45
 
-✅ Validation:
+[PASS] Validation:
    - All tests passing
    - No new type errors
    - Coverage improved
    - Linting clean
 
-💡 Benefits:
+[INFO] Benefits:
    - Improved readability
    - Reduced complexity
    - Better maintainability
    - Enhanced testability
 
-📋 Next Refactoring Opportunities:
+[LIST] Next Refactoring Opportunities:
    - [Component X]: Extract component
    - [Service Y]: Simplify error handling
 ```

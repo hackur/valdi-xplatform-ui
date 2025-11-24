@@ -17,20 +17,20 @@ Run comprehensive TypeScript type checking on the entire codebase.
 ## Output Format
 
 ```
-📊 TypeScript Type Check Results
+TypeScript Type Check Results
 ================================
 
 Total Errors: X
 Files with Errors: Y
 
-🔴 Critical Errors (blocking):
+Critical Errors (blocking):
 - file.ts:line - error message
 
-⚠️  Common Patterns:
+Common Patterns:
 - Pattern 1: N occurrences
 - Pattern 2: M occurrences
 
-✅ Next Steps:
+Next Steps:
 - Priority fixes needed in: [files]
 ```
 

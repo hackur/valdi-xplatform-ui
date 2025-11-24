@@ -2,11 +2,11 @@
 description: Generate a comprehensive commit message for staged changes
 ---
 
-Generate a comprehensive, standards-compliant commit message for all staged changes:
+Generate a comprehensive, standards-compliant commit message for all staged changes.
 
 ## Commit Message Format
 
-Follow Conventional Commits with PCR Card enhancements:
+Follow Conventional Commits with structured details:
 
 ```
 <type>(<scope>): <short description>
@@ -37,22 +37,33 @@ Documentation: <status>
 ```
 
 ## Types
-- **feat**: New feature
-- **fix**: Bug fix
-- **docs**: Documentation only
-- **refactor**: Code refactoring
-- **perf**: Performance improvement
-- **test**: Adding/updating tests
-- **chore**: Maintenance tasks
 
-## Scopes (PCR Card specific)
-- seeders, database, migrations
-- nova, admin, resources
-- api, endpoints, controllers
-- services, models, repositories
-- tests, dusk, phpunit
-- scripts, deployment, ci-cd
-- docs, guides, summaries
+| Type | Usage |
+|------|-------|
+| feat | New feature |
+| fix | Bug fix |
+| docs | Documentation only |
+| refactor | Code refactoring |
+| perf | Performance improvement |
+| test | Adding/updating tests |
+| chore | Maintenance tasks |
+
+## Scopes
+
+| Scope | Purpose |
+|-------|---------|
+| valdi | Core Valdi functionality |
+| components | React/Vue components |
+| stores | State management (Pinia, Vuex) |
+| navigation | Routing and navigation |
+| api | API client and integration |
+| types | TypeScript type definitions |
+| theme | Styling and theme system |
+| bazel | Build system configuration |
+| jest | Testing framework and setup |
+| build | Build process and configuration |
+| ci-cd | Continuous integration and deployment |
+| docs | Documentation and guides |
 
 ## Analysis Steps
 

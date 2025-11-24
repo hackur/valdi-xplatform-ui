@@ -174,11 +174,11 @@ Also create test file.
 ====================================
 
 📁 Files Created:
-   ✅ modules/{module}/src/[type]/{Name}.[ext]
-   ✅ modules/{module}/src/__tests__/{Name}.test.[ext]
-   ✅ Updated modules/{module}/src/index.ts
+   [PASS] modules/{module}/src/[type]/{Name}.[ext]
+   [PASS] modules/{module}/src/__tests__/{Name}.test.[ext]
+   [PASS] Updated modules/{module}/src/index.ts
 
-🔍 Next Steps:
+[SEARCH] Next Steps:
    1. Implement component logic
    2. Add tests
    3. Import in parent component

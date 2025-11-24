@@ -11,23 +11,23 @@ Located at `.eslintrc.js` with these key rules:
 
 ### Type Safety Rules (STRICT)
 ```typescript
-// ❌ NEVER use 'any' type
+// [FAIL] NEVER use 'any' type
 const data: any = fetchData(); // ERROR
 
-// ✅ Use proper types
+// [PASS] Use proper types
 const data: UserData = fetchData();
 
-// ❌ NO explicit 'any'
+// [FAIL] NO explicit 'any'
 function process(data: any): any { } // ERROR
 
-// ✅ Use generics or specific types
+// [PASS] Use generics or specific types
 function process<T>(data: T): T { }
 function process(data: UserData): ProcessedData { }
 
-// ❌ NO non-null assertions (avoid !)
+// [FAIL] NO non-null assertions (avoid !)
 const value = obj.prop!; // WARNING
 
-// ✅ Use type guards or optional chaining
+// [PASS] Use type guards or optional chaining
 const value = obj.prop ?? defaultValue;
 if (obj.prop !== undefined) {
   const value = obj.prop;
@@ -36,20 +36,20 @@ if (obj.prop !== undefined) {
 
 ### Function Return Types
 ```typescript
-// ❌ Missing return type
+// [FAIL] Missing return type
 function calculate(a: number, b: number) { // WARNING
   return a + b;
 }
 
-// ✅ Explicit return type
+// [PASS] Explicit return type
 function calculate(a: number, b: number): number {
   return a + b;
 }
 
-// ✅ Expressions allowed without return type
+// [PASS] Expressions allowed without return type
 const calculate = (a: number, b: number) => a + b;
 
-// ✅ Async functions must have return type
+// [PASS] Async functions must have return type
 async function fetchData(): Promise<UserData> {
   return await api.get('/user');
 }
@@ -57,24 +57,24 @@ async function fetchData(): Promise<UserData> {
 
 ### Unused Variables
 ```typescript
-// ❌ Unused variables
+// [FAIL] Unused variables
 const unusedVar = 10; // ERROR
 function example(unusedParam: string) { } // ERROR
 
-// ✅ Prefix with underscore if intentionally unused
+// [PASS] Prefix with underscore if intentionally unused
 const _unusedVar = 10;
 function example(_unusedParam: string) { }
 
-// ✅ Or remove them entirely
+// [PASS] Or remove them entirely
 function example() { }
 ```
 
 ### Promise Handling
 ```typescript
-// ❌ Floating promises (CRITICAL ERROR)
+// [FAIL] Floating promises (CRITICAL ERROR)
 fetchData(); // ERROR - promise not handled
 
-// ✅ Always await or handle promises
+// [PASS] Always await or handle promises
 await fetchData();
 
 // Or explicitly handle
@@ -83,27 +83,27 @@ fetchData().catch(console.error);
 // Or mark as intentional
 void fetchData();
 
-// ❌ Misused promises
+// [FAIL] Misused promises
 if (fetchData()) { } // ERROR - promise in condition
 
-// ✅ Await the promise first
+// [PASS] Await the promise first
 const result = await fetchData();
 if (result) { }
 ```
 
 ### Async/Await Best Practices
 ```typescript
-// ❌ Return await (except in try-catch)
+// [FAIL] Return await (except in try-catch)
 async function get(): Promise<Data> {
   return await fetchData(); // WARNING
 }
 
-// ✅ Direct return
+// [PASS] Direct return
 async function get(): Promise<Data> {
   return fetchData();
 }
 
-// ✅ But DO use await in try-catch
+// [PASS] But DO use await in try-catch
 async function get(): Promise<Data> {
   try {
     return await fetchData(); // CORRECT
@@ -112,12 +112,12 @@ async function get(): Promise<Data> {
   }
 }
 
-// ❌ Async function without await
+// [FAIL] Async function without await
 async function process(): Promise<void> { // WARNING
   doSomething();
 }
 
-// ✅ Remove async or add await
+// [PASS] Remove async or add await
 function process(): void {
   doSomething();
 }
@@ -125,25 +125,25 @@ function process(): void {
 
 ### Type Imports
 ```typescript
-// ❌ Regular import for types
+// [FAIL] Regular import for types
 import { UserData } from './types'; // WARNING (if only used as type)
 
-// ✅ Use type imports
+// [PASS] Use type imports
 import type { UserData } from './types';
 
-// ✅ Mixed imports
+// [PASS] Mixed imports
 import { fetchUser, type UserData, type Config } from './api';
 
-// ❌ Type exports without 'export type'
+// [FAIL] Type exports without 'export type'
 export { UserData }; // WARNING
 
-// ✅ Use export type
+// [PASS] Use export type
 export type { UserData };
 ```
 
 ### Naming Conventions (STRICT)
 ```typescript
-// ✅ CORRECT naming
+// [PASS] CORRECT naming
 interface UserData { }        // PascalCase for interfaces
 type ApiResponse = { };       // PascalCase for types
 class ChatService { }         // PascalCase for classes
@@ -156,7 +156,7 @@ const _private = 10;          // Leading underscore allowed
 // Component/Function as variable (PascalCase allowed)
 const Button = () => <view />;
 
-// ❌ WRONG naming
+// [FAIL] WRONG naming
 interface userData { }         // ERROR - should be PascalCase
 class chatService { }         // ERROR - should be PascalCase
 const UserData = { };         // WARNING - confusing (looks like type)
@@ -165,27 +165,27 @@ function FetchData() { }      // WARNING - should be camelCase
 
 ### Boolean Expressions
 ```typescript
-// ❌ Unnecessary conditions
+// [FAIL] Unnecessary conditions
 if (isValid === true) { }     // WARNING
 if (count !== 0) { }          // WARNING if count is boolean
 
-// ✅ Direct boolean use
+// [PASS] Direct boolean use
 if (isValid) { }
 if (count > 0) { }
 
-// ❌ Unnecessary type assertions
+// [FAIL] Unnecessary type assertions
 const value = data as UserData; // WARNING if unnecessary
 
-// ✅ Only assert when needed
+// [PASS] Only assert when needed
 const value = data; // TypeScript can infer
 ```
 
 ### Array Methods
 ```typescript
-// ❌ Array.sort() without compare function
+// [FAIL] Array.sort() without compare function
 numbers.sort(); // WARNING - unreliable
 
-// ✅ Provide compare function
+// [PASS] Provide compare function
 numbers.sort((a, b) => a - b);
 strings.sort((a, b) => a.localeCompare(b));
 ```
@@ -194,7 +194,7 @@ strings.sort((a, b) => a.localeCompare(b));
 ```typescript
 enum Status { Active, Inactive, Pending }
 
-// ❌ Non-exhaustive switch
+// [FAIL] Non-exhaustive switch
 function handle(status: Status): string {
   switch (status) {
     case Status.Active: return 'active';
@@ -203,7 +203,7 @@ function handle(status: Status): string {
   }
 }
 
-// ✅ Exhaustive switch
+// [PASS] Exhaustive switch
 function handle(status: Status): string {
   switch (status) {
     case Status.Active: return 'active';
@@ -212,7 +212,7 @@ function handle(status: Status): string {
   }
 }
 
-// ✅ Or use default
+// [PASS] Or use default
 function handle(status: Status): string {
   switch (status) {
     case Status.Active: return 'active';
@@ -223,73 +223,73 @@ function handle(status: Status): string {
 
 ### Console Usage
 ```typescript
-// ❌ console.log in production code
+// [FAIL] console.log in production code
 console.log('Debug info'); // WARNING
 
-// ✅ Allowed console methods
+// [PASS] Allowed console methods
 console.warn('Warning message');
 console.error('Error occurred');
 console.info('Info message');
 
-// ✅ Or use proper logger
+// [PASS] Or use proper logger
 logger.debug('Debug info');
 ```
 
 ### Prefer Modern JavaScript
 ```typescript
-// ❌ Old patterns
+// [FAIL] Old patterns
 var x = 10;                    // ERROR - use const/let
 const obj = { x: x };          // WARNING - use shorthand
 const str = 'Hello ' + name;   // WARNING - use template
 
-// ✅ Modern patterns
+// [PASS] Modern patterns
 const x = 10;
 const obj = { x };
 const str = `Hello ${name}`;
 
-// ✅ Arrow functions preferred
+// [PASS] Arrow functions preferred
 const handler = () => { };
 
-// ✅ Destructuring preferred
+// [PASS] Destructuring preferred
 const { name, age } = user;
 const [first, second] = array;
 ```
 
 ### Valdi-Specific Patterns
 ```typescript
-// ✅ Always use 'override' keyword
+// [PASS] Always use 'override' keyword
 export class MyComponent extends Component<Props> {
   override onCreate(): void { }    // REQUIRED 'override'
   override onRender(): JSX.Element { }
 }
 
-// ✅ Consistent type definitions (prefer interface)
-interface UserData { }  // ✅ Preferred
-type UserData = { };    // ⚠️  Only for unions/intersections
+// [PASS] Consistent type definitions (prefer interface)
+interface UserData { }  // [PASS] Preferred
+type UserData = { };    // [WARN]  Only for unions/intersections
 
-// ✅ Method signature style (property form)
+// [PASS] Method signature style (property form)
 interface Service {
-  fetchData: () => Promise<Data>;  // ✅ Preferred
-  // fetchData(): Promise<Data>;   // ❌ Not preferred
+  fetchData: () => Promise<Data>;  // [PASS] Preferred
+  // fetchData(): Promise<Data>;   // [FAIL] Not preferred
 }
 ```
 
 ### Common Gotchas
 ```typescript
-// ❌ Duplicate imports
+// [FAIL] Duplicate imports
 import { A } from './module';
 import { B } from './module'; // ERROR - combine
 
-// ✅ Single import
+// [PASS] Single import
 import { A, B } from './module';
 
-// ❌ Useless empty export
+// [FAIL] Useless empty export
 export {}; // WARNING
 
-// ❌ Confusing void expression
+// [FAIL] Confusing void expression
 const result = console.log('test'); // WARNING
 
-// ✅ Separate statements
+// [PASS] Separate statements
 console.log('test');
 const result = getValue();
 ```

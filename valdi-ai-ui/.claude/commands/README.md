@@ -1,236 +1,217 @@
-# Custom Commands for PCR Card
+# Custom Commands for Valdi AI UI
 
-Custom slash commands for the PCR Card Laravel project.
+Custom slash commands for the Valdi AI UI TypeScript cross-platform project.
 
 ## Quick Commands (Fast & Focused)
 
-### `/qfix` - Quick Fix
-Rapidly debug and fix errors or issues.
-```
-/qfix TypeError in PaymentService line 42
-/qfix Seeder failing with null constraint violation
-```
-
-### `/qrefactor` - Quick Refactor
-Refactor code following SOLID/DRY/KISS principles.
-```
-/qrefactor PaymentService
-/qrefactor @app/Services/StateTransitionService.php
-```
-
-### `/qtest` - Quick Test
-Create tests or run test suites.
-```
-/qtest PaymentService
-/qtest run unit
-/qtest failing
-```
-
-### `/qnova` - Quick Nova Resource
-Create Nova resources following project patterns.
-```
-/qnova Payment
-/qnova Invoice user_id:belongsTo amount:currency
-```
-
-### `/qdb` - Quick Database
-Database operations (migrations, seeders, queries).
-```
-/qdb migration add_status_to_users
-/qdb seeder UserSeeder
-/qdb fresh
-```
-
-### `/qsearch` - Quick Search
-Search codebase with context and categorization.
-```
-/qsearch submitSubmission
-/qsearch "old terminology"
-/qsearch class PromoCode
-```
-
-### `/qdocs` - Quick Documentation
-Update or create documentation.
-```
-/qdocs update
-/qdocs PaymentService
-/qdocs check
-```
-
-### `/qplan` - Quick Planning
-Plan features or refactoring with step-by-step approach.
-```
-/qplan add payment retry logic
-/qplan refactor state machine
-```
-
-### `/qcommit` - Quick Commit Message
-Generate conventional commit message from staged changes.
-```
-/qcommit
-```
-
-### `/qreview` - Quick Code Review
-Review staged changes for quality and issues.
-```
-/qreview
-```
-
-### `/ultrathink` - Deep Multi-Agent Analysis
-Complex task orchestration with multiple specialist agents.
-```
-/ultrathink implement payment reconciliation system
-```
-
----
+| Command | Purpose | Example |
+|---------|---------|---------|
+| `/qfix` | Rapidly debug and fix errors | `/qfix TypeError in ChatService` |
+| `/qrefactor` | Refactor following SOLID/DRY/KISS | `/qrefactor MessageStore` |
+| `/qtest` | Create or run Jest tests | `/qtest ChatService` |
+| `/qsearch` | Search codebase with context | `/qsearch "useMessage"` |
+| `/qdocs` | Quick documentation updates | `/qdocs update` |
+| `/qplan` | Plan features or refactoring | `/qplan add message filtering` |
+| `/qcommit` | Generate conventional commit | `/qcommit` |
+| `/qreview` | Review staged changes | `/qreview` |
 
 ## Comprehensive Commands (Detailed Workflows)
 
-### `/session-summary`
-Create comprehensive session summary document.
+| Command | Purpose | Best For |
+|---------|---------|----------|
+| `/session-summary` | Document current work session | End-of-session recap |
+| `/review-staged` | Deep review of staged changes | Pre-commit validation |
+| `/update-docs` | Update docs after code changes | Documentation maintenance |
+| `/refactor-plan` | Detailed refactoring blueprint | Large refactoring projects |
+| `/commit-msg` | Comprehensive commit message | Complex changeset documentation |
+| `/code-quality` | SOLID/DRY/KISS analysis | Code quality verification |
+| `/search-pattern` | Find code patterns/terminology | Codebase research |
+| `/test-suite` | Run full Jest suite with report | Pre-deployment testing |
+| `/quick-fix` | Analyze and fix specific error | Error investigation |
+| `/deploy-check` | Pre-deployment validation | Release preparation |
+| `/ultrathink` | Deep multi-agent analysis | Complex problem solving |
 
-### `/review-staged`
-Comprehensive review of all staged git changes.
+## Build & Validation Commands
 
-### `/update-docs`
-Update all documentation after code changes.
+| Command | Purpose | Output |
+|---------|---------|--------|
+| `/validate` | TypeScript and ESLint validation | Type/lint errors |
+| `/type-check` | Full TypeScript type checking | Type errors only |
+| `/lint` | ESLint checking | Linting issues |
+| `/validate-all` | Comprehensive validation suite | Full report |
+| `/build` | Build project | Build artifacts/errors |
+| `/validated-build` | Build with pre-validation | Success/fail report |
+| `/test` | Run Jest test suite | Test results |
+| `/test-writer` | Generate test files | Test code |
 
-### `/refactor-plan`
-Create detailed refactoring plan following SOLID/DRY/KISS.
+## Platform-Specific Commands
 
-### `/fresh-seed`
-Reset database and seed with verification.
+| Command | Purpose | Platform |
+|---------|---------|----------|
+| `/ios` | iOS-specific builds/checks | iOS |
+| `/android` | Android-specific builds/checks | Android |
+| `/component-gen` | Generate component with tests | Cross-platform |
 
-### `/commit-msg`
-Generate comprehensive commit message for staged changes.
+## Utility Commands
 
-### `/code-quality`
-Comprehensive code quality check (SOLID/DRY/KISS analysis).
+| Command | Purpose | Usage |
+|---------|---------|-------|
+| `/clean` | Clean build artifacts | `/clean` |
+| `/status` | Project status check | `/status` |
+| `/debug` | Debug mode for issues | `/debug [target]` |
+| `/setup-git-hooks` | Configure Git hooks | `/setup-git-hooks` |
+| `/release-prep` | Prepare for release | `/release-prep` |
+| `/performance-test` | Performance testing | `/performance-test` |
+| `/module-test` | Test single module | `/module-test [module]` |
 
-### `/search-pattern`
-Search for code patterns, terminology, or references.
+## Reference & Pattern Commands
 
-### `/test-suite`
-Run comprehensive test suite with reporting.
+These commands provide guidance and pattern documentation:
 
-### `/nova-resource`
-Create Laravel Nova resource following PCR Card best practices.
-
-### `/quick-fix`
-Quickly analyze and fix specific error or issue.
-
-### `/migration-builder`
-Create Laravel migration following project conventions.
-
-### `/deploy-check`
-Pre-deployment checklist and validation.
+| Command | Topic |
+|---------|-------|
+| `/valdi-patterns.md` | Valdi-specific patterns |
+| `/valdi-testing.md` | Jest setup and test patterns (60% coverage) |
+| `/path-conventions.md` | Module path conventions |
+| `/api-patterns.md` | HTTP client and API patterns |
+| `/style-patterns.md` | Styling patterns |
+| `/es2015-guide.md` | ES2015+ feature guidance |
+| `/lint-prevention.md` | Linting rules and avoidance |
+| `/build-config.md` | Build configuration reference |
+| `/no-emoji-policy.md` | Project emoji policy |
 
 ---
 
 ## Command Categories
 
 ### Development Workflow
+Quick iteration commands for daily development:
 - `/qfix` - Fast error fixing
 - `/qrefactor` - Code improvement
 - `/qplan` - Feature planning
 - `/ultrathink` - Complex problem solving
 
-### Database Operations
-- `/qdb` - Database operations
-- `/fresh-seed` - Database reset
-- `/migration-builder` - Create migrations
-
-### Nova Admin
-- `/qnova` - Nova resource creation
-- `/nova-resource` - Detailed Nova resource
-
 ### Testing
-- `/qtest` - Test operations
-- `/test-suite` - Full test suite
+Jest-based testing with 60% coverage requirement:
+- `/qtest` - Quick test operations
+- `/test` - Run full Jest suite
+- `/test-writer` - Generate test files
+- `/test-suite` - Comprehensive test report
+- `/module-test` - Test single module
+- Reference: `/valdi-testing.md`
 
-### Documentation
-- `/qdocs` - Quick doc updates
-- `/update-docs` - Comprehensive doc update
-- `/session-summary` - Session documentation
-
-### Code Analysis
+### Code Analysis & Review
 - `/qsearch` - Codebase search
 - `/qreview` - Code review
 - `/code-quality` - Quality analysis
 - `/search-pattern` - Pattern search
+- `/review-staged` - Detailed review
+
+### Documentation
+- `/qdocs` - Quick updates
+- `/update-docs` - Comprehensive update
+- `/session-summary` - Work session recap
+
+### Build & Validation
+- `/validate` - TypeScript + ESLint check
+- `/type-check` - Type validation only
+- `/lint` - Linting only
+- `/validate-all` - Full validation
+- `/build` - Build project
+- `/validated-build` - Safe build
+- Reference: `/build-config.md`
+
+### Platform-Specific
+- `/ios` - iOS development
+- `/android` - Android development
+- `/component-gen` - Component generation
 
 ### Git & Deployment
-- `/qcommit` - Commit message
-- `/commit-msg` - Detailed commit message
-- `/review-staged` - Review changes
-- `/deploy-check` - Deployment validation
+- `/qcommit` - Quick commit message
+- `/commit-msg` - Detailed message
+- `/deploy-check` - Pre-deployment check
+- `/release-prep` - Release preparation
 
-### Planning & Architecture
-- `/qplan` - Quick planning
-- `/refactor-plan` - Refactoring planning
-- `/ultrathink` - Deep analysis
+### Utilities & Setup
+- `/clean` - Clean artifacts
+- `/status` - Project status
+- `/debug` - Debug assistance
+- `/setup-git-hooks` - Configure hooks
+- `/performance-test` - Performance analysis
 
 ---
 
-## Usage Tips
+## Usage Guide
 
 ### Quick Commands (q*)
-- Designed for speed and common tasks
+Fast, focused commands for common tasks:
+- Designed for speed
 - Use when you know exactly what you want
-- Minimal ceremony, maximum action
-- Example: `/qfix null error in PaymentService`
+- Minimal output, maximum action
+- Examples:
+  - `/qfix TypeError in ChatService`
+  - `/qtest MessageStore`
+  - `/qsearch "conversationId"`
 
 ### Comprehensive Commands
-- Use for complex, multi-step workflows
-- Provide detailed analysis and documentation
-- Include verification and validation
-- Example: `/test-suite` for full test run with reporting
+Detailed workflows for complex tasks:
+- Multi-step analysis and execution
+- Thorough documentation
+- Verification and validation
+- Examples:
+  - `/test-suite` - Full test run with coverage report
+  - `/review-staged` - Detailed change analysis
+  - `/refactor-plan` - Detailed refactoring blueprint
 
 ### UltraThink
-- Use for complex, unclear problems
-- Spawns multiple specialist agents
-- Iterates until solution found
-- Example: `/ultrathink design multi-tenant architecture`
+Complex problem solving with specialist agents:
+- Use for unclear/ambiguous problems
+- Multiple agent coordination
+- Iterative refinement
+- Example: `/ultrathink redesign component architecture`
 
-### @file References
-Most commands support @file syntax:
-```
-/qrefactor @app/Services/PaymentService.php
-/qdocs @app/Models/Submission.php
+### Command Arguments
+Most commands accept additional context:
+```bash
+/qfix <error description>
+/qtest <target|--coverage>
+/qrefactor <file|pattern>
+/qsearch <pattern|@file>
+/qplan <feature|refactoring>
 ```
 
 ---
 
-## Quick Reference Card
+## Best Practices
 
-**Most Common Commands:**
-```bash
-/qfix <error>              # Fix errors fast
-/qrefactor <file>          # Improve code quality
-/qtest <target>            # Test operations
-/qdb fresh                 # Reset database
-/qsearch <pattern>         # Find in codebase
-/qcommit                   # Generate commit message
-/qreview                   # Review staged changes
-/qplan <task>              # Plan implementation
-```
+### Before Committing
+1. `/qreview` - Check quality of changes
+2. `/qcommit` - Generate commit message
+3. `/validate` - Run validation suite
 
-**Before Committing:**
-```bash
-/qreview                   # Check quality
-/qcommit                   # Generate message
-```
+### Testing Workflow
+1. `/qtest <target>` - Create/run tests
+2. `/test-suite` - Run full suite
+3. Verify 60% coverage threshold
+4. Reference: `/valdi-testing.md`
 
-**Complex Problems:**
-```bash
-/ultrathink <description>  # Deep multi-agent analysis
-```
+### Major Refactoring
+1. `/qplan <refactoring>` - Plan approach
+2. `/refactor-plan` - Detailed blueprint
+3. `/qrefactor <target>` - Execute changes
+4. `/validate-all` - Full validation
+
+### Pre-Release
+1. `/deploy-check` - Pre-deployment check
+2. `/release-prep` - Release preparation
+3. `/validate-all` - Final validation
+4. Create release commit
 
 ---
 
 ## Creating New Commands
 
-Add new .md files to `.claude/commands/`:
+Add new `.md` files to `.claude/commands/` directory:
 
 ```markdown
 ---
@@ -238,7 +219,7 @@ description: Brief description shown in command list
 ---
 
 ## Usage
-`/commandname <ARGUMENTS>`
+/commandname <ARGUMENTS>
 
 ## Context
 - Argument: $ARGUMENTS
@@ -251,11 +232,20 @@ What this command does
 2. Step 2
 
 ## Output
-- What the user gets
+- Result description
 ```
 
 ---
 
-**Project**: PCR Card
-**Documentation**: See individual command files for detailed usage
-**Support**: Refer to CLAUDE.md for project-specific patterns
+## Key Resources
+
+- **Jest Testing**: See `/valdi-testing.md` (60% coverage requirement)
+- **Valdi Patterns**: See `/valdi-patterns.md`
+- **Build Config**: See `/build-config.md`
+- **Path Conventions**: See `/path-conventions.md`
+- **API Patterns**: See `/api-patterns.md`
+- **Style Patterns**: See `/style-patterns.md`
+
+**Project**: Valdi AI UI
+**Stack**: TypeScript, Jest, Cross-platform
+**Validation**: Type checking, ESLint, Test coverage (60% minimum)

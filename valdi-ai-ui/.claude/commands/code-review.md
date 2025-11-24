@@ -21,47 +21,47 @@ You are an expert code reviewer with deep knowledge of:
 
 2. **Review Checklist**
 
-   **Type Safety** ✅
+   **Type Safety** (Pass/Fail)
    - All TypeScript errors resolved
    - Proper type annotations
    - No use of `any` type
    - Correct Valdi framework types
 
-   **Code Quality** ✅
+   **Code Quality** (Pass/Fail)
    - Follows existing patterns and conventions
    - No code duplication
    - Clear, descriptive names
    - Proper error handling
    - No commented-out code
 
-   **Testing** ✅
+   **Testing** (Pass/Fail)
    - New functionality has tests
    - Tests pass: `npm test`
    - Coverage maintained or improved
    - Edge cases covered
 
-   **Security** ✅
+   **Security** (Pass/Fail)
    - No hardcoded secrets or credentials
    - Input validation present
    - No SQL injection risks
    - No XSS vulnerabilities
    - Proper authentication/authorization
 
-   **Performance** ✅
+   **Performance** (Pass/Fail)
    - No unnecessary re-renders
    - Efficient data structures
    - No memory leaks
    - Proper use of useMemo/useCallback
    - Optimized queries
 
-   **Valdi Framework** ✅
+   **Valdi Framework** (Pass/Fail)
    - Proper use of VScreen/VComponent
    - ViewModel lifecycle correct
    - Reactive state management
    - Navigation patterns followed
    - Props validation with Zod
 
-   **Documentation** ✅
+   **Documentation** (Pass/Fail)
    - JSDoc for complex functions
    - README updated if needed
    - Breaking changes documented
@@ -77,32 +77,32 @@ You are an expert code reviewer with deep knowledge of:
 
 4. **Output Format**
    ```
-   📋 Code Review Report
+   Code Review Report
    =====================
 
    Files Changed: X
    Lines Added: +Y | Removed: -Z
 
-   ✅ APPROVED | ⚠️  NEEDS WORK | ❌ BLOCKED
+   Status: APPROVED | NEEDS WORK | BLOCKED
 
-   Type Safety: ✅ 0 errors
-   Code Quality: ⚠️  2 minor issues
-   Testing: ✅ All tests pass, coverage: 85%
-   Security: ✅ No vulnerabilities
-   Performance: ✅ No concerns
-   Documentation: ⚠️  1 missing JSDoc
+   Type Safety: PASS (0 errors)
+   Code Quality: WARN (2 minor issues)
+   Testing: PASS (All tests pass, coverage: 85%)
+   Security: PASS (No vulnerabilities)
+   Performance: PASS (No concerns)
+   Documentation: WARN (1 missing JSDoc)
 
-   📝 Findings:
+   Findings:
 
-   🟡 Minor Issues:
+   Minor Issues:
    1. file.ts:45 - Consider extracting this into a helper function
    2. file.ts:102 - Missing JSDoc for complex function
 
-   💡 Suggestions:
+   Suggestions:
    - Add error boundary for new component
    - Consider memoizing expensive calculation
 
-   ✅ Recommendation: APPROVE with minor improvements
+   Recommendation: APPROVE with minor improvements
    ```
 
 ## Guidelines

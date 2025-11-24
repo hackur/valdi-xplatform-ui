@@ -4,8 +4,6 @@ description: Create a comprehensive session summary document for the current wor
 
 Create a comprehensive session summary document for today's work in `docs/development/SESSION-YYYY-MM-DD-[TOPIC].md`.
 
-The summary should include:
-
 ## Required Sections
 
 1. **Executive Summary**
@@ -16,8 +14,8 @@ The summary should include:
 2. **Technical Changes**
    - Files modified with line counts
    - Code refactoring details
-   - New methods/functions added
-   - PHPDoc and comment additions
+   - New components/functions added
+   - JSDoc and comment additions
 
 3. **Documentation Updates**
    - Files updated
@@ -27,12 +25,13 @@ The summary should include:
 4. **Testing & Validation**
    - Tests run
    - Manual verification completed
-   - Backward compatibility checks
+   - Type safety verification
 
 5. **Code Quality Metrics**
    - SOLID/DRY/KISS principles applied
    - Duplication reduction
    - Documentation coverage
+   - Type coverage
 
 6. **Files Modified**
    - Staged changes summary
@@ -41,11 +40,16 @@ The summary should include:
 7. **Completion Checklist**
    - All tasks completed
    - Standards compliance verified
+   - TypeScript strict mode compliance
 
 8. **Future Enhancements**
    - Potential improvements
    - Out-of-scope items
 
-Use the format from existing session summaries in `docs/development/` as a template.
-Include before/after code examples where relevant.
-Provide git stats and change summaries.
+## Reference Documentation
+
+- Review `docs/path-conventions.md` for file organization
+- Check `docs/valdi-patterns.md` for component patterns
+- Use existing session summaries in `docs/development/` as templates
+- Include before/after code examples where relevant
+- Provide git stats and change summaries

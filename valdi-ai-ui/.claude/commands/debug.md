@@ -118,38 +118,38 @@ npx react-native run-android
 ## Output Format
 
 ```
-🔍 Debug Report
+Debug Report
 ===============
 
 Environment:
-  ✅ Node: v18.x.x
-  ✅ npm: v9.x.x
-  ✅ TypeScript: v5.x.x
-  ⚠️  React Native: v0.x.x (update available)
+  PASS: Node: v18.x.x
+  PASS: npm: v9.x.x
+  PASS: TypeScript: v5.x.x
+  WARN: React Native: v0.x.x (update available)
 
 Dependencies:
-  ✅ All required packages installed
-  ⚠️  3 packages have security vulnerabilities
-  💡 Run: npm audit fix
+  PASS: All required packages installed
+  WARN: 3 packages have security vulnerabilities
+  INFO: Run: npm audit fix
 
 Configuration:
-  ✅ tsconfig.json valid
-  ✅ jest.config.js found
-  ⚠️  ESLint config has warnings
+  PASS: tsconfig.json valid
+  PASS: jest.config.js found
+  WARN: ESLint config has warnings
 
 Build Status:
-  ❌ TypeScript: 242 errors
-  ⚠️  ESLint: 12 warnings
-  ✅ Tests: All passing
-  ❌ Metro: Not running
+  FAIL: TypeScript: 242 errors
+  WARN: ESLint: 12 warnings
+  PASS: Tests: All passing
+  FAIL: Metro: Not running
 
-🎯 Recommended Actions:
+Recommended Actions:
   1. Fix critical TypeScript errors (Priority: High)
   2. Update React Native to latest stable
   3. Run npm audit fix for security patches
   4. Start Metro bundler: npm start
 
-📋 Detailed Logs:
+Detailed Logs:
   - TypeScript: /tmp/tsc-errors.log
   - Build: /tmp/build.log
   - Tests: /tmp/test-results.log

@@ -152,12 +152,12 @@ private handleTap = (): void => {
 
 ### Common Anti-Patterns
 ```typescript
-// ❌ WRONG - Forgetting to unsubscribe
+// [FAIL] WRONG - Forgetting to unsubscribe
 override onCreate() {
   this.store.subscribe(this.handleUpdate); // Memory leak!
 }
 
-// ✅ CORRECT
+// [PASS] CORRECT
 private unsubscribe?: () => void;
 override onCreate() {
   this.unsubscribe = this.store.subscribe(this.handleUpdate);
@@ -166,25 +166,25 @@ override onDestroy() {
   if (this.unsubscribe) this.unsubscribe();
 }
 
-// ❌ WRONG - Not passing navigationController
+// [FAIL] WRONG - Not passing navigationController
 <ChatView conversationId={id} />
 
-// ✅ CORRECT
+// [PASS] CORRECT
 <ChatView
   navigationController={this.viewModel.navigationController}
   conversationId={id}
 />
 
-// ❌ WRONG - Missing override keyword
+// [FAIL] WRONG - Missing override keyword
 onCreate() { }
 
-// ✅ CORRECT
+// [PASS] CORRECT
 override onCreate() { }
 
-// ❌ WRONG - Regular function (wrong 'this')
+// [FAIL] WRONG - Regular function (wrong 'this')
 private handleTap(): void { }
 
-// ✅ CORRECT
+// [PASS] CORRECT
 private handleTap = (): void => { };
 ```
 

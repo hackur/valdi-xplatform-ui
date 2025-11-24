@@ -8,12 +8,12 @@ Reference this for correct import paths in Valdi TypeScript project.
 **IMPORTANT**: TypeScript path aliases (@common, @chat_core, etc.) defined in `tsconfig.json` are ONLY for IDE autocomplete and Jest tests. Valdi's compiler does NOT support them!
 
 ```typescript
-// ❌ DOES NOT WORK in Valdi (even though IDE shows no error)
+// [FAIL] DOES NOT WORK in Valdi (even though IDE shows no error)
 import { Message } from '@common';
 import { Colors } from '@common/theme';
 import { ChatService } from '@chat_core';
 
-// ✅ WORKS - Use full module paths
+// [PASS] WORKS - Use full module paths
 import { Message } from 'common/src/types';
 import { Colors } from 'common/src/theme';
 import { ChatService } from 'chat_core/src/ChatService';
@@ -66,7 +66,7 @@ import { HTTPClient } from 'valdi_http/src/HTTPClient';
 
 ### Application Module Imports (CRITICAL)
 ```typescript
-// ✅ CORRECT - Full module paths
+// [PASS] CORRECT - Full module paths
 import { Colors, Spacing, Fonts, BorderRadius } from 'common/src/theme';
 import { Message, Conversation, User } from 'common/src/types';
 import { Button, Card, Avatar, LoadingSpinner } from 'common/src/components';
@@ -76,7 +76,7 @@ import { ChatService } from 'chat_core/src/ChatService';
 import { ChatView } from 'chat_ui/src/ChatView';
 import { MessageList } from 'chat_ui/src/MessageList';
 
-// ❌ WRONG - Path aliases don't work in Valdi
+// [FAIL] WRONG - Path aliases don't work in Valdi
 import { Colors } from '@common/theme';
 import { MessageStore } from '@chat_core';
 import { ChatView } from '@chat_ui';
@@ -85,9 +85,9 @@ import { ChatView } from '@chat_ui';
 ### Relative Imports (Within Same Module)
 ```typescript
 // Within modules/common/src/components/Button.tsx
-import { Colors, Spacing } from '../theme';      // ✅ OK for same module
-import type { ButtonProps } from './types';       // ✅ OK for same directory
-import { Style } from 'valdi_core/src/Style';     // ✅ External modules always full path
+import { Colors, Spacing } from '../theme';      // [PASS] OK for same module
+import type { ButtonProps } from './types';       // [PASS] OK for same directory
+import { Style } from 'valdi_core/src/Style';     // [PASS] External modules always full path
 ```
 
 ### Type-Only Imports
@@ -100,9 +100,9 @@ import { MessageStore, type MessageStoreState } from 'chat_core/src/MessageStore
 ## Path Aliases (IDE and Tests Only!)
 
 Path aliases in `tsconfig.json` work in:
-- ✅ **VS Code / IDE** - Autocomplete and navigation
-- ✅ **Jest tests** - via jest.config.js moduleNameMapper
-- ❌ **Valdi builds** - NOT SUPPORTED
+- [PASS] **VS Code / IDE** - Autocomplete and navigation
+- [PASS] **Jest tests** - via jest.config.js moduleNameMapper
+- [FAIL] **Valdi builds** - NOT SUPPORTED
 
 ```json
 // tsconfig.json (IDE only!)
@@ -156,39 +156,39 @@ export type { Message, Conversation, User } from './types';
 
 ### Mistake 1: Using @alias in Production Code
 ```typescript
-// ❌ WRONG - Will fail in Valdi build
+// [FAIL] WRONG - Will fail in Valdi build
 import { Colors } from '@common/theme';
 
-// ✅ CORRECT
+// [PASS] CORRECT
 import { Colors } from 'common/src/theme';
 ```
 
 ### Mistake 2: Mixing Path Styles
 ```typescript
-// ❌ INCONSISTENT
+// [FAIL] INCONSISTENT
 import { Colors } from 'common/src/theme';
 import { Button } from '@common/components'; // Different style!
 
-// ✅ CONSISTENT - Always use full paths
+// [PASS] CONSISTENT - Always use full paths
 import { Colors } from 'common/src/theme';
 import { Button } from 'common/src/components';
 ```
 
 ### Mistake 3: Importing from Barrel When Not Needed
 ```typescript
-// ⚠️  Works but unnecessary indirection
+// [WARN]  Works but unnecessary indirection
 import { Button } from 'common/src/index';
 
-// ✅ BETTER - Direct import
+// [PASS] BETTER - Direct import
 import { Button } from 'common/src/components/Button';
 ```
 
 ### Mistake 4: Forgetting Type-Only Imports
 ```typescript
-// ⚠️  Works but unnecessary in bundle
+// [WARN]  Works but unnecessary in bundle
 import { UserData } from 'common/src/types';
 
-// ✅ BETTER - Type-only import
+// [PASS] BETTER - Type-only import
 import type { UserData } from 'common/src/types';
 ```
 
@@ -198,18 +198,18 @@ import type { UserData } from 'common/src/types';
 ```typescript
 // modules/chat_ui/src/ChatView.tsx
 
-// External module → Full path
+// External module [NEXT] Full path
 import { Component } from 'valdi_core/src/Component';
 
-// Different app module → Full path
+// Different app module [NEXT] Full path
 import { MessageStore } from 'chat_core/src/MessageStore';
 import { Colors } from 'common/src/theme';
 
-// Same module → Relative path OK
+// Same module [NEXT] Relative path OK
 import { MessageBubble } from './MessageBubble';
 import { styles } from './styles';
 
-// Types → Use 'import type'
+// Types [NEXT] Use 'import type'
 import type { Message } from 'common/src/types';
 ```
 

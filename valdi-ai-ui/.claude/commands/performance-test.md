@@ -117,26 +117,26 @@ echo "🚀 Performance Testing"
 echo "====================="
 
 # Bundle size
-echo "📦 Analyzing bundle size..."
+echo "[PACKAGE] Analyzing bundle size..."
 npx react-native bundle --platform ios --entry-file index.js --bundle-output /tmp/bundle.js --dev false
 BUNDLE_SIZE=$(ls -lh /tmp/bundle.js | awk '{print $5}')
 echo "  Bundle size: $BUNDLE_SIZE"
 
 # TypeScript compilation
-echo "⏱️  TypeScript compilation time..."
+echo "[TIME]  TypeScript compilation time..."
 TIME_TS=$( { time npx tsc --noEmit; } 2>&1 | grep real | awk '{print $2}')
 echo "  Compilation time: $TIME_TS"
 
 # Test execution
-echo "🧪 Test execution time..."
+echo "[TEST] Test execution time..."
 TIME_TEST=$( { time npm test -- --silent; } 2>&1 | grep real | awk '{print $2}')
 echo "  Test time: $TIME_TEST"
 
 # Dependencies audit
-echo "📊 Dependency analysis..."
+echo "[REPORT] Dependency analysis..."
 npx depcheck
 
-echo "✅ Performance analysis complete!"
+echo "[PASS] Performance analysis complete!"
 ```
 
 ## Output Format
@@ -146,31 +146,31 @@ echo "✅ Performance analysis complete!"
 =====================
 
 Bundle Analysis:
-  📦 Total: 8.2MB
-  📦 JS: 6.1MB
-  📦 Assets: 2.1MB
-  ⚠️  Largest dependencies:
+  [PACKAGE] Total: 8.2MB
+  [PACKAGE] JS: 6.1MB
+  [PACKAGE] Assets: 2.1MB
+  [WARN]  Largest dependencies:
      - react-native: 2.1MB
      - lodash: 500KB
      - moment: 300KB
 
 Runtime Metrics:
-  ⏱️  Initial Load: 1.8s ✅
-  ⏱️  Screen Navigation: 85ms ✅
+  [TIME]  Initial Load: 1.8s [PASS]
+  [TIME]  Screen Navigation: 85ms [PASS]
   💾 Memory (Initial): 45MB
   💾 Memory (After Nav): 52MB
 
 Compilation:
-  ⏱️  TypeScript: 12.3s
-  ⏱️  Tests: 8.5s
+  [TIME]  TypeScript: 12.3s
+  [TIME]  Tests: 8.5s
 
-🎯 Optimization Recommendations:
+[TARGET] Optimization Recommendations:
   1. Replace moment with date-fns (save ~200KB)
   2. Enable hermes engine (faster startup)
   3. Implement code splitting for heavy screens
   4. Add image compression
 
-📊 Performance Score: 85/100 ✅
+[REPORT] Performance Score: 85/100 [PASS]
 ```
 
 Use these insights to identify and fix performance bottlenecks.

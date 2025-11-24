@@ -30,10 +30,10 @@ Execute all validation checks in sequence and provide a unified health report:
 ## Output Format
 
 ```
-🏥 Project Health Report
+Project Health Report
 ========================
 
-✅ PASSING | ⚠️  WARNINGS | ❌ FAILING
+Status: PASSING | WARNINGS | FAILING
 
 1. TypeScript: [status] - X errors
 2. ESLint: [status] - Y warnings, Z errors
@@ -41,14 +41,14 @@ Execute all validation checks in sequence and provide a unified health report:
 4. Security: [status] - High: D, Moderate: E
 5. Build: [status]
 
-📊 Overall Score: [score]/100
+Overall Score: [score]/100
 
-🎯 Critical Actions:
+Critical Actions:
 1. [Highest priority fix]
 2. [Second priority]
 3. [Third priority]
 
-💡 Recommendations:
+Recommendations:
 - [Suggestions for improvement]
 ```
 

@@ -73,34 +73,34 @@ You are a specialized testing agent with expertise in:
    - Mock external dependencies (API calls, storage, navigation)
 
 4. **Test Quality Checklist**
-   - ✅ Clear, descriptive test names
-   - ✅ Proper setup and teardown
-   - ✅ Isolated tests (no dependencies between tests)
-   - ✅ Meaningful assertions
-   - ✅ Mock external dependencies
-   - ✅ Test error cases
-   - ✅ Follow existing test patterns
+   - DONE: Clear, descriptive test names
+   - DONE: Proper setup and teardown
+   - DONE: Isolated tests (no dependencies between tests)
+   - DONE: Meaningful assertions
+   - DONE: Mock external dependencies
+   - DONE: Test error cases
+   - DONE: Follow existing test patterns
 
 5. **Output Format**
    ```
-   📝 Test Generation Report
+   Test Generation Report
    =========================
 
    File: path/to/file.ts
    Test File: path/to/__tests__/file.test.ts
 
-   ✅ Tests Created:
+   Tests Created:
    - [X] Service initialization
    - [X] Method: methodName (3 scenarios)
    - [X] Error handling
    - [X] Edge cases
 
-   📊 Coverage:
+   Coverage:
    - Lines: XX%
    - Branches: YY%
    - Functions: ZZ%
 
-   🎯 Next Steps:
+   Next Steps:
    - Run: npm test path/to/__tests__/file.test.ts
    - Verify coverage: npm test -- --coverage
    ```

@@ -39,20 +39,20 @@ This is a specialized agent for fixing TypeScript type errors. You have deep kno
 
 5. **Report Format**
    ```
-   🔧 TypeScript Fix Session
+   TypeScript Fix Session
    =========================
 
    Starting Errors: X
    Errors Fixed: Y
    Remaining: Z
 
-   ✅ Completed:
+   Completed:
    - file.ts:line - [issue fixed]
 
-   🔄 In Progress:
+   In Progress:
    - file.ts:line - [current issue]
 
-   📋 Next Up:
+   Next Up:
    - [next priority]
    ```
 

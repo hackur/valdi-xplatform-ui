@@ -14,40 +14,40 @@ Configure automated pre-commit validation hooks.
    #!/bin/bash
    set -e
 
-   echo "🔍 Running pre-commit checks..."
+   echo "[SEARCH] Running pre-commit checks..."
 
    # Get staged TypeScript/TSX files
    STAGED_TS_FILES=$(git diff --cached --name-only --diff-filter=ACM | grep -E '\.(ts|tsx)$' || true)
 
    if [ -n "$STAGED_TS_FILES" ]; then
-     echo "📝 Checking TypeScript files..."
+     echo "[DOCS] Checking TypeScript files..."
 
      # Type check
      echo "  ├─ Type checking..."
      npx tsc --noEmit --skipLibCheck || {
-       echo "❌ TypeScript errors found. Please fix before committing."
+       echo "[FAIL] TypeScript errors found. Please fix before committing."
        exit 1
      }
 
      # Lint
      echo "  ├─ Linting..."
      npx eslint $STAGED_TS_FILES --max-warnings 0 || {
-       echo "⚠️  ESLint issues found. Run 'npx eslint --fix' or fix manually."
+       echo "[WARN]  ESLint issues found. Run 'npx eslint --fix' or fix manually."
        exit 1
      }
 
-     echo "  └─ ✅ All checks passed!"
+     echo "  └─ [PASS] All checks passed!"
    fi
 
    # Check for sensitive data
-   echo "🔒 Checking for sensitive data..."
+   echo "[SECURE] Checking for sensitive data..."
    if git diff --cached | grep -iE '(password|api[_-]?key|secret|token|credential).*=.*["\047][^"\047]+["\047]' | grep -v '^[-+].*//'; then
-     echo "❌ Potential sensitive data detected in commit!"
+     echo "[FAIL] Potential sensitive data detected in commit!"
      echo "   Please review and remove before committing."
      exit 1
    fi
 
-   echo "✅ Pre-commit checks completed successfully!"
+   echo "[PASS] Pre-commit checks completed successfully!"
    ```
 
 3. **Install Hook**
@@ -69,12 +69,12 @@ Configure automated pre-commit validation hooks.
 🎣 Git Hooks Setup Complete
 ===========================
 
-✅ Pre-commit hook installed
-✅ Type checking enabled
-✅ Linting enabled
-✅ Sensitive data checks enabled
+[PASS] Pre-commit hook installed
+[PASS] Type checking enabled
+[PASS] Linting enabled
+[PASS] Sensitive data checks enabled
 
-📝 Test the hook:
+[DOCS] Test the hook:
    git add [files]
    git commit -m "test"
 

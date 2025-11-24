@@ -76,7 +76,7 @@ new Style<View>({
 
 ### Spacing Properties (NO SHORTHANDS!)
 ```typescript
-// ❌ NOT SUPPORTED - React Native shorthands
+// WRONG - React Native shorthands (NOT SUPPORTED)
 new Style<View>({
   gap: 16,                    // ERROR - gap doesn't exist
   paddingVertical: 8,         // ERROR - no shorthand
@@ -87,7 +87,7 @@ new Style<View>({
   margin: 8,                  // ERROR - no universal margin
 })
 
-// ✅ SUPPORTED - Individual properties
+// CORRECT - Individual properties (SUPPORTED)
 new Style<View>({
   // Padding (individual sides only!)
   paddingTop: 8,
@@ -173,7 +173,7 @@ new Style({
 ```typescript
 import { Colors, Spacing, Fonts, BorderRadius } from 'common/src/theme';
 
-// ✅ CORRECT - Use design tokens
+// CORRECT - Use design tokens
 const styles = {
   container: new Style<View>({
     backgroundColor: Colors.surface,
@@ -191,7 +191,7 @@ const styles = {
   }),
 };
 
-// ❌ WRONG - Hardcoded values
+// WRONG - Hardcoded values
 const styles = {
   container: new Style<View>({
     backgroundColor: '#FFFFFF',     // Use Colors.surface
@@ -361,14 +361,14 @@ const styles = {
 
 ### DON'T Use Shorthands
 ```typescript
-// ❌ WRONG
+// WRONG
 new Style<View>({
   gap: Spacing.base,
   paddingVertical: Spacing.sm,
   paddingHorizontal: Spacing.lg,
 })
 
-// ✅ CORRECT
+// CORRECT
 new Style<View>({
   paddingTop: Spacing.sm,
   paddingBottom: Spacing.sm,
@@ -380,13 +380,13 @@ new Style<View>({
 
 ### DON'T Hardcode Values
 ```typescript
-// ❌ WRONG
+// WRONG
 new Style<View>({
   paddingTop: 16,
   backgroundColor: '#FFFFFF',
 })
 
-// ✅ CORRECT
+// CORRECT
 new Style<View>({
   paddingTop: Spacing.base,
   backgroundColor: Colors.surface,
@@ -395,13 +395,13 @@ new Style<View>({
 
 ### DON'T Define Styles Inside Render
 ```typescript
-// ❌ WRONG - Creates new objects every render
+// WRONG - Creates new objects every render
 override onRender(): JSX.Element {
   const containerStyle = new Style<View>({ /* ... */ });
   return <view style={containerStyle} />;
 }
 
-// ✅ CORRECT - Define outside component
+// CORRECT - Define outside component
 const styles = {
   container: new Style<View>({ /* ... */ }),
 };
@@ -415,14 +415,14 @@ export class MyComponent extends Component<Props> {
 
 ### DON'T Use CSS-Style Units
 ```typescript
-// ❌ WRONG
+// WRONG
 new Style<View>({
   width: '100px',      // NO px units
   padding: '1rem',     // NO rem units
   margin: '2em',       // NO em units
 })
 
-// ✅ CORRECT
+// CORRECT
 new Style<View>({
   width: 100,          // Numbers are points/dp
   width: '100%',       // Percentages OK

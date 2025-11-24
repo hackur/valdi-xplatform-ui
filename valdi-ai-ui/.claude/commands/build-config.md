@@ -137,14 +137,14 @@ Examples:
 ### Common Pitfall: Including All Files
 
 ```python
-# ❌ WRONG - Includes test files, breaking compilation
+# [FAIL] WRONG - Includes test files, breaking compilation
 valdi_module(
     name = "chat_core",
     srcs = glob(["src/**/*.ts"]),
     # ...
 )
 
-# ✅ CORRECT - Explicitly excludes test files
+# [PASS] CORRECT - Explicitly excludes test files
 valdi_module(
     name = "chat_core",
     srcs = glob(
@@ -271,13 +271,13 @@ Module paths in code must match BUILD.bazel structure:
 ```typescript
 // In chat_ui/src/ChatScreen.ts
 
-// ❌ WRONG - path aliases don't work in production
+// [FAIL] WRONG - path aliases don't work in production
 import { Message } from '@common';
 
-// ✅ CORRECT - full module path matching deps
+// [PASS] CORRECT - full module path matching deps
 import { Message } from 'common/src/types';
 
-// ✅ CORRECT - import from dependency
+// [PASS] CORRECT - import from dependency
 import { ChatService } from 'chat_core/src/ChatService';
 ```
 
@@ -294,14 +294,14 @@ deps = [
 Avoid circular dependencies between modules:
 
 ```python
-# ❌ WRONG - circular dependency
+# [FAIL] WRONG - circular dependency
 # Module A depends on B
 deps = ["//modules/B"]
 
 # Module B depends on A
 deps = ["//modules/A"]
 
-# ✅ CORRECT - extract shared code to new module
+# [PASS] CORRECT - extract shared code to new module
 # Module A depends on Common
 deps = ["//modules/common"]
 
@@ -316,7 +316,7 @@ deps = ["//modules/common"]
 Only include necessary dependencies:
 
 ```python
-# ❌ WRONG - includes unused dependencies
+# [FAIL] WRONG - includes unused dependencies
 deps = [
     "@valdi//src/valdi_modules/src/valdi/valdi_core",
     "@valdi//src/valdi_modules/src/valdi/valdi_http",
@@ -325,7 +325,7 @@ deps = [
     "//apps/valdi_ai_ui/modules/settings",  # Not imported!
 ]
 
-# ✅ CORRECT - only required dependencies
+# [PASS] CORRECT - only required dependencies
 deps = [
     "@valdi//src/valdi_modules/src/valdi/valdi_core",
     "@valdi//src/valdi_modules/src/valdi/valdi_http",

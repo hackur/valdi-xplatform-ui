@@ -11,39 +11,39 @@ Perform pre-build checks to ensure code quality and prevent build failures.
 1. **Pre-Build Validation**
 
    ```bash
-   echo "🔍 Running pre-build validation..."
+   echo "[Validation] Running pre-build validation..."
 
    # Type Check
-   echo "📝 Type checking..."
+   echo "[Type-check] Type checking..."
    npx tsc --noEmit || {
-     echo "❌ TypeScript errors found. Build aborted."
+     echo "[Error] TypeScript errors found. Build aborted."
      exit 1
    }
 
    # Lint
-   echo "🎨 Linting..."
+   echo "[Linting] Linting..."
    npx eslint . --ext .ts,.tsx --max-warnings 10 || {
-     echo "⚠️  Too many ESLint warnings. Please fix critical issues."
+     echo "[Warning] Too many ESLint warnings. Please fix critical issues."
      exit 1
    }
 
    # Tests
-   echo "🧪 Running tests..."
+   echo "[Testing] Running tests..."
    npm test -- --passWithNoTests --coverage || {
-     echo "❌ Tests failed. Build aborted."
+     echo "[Error] Tests failed. Build aborted."
      exit 1
    }
 
    # Check coverage
    COVERAGE=$(npm test -- --coverage --silent 2>&1 | grep "Lines" | awk '{print $3}' | tr -d '%')
    if [ "$COVERAGE" -lt 70 ]; then
-     echo "⚠️  Warning: Test coverage below 70% (${COVERAGE}%)"
+     echo "[Warning] Test coverage below 70% (${COVERAGE}%)"
    fi
 
    # Security Audit
-   echo "🔒 Security audit..."
+   echo "[Security] Security audit..."
    npm audit --audit-level=high || {
-     echo "⚠️  High severity vulnerabilities found"
+     echo "[Warning] High severity vulnerabilities found"
    }
    ```
 
@@ -53,7 +53,7 @@ Perform pre-build checks to ensure code quality and prevent build failures.
 
    **iOS:**
    ```bash
-   echo "📱 Building iOS..."
+   echo "[Build] Building iOS..."
    cd ios
    pod install
    cd ..
@@ -63,7 +63,7 @@ Perform pre-build checks to ensure code quality and prevent build failures.
 
    **Android:**
    ```bash
-   echo "🤖 Building Android..."
+   echo "[Build] Building Android..."
    cd android
    ./gradlew clean
    ./gradlew assembleRelease
@@ -72,24 +72,24 @@ Perform pre-build checks to ensure code quality and prevent build failures.
 
    **Web/Bundle:**
    ```bash
-   echo "🌐 Building bundle..."
+   echo "[Build] Building bundle..."
    npx react-native bundle --entry-file index.js --platform ios --bundle-output bundle.js
    ```
 
 3. **Post-Build Verification**
 
    ```bash
-   echo "✅ Verifying build artifacts..."
+   echo "[Verification] Verifying build artifacts..."
 
    # Check bundle size
    if [ -f "bundle.js" ]; then
      SIZE=$(wc -c < bundle.js)
      SIZE_MB=$((SIZE / 1024 / 1024))
-     echo "📦 Bundle size: ${SIZE_MB}MB"
+     echo "[Artifacts] Bundle size: ${SIZE_MB}MB"
 
      if [ "$SIZE_MB" -gt 10 ]; then
-       echo "⚠️  Warning: Large bundle size (${SIZE_MB}MB)"
-       echo "💡 Consider code splitting or reducing dependencies"
+       echo "[Warning] Large bundle size (${SIZE_MB}MB)"
+       echo "[Suggestion] Consider code splitting or reducing dependencies"
      fi
    fi
    ```
@@ -97,7 +97,7 @@ Perform pre-build checks to ensure code quality and prevent build failures.
 4. **Build Report**
 
    ```bash
-   echo "📊 Build completed successfully!"
+   echo "[Report] Build completed successfully!"
    echo "================================"
    echo "Platform: [platform]"
    echo "Build Time: [duration]"
@@ -108,37 +108,37 @@ Perform pre-build checks to ensure code quality and prevent build failures.
 
 ## Validation Thresholds
 
-- TypeScript: 0 errors ✅
-- ESLint: ≤10 warnings ⚠️
-- Tests: 100% pass ✅
-- Coverage: ≥70% ⚠️
-- Security: No high/critical vulnerabilities ✅
+- TypeScript: 0 errors (PASS)
+- ESLint: 10 warnings or fewer (WARN)
+- Tests: 100% pass (PASS)
+- Coverage: 70% or greater (WARN)
+- Security: No high/critical vulnerabilities (PASS)
 
 ## Output Format
 
 ```
-🏗️  Validated Build Report
+Validated Build Report
 ==========================
 
 Pre-Build Validation:
-  ✅ TypeScript: 0 errors
-  ✅ ESLint: 3 warnings
-  ✅ Tests: 143/143 passed
-  ✅ Coverage: 85.2%
-  ✅ Security: No high vulnerabilities
+  PASS: TypeScript: 0 errors
+  PASS: ESLint: 3 warnings
+  PASS: Tests: 143/143 passed
+  PASS: Coverage: 85.2%
+  PASS: Security: No high vulnerabilities
 
 Build Process:
-  ✅ Dependencies installed
-  ✅ Bundle created successfully
-  ✅ Platform build completed
+  PASS: Dependencies installed
+  PASS: Bundle created successfully
+  PASS: Platform build completed
 
 Build Artifacts:
-  📦 iOS: main.jsbundle (8.2MB)
-  📦 Android: app-release.apk (12.5MB)
+  iOS: main.jsbundle (8.2MB)
+  Android: app-release.apk (12.5MB)
 
-⏱️  Total Time: 3m 42s
+Total Time: 3m 42s
 
-✅ Build Ready for Deployment
+Status: Build Ready for Deployment
 ```
 
 ## Quick Flags
