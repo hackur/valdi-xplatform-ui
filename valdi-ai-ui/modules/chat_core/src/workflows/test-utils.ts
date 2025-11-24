@@ -6,7 +6,7 @@
 
 import { ChatService } from '../ChatService';
 import { MessageStore } from '../MessageStore';
-import { Message, MessageUtils } from 'common/types';
+import { Message, MessageUtils } from '../../common/src';
 import {
   WorkflowExecutionOptions,
   WorkflowProgressEvent,

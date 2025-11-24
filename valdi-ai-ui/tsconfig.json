@@ -76,7 +76,7 @@
       "@settings/*": ["./modules/settings/src/*"]
     }
   },
-  "include": ["modules/**/*.ts", "modules/**/*.tsx"],
+  "include": ["modules/**/*.ts", "modules/**/*.tsx", "modules/valdi.d.ts"],
   "exclude": [
     "node_modules",
     "bazel-*",

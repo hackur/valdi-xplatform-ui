@@ -16,7 +16,7 @@ import {
   SemanticSpacing,
   Message,
   Conversation,
-} from '@common';
+} from '../common/src';
 import { MessageBubble } from './MessageBubble';
 import { InputBar } from './InputBar';
 import { ChatService } from '@chat_core/ChatService';

@@ -5,7 +5,7 @@
  * Provides base classes and types for orchestrating multiple AI agents.
  */
 
-import { Message, ModelConfig } from 'common/types';
+import { Message, ModelConfig } from '../../common/src';
 import { ChatService } from './ChatService';
 import { MessageStore } from './MessageStore';
 

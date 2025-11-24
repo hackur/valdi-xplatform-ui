@@ -26,9 +26,9 @@ export interface ErrorInfo {
 }
 
 /**
- * Error Handler Callback
+ * Error Boundary Callback
  */
-export type ErrorHandler = (error: Error, info: ErrorInfo) => void;
+export type ErrorBoundaryCallback = (error: Error, info: ErrorInfo) => void;
 
 /**
  * Error Recovery Strategy
@@ -43,7 +43,7 @@ export interface ErrorBoundaryConfig {
   componentName: string;
 
   /** Custom error handler */
-  onError?: ErrorHandler;
+  onError?: ErrorBoundaryCallback;
 
   /** Recovery strategy */
   recovery?: RecoveryStrategy;

@@ -11,7 +11,7 @@
 import { Component } from 'valdi_core/src/Component';
 import { Style } from 'valdi_core/src/Style';
 import { View } from 'valdi_tsx/src/NativeTemplateElements';
-import { Card, Colors, Fonts, Spacing, BorderRadius } from '@common';
+import { Card, Colors, Fonts, Spacing, BorderRadius } from '../common/src';
 
 /**
  * Workflow Step

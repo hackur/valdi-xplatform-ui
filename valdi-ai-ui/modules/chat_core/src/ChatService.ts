@@ -7,13 +7,13 @@
 
 // @ts-ignore - valdi_http is a vendor library without TypeScript definitions
 import { HTTPClient } from 'valdi_http/src/HTTPClient';
-import { Message, MessageUtils, AIProvider, ModelConfig } from 'common/types';
+import { Message, MessageUtils, AIProvider, ModelConfig } from '../../common/src';
 import {
   APIError,
   ErrorCode,
   handleError,
   retryWithBackoff,
-} from 'common/errors';
+} from '../../common/src';
 import { MessageStore } from './MessageStore';
 import {
   ChatRequestOptions,
@@ -177,7 +177,7 @@ export class ChatService {
           const result = JSON.parse(text);
 
           if (result.error) {
-            const statusCode = response.status || 500;
+            const statusCode = (response as any).status || 500;
             const errorCode = this.getErrorCodeFromStatus(statusCode);
             throw new APIError(
               result.error.message || 'OpenAI API error',

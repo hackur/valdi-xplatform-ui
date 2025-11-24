@@ -18,6 +18,9 @@ export * from './types';
 // Component exports
 export * from './components';
 
+// Error exports
+export * from './errors';
+
 // Schema exports
 // export * from './schemas'; // TODO: Re-enable when schema dependencies are available
 

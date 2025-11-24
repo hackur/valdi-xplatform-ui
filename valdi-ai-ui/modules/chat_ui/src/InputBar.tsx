@@ -16,7 +16,7 @@ import {
   ChatBorderRadius,
   SemanticShadows,
   Button,
-} from '@common';
+} from '../common/src';
 
 /**
  * InputBar Props

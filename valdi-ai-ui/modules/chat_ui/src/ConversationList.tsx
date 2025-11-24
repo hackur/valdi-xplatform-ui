@@ -17,7 +17,7 @@ import {
   Conversation,
   ConversationStatus,
   LoadingSpinner,
-} from '@common';
+} from '../common/src';
 import { ConversationListItem } from './ConversationListItem';
 
 /**

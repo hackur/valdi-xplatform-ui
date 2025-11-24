@@ -9,11 +9,11 @@ import { StatefulComponent } from 'valdi_core/src/Component';
 import { Style } from 'valdi_core/src/Style';
 import { View, ScrollView, Label } from 'valdi_tsx/src/NativeTemplateElements';
 import { NavigationController } from 'valdi_navigation/src/NavigationController';
-import { Colors, Fonts, Spacing } from 'common/theme';
-import { Conversation } from 'common/types';
-import { LoadingSpinner } from 'common/components';
-import { Card } from 'common/components';
-import { Button } from 'common/components';
+import { Colors, Fonts, Spacing } from '../common/src';
+import { Conversation } from '../common/src';
+import { LoadingSpinner } from '../common/src';
+import { Card } from '../common/src';
+import { Button } from '../common/src';
 import { ChatIntegrationService } from './ChatIntegrationService';
 import { ChatView } from './ChatView';
 

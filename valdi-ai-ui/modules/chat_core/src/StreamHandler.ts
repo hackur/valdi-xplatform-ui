@@ -5,7 +5,7 @@
  * Provides helpers for managing stream state and processing chunks.
  */
 
-import { Message } from 'common/types';
+import { Message } from '../../common/src';
 import { StreamEvent, StreamCallback, StreamingStatus } from './types';
 
 /**

@@ -17,7 +17,7 @@ import {
   BorderRadius,
   Button,
   Card,
-} from '@common';
+} from '../common/src';
 
 // Screen Imports
 import { ChatView } from '@chat_ui/ChatView';
