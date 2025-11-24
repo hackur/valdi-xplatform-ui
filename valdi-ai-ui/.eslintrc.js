@@ -199,6 +199,7 @@ module.exports = {
     'dist/',
     'build/',
     'coverage/',
+    'vendor/',
     '*.config.js',
     '*.config.mjs',
   ],

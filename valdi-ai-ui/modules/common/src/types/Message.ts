@@ -537,4 +537,37 @@ export const MessageUtils = {
       updatedAt: new Date(),
     };
   },
+
+  /**
+   * Create a system message
+   *
+   * Creates a system message for providing instructions or context to the AI.
+   * System messages are typically used to set behavior or provide background information.
+   *
+   * @param conversationId - The ID of the conversation this message belongs to
+   * @param content - The system message content (instructions, context, etc.)
+   * @returns A complete Message object with role 'system'
+   *
+   * @example
+   * ```typescript
+   * const systemMsg = MessageUtils.createSystemMessage(
+   *   'conv_123',
+   *   'You are a helpful coding assistant. Be concise and accurate.'
+   * );
+   * console.log(systemMsg.role); // 'system'
+   * console.log(systemMsg.status); // 'completed'
+   * ```
+   */
+  createSystemMessage(conversationId: string, content: string): Message {
+    const now = new Date();
+    return {
+      id: MessageUtils.generateId(),
+      conversationId,
+      role: 'system',
+      content,
+      createdAt: now,
+      updatedAt: now,
+      status: 'completed', // System messages are always completed
+    };
+  },
 };

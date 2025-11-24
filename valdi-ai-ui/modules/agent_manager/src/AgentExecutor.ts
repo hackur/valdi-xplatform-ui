@@ -155,6 +155,9 @@ export class AgentExecutor {
 
       // Get last message content for the request
       const lastMessage = conversationMessages[conversationMessages.length - 1];
+      if (!lastMessage) {
+        throw new Error('No messages in conversation context');
+      }
       const userContent = MessageUtils.getTextContent(lastMessage);
 
       // Report progress
@@ -224,8 +227,9 @@ export class AgentExecutor {
         steps >= maxSteps ? 'max_steps' : 'completed';
 
       // Extract output from last message
-      const output = context.sharedData?.extractOutput
-        ? this.extractOutput(messages[messages.length - 1])
+      const lastOutputMessage = messages[messages.length - 1];
+      const output = context.sharedData?.extractOutput && lastOutputMessage
+        ? this.extractOutput(lastOutputMessage)
         : undefined;
 
       return {
