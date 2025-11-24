@@ -55,6 +55,26 @@
             "description": "Warn about destructive commands"
           }
         ]
+      },
+      {
+        "matcher": "Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "if [[ \"$CLAUDE_FILE_PATHS\" =~ \\.(ts|tsx)$ ]]; then echo '[Doc-check] Checking JSDoc completeness...' && grep -q '/\\*\\*' \"$CLAUDE_FILE_PATHS\" && echo '[Pass] JSDoc comments found' || echo '[Info] Consider adding JSDoc comments for public APIs'; fi",
+            "description": "Check for JSDoc documentation"
+          },
+          {
+            "type": "command",
+            "command": "if [[ \"$CLAUDE_FILE_PATHS\" =~ package\\.json$ ]]; then echo '[Security] Running dependency audit...' && npm audit --audit-level=moderate 2>&1 | head -15 || echo '[Info] Dependency audit check complete'; fi",
+            "description": "Security audit on package.json changes"
+          },
+          {
+            "type": "command",
+            "command": "if [[ \"$CLAUDE_FILE_PATHS\" =~ BUILD\\.bazel$ ]]; then echo '[Build] Validating Bazel syntax...' && bazel query \"deps($CLAUDE_FILE_PATHS)\" --output=label 2>&1 | head -10 || echo '[Warning] Bazel validation failed - check syntax'; fi",
+            "description": "Validate Bazel BUILD files"
+          }
+        ]
       }
     ],
     "PreToolUse": [
