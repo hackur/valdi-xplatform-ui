@@ -33,21 +33,21 @@ declare global {
      * These map to Valdi's native UI elements
      */
     interface IntrinsicElements {
-      view: import('valdi_tsx/src/NativeTemplateElements').View;
-      layout: import('valdi_tsx/src/NativeTemplateElements').Layout;
-      scroll: import('valdi_tsx/src/NativeTemplateElements').ScrollView;
-      scrollView: import('valdi_tsx/src/NativeTemplateElements').ScrollView;
-      label: import('valdi_tsx/src/NativeTemplateElements').Label;
-      textfield: import('valdi_tsx/src/NativeTemplateElements').TextField;
-      textInput: import('valdi_tsx/src/NativeTemplateElements').TextField;
-      textview: import('valdi_tsx/src/NativeTemplateElements').TextView;
-      image: import('valdi_tsx/src/NativeTemplateElements').ImageView;
-      video: import('valdi_tsx/src/NativeTemplateElements').VideoView;
-      shape: import('valdi_tsx/src/NativeTemplateElements').ShapeView;
-      blur: import('valdi_tsx/src/NativeTemplateElements').BlurView;
-      spinner: import('valdi_tsx/src/NativeTemplateElements').SpinnerView;
-      animatedimage: import('valdi_tsx/src/NativeTemplateElements').AnimatedImage;
-      slot: import('valdi_tsx/src/NativeTemplateElements').Slot;
+      view: import('valdi_tsx/src/NativeTemplateElements').ViewProps;
+      layout: import('valdi_tsx/src/NativeTemplateElements').ViewProps;
+      scroll: import('valdi_tsx/src/NativeTemplateElements').ScrollViewProps;
+      scrollView: import('valdi_tsx/src/NativeTemplateElements').ScrollViewProps;
+      label: import('valdi_tsx/src/NativeTemplateElements').LabelProps;
+      textfield: import('valdi_tsx/src/NativeTemplateElements').TextInputProps;
+      textInput: import('valdi_tsx/src/NativeTemplateElements').TextInputProps;
+      textview: import('valdi_tsx/src/NativeTemplateElements').TextInputProps;
+      image: import('valdi_tsx/src/NativeTemplateElements').ImageProps;
+      video: import('valdi_tsx/src/NativeTemplateElements').ViewProps;
+      shape: import('valdi_tsx/src/NativeTemplateElements').ViewProps;
+      blur: import('valdi_tsx/src/NativeTemplateElements').ViewProps;
+      spinner: import('valdi_tsx/src/NativeTemplateElements').ViewProps;
+      animatedimage: import('valdi_tsx/src/NativeTemplateElements').ImageProps;
+      slot: import('valdi_tsx/src/NativeTemplateElements').ViewProps;
     }
 
     /**
@@ -102,519 +102,113 @@ declare global {
 // ============================================================================
 
 /**
- * Valdi Core Component Module
- * Exports base component classes for building Valdi applications
+ * Valdi Core Component Module Type Extensions
+ * Provides additional type information for Valdi components
+ * Note: Actual implementations are in __mocks__ via tsconfig path mappings
  */
 declare module 'valdi_core/src/Component' {
-  import { IRenderer } from 'valdi_core/src/IRenderer';
+  import type { IRenderer } from 'valdi_core/src/IRenderer';
 
   /**
-   * Base Component class for Valdi applications
+   * Component interface - extends the mock implementation
    * @template ViewModel - The component's props/view model type
    * @template ComponentContext - The component's context type
    */
-  export class Component<ViewModel = object, ComponentContext = object> {
-    readonly viewModel: Readonly<ViewModel>;
-    readonly context: Readonly<ComponentContext>;
-    readonly renderer: IRenderer;
-
-    constructor(
-      renderer: IRenderer,
-      viewModel: ViewModel,
-      componentContext: any,
-    );
-
-    /**
-     * Called when the component is created for the first time
-     */
-    onCreate(): void;
-
-    /**
-     * Called during render pass - override to define JSX structure
-     */
+  export interface IComponentExtended<ViewModel = object, ComponentContext = object> {
+    readonly viewModel?: Readonly<ViewModel>;
+    readonly context?: Readonly<ComponentContext>;
+    readonly renderer?: IRenderer;
+    onCreate?(): void;
     onRender(): void;
-
-    /**
-     * Called when the component is destroyed
-     */
-    onDestroy(): void;
-
-    /**
-     * Called when the view model changes
-     */
-    onViewModelUpdate(previousViewModel?: Readonly<ViewModel>): void;
-
-    /**
-     * Schedule a render for the component
-     */
-    scheduleRender(): void;
-
-    /**
-     * Register a cleanup function to be called on destroy
-     */
-    registerDisposable(
+    onDestroy?(): void;
+    onViewModelUpdate?(previousViewModel?: Readonly<ViewModel>): void;
+    scheduleRender?(): void;
+    registerDisposable?(
       disposable: (() => void) | { unsubscribe: () => void },
     ): void;
-
-    /**
-     * Register multiple cleanup functions
-     */
-    registerDisposables(
+    registerDisposables?(
       disposables: Array<(() => void) | { unsubscribe: () => void }>,
     ): void;
-
-    /**
-     * Set a timeout that auto-clears on component destroy
-     */
-    setTimeoutDisposable(handler: () => void, timeout?: number): number;
-
-    /**
-     * Check if component has been destroyed
-     */
-    isDestroyed(): boolean;
-
-    /**
-     * Animate changes with options
-     */
-    animate(options: any, animations: () => void): void;
-
-    /**
-     * Animate changes and return a promise
-     */
-    animatePromise(options: any, animations: () => void): Promise<void>;
-
-    /**
-     * Create a cancellable animation
-     */
-    createAnimation(options: any, animations: () => void): any;
-
-    static disallowNullViewModel: boolean;
-  }
-
-  /**
-   * Stateful Component class with built-in state management
-   * @template ViewModel - The component's props/view model type
-   * @template State - The component's state type
-   * @template ComponentContext - The component's context type
-   */
-  export class StatefulComponent<
-    ViewModel = object,
-    State = object,
-    ComponentContext = object,
-  > extends Component<ViewModel, ComponentContext> {
-    state?: Readonly<State>;
-
-    /**
-     * Update component state and trigger re-render
-     */
-    setState(state: Readonly<Partial<State>>): void;
-
-    /**
-     * Update state with animation
-     */
-    setStateAnimated(
-      state: Readonly<Partial<State>>,
-      animationOptions: any,
-    ): void;
-
-    /**
-     * Update state with animation and return promise
-     */
-    setStateAnimatedPromise(
-      state: Readonly<Partial<State>>,
-      animationOptions: any,
-    ): Promise<void>;
-  }
-
-  /**
-   * Component interface
-   */
-  export interface IComponent<ViewModel = any, Context = any> {
-    readonly viewModel: Readonly<ViewModel>;
-    readonly context: Readonly<Context>;
-    readonly renderer: IRenderer;
-    onCreate(): void;
-    onRender(): void;
-    onDestroy(): void;
-    onViewModelUpdate(previousViewModel?: Readonly<ViewModel>): void;
+    setTimeoutDisposable?(handler: () => void, timeout?: number): number;
+    isDestroyed?(): boolean;
+    animate?(options: any, animations: () => void): void;
+    animatePromise?(options: any, animations: () => void): Promise<void>;
+    createAnimation?(options: any, animations: () => void): any;
   }
 
   /**
    * Component constructor type
    */
-  export type ComponentConstructor<
-    T extends IComponent<ViewModel, Context>,
-    ViewModel = any,
-    Context = any,
-  > = {
-    new (renderer: IRenderer, viewModel: ViewModel, context: Context): T;
-    disallowNullViewModel?: boolean;
-  };
+  export type ComponentConstructor<T = any, ViewModel = any, Context = any> = new (
+    viewModel: ViewModel,
+    context?: Context,
+  ) => T;
 }
 
 /**
- * Valdi Style Module
- * Exports Style class for styling Valdi elements
+ * Valdi Style Module Type Extensions
+ * Note: Actual implementation is in __mocks__ via tsconfig path mappings
  */
 declare module 'valdi_core/src/Style' {
-  /**
-   * Style class for Valdi elements
-   * Holds styling attributes and efficiently marshalls them to native code
-   * @template T - The element type this style applies to
-   */
-  export class Style<T> {
-    readonly attributes: Omit<T, 'style'>;
-
-    /**
-     * Create a new Style with the given attributes
-     */
-    constructor(attributes: T);
-
-    /**
-     * Convert style to native representation
-     */
-    toNative(convertFunc: (attributes: any) => number): number;
-
-    /**
-     * Create a new Style by extending this style with additional attributes
-     */
-    extend<T2>(attributes: T2): Style<Omit<T, 'style'> & T2>;
-
-    /**
-     * Merge multiple styles into one
-     */
-    static merge<S1, S2>(style1: Style<S1>, style2: Style<S2>): Style<S1 & S2>;
-    static merge<S1, S2, S3>(
-      style1: Style<S1>,
-      style2: Style<S2>,
-      style3: Style<S3>,
-    ): Style<S1 & S2 & S3>;
-    static merge<S1, S2, S3, S4>(
-      style1: Style<S1>,
-      style2: Style<S2>,
-      style3: Style<S3>,
-      style4: Style<S4>,
-    ): Style<S1 & S2 & S3 & S4>;
-    static merge(...styles: Array<Style<any>>): Style<any>;
-  }
-
   export type NativeStyle = number;
   export type StyleToNativeFunc = (attributes: any) => NativeStyle;
 }
 
 /**
- * Valdi Native Template Elements Module
- * Exports all native UI element types and interfaces
+ * Valdi Native Template Elements Module Type Extensions
+ * Note: Actual implementations are in __mocks__ via tsconfig path mappings
  */
 declare module 'valdi_tsx/src/NativeTemplateElements' {
-  /**
-   * Base template element
-   */
-  export interface TemplateElement {
+  // Additional type aliases for compatibility - actual Props interfaces and classes are in mocks
+  export type TemplateElement = {
     key?: string;
     ref?: any;
-  }
+  };
 
-  /**
-   * Container element that can have children
-   */
-  export interface ContainerTemplateElement extends TemplateElement {
+  export type ContainerTemplateElement = TemplateElement & {
     children?: unknown;
-  }
-
-  /**
-   * View element - the basic building block
-   */
-  export interface View extends ContainerTemplateElement {
-    style?: any;
-    width?: string | number;
-    height?: string | number;
-    backgroundColor?: string;
-    padding?: string | number;
-    margin?: string | number;
-    flex?: number;
-    flexDirection?: 'row' | 'column' | 'row-reverse' | 'column-reverse';
-    justifyContent?:
-      | 'flex-start'
-      | 'flex-end'
-      | 'center'
-      | 'space-between'
-      | 'space-around'
-      | 'space-evenly';
-    alignItems?: 'flex-start' | 'flex-end' | 'center' | 'stretch' | 'baseline';
-    position?: 'relative' | 'absolute';
-    top?: string | number;
-    left?: string | number;
-    right?: string | number;
-    bottom?: string | number;
-    borderRadius?: string | number;
-    borderWidth?: string | number;
-    borderColor?: string;
-    opacity?: number;
-    onTap?: (event: any) => void;
-    onLongPress?: (event: any) => void;
-    [key: string]: any;
-  }
-
-  /**
-   * Layout element - like View but without native backing
-   */
-  export interface Layout extends ContainerTemplateElement {
-    style?: any;
-    flexDirection?: 'row' | 'column' | 'row-reverse' | 'column-reverse';
-    [key: string]: any;
-  }
-
-  /**
-   * ScrollView element for scrollable content
-   */
-  export interface ScrollView extends ContainerTemplateElement {
-    style?: any;
-    horizontal?: boolean;
-    onScroll?: (event: any) => void;
-    bounces?: boolean;
-    [key: string]: any;
-  }
-
-  /**
-   * Label element for text display
-   */
-  export interface Label extends TemplateElement {
-    value: string;
-    style?: any;
-    font?: string;
-    color?: string;
-    fontSize?: number;
-    fontWeight?: string;
-    textAlign?: 'left' | 'center' | 'right' | 'justified';
-    numberOfLines?: number;
-    [key: string]: any;
-  }
-
-  /**
-   * TextField element for text input
-   */
-  export interface TextField extends TemplateElement {
-    value?: string;
-    placeholder?: string;
-    style?: any;
-    onChange?: (event: any) => void;
-    onEditBegin?: (event: any) => void;
-    onEditEnd?: (event: any) => void;
-    [key: string]: any;
-  }
-
-  /**
-   * TextInput - alias for TextField
-   */
-  export type TextInput = TextField;
-
-  /**
-   * TextView element for multiline text input
-   */
-  export interface TextView extends TemplateElement {
-    value?: string;
-    placeholder?: string;
-    style?: any;
-    onChange?: (event: any) => void;
-    [key: string]: any;
-  }
-
-  /**
-   * ImageView element for displaying images
-   */
-  export interface ImageView extends TemplateElement {
-    src?: string | any;
-    style?: any;
-    objectFit?: 'fill' | 'contain' | 'cover' | 'none';
-    [key: string]: any;
-  }
-
-  /**
-   * VideoView element for video playback
-   */
-  export interface VideoView extends TemplateElement {
-    src?: string | any;
-    style?: any;
-    [key: string]: any;
-  }
-
-  /**
-   * ShapeView element for drawing shapes
-   */
-  export interface ShapeView extends TemplateElement {
-    style?: any;
-    path?: any;
-    strokeColor?: string;
-    fillColor?: string;
-    strokeWidth?: number;
-    [key: string]: any;
-  }
-
-  /**
-   * BlurView element for blur effects
-   */
-  export interface BlurView extends ContainerTemplateElement {
-    style?: any;
-    blurStyle?: string;
-    [key: string]: any;
-  }
-
-  /**
-   * SpinnerView element for loading indicators
-   */
-  export interface SpinnerView extends TemplateElement {
-    style?: any;
-    color?: string;
-    [key: string]: any;
-  }
-
-  /**
-   * AnimatedImage element for animated content
-   */
-  export interface AnimatedImage extends TemplateElement {
-    src?: string | any;
-    style?: any;
-    loop?: boolean;
-    advanceRate?: number;
-    [key: string]: any;
-  }
-
-  /**
-   * Slot element for content projection
-   */
-  export interface Slot extends TemplateElement {
-    name?: string;
-    [key: string]: any;
-  }
-
-  // Export all element types
-  export {
-    View,
-    Layout,
-    ScrollView,
-    Label,
-    TextField,
-    TextView,
-    ImageView,
-    VideoView,
-    ShapeView,
-    BlurView,
-    SpinnerView,
-    AnimatedImage,
-    Slot,
   };
 }
 
 /**
- * Valdi Navigation Module
- * Exports NavigationController and navigation-related types
+ * Valdi Navigation Module Type Extensions
+ * Note: Actual implementation is in __mocks__ via tsconfig path mappings
  */
 declare module 'valdi_navigation/src/NavigationController' {
-  import { IComponent, ComponentConstructor } from 'valdi_core/src/Component';
-
-  /**
-   * Navigation options for page transitions
-   */
   export interface NavigationOptions {
     animated?: boolean;
     pageBackgroundColor?: string;
     isPartiallyHiding?: boolean;
   }
-
-  /**
-   * NavigationController for managing page navigation
-   */
-  export class NavigationController {
-    constructor(navigator: any);
-
-    /**
-     * Push a new page onto the navigation stack
-     */
-    push<
-      T extends IComponent<ViewModel, Context>,
-      ViewModel = any,
-      Context = any,
-    >(
-      componentConstructor: ComponentConstructor<T, ViewModel, Context>,
-      viewModel: ViewModel,
-      options?: NavigationOptions,
-    ): void;
-
-    /**
-     * Pop the current page from the navigation stack
-     */
-    pop(options?: NavigationOptions): void;
-
-    /**
-     * Present a page modally
-     */
-    present<
-      T extends IComponent<ViewModel, Context>,
-      ViewModel = any,
-      Context = any,
-    >(
-      componentConstructor: ComponentConstructor<T, ViewModel, Context>,
-      viewModel: ViewModel,
-      options?: NavigationOptions,
-    ): void;
-
-    /**
-     * Dismiss the current modal page
-     */
-    dismiss(options?: NavigationOptions): void;
-
-    /**
-     * Register a back button observer
-     */
-    registerBackButtonObserver(observer: () => void): void;
-
-    /**
-     * Unregister a back button observer
-     */
-    unregisterBackButtonObserver(observer: () => void): void;
-  }
 }
 
 /**
  * Valdi Navigation Page Component Module
- * Exports NavigationPageComponent base class
+ * Provides type definitions for NavigationPageComponent
  */
 declare module 'valdi_navigation/src/NavigationPageComponent' {
-  import { Component, StatefulComponent } from 'valdi_core/src/Component';
-  import { NavigationController } from 'valdi_navigation/src/NavigationController';
+  import type { Component, StatefulComponent } from 'valdi_core/src/Component';
+  import type { NavigationController } from 'valdi_navigation/src/NavigationController';
 
-  /**
-   * Navigation page context
-   */
   export interface NavigationPageContext {
     navigator: any;
   }
 
-  /**
-   * Base class for navigation pages (stateless)
-   * Provides automatic NavigationController instance
-   */
-  export abstract class NavigationPageComponent<
-    ViewModel,
-    ComponentContext extends NavigationPageContext = NavigationPageContext,
-  > extends Component<ViewModel, ComponentContext> {
+  // Type aliases for NavigationPageComponent (implemented via Component extension in actual code)
+  export type NavigationPageComponent<
+    ViewModel = any,
+    ComponentContext = any
+  > = Component<ViewModel, ComponentContext> & {
     navigationController: NavigationController;
-    static componentPath: string;
-  }
+  };
 
-  /**
-   * Base class for navigation pages (stateful)
-   * Provides automatic NavigationController instance with state management
-   */
-  export abstract class NavigationPageStatefulComponent<
-    ViewModel,
-    State = object,
-    ComponentContext extends NavigationPageContext = NavigationPageContext,
-  > extends StatefulComponent<ViewModel, State, ComponentContext> {
+  export type NavigationPageStatefulComponent<
+    ViewModel = any,
+    State = any,
+    ComponentContext = any
+  > = StatefulComponent<ViewModel, State> & {
     navigationController: NavigationController;
-    static componentPath: string;
-  }
+  };
 }
 
 /**

@@ -5,7 +5,7 @@
  * Provides error handling, result formatting, and async execution support.
  */
 
-import { CoreTool } from 'ai';
+import { Tool } from 'ai';
 
 /**
  * Tool Call Input
@@ -57,14 +57,14 @@ export interface ToolCallResult {
  * Executes tool calls and handles errors gracefully
  */
 export class ToolExecutor {
-  private tools: Record<string, CoreTool>;
+  private tools: Record<string, Tool>;
 
   /**
    * Constructor
    *
    * @param tools - Available tools mapped by name
    */
-  constructor(tools: Record<string, CoreTool>) {
+  constructor(tools: Record<string, Tool>) {
     this.tools = tools;
   }
 
@@ -174,7 +174,7 @@ export class ToolExecutor {
    *
    * @param tools - New tools to use
    */
-  updateTools(tools: Record<string, CoreTool>): void {
+  updateTools(tools: Record<string, Tool>): void {
     this.tools = tools;
   }
 
@@ -184,7 +184,7 @@ export class ToolExecutor {
    * @param name - Tool name
    * @param tool - Tool implementation
    */
-  addTool(name: string, tool: CoreTool): void {
+  addTool(name: string, tool: Tool): void {
     this.tools[name] = tool;
   }
 
@@ -277,7 +277,7 @@ export class ToolExecutor {
  * @returns ToolExecutor instance
  */
 export function createToolExecutor(
-  tools: Record<string, CoreTool>,
+  tools: Record<string, Tool>,
 ): ToolExecutor {
   return new ToolExecutor(tools);
 }

@@ -156,7 +156,7 @@ export const StreamUtils = {
   ): (delta: string) => void {
     let buffer = '';
     let content = '';
-    let timeout: number | null = null;
+    let timeout: ReturnType<typeof setTimeout> | null = null;
 
     return (delta: string) => {
       buffer += delta;

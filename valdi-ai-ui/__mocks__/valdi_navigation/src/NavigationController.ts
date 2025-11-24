@@ -12,7 +12,7 @@ export interface NavigationController {
 }
 
 export class DefaultNavigationController implements NavigationController {
-  push(component: any, props?: any): void {
+  push(_component: any, _props?: any): void {
     // Mock implementation
   }
 
@@ -24,7 +24,7 @@ export class DefaultNavigationController implements NavigationController {
     // Mock implementation
   }
 
-  replace(component: any, props?: any): void {
+  replace(_component: any, _props?: any): void {
     // Mock implementation
   }
 

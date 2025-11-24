@@ -71,72 +71,74 @@ export class ChatIntegrationService {
       }
 
       // Create user message
+      const now = new Date();
       const userMessage: Message = {
         id: this.generateMessageId(),
         conversationId,
         role: 'user',
         content,
-        timestamp: new Date().toISOString(),
-        status: 'sent',
+        createdAt: now,
+        updatedAt: now,
+        status: 'completed',
       };
 
       // Add to store
       this.messageStore.addMessage(userMessage);
 
       // Create assistant message placeholder
+      const assistantNow = new Date();
       const assistantMessage: Message = {
         id: this.generateMessageId(),
         conversationId,
         role: 'assistant',
         content: '',
-        timestamp: new Date().toISOString(),
+        createdAt: assistantNow,
+        updatedAt: assistantNow,
         status: 'sending',
       };
 
       this.messageStore.addMessage(assistantMessage);
 
       // Get conversation messages
-      const messages =
-        this.messageStore.getConversationMessages(conversationId);
+      const messages = this.messageStore.getMessages(conversationId);
 
       // Stream response
       let fullResponse = '';
 
-      await this.chatService.sendMessageStreaming(messages, {
-        onToken: (delta: string) => {
-          fullResponse += delta;
+      await this.chatService.sendMessageStreaming(
+        {
+          conversationId,
+          message: content,
+          modelConfig: conversation.modelConfig,
+          systemPrompt: conversation.systemPrompt,
+        },
+        (event) => {
+          if (event.type === 'chunk') {
+            fullResponse += event.delta;
 
-          // Update message
-          this.messageStore.updateMessage(assistantMessage.id, {
-            content: fullResponse,
-            status: 'sending',
-          });
+            // Update message
+            this.messageStore.updateMessage(conversationId, assistantMessage.id, {
+              content: fullResponse,
+            });
 
-          // Progress callback
-          if (onProgress) {
-            onProgress(delta, fullResponse);
+            // Progress callback
+            if (onProgress) {
+              onProgress(event.delta, fullResponse);
+            }
+          } else if (event.type === 'complete') {
+            // Mark as completed
+            this.messageStore.updateMessage(conversationId, assistantMessage.id, {
+              status: 'completed',
+            });
+          } else if (event.type === 'error') {
+            // Mark as error
+            this.messageStore.updateMessage(conversationId, assistantMessage.id, {
+              status: 'error',
+              error: event.error,
+            });
           }
         },
-        onComplete: () => {
-          // Mark as sent
-          this.messageStore.updateMessage(assistantMessage.id, {
-            status: 'sent',
-          });
-
-          // Update conversation metadata
-          this.conversationStore.updateConversation(conversationId, {
-            updatedAt: new Date().toISOString(),
-            messageCount: messages.length + 2, // +2 for user and assistant
-          });
-        },
-        onError: (error: Error) => {
-          // Mark as error
-          this.messageStore.updateMessage(assistantMessage.id, {
-            status: 'error',
-            error: error.message,
-          });
-        },
-      });
+      );
     } catch (error) {
       console.error('[ChatIntegrationService] Send message error:', error);
       throw error;
@@ -164,11 +166,12 @@ export class ChatIntegrationService {
     title: string,
     ChatViewComponent: any,
   ): Promise<string> {
+    const now = new Date();
     const conversation: Conversation = {
       id: this.generateConversationId(),
       title,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
+      createdAt: now,
+      updatedAt: now,
       messageCount: 0,
       status: 'active',
     };
@@ -185,7 +188,7 @@ export class ChatIntegrationService {
    * KISS: Simple data loading
    */
   loadConversationMessages(conversationId: string): Message[] {
-    return this.messageStore.getConversationMessages(conversationId);
+    return this.messageStore.getMessages(conversationId);
   }
 
   /**
@@ -219,7 +222,7 @@ export class ChatIntegrationService {
       conversations = conversations.filter(
         (c) =>
           c.title?.toLowerCase().includes(query) ||
-          c.metadata?.tags?.some((tag) => tag.toLowerCase().includes(query)),
+          c.tags?.some((tag) => tag.toLowerCase().includes(query)),
       );
     }
 
@@ -240,7 +243,6 @@ export class ChatIntegrationService {
   async archiveConversation(conversationId: string): Promise<void> {
     await this.conversationStore.updateConversation(conversationId, {
       status: 'archived',
-      updatedAt: new Date().toISOString(),
     });
   }
 

@@ -101,7 +101,7 @@ export class SequentialWorkflow extends WorkflowExecutor {
   /**
    * Execute the sequential workflow
    */
-  async execute(
+  override async execute(
     options: WorkflowExecutionOptions,
   ): Promise<WorkflowExecutionResult> {
     const { conversationId, input, onProgress, abortSignal } = options;
@@ -124,7 +124,7 @@ export class SequentialWorkflow extends WorkflowExecutor {
 
     try {
       let currentInput = input;
-      const messages = this.messageStore.getMessages(conversationId);
+      const _messages = this.messageStore.getMessages(conversationId);
 
       // Execute each agent in sequence
       for (let i = 0; i < this.config.agents.length; i++) {
@@ -142,6 +142,9 @@ export class SequentialWorkflow extends WorkflowExecutor {
         }
 
         const agent = this.config.agents[i];
+        if (!agent) {
+          throw new Error(`Agent at index ${i} not found`);
+        }
 
         if (this.config.debug) {
           console.log(

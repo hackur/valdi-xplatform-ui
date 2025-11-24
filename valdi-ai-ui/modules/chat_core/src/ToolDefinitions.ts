@@ -23,7 +23,7 @@ export const getWeather = tool({
         'City name or location (e.g., "San Francisco", "New York, NY")',
       ),
   }),
-  execute: async ({ location }) => {
+  execute: async ({ location }: { location: string }) => {
     // Mock weather data - in production, this would call a real weather API
     const conditions = ['Sunny', 'Cloudy', 'Rainy', 'Partly Cloudy', 'Stormy'];
     const randomCondition =
@@ -67,7 +67,7 @@ export const calculateExpression = tool({
         'Mathematical expression to evaluate (e.g., "2 + 2", "(10 * 5) - 3")',
       ),
   }),
-  execute: async ({ expression }) => {
+  execute: async ({ expression }: { expression: string }) => {
     try {
       // Sanitize expression - only allow numbers, operators, spaces, and parentheses
       const sanitized = expression.replace(/[^0-9+\-*/().\s]/g, '');
@@ -123,7 +123,7 @@ export const searchWeb = tool({
   parameters: z.object({
     query: z.string().describe('Search query or keywords to search for'),
   }),
-  execute: async ({ query }) => {
+  execute: async ({ query }: { query: string }) => {
     // Mock search results - in production, this would call a real search API
     const mockResults = [
       {

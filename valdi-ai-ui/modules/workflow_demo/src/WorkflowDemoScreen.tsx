@@ -208,7 +208,7 @@ export class WorkflowDemoScreen extends Component<{}, WorkflowDemoScreenState> {
     });
   };
 
-  onRender() {
+  override onRender() {
     const { selectedTab, executionStates } = this.state;
     const selectedWorkflow = this.workflows.find((w) => w.id === selectedTab)!;
     const executionState = executionStates[selectedTab];

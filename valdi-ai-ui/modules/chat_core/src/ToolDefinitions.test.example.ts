@@ -161,7 +161,7 @@ async function testSequentialExecution() {
   console.log('Sequential execution results:', results);
   console.assert(results.length === 2, 'Should execute both tools');
   console.assert(
-    results[0].timestamp < results[1].timestamp,
+    results[0]!.timestamp < results[1]!.timestamp,
     'Should execute in order',
   );
 }

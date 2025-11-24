@@ -186,10 +186,10 @@ export class RoutingWorkflow extends WorkflowExecutor {
   /**
    * Execute the routing workflow
    */
-  async execute(
+  override async execute(
     options: WorkflowExecutionOptions,
   ): Promise<WorkflowExecutionResult> {
-    const { conversationId, input, onProgress, abortSignal } = options;
+    const { conversationId, input, onProgress } = options;
     const startTime = Date.now();
 
     // Initialize state (router + 1 or more routes)
@@ -287,6 +287,9 @@ export class RoutingWorkflow extends WorkflowExecutor {
       } else {
         // Execute single route
         const route = routesToExecute[0];
+        if (!route) {
+          throw new Error('No route available to execute');
+        }
         const routeStep = await this.executeAgentWithRetry(
           route.agent,
           input,
@@ -331,13 +334,13 @@ export class RoutingWorkflow extends WorkflowExecutor {
       if (onProgress) {
         onProgress({
           type: 'workflow-complete',
-          result: finalResult,
+          result: finalResult ?? '',
           state: this.state,
         });
       }
 
       return {
-        result: finalResult,
+        result: finalResult ?? '',
         state: this.state,
         messages: this.messageStore.getMessages(conversationId),
         totalTokens,
@@ -464,7 +467,11 @@ export class RoutingWorkflow extends WorkflowExecutor {
   ): string {
     return results
       .map((result, index) => {
-        const routeName = routes[index].name;
+        const route = routes[index];
+        if (!route) {
+          return `## Route ${index + 1}\n\n${result}`;
+        }
+        const routeName = route.name;
         return `## ${routeName}\n\n${result}`;
       })
       .join('\n\n---\n\n');

@@ -431,13 +431,13 @@ export async function createCustomWorkflowExample(
         },
       ],
       includePreviousContext: true,
-      transformOutput: (output, index) => {
+      transformOutput: (output, _index) => {
         // Clean markdown code blocks
         return output.replace(/```[\s\S]*?```/g, (match) => {
           return match.trim();
         });
       },
-      shouldStop: (output, index) => {
+      shouldStop: (output, _index) => {
         // Early stop if output contains "COMPLETE" marker
         return output.includes('[COMPLETE]');
       },

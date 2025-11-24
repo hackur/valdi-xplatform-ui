@@ -10,7 +10,7 @@ export interface SystemFontConfig {
 }
 
 export class SystemFont {
-  static get(config?: SystemFontConfig): string {
+  static get(_config?: SystemFontConfig): string {
     return 'system-font';
   }
 

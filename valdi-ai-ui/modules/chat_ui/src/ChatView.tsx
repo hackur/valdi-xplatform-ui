@@ -5,17 +5,15 @@
  * Displays messages and handles user input.
  */
 
-import { NavigationPageComponent } from 'valdi_core/src/Component';
-import { StatefulComponent } from 'valdi_core/src/Component';
+import { NavigationPageStatefulComponent } from 'valdi_core/src/Component';
 import { Style } from 'valdi_core/src/Style';
-import { View } from 'valdi_tsx/src/NativeTemplateElements';
+import { View, ScrollView } from 'valdi_tsx/src/NativeTemplateElements';
 import { NavigationController } from 'valdi_navigation/src/NavigationController';
 import {
   Colors,
   Spacing,
   SemanticSpacing,
   Message,
-  Conversation,
 } from '@common';
 import { MessageBubble } from './MessageBubble';
 import { InputBar } from './InputBar';
@@ -55,7 +53,7 @@ interface ChatViewState {
  *
  * Fully integrated with ChatService and MessageStore for real-time chat functionality.
  */
-export class ChatView extends NavigationPageComponent<
+export class ChatView extends NavigationPageStatefulComponent<
   ChatViewProps,
   ChatViewState
 > {
@@ -73,7 +71,12 @@ export class ChatView extends NavigationPageComponent<
   };
 
   constructor(props: ChatViewProps) {
-    super(props);
+    super(props, {
+      messages: [],
+      isLoading: false,
+      isStreaming: false,
+      error: undefined,
+    });
 
     // Initialize stores
     this.messageStore = messageStore;

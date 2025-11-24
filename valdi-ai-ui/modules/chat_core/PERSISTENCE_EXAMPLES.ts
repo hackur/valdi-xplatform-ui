@@ -11,7 +11,7 @@ import { exportService } from './src/ExportService';
 import { MessagePersistence } from './src/MessagePersistence';
 import { ConversationPersistence } from './src/ConversationPersistence';
 import { MemoryStorageProvider } from './src/StorageProvider';
-import { DefaultModels } from '../common';
+import { DefaultModels } from '../common/src';
 
 // ============================================================================
 // Example 1: Basic App Initialization

@@ -6,7 +6,7 @@
 
 import { ChatService } from '../ChatService';
 import { MessageStore } from '../MessageStore';
-import { Message, MessageUtils } from '../../common/src';
+import { Message, MessageUtils } from '../../../common/src';
 import {
   WorkflowExecutionOptions,
   WorkflowProgressEvent,
@@ -97,7 +97,7 @@ export class MockChatService {
   private extractAgentIdFromPrompt(prompt: string): string {
     // Try to extract agent identifier from system prompt
     const match = prompt.match(/You are (?:a |an )?([a-zA-Z\s]+)/i);
-    return match ? match[1].toLowerCase().replace(/\s+/g, '-') : 'default';
+    return match && match[1] ? match[1].toLowerCase().replace(/\s+/g, '-') : 'default';
   }
 
   private delay(ms: number): Promise<void> {
@@ -414,7 +414,10 @@ export const TestDataGenerators = {
     const result: string[] = [];
 
     while (result.join(' ').length < length) {
-      result.push(words[Math.floor(Math.random() * words.length)]);
+      const word = words[Math.floor(Math.random() * words.length)];
+      if (word) {
+        result.push(word);
+      }
     }
 
     return result.join(' ').substring(0, length);
@@ -494,10 +497,10 @@ export async function exampleTestUsage() {
   });
 
   // Collect events
-  const collector = new ProgressEventCollector();
+  const _collector = new ProgressEventCollector();
 
   // Track metrics
-  const metrics = new WorkflowMetrics();
+  const _metrics = new WorkflowMetrics();
 
   // Execute workflow (example - you would create actual workflow here)
   // const workflow = createWorkflow(suite.getChatService(), suite.getMessageStore());

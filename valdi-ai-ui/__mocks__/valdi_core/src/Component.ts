@@ -52,3 +52,23 @@ export class StatefulComponent<
     }
   }
 }
+
+// Navigation page components (for navigation integration)
+export class NavigationPageComponent<TViewModel = any> extends Component<TViewModel> {
+  navigationController: any; // Will be injected by navigation system
+
+  constructor(viewModel: TViewModel) {
+    super(viewModel);
+  }
+}
+
+export class NavigationPageStatefulComponent<
+  TViewModel = any,
+  TState = any,
+> extends StatefulComponent<TViewModel, TState> {
+  navigationController: any; // Will be injected by navigation system
+
+  constructor(viewModel: TViewModel, initialState?: TState) {
+    super(viewModel, initialState);
+  }
+}

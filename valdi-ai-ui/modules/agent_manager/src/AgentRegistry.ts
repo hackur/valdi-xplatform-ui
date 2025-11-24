@@ -6,7 +6,7 @@
  */
 
 import { AgentDefinition } from './types';
-import { StorageProvider } from '@common';
+import { StorageProvider } from '../../chat_core/src/StorageProvider';
 
 const STORAGE_KEY = 'agent_registry_agents';
 

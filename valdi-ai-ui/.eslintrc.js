@@ -101,8 +101,6 @@ module.exports = {
     'no-useless-concat': 'error',
     'no-useless-constructor': 'off', // Disabled in favor of TypeScript rule
     '@typescript-eslint/no-useless-constructor': 'error',
-    'no-duplicate-imports': 'off', // Disabled in favor of TypeScript rule
-    '@typescript-eslint/no-duplicate-imports': 'error',
 
     // Code Quality
     'no-return-await': 'off', // Disabled in favor of TypeScript rule
@@ -113,6 +111,7 @@ module.exports = {
     '@typescript-eslint/only-throw-error': 'error',
     'dot-notation': 'off', // Disabled in favor of TypeScript rule
     '@typescript-eslint/dot-notation': 'error',
+    'no-duplicate-imports': 'error', // Re-enabled since TypeScript version has issues
 
     // Naming Conventions (2025 Best Practices)
     '@typescript-eslint/naming-convention': [

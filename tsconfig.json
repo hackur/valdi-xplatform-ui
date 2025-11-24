@@ -1,0 +1,8 @@
+{
+  "extends": "./valdi-ai-ui/tsconfig.json",
+  "compilerOptions": {
+    "baseUrl": "./valdi-ai-ui"
+  },
+  "include": ["valdi-ai-ui/**/*.ts", "valdi-ai-ui/**/*.tsx"],
+  "exclude": ["node_modules", "bazel-*", "**/dist", "**/build"]
+}
