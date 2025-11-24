@@ -5,3 +5,48 @@ local_repository(
     name = "valdi",
     path = "vendor/valdi",
 )
+
+# Define Valdi's internal sub-repositories (normally done by valdi_prepare_workspace)
+local_repository(
+    name = "android_macros",
+    path = "vendor/valdi/bzl/macros",
+)
+
+local_repository(
+    name = "snap_macros",
+    path = "vendor/valdi/bzl/valdi/snap_macros",
+)
+
+local_repository(
+    name = "snap_client_toolchains",
+    path = "vendor/valdi/bzl/toolchains",
+)
+
+local_repository(
+    name = "snap_platforms",
+    path = "vendor/valdi/bzl/platforms",
+)
+
+local_repository(
+    name = "skia_user_config",
+    path = "vendor/valdi/third-party/skia_user_config",
+)
+
+local_repository(
+    name = "rules_hdrs",
+    path = "vendor/valdi/third-party/rules_hdrs",
+)
+
+local_repository(
+    name = "valdi_toolchain",
+    path = "vendor/valdi/bin",
+)
+
+local_repository(
+    name = "resvg_libs",
+    path = "vendor/valdi/third-party/resvg/resvg_libs",
+)
+
+# Initialize Valdi workspace dependencies
+load("@valdi//bzl:workspace_init.bzl", "valdi_initialize_workspace")
+valdi_initialize_workspace()
