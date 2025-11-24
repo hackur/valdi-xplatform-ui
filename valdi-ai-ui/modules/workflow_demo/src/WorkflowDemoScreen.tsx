@@ -122,7 +122,9 @@ export class WorkflowDemoScreen extends Component<{}, WorkflowDemoScreenState> {
   /**
    * Handle workflow execution
    */
-  private handleRunWorkflow = async (workflowType: WorkflowType): Promise<void> => {
+  private handleRunWorkflow = async (
+    workflowType: WorkflowType,
+  ): Promise<void> => {
     // Update state to show loading
     this.setState({
       executionStates: {
@@ -141,23 +143,23 @@ export class WorkflowDemoScreen extends Component<{}, WorkflowDemoScreenState> {
       // Execute the appropriate workflow demo
       switch (workflowType) {
         case 'sequential':
-          result = await runSequentialDemo(
-            (state) => this.updateWorkflowState(workflowType, state)
+          result = await runSequentialDemo((state) =>
+            this.updateWorkflowState(workflowType, state),
           );
           break;
         case 'parallel':
-          result = await runParallelDemo(
-            (state) => this.updateWorkflowState(workflowType, state)
+          result = await runParallelDemo((state) =>
+            this.updateWorkflowState(workflowType, state),
           );
           break;
         case 'routing':
-          result = await runRoutingDemo(
-            (state) => this.updateWorkflowState(workflowType, state)
+          result = await runRoutingDemo((state) =>
+            this.updateWorkflowState(workflowType, state),
           );
           break;
         case 'evaluator':
-          result = await runEvaluatorOptimizerDemo(
-            (state) => this.updateWorkflowState(workflowType, state)
+          result = await runEvaluatorOptimizerDemo((state) =>
+            this.updateWorkflowState(workflowType, state),
           );
           break;
       }
@@ -193,7 +195,7 @@ export class WorkflowDemoScreen extends Component<{}, WorkflowDemoScreenState> {
    */
   private updateWorkflowState = (
     workflowType: WorkflowType,
-    state: Partial<WorkflowExecutionState>
+    state: Partial<WorkflowExecutionState>,
   ): void => {
     this.setState({
       executionStates: {
@@ -212,7 +214,7 @@ export class WorkflowDemoScreen extends Component<{}, WorkflowDemoScreenState> {
     const executionState = executionStates[selectedTab];
 
     return (
-      <scrollview style={styles.container}>
+      <ScrollView style={styles.container}>
         {/* Header */}
         <view style={styles.header}>
           <label value="Workflow Patterns Demo" style={Fonts.h1} />
@@ -228,7 +230,7 @@ export class WorkflowDemoScreen extends Component<{}, WorkflowDemoScreenState> {
 
         {/* Tabs */}
         <view style={styles.tabsContainer}>
-          <scrollview horizontal={true} style={styles.tabsScroll}>
+          <ScrollView horizontal={true} style={styles.tabsScroll}>
             {this.workflows.map((workflow) => (
               <view
                 key={workflow.id}
@@ -258,7 +260,7 @@ export class WorkflowDemoScreen extends Component<{}, WorkflowDemoScreenState> {
                 />
               </view>
             ))}
-          </scrollview>
+          </ScrollView>
         </view>
 
         {/* Selected Workflow Content */}
@@ -290,7 +292,10 @@ export class WorkflowDemoScreen extends Component<{}, WorkflowDemoScreenState> {
               />
               {selectedWorkflow.useCases.map((useCase, index) => (
                 <view key={index} style={styles.useCaseItem}>
-                  <label value="•" style={{ ...Fonts.body, color: Colors.primary }} />
+                  <label
+                    value="•"
+                    style={{ ...Fonts.body, color: Colors.primary }}
+                  />
                   <label
                     value={useCase}
                     style={{
@@ -306,9 +311,7 @@ export class WorkflowDemoScreen extends Component<{}, WorkflowDemoScreenState> {
             {/* Run Button */}
             <Button
               title={
-                executionState.status === 'running'
-                  ? 'Running...'
-                  : 'Run Demo'
+                executionState.status === 'running' ? 'Running...' : 'Run Demo'
               }
               variant="primary"
               size="large"
@@ -326,7 +329,7 @@ export class WorkflowDemoScreen extends Component<{}, WorkflowDemoScreenState> {
             executionState={executionState}
           />
         </view>
-      </scrollview>
+      </ScrollView>
     );
   }
 }

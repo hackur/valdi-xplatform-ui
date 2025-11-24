@@ -142,7 +142,7 @@ export class ToolsDemoScreen extends Component<{}, ToolsDemoScreenState> {
     const { executionResults, currentlyExecuting } = this.state;
 
     return (
-      <scrollview style={styles.container}>
+      <ScrollView style={styles.container}>
         {/* Header */}
         <view style={styles.header}>
           <label value="Tools Demo" style={Fonts.h1} />
@@ -161,11 +161,7 @@ export class ToolsDemoScreen extends Component<{}, ToolsDemoScreenState> {
           <label value="Available Tools" style={Fonts.h2} />
           <view style={styles.toolGrid}>
             {this.toolDemos.map((toolDemo) => (
-              <Card
-                key={toolDemo.name}
-                elevation="md"
-                style={styles.toolCard}
-              >
+              <Card key={toolDemo.name} elevation="md" style={styles.toolCard}>
                 <view style={styles.toolCardHeader}>
                   <label
                     value={`${toolDemo.icon} ${toolDemo.displayName}`}
@@ -265,7 +261,7 @@ export class ToolsDemoScreen extends Component<{}, ToolsDemoScreenState> {
             />
           </view>
         )}
-      </scrollview>
+      </ScrollView>
     );
   }
 }

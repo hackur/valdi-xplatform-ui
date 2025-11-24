@@ -78,7 +78,10 @@ interface ConversationListState {
 /**
  * ConversationList Component
  */
-export class ConversationList extends StatefulComponent<ConversationListProps, ConversationListState> {
+export class ConversationList extends StatefulComponent<
+  ConversationListProps,
+  ConversationListState
+> {
   static defaultProps: Partial<ConversationListProps> = {
     initialFilter: 'all',
     isLoading: false,
@@ -133,7 +136,7 @@ export class ConversationList extends StatefulComponent<ConversationListProps, C
       filtered = filtered.filter(
         (conv) =>
           conv.title.toLowerCase().includes(query) ||
-          conv.tags.some((tag) => tag.toLowerCase().includes(query))
+          conv.tags.some((tag) => tag.toLowerCase().includes(query)),
       );
     }
 
@@ -182,7 +185,7 @@ export class ConversationList extends StatefulComponent<ConversationListProps, C
   private renderFilterButton(
     filterType: ConversationFilter,
     label: string,
-    count?: number
+    count?: number,
   ) {
     const { filter } = this.state;
     const isActive = filter === filterType;
@@ -265,8 +268,12 @@ export class ConversationList extends StatefulComponent<ConversationListProps, C
 
     // Calculate filter counts
     const pinnedCount = conversations.filter((c) => c.isPinned).length;
-    const archivedCount = conversations.filter((c) => c.status === 'archived').length;
-    const allCount = conversations.filter((c) => c.status !== 'archived').length;
+    const archivedCount = conversations.filter(
+      (c) => c.status === 'archived',
+    ).length;
+    const allCount = conversations.filter(
+      (c) => c.status !== 'archived',
+    ).length;
 
     return (
       <view
@@ -302,7 +309,7 @@ export class ConversationList extends StatefulComponent<ConversationListProps, C
             <LoadingSpinner size="large" showText={true} text="Loading" />
           </view>
         ) : (
-          <scrollview
+          <ScrollView
             style={styles.scrollView}
             refreshControl={
               isRefreshing !== undefined
@@ -337,7 +344,7 @@ export class ConversationList extends StatefulComponent<ConversationListProps, C
             ) : (
               this.renderEmptyState()
             )}
-          </scrollview>
+          </ScrollView>
         )}
       </view>
     );

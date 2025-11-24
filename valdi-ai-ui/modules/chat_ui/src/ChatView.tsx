@@ -10,13 +10,26 @@ import { StatefulComponent } from 'valdi_core/src/Component';
 import { Style } from 'valdi_core/src/Style';
 import { View } from 'valdi_tsx/src/NativeTemplateElements';
 import { NavigationController } from 'valdi_navigation/src/NavigationController';
-import { Colors, Spacing, SemanticSpacing, Message, Conversation } from '@common';
+import {
+  Colors,
+  Spacing,
+  SemanticSpacing,
+  Message,
+  Conversation,
+} from '@common';
 import { MessageBubble } from './MessageBubble';
 import { InputBar } from './InputBar';
-import { ChatService } from 'chat_core/src/ChatService';
-import { MessageStore, messageStore } from 'chat_core/src/MessageStore';
-import { ConversationStore, conversationStore } from 'chat_core/src/ConversationStore';
-import { MessageStoreState, StreamEvent, ChatServiceConfig } from 'chat_core/src/types';
+import { ChatService } from '@chat_core/ChatService';
+import { MessageStore, messageStore } from '@chat_core/MessageStore';
+import {
+  ConversationStore,
+  conversationStore,
+} from '@chat_core/ConversationStore';
+import {
+  MessageStoreState,
+  StreamEvent,
+  ChatServiceConfig,
+} from '@chat_core/types';
 
 /**
  * ChatView Props
@@ -42,7 +55,10 @@ interface ChatViewState {
  *
  * Fully integrated with ChatService and MessageStore for real-time chat functionality.
  */
-export class ChatView extends NavigationPageComponent<ChatViewProps, ChatViewState> {
+export class ChatView extends NavigationPageComponent<
+  ChatViewProps,
+  ChatViewState
+> {
   // Stores and Services
   private messageStore: MessageStore;
   private conversationStore: ConversationStore;
@@ -94,7 +110,7 @@ export class ChatView extends NavigationPageComponent<ChatViewProps, ChatViewSta
     this.unsubscribeMessageStore = this.messageStore.subscribe(
       (state: MessageStoreState) => {
         this.handleMessageStoreUpdate(state);
-      }
+      },
     );
   }
 
@@ -110,7 +126,9 @@ export class ChatView extends NavigationPageComponent<ChatViewProps, ChatViewSta
    * Load messages from store
    */
   private loadMessages(): void {
-    const messages = this.messageStore.getMessages(this.viewModel.conversationId);
+    const messages = this.messageStore.getMessages(
+      this.viewModel.conversationId,
+    );
     this.setState({
       messages,
       isStreaming: this.messageStore.isStreaming(),
@@ -121,7 +139,8 @@ export class ChatView extends NavigationPageComponent<ChatViewProps, ChatViewSta
    * Handle message store updates
    */
   private handleMessageStoreUpdate(state: MessageStoreState): void {
-    const messages = state.messagesByConversation[this.viewModel.conversationId] || [];
+    const messages =
+      state.messagesByConversation[this.viewModel.conversationId] || [];
     const isStreaming = state.streamingStatus === 'streaming';
 
     this.setState({
@@ -140,7 +159,9 @@ export class ChatView extends NavigationPageComponent<ChatViewProps, ChatViewSta
     }
 
     // Get conversation to get system prompt and model config
-    const conversation = this.conversationStore.getConversation(this.viewModel.conversationId);
+    const conversation = this.conversationStore.getConversation(
+      this.viewModel.conversationId,
+    );
 
     // Set loading state
     this.setState({
@@ -159,11 +180,13 @@ export class ChatView extends NavigationPageComponent<ChatViewProps, ChatViewSta
           toolsEnabled: conversation?.toolsEnabled || false,
           maxSteps: 5,
         },
-        this.handleStreamEvent
+        this.handleStreamEvent,
       );
 
       // Update conversation message count
-      this.conversationStore.incrementMessageCount(this.viewModel.conversationId);
+      this.conversationStore.incrementMessageCount(
+        this.viewModel.conversationId,
+      );
 
       // Clear loading state (streaming state is managed by store)
       this.setState({
@@ -175,7 +198,8 @@ export class ChatView extends NavigationPageComponent<ChatViewProps, ChatViewSta
       this.setState({
         isLoading: false,
         isStreaming: false,
-        error: error instanceof Error ? error.message : 'Failed to send message',
+        error:
+          error instanceof Error ? error.message : 'Failed to send message',
       });
     }
   };
@@ -215,12 +239,7 @@ export class ChatView extends NavigationPageComponent<ChatViewProps, ChatViewSta
   };
 
   private renderMessage = (message: Message) => {
-    return (
-      <MessageBubble
-        key={message.id}
-        message={message}
-      />
-    );
+    return <MessageBubble key={message.id} message={message} />;
   };
 
   onRender() {
@@ -264,7 +283,7 @@ export class ChatView extends NavigationPageComponent<ChatViewProps, ChatViewSta
         )}
 
         {/* Messages List */}
-        <scrollview style={styles.messagesList}>
+        <ScrollView style={styles.messagesList}>
           <view style={styles.messagesContent}>
             {messages.length === 0 ? (
               <view style={styles.emptyState}>
@@ -280,7 +299,7 @@ export class ChatView extends NavigationPageComponent<ChatViewProps, ChatViewSta
               messages.map((message) => this.renderMessage(message))
             )}
           </view>
-        </scrollview>
+        </ScrollView>
 
         {/* Input Bar */}
         <InputBar
