@@ -565,9 +565,7 @@ describe('StreamUtils', () => {
     });
 
     it('should preserve multiple spaces', () => {
-      const words = Array.from(
-        StreamUtils.wordSplitter('Hello    world')
-      );
+      const words = Array.from(StreamUtils.wordSplitter('Hello    world'));
 
       expect(words).toEqual(['Hello', '    ', 'world']);
     });
@@ -585,25 +583,19 @@ describe('StreamUtils', () => {
     });
 
     it('should handle text with newlines', () => {
-      const words = Array.from(
-        StreamUtils.wordSplitter('Hello\nworld')
-      );
+      const words = Array.from(StreamUtils.wordSplitter('Hello\nworld'));
 
       expect(words).toEqual(['Hello', '\n', 'world']);
     });
 
     it('should handle text with tabs', () => {
-      const words = Array.from(
-        StreamUtils.wordSplitter('Hello\tworld')
-      );
+      const words = Array.from(StreamUtils.wordSplitter('Hello\tworld'));
 
       expect(words).toEqual(['Hello', '\t', 'world']);
     });
 
     it('should handle punctuation', () => {
-      const words = Array.from(
-        StreamUtils.wordSplitter('Hello, world!')
-      );
+      const words = Array.from(StreamUtils.wordSplitter('Hello, world!'));
 
       expect(words).toEqual(['Hello,', ' ', 'world!']);
     });
@@ -683,7 +675,7 @@ describe('StreamUtils', () => {
 
 function createMockMessage(
   messageId: string,
-  content: string = 'Test message'
+  content: string = 'Test message',
 ): Message {
   return {
     id: messageId,

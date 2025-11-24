@@ -19,10 +19,7 @@ export {
 } from './AgentRegistry';
 
 // Agent Executor
-export {
-  AgentExecutor,
-  type AgentExecutorConfig,
-} from './AgentExecutor';
+export { AgentExecutor, type AgentExecutorConfig } from './AgentExecutor';
 
 // Workflow Engine
 export {

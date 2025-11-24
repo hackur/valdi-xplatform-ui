@@ -7,7 +7,6 @@
  */
 
 import {
-  AgentDefinition,
   AgentContext,
   AgentExecutionResult,
   LoopControlConfig,
@@ -97,9 +96,7 @@ export class LoopController {
         const iterationStart = Date.now();
         state.iteration++;
 
-        this.log(
-          `Iteration ${state.iteration}/${config.maxIterations}`,
-        );
+        this.log(`Iteration ${state.iteration}/${config.maxIterations}`);
 
         // Check total timeout
         if (config.totalTimeout) {
@@ -135,14 +132,16 @@ export class LoopController {
             state.iterationResults.push(result);
             break;
           }
-
         } catch (error) {
-          const errorMessage = error instanceof Error ? error.message : String(error);
+          const errorMessage =
+            error instanceof Error ? error.message : String(error);
           this.log(`Iteration ${state.iteration} threw error: ${errorMessage}`);
 
           // Call error callback
           if (config.onError) {
-            config.onError(error instanceof Error ? error : new Error(errorMessage));
+            config.onError(
+              error instanceof Error ? error : new Error(errorMessage),
+            );
           }
 
           // Create error result
@@ -181,9 +180,7 @@ export class LoopController {
           );
 
           if (shouldStop) {
-            this.log(
-              `Stop condition met at iteration ${state.iteration}`,
-            );
+            this.log(`Stop condition met at iteration ${state.iteration}`);
             break;
           }
         }
@@ -230,7 +227,9 @@ export class LoopController {
       state.isRunning = false;
       state.totalTime = Date.now() - state.startTime.getTime();
 
-      this.log(`Loop failed: ${error instanceof Error ? error.message : String(error)}`);
+      this.log(
+        `Loop failed: ${error instanceof Error ? error.message : String(error)}`,
+      );
 
       // Call error callback
       if (config.onError) {
@@ -267,14 +266,15 @@ export class LoopController {
 
       // Pass results to next loop
       if (state.iterationResults.length > 0) {
-        const lastResult = state.iterationResults[state.iterationResults.length - 1];
-        if (lastResult.messages.length > 0) {
+        const lastResult =
+          state.iterationResults[state.iterationResults.length - 1];
+        if (lastResult && lastResult.messages.length > 0) {
           currentContext.messages = [
             ...currentContext.messages,
             ...lastResult.messages,
           ];
         }
-        if (lastResult.output) {
+        if (lastResult && lastResult.output) {
           currentContext.sharedData = {
             ...currentContext.sharedData,
             previousLoopOutput: lastResult.output,
@@ -303,13 +303,17 @@ export class LoopController {
   ): Promise<LoopExecutionState> {
     return this.executeLoop(agentId, context, {
       maxIterations,
-      stopWhen: (iteration, results) => {
+      stopWhen: (_iteration, results) => {
         if (results.length === 0) {
           return false;
         }
 
         const lastResult = results[results.length - 1];
-        return lastResult.output !== undefined && targetCondition(lastResult.output);
+        return (
+          lastResult !== undefined &&
+          lastResult.output !== undefined &&
+          targetCondition(lastResult.output)
+        );
       },
     });
   }
@@ -392,17 +396,21 @@ export class LoopController {
 export function createKeywordStopCondition(
   keyword: string,
 ): (iteration: number, results: AgentExecutionResult[]) => boolean {
-  return (iteration, results) => {
+  return (_iteration, results) => {
     if (results.length === 0) {
       return false;
     }
 
     const lastResult = results[results.length - 1];
-    if (lastResult.messages.length === 0) {
+    if (!lastResult || lastResult.messages.length === 0) {
       return false;
     }
 
     const lastMessage = lastResult.messages[lastResult.messages.length - 1];
+    if (!lastMessage) {
+      return false;
+    }
+
     const content =
       typeof lastMessage.content === 'string' ? lastMessage.content : '';
 
@@ -429,12 +437,15 @@ export function createIterationStopCondition(
 export function createSuccessStopCondition(
   evaluator: (result: AgentExecutionResult) => boolean,
 ): (iteration: number, results: AgentExecutionResult[]) => boolean {
-  return (iteration, results) => {
+  return (_iteration, results) => {
     if (results.length === 0) {
       return false;
     }
 
     const lastResult = results[results.length - 1];
+    if (!lastResult) {
+      return false;
+    }
     return evaluator(lastResult);
   };
 }
@@ -447,7 +458,7 @@ export function createSuccessStopCondition(
 export function createErrorThresholdStopCondition(
   maxErrors: number,
 ): (iteration: number, results: AgentExecutionResult[]) => boolean {
-  return (iteration, results) => {
+  return (_iteration, results) => {
     if (results.length < maxErrors) {
       return false;
     }
@@ -473,7 +484,7 @@ export function createStabilityStopCondition(
 
   const compare = comparator || defaultComparator;
 
-  return (iteration, results) => {
+  return (_iteration, results) => {
     if (results.length < stableIterations) {
       return false;
     }
@@ -481,7 +492,11 @@ export function createStabilityStopCondition(
     const recentResults = results.slice(-stableIterations);
 
     // Check if all outputs are the same
-    const firstOutput = recentResults[0].output;
+    const firstResult = recentResults[0];
+    if (!firstResult) {
+      return false;
+    }
+    const firstOutput = firstResult.output;
     return recentResults.every((result) => compare(result.output, firstOutput));
   };
 }

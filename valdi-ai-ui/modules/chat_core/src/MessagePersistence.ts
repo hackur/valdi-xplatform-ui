@@ -57,14 +57,13 @@ export interface MessagePersistenceConfig {
  */
 export class MessagePersistence {
   private storage: StorageProvider;
-  private autoPersist: boolean;
   private debounceMs: number;
   private debug: boolean;
-  private debounceTimers: Map<string, number> = new Map();
+  private debounceTimers: Map<string, ReturnType<typeof setTimeout>> =
+    new Map();
 
   constructor(config: MessagePersistenceConfig = {}) {
     this.storage = config.storage || defaultStorage;
-    this.autoPersist = config.autoPersist ?? true;
     this.debounceMs = config.debounceMs ?? 500;
     this.debug = config.debug ?? false;
   }

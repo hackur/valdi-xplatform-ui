@@ -5,12 +5,8 @@
  * Provides reactive state management for messages with CRUD operations.
  */
 
-import { Message, MessageUtils, MessageUpdateInput } from '@common/types';
-import {
-  StorageError,
-  ErrorCode,
-  handleError,
-} from '@common/errors';
+import { Message, MessageUpdateInput } from '@common/types';
+import { StorageError, ErrorCode, handleError } from '@common/errors';
 import { MessageStoreState, StreamingStatus } from './types';
 import { MessagePersistence } from './MessagePersistence';
 
@@ -60,7 +56,10 @@ export class MessageStore {
         operation: 'loadMessages',
         store: 'MessageStore',
       });
-      console.error('[MessageStore] Error loading persisted messages:', errorInfo.userMessage);
+      console.error(
+        '[MessageStore] Error loading persisted messages:',
+        errorInfo.userMessage,
+      );
 
       // Re-throw as StorageError for caller to handle
       throw new StorageError(
@@ -71,7 +70,7 @@ export class MessageStore {
           storageType: 'persistence',
           cause: error instanceof Error ? error : undefined,
           userMessage: errorInfo.userMessage,
-        }
+        },
       );
     }
   }
@@ -146,7 +145,10 @@ export class MessageStore {
           conversationId: message.conversationId,
           store: 'MessageStore',
         });
-        console.error('[MessageStore] Error persisting message:', errorInfo.userMessage);
+        console.error(
+          '[MessageStore] Error persisting message:',
+          errorInfo.userMessage,
+        );
 
         // Don't throw - allow the operation to continue even if persistence fails
         // The message is already in memory state
@@ -172,10 +174,23 @@ export class MessageStore {
       return;
     }
 
+    // Get existing message (index check already done above)
+    const existingMessage = messages[index];
+    if (!existingMessage) {
+      console.error('Unexpected: message at index is undefined');
+      return;
+    }
+
     const updatedMessage: Message = {
-      ...messages[index],
+      ...existingMessage,
       ...updates,
+      id: existingMessage.id,
+      conversationId: existingMessage.conversationId,
+      role: existingMessage.role,
+      content: updates.content ?? existingMessage.content,
+      createdAt: existingMessage.createdAt,
       updatedAt: new Date(),
+      status: updates.status ?? existingMessage.status,
     };
 
     const updatedMessages = [...messages];
@@ -205,7 +220,10 @@ export class MessageStore {
           messageId,
           store: 'MessageStore',
         });
-        console.error('[MessageStore] Error persisting message update:', errorInfo.userMessage);
+        console.error(
+          '[MessageStore] Error persisting message update:',
+          errorInfo.userMessage,
+        );
       }
     }
   }

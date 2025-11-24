@@ -118,7 +118,7 @@ export interface ParallelWorkflowConfig extends WorkflowConfig {
  * ```
  */
 export class ParallelWorkflow extends WorkflowExecutor {
-  protected config: ParallelWorkflowConfig;
+  protected override config: ParallelWorkflowConfig;
 
   constructor(
     config: ParallelWorkflowConfig,
@@ -132,7 +132,7 @@ export class ParallelWorkflow extends WorkflowExecutor {
   /**
    * Execute the parallel workflow
    */
-  async execute(
+  override async execute(
     options: WorkflowExecutionOptions,
   ): Promise<WorkflowExecutionResult> {
     const { conversationId, input, onProgress, abortSignal } = options;
@@ -355,8 +355,11 @@ export class ParallelWorkflow extends WorkflowExecutor {
       case 'concatenate':
         return outputs
           .map((output, index) => {
-            const agentName = steps[index].agentName;
-            return `## ${agentName}\n\n${output}`;
+            const step = steps[index];
+            if (!step) {
+              return `## Unknown Agent\n\n${output}`;
+            }
+            return `## ${step.agentName}\n\n${output}`;
           })
           .join('\n\n---\n\n');
 
@@ -369,7 +372,7 @@ export class ParallelWorkflow extends WorkflowExecutor {
         });
 
         let maxVotes = 0;
-        let winner = outputs[0];
+        let winner = outputs[0] || '';
         votes.forEach((count, output) => {
           if (count > maxVotes) {
             maxVotes = count;
@@ -380,7 +383,7 @@ export class ParallelWorkflow extends WorkflowExecutor {
         return winner;
 
       case 'first':
-        return outputs[0];
+        return outputs[0] || '';
 
       default:
         return outputs.join('\n\n');
@@ -408,7 +411,7 @@ export class ParallelWorkflow extends WorkflowExecutor {
     }
 
     const synthesizerStep = this.state.steps.find(
-      (step) => step.agentId === this.config.synthesizerAgent!.id,
+      (step) => step.agentId === this.config.synthesizerAgent?.id,
     );
 
     return synthesizerStep?.output;

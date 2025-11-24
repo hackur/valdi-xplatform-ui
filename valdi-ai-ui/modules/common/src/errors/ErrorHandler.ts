@@ -102,7 +102,7 @@ export class ErrorHandler {
    */
   handleError(
     error: unknown,
-    context?: Record<string, unknown>
+    context?: Record<string, unknown>,
   ): {
     code: string;
     message: string;
@@ -193,7 +193,10 @@ export class ErrorHandler {
   /**
    * Normalize any error to AppError
    */
-  private normalizeError(error: unknown, context?: Record<string, unknown>): AppError {
+  private normalizeError(
+    error: unknown,
+    context?: Record<string, unknown>,
+  ): AppError {
     if (isAppError(error)) {
       // Add additional context if provided
       if (context) {
@@ -209,11 +212,16 @@ export class ErrorHandler {
 
     if (error instanceof Error) {
       // Convert native Error to AppError
-      return new AppError(error.message, ErrorCode.UNKNOWN, ErrorSeverity.MEDIUM, {
-        cause: error,
-        context,
-        retryable: false,
-      });
+      return new AppError(
+        error.message,
+        ErrorCode.UNKNOWN,
+        ErrorSeverity.MEDIUM,
+        {
+          cause: error,
+          context,
+          retryable: false,
+        },
+      );
     }
 
     // Unknown error type
@@ -224,7 +232,7 @@ export class ErrorHandler {
       {
         context,
         retryable: false,
-      }
+      },
     );
   }
 
@@ -238,7 +246,11 @@ export class ErrorHandler {
    * @param maxRetries - Maximum number of retries allowed
    * @returns Whether to retry the operation
    */
-  shouldRetry(error: unknown, attemptNumber: number = 0, maxRetries: number = 3): boolean {
+  shouldRetry(
+    error: unknown,
+    attemptNumber: number = 0,
+    maxRetries: number = 3,
+  ): boolean {
     // Don't retry if max retries exceeded
     if (attemptNumber >= maxRetries) {
       return false;
@@ -496,7 +508,7 @@ export const errorHandler = new ErrorHandler();
  */
 export function handleError(
   error: unknown,
-  context?: Record<string, unknown>
+  context?: Record<string, unknown>,
 ): ReturnType<ErrorHandler['handleError']> {
   return errorHandler.handleError(error, context);
 }
@@ -544,7 +556,7 @@ export function logError(error: AppError): void {
 export function shouldRetry(
   error: unknown,
   attemptNumber: number = 0,
-  maxRetries: number = 3
+  maxRetries: number = 3,
 ): boolean {
   return errorHandler.shouldRetry(error, attemptNumber, maxRetries);
 }

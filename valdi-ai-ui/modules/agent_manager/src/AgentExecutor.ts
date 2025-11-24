@@ -5,11 +5,7 @@
  * Handles message formatting, error handling, and result tracking.
  */
 
-import {
-  AgentDefinition,
-  AgentContext,
-  AgentExecutionResult,
-} from './types';
+import { AgentDefinition, AgentContext, AgentExecutionResult } from './types';
 import { ChatService } from '@chat_core/ChatService';
 import { MessageUtils, Message } from '@common/types';
 
@@ -59,7 +55,7 @@ export class AgentExecutor {
       timeout?: number;
       abortSignal?: AbortSignal;
       onProgress?: (step: number, total: number) => void;
-    }
+    },
   ): Promise<AgentExecutionResult> {
     const executionId = `exec_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
     const startTime = Date.now();
@@ -76,7 +72,10 @@ export class AgentExecutor {
 
       // Set up timeout
       const timeoutPromise = new Promise<never>((_, reject) => {
-        setTimeout(() => reject(new Error(`Execution timeout after ${timeout}ms`)), timeout);
+        setTimeout(
+          () => reject(new Error(`Execution timeout after ${timeout}ms`)),
+          timeout,
+        );
       });
 
       // Set up abort handling
@@ -102,7 +101,8 @@ export class AgentExecutor {
       return result;
     } catch (error) {
       const executionTime = Date.now() - startTime;
-      const errorMessage = error instanceof Error ? error.message : String(error);
+      const errorMessage =
+        error instanceof Error ? error.message : String(error);
 
       this.log(`Agent ${agent.id} failed: ${errorMessage}`);
 
@@ -116,8 +116,8 @@ export class AgentExecutor {
           finishReason: errorMessage.includes('timeout')
             ? 'timeout'
             : errorMessage.includes('aborted')
-            ? 'max_steps'
-            : 'error',
+              ? 'max_steps'
+              : 'error',
         },
       };
     } finally {
@@ -133,7 +133,7 @@ export class AgentExecutor {
     context: AgentContext,
     options?: {
       onProgress?: (step: number, total: number) => void;
-    }
+    },
   ): Promise<AgentExecutionResult> {
     const startTime = Date.now();
     let steps = 0;
@@ -149,7 +149,10 @@ export class AgentExecutor {
       // Add system prompt if provided
       if (agent.systemPrompt && conversationMessages[0]?.role !== 'system') {
         conversationMessages.unshift(
-          MessageUtils.createSystemMessage(context.conversationId, agent.systemPrompt)
+          MessageUtils.createSystemMessage(
+            context.conversationId,
+            agent.systemPrompt,
+          ),
         );
       }
 
@@ -205,9 +208,14 @@ export class AgentExecutor {
         if (response.finishReason === 'stop') {
           // Normal completion
           break;
-        } else if (response.finishReason === 'tool-calls' && response.toolCalls) {
+        } else if (
+          response.finishReason === 'tool-calls' &&
+          response.toolCalls
+        ) {
           // Tool calls made, continue loop
-          this.log(`Agent ${agent.id} made ${response.toolCalls.length} tool calls`);
+          this.log(
+            `Agent ${agent.id} made ${response.toolCalls.length} tool calls`,
+          );
           continue;
         } else if (response.finishReason === 'error') {
           // Error occurred
@@ -223,14 +231,15 @@ export class AgentExecutor {
       }
 
       const executionTime = Date.now() - startTime;
-      const finishReason: AgentExecutionResult['metadata']['finishReason'] =
+      const finishReason: 'completed' | 'max_steps' | 'timeout' | 'error' =
         steps >= maxSteps ? 'max_steps' : 'completed';
 
       // Extract output from last message
       const lastOutputMessage = messages[messages.length - 1];
-      const output = context.sharedData?.extractOutput && lastOutputMessage
-        ? this.extractOutput(lastOutputMessage)
-        : undefined;
+      const output =
+        context.sharedData?.extractOutput && lastOutputMessage
+          ? this.extractOutput(lastOutputMessage)
+          : undefined;
 
       return {
         agentId: agent.id,
@@ -240,7 +249,7 @@ export class AgentExecutor {
           steps,
           toolCalls: messages.reduce(
             (count, msg) => count + (msg.toolCalls?.length ?? 0),
-            0
+            0,
           ),
           tokens: {
             prompt: promptTokens,
@@ -275,7 +284,7 @@ export class AgentExecutor {
 
     // Try to parse JSON from code blocks
     const jsonMatch = content.match(/```json\s*\n([\s\S]*?)\n```/);
-    if (jsonMatch) {
+    if (jsonMatch && jsonMatch[1]) {
       try {
         return JSON.parse(jsonMatch[1]);
       } catch {
@@ -306,18 +315,20 @@ export class AgentExecutor {
       timeout?: number;
       abortSignal?: AbortSignal;
       maxConcurrency?: number;
-    }
+    },
   ): Promise<AgentExecutionResult[]> {
     const maxConcurrency = options?.maxConcurrency ?? agents.length;
 
-    this.log(`Executing ${agents.length} agents in parallel (max concurrency: ${maxConcurrency})`);
+    this.log(
+      `Executing ${agents.length} agents in parallel (max concurrency: ${maxConcurrency})`,
+    );
 
     // Execute in batches if max concurrency is set
     const results: AgentExecutionResult[] = [];
     for (let i = 0; i < agents.length; i += maxConcurrency) {
       const batch = agents.slice(i, i + maxConcurrency);
       const batchResults = await Promise.all(
-        batch.map((agent) => this.execute(agent, context, options))
+        batch.map((agent) => this.execute(agent, context, options)),
       );
       results.push(...batchResults);
     }

@@ -5,12 +5,7 @@
  * Supports multiple formats: JSON, Markdown, and plain text.
  */
 
-import {
-  Conversation,
-  Message,
-  MessageUtils,
-  ConversationUtils,
-} from '@common/types';
+import { Conversation, Message, MessageUtils } from '@common/types';
 import { MessagePersistence } from './MessagePersistence';
 import { ConversationPersistence } from './ConversationPersistence';
 
@@ -199,7 +194,7 @@ export class ExportService {
       mimeType = 'application/json';
     } else {
       // For markdown/text, concatenate individual exports
-      const parts = validExports.map((e, index) => {
+      const parts = validExports.map((e) => {
         if (config.format === 'markdown') {
           return this.exportToMarkdown(e.conversation!, e.messages, config);
         } else {

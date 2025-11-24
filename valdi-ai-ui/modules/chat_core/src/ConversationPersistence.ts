@@ -59,16 +59,14 @@ export interface ConversationPersistenceConfig {
  */
 export class ConversationPersistence {
   private storage: StorageProvider;
-  private autoPersist: boolean;
   private debounceMs: number;
   private debug: boolean;
-  private debounceTimer?: number;
+  private debounceTimer?: ReturnType<typeof setTimeout>;
 
   private readonly STORAGE_KEY = 'conversations';
 
   constructor(config: ConversationPersistenceConfig = {}) {
     this.storage = config.storage || defaultStorage;
-    this.autoPersist = config.autoPersist ?? true;
     this.debounceMs = config.debounceMs ?? 500;
     this.debug = config.debug ?? false;
   }

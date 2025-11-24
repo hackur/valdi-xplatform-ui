@@ -167,7 +167,7 @@ describe('MessageStore', () => {
             messagesByConversation: expect.objectContaining({
               'conv-1': expect.arrayContaining([message]),
             }),
-          })
+          }),
         );
       });
     });
@@ -202,7 +202,7 @@ describe('MessageStore', () => {
 
         const updated = store.getMessage('conv-1', 'msg-1');
         expect(updated?.updatedAt.getTime()).toBeGreaterThan(
-          originalUpdatedAt.getTime()
+          originalUpdatedAt.getTime(),
         );
       });
 
@@ -212,7 +212,7 @@ describe('MessageStore', () => {
         });
 
         expect(console.warn).toHaveBeenCalledWith(
-          expect.stringContaining('not found')
+          expect.stringContaining('not found'),
         );
       });
 
@@ -424,7 +424,7 @@ describe('MessageStore', () => {
           expect.objectContaining({
             streamingStatus: 'streaming',
             streamingMessageId: 'msg-1',
-          })
+          }),
         );
       });
     });
@@ -606,7 +606,7 @@ describe('MessageStore', () => {
       await errorStore.addMessage(createMockMessage('conv-1', 'msg-1'));
 
       await expect(
-        errorStore.updateMessage('conv-1', 'msg-1', { content: 'Updated' })
+        errorStore.updateMessage('conv-1', 'msg-1', { content: 'Updated' }),
       ).resolves.not.toThrow();
     });
 
@@ -627,7 +627,7 @@ describe('MessageStore', () => {
       await errorStore.addMessage(createMockMessage('conv-1', 'msg-1'));
 
       await expect(
-        errorStore.deleteMessage('conv-1', 'msg-1')
+        errorStore.deleteMessage('conv-1', 'msg-1'),
       ).resolves.not.toThrow();
     });
   });
@@ -638,7 +638,7 @@ describe('MessageStore', () => {
 function createMockMessage(
   conversationId: string,
   messageId: string,
-  content: string = 'Test message'
+  content: string = 'Test message',
 ): Message {
   return {
     id: messageId,

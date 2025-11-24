@@ -92,9 +92,12 @@ describe('ConversationStore', () => {
     it('should set loading state during initialization', async () => {
       const slowPersistence = new ConversationPersistence({
         storage: {
-          getItem: jest.fn().mockImplementation(
-            () => new Promise((resolve) => setTimeout(() => resolve(null), 50))
-          ),
+          getItem: jest
+            .fn()
+            .mockImplementation(
+              () =>
+                new Promise((resolve) => setTimeout(() => resolve(null), 50)),
+            ),
           setItem: jest.fn(),
           removeItem: jest.fn(),
           clear: jest.fn(),
@@ -941,7 +944,7 @@ describe('ConversationStore', () => {
         errorStore.createConversation({
           title: 'Test',
           modelConfig: createMockModelConfig(),
-        })
+        }),
       ).resolves.not.toThrow();
     });
   });
@@ -952,7 +955,7 @@ describe('ConversationStore', () => {
 function createMockConversation(
   id: string,
   title: string,
-  provider: AIProvider = 'openai'
+  provider: AIProvider = 'openai',
 ): Conversation {
   return {
     id,

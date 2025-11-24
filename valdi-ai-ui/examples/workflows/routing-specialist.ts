@@ -249,7 +249,9 @@ export async function executeRoutingWorkflow(
     workflowState.currentStep = 1;
 
     // Parse classification
-    const classification = parseClassification(classificationResult.output || '');
+    const classification = parseClassification(
+      classificationResult.output || '',
+    );
     console.log(
       `Classification: ${classification.type} (${classification.confidence}% confidence)`,
     );
@@ -376,7 +378,9 @@ async function simulateAgentExecution(
   context: AgentContext,
 ): Promise<AgentExecutionResult> {
   const startTime = Date.now();
-  await new Promise((resolve) => setTimeout(resolve, 800 + Math.random() * 800));
+  await new Promise((resolve) =>
+    setTimeout(resolve, 800 + Math.random() * 800),
+  );
 
   let output = '';
 

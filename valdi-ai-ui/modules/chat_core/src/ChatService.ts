@@ -5,14 +5,9 @@
  * Uses Valdi's valdi_http module for cross-platform networking.
  */
 
+// @ts-ignore - valdi_http is a vendor library without TypeScript definitions
 import { HTTPClient } from 'valdi_http/src/HTTPClient';
-import {
-  Message,
-  MessageUtils,
-  Conversation,
-  AIProvider,
-  ModelConfig,
-} from '@common/types';
+import { Message, MessageUtils, AIProvider, ModelConfig } from '@common/types';
 import {
   APIError,
   ErrorCode,
@@ -25,7 +20,6 @@ import {
   ChatResponse,
   ChatServiceConfig,
   StreamCallback,
-  StreamEvent,
 } from './types';
 
 /**
@@ -140,7 +134,7 @@ export class ChatService {
         {
           provider: 'openai',
           userMessage: 'Please add your OpenAI API key in Settings',
-        }
+        },
       );
     }
 
@@ -175,7 +169,7 @@ export class ChatService {
               {
                 provider: 'openai',
                 url: '/chat/completions',
-              }
+              },
             );
           }
 
@@ -192,7 +186,7 @@ export class ChatService {
                 statusCode,
                 provider: 'openai',
                 url: '/chat/completions',
-              }
+              },
             );
           }
 
@@ -207,7 +201,7 @@ export class ChatService {
             {
               provider: 'openai',
               cause: error,
-            }
+            },
           );
         }
       },
@@ -217,10 +211,10 @@ export class ChatService {
         onRetry: (error, attempt, delay) => {
           console.log(
             `[ChatService] Retrying OpenAI request (attempt ${attempt}) after ${delay}ms`,
-            error
+            error,
           );
         },
-      }
+      },
     );
   }
 

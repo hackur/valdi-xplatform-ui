@@ -18,7 +18,10 @@ export class Component<T = any> {
   }
 }
 
-export class StatefulComponent<TProps = any, TState = any> extends Component<TProps> {
+export class StatefulComponent<
+  TProps = any,
+  TState = any,
+> extends Component<TProps> {
   state: TState;
 
   constructor(viewModel: TProps, initialState?: TState) {

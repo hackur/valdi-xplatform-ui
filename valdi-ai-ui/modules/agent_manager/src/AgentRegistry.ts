@@ -111,7 +111,7 @@ export class AgentRegistry {
    */
   async register(
     agent: AgentDefinition,
-    options?: { skipSave?: boolean; skipValidation?: boolean }
+    options?: { skipSave?: boolean; skipValidation?: boolean },
   ): Promise<void> {
     if (this.agents.has(agent.id)) {
       throw new Error(`Agent with ID "${agent.id}" already registered`);
@@ -151,7 +151,7 @@ export class AgentRegistry {
    */
   async update(
     agentId: string,
-    updates: Partial<Omit<AgentDefinition, 'id'>>
+    updates: Partial<Omit<AgentDefinition, 'id'>>,
   ): Promise<void> {
     const agent = this.agents.get(agentId);
     if (!agent) {
@@ -227,8 +227,11 @@ export class AgentRegistry {
    * @returns Results of registration attempts
    */
   async registerBulk(
-    agents: AgentDefinition[]
-  ): Promise<{ success: string[]; failed: Array<{ id: string; error: string }> }> {
+    agents: AgentDefinition[],
+  ): Promise<{
+    success: string[];
+    failed: Array<{ id: string; error: string }>;
+  }> {
     const success: string[] = [];
     const failed: Array<{ id: string; error: string }> = [];
 
@@ -254,7 +257,9 @@ export class AgentRegistry {
       await this.save();
     }
 
-    this.log(`Bulk register: ${success.length} succeeded, ${failed.length} failed`);
+    this.log(
+      `Bulk register: ${success.length} succeeded, ${failed.length} failed`,
+    );
 
     return { success, failed };
   }
@@ -305,13 +310,20 @@ export class AgentRegistry {
     }
 
     // Start with agents that have the first capability
-    let results = this.findByCapability(capabilities[0]);
+    const firstCapability = capabilities[0];
+    if (!firstCapability) {
+      return [];
+    }
+    let results = this.findByCapability(firstCapability);
 
     // Filter to only include agents that have all other capabilities
     for (let i = 1; i < capabilities.length; i++) {
       const capability = capabilities[i];
+      if (!capability) {
+        continue;
+      }
       results = results.filter((agent) =>
-        agent.capabilities?.includes(capability)
+        agent.capabilities?.includes(capability),
       );
     }
 
@@ -323,7 +335,9 @@ export class AgentRegistry {
    * @param provider AI provider
    * @returns Array of agent definitions using the provider
    */
-  findByProvider(provider: 'openai' | 'anthropic' | 'google'): AgentDefinition[] {
+  findByProvider(
+    provider: 'openai' | 'anthropic' | 'google',
+  ): AgentDefinition[] {
     return this.getAll((agent) => agent.model?.provider === provider);
   }
 
@@ -335,12 +349,14 @@ export class AgentRegistry {
    */
   search(
     query: string,
-    options?: { caseSensitive?: boolean; searchDescription?: boolean }
+    options?: { caseSensitive?: boolean; searchDescription?: boolean },
   ): AgentDefinition[] {
     const lowerQuery = options?.caseSensitive ? query : query.toLowerCase();
 
     return this.getAll((agent) => {
-      const name = options?.caseSensitive ? agent.name : agent.name.toLowerCase();
+      const name = options?.caseSensitive
+        ? agent.name
+        : agent.name.toLowerCase();
       const nameMatch = name.includes(lowerQuery);
 
       if (!options?.searchDescription) {
@@ -443,7 +459,10 @@ export class AgentRegistry {
    * @param options Export options
    * @returns JSON string of all agents
    */
-  export(options?: { pretty?: boolean; filter?: (agent: AgentDefinition) => boolean }): string {
+  export(options?: {
+    pretty?: boolean;
+    filter?: (agent: AgentDefinition) => boolean;
+  }): string {
     const agents = this.getAll(options?.filter);
     return JSON.stringify(agents, null, options?.pretty ? 2 : 0);
   }
@@ -456,14 +475,20 @@ export class AgentRegistry {
    */
   async import(
     json: string,
-    options?: { replace?: boolean; skipInvalid?: boolean }
-  ): Promise<{ success: string[]; failed: Array<{ id: string; error: string }> }> {
+    options?: { replace?: boolean; skipInvalid?: boolean },
+  ): Promise<{
+    success: string[];
+    failed: Array<{ id: string; error: string }>;
+  }> {
     let agents: AgentDefinition[];
 
     try {
       agents = JSON.parse(json);
     } catch (error) {
-      throw new Error('Invalid JSON: ' + (error instanceof Error ? error.message : String(error)));
+      throw new Error(
+        'Invalid JSON: ' +
+          (error instanceof Error ? error.message : String(error)),
+      );
     }
 
     if (!Array.isArray(agents)) {
@@ -476,12 +501,18 @@ export class AgentRegistry {
 
     const result = await this.registerBulk(agents);
 
-    this.log(`Imported ${result.success.length} agents, ${result.failed.length} failed`);
+    this.log(
+      `Imported ${result.success.length} agents, ${result.failed.length} failed`,
+    );
 
     // Throw if any failed and not skipping invalid
     if (result.failed.length > 0 && !options?.skipInvalid) {
-      const errorMessages = result.failed.map((f) => `${f.id}: ${f.error}`).join('; ');
-      throw new Error(`Failed to import ${result.failed.length} agents: ${errorMessages}`);
+      const errorMessages = result.failed
+        .map((f) => `${f.id}: ${f.error}`)
+        .join('; ');
+      throw new Error(
+        `Failed to import ${result.failed.length} agents: ${errorMessages}`,
+      );
     }
 
     return result;
@@ -497,7 +528,7 @@ export class AgentRegistry {
   async clone(
     agentId: string,
     newId: string,
-    updates?: Partial<Omit<AgentDefinition, 'id'>>
+    updates?: Partial<Omit<AgentDefinition, 'id'>>,
   ): Promise<AgentDefinition> {
     const agent = this.get(agentId);
     if (!agent) {
@@ -612,7 +643,7 @@ export async function registerDefaultAgents(
   const result = await registry.registerBulk(DEFAULT_AGENTS);
 
   console.log(
-    `[AgentRegistry] Registered ${result.success.length} default agents, ${result.failed.length} failed`
+    `[AgentRegistry] Registered ${result.success.length} default agents, ${result.failed.length} failed`,
   );
 
   return result.success.length;

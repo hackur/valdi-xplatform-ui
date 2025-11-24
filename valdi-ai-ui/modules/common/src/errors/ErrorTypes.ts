@@ -114,7 +114,7 @@ export class AppError extends Error {
       retryable?: boolean;
       cause?: Error;
       userMessage?: string;
-    }
+    },
   ) {
     super(message);
     this.name = this.constructor.name;
@@ -127,8 +127,8 @@ export class AppError extends Error {
     this.userMessage = options?.userMessage;
 
     // Maintains proper stack trace for where our error was thrown (only available on V8)
-    if (Error.captureStackTrace) {
-      Error.captureStackTrace(this, this.constructor);
+    if (typeof (Error as any).captureStackTrace === 'function') {
+      (Error as any).captureStackTrace(this, this.constructor);
     }
   }
 
@@ -146,10 +146,12 @@ export class AppError extends Error {
       retryable: this.retryable,
       userMessage: this.userMessage,
       stack: this.stack,
-      cause: this.cause ? {
-        name: this.cause.name,
-        message: this.cause.message,
-      } : undefined,
+      cause: this.cause
+        ? {
+            name: this.cause.name,
+            message: this.cause.message,
+          }
+        : undefined,
     };
   }
 }
@@ -180,7 +182,7 @@ export class APIError extends AppError {
       context?: Record<string, unknown>;
       cause?: Error;
       userMessage?: string;
-    }
+    },
   ) {
     // Determine severity based on status code
     let severity = ErrorSeverity.MEDIUM;
@@ -250,7 +252,7 @@ export class ValidationError extends AppError {
       received?: unknown;
       context?: Record<string, unknown>;
       userMessage?: string;
-    }
+    },
   ) {
     super(message, code, ErrorSeverity.LOW, {
       ...options,
@@ -300,7 +302,7 @@ export class StorageError extends AppError {
       context?: Record<string, unknown>;
       cause?: Error;
       userMessage?: string;
-    }
+    },
   ) {
     // Determine severity based on operation
     let severity = ErrorSeverity.MEDIUM;
@@ -311,7 +313,8 @@ export class StorageError extends AppError {
     }
 
     // Read operations might be retryable
-    const retryable = options?.operation === 'read' || code === ErrorCode.STORAGE_READ_ERROR;
+    const retryable =
+      options?.operation === 'read' || code === ErrorCode.STORAGE_READ_ERROR;
 
     super(message, code, severity, {
       ...options,
@@ -344,7 +347,11 @@ export class StreamError extends AppError {
   public readonly streamId?: string;
 
   /** Connection state when error occurred */
-  public readonly connectionState?: 'connecting' | 'connected' | 'disconnected' | 'error';
+  public readonly connectionState?:
+    | 'connecting'
+    | 'connected'
+    | 'disconnected'
+    | 'error';
 
   /** Bytes received before error */
   public readonly bytesReceived?: number;
@@ -359,7 +366,7 @@ export class StreamError extends AppError {
       context?: Record<string, unknown>;
       cause?: Error;
       userMessage?: string;
-    }
+    },
   ) {
     // Connection and timeout errors are retryable
     const retryable =
@@ -417,7 +424,7 @@ export class WorkflowError extends AppError {
       context?: Record<string, unknown>;
       cause?: Error;
       userMessage?: string;
-    }
+    },
   ) {
     // Workflow errors are generally retryable unless cancelled
     const retryable = code !== ErrorCode.WORKFLOW_CANCELLED;

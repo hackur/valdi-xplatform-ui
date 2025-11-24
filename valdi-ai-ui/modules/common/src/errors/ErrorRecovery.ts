@@ -111,7 +111,7 @@ export interface CacheFallbackOptions<T> {
  */
 export async function retryWithBackoff<T>(
   fn: () => Promise<T>,
-  options: RetryOptions = {}
+  options: RetryOptions = {},
 ): Promise<T> {
   const {
     maxRetries = 3,
@@ -134,14 +134,14 @@ export async function retryWithBackoff<T>(
       attempt++;
 
       // Check if we should retry
-      if (attempt > maxRetries || !shouldRetry(error, attempt - 1, maxRetries)) {
+      if (attempt > maxRetries || !shouldRetry(error, attempt - 1)) {
         throw error;
       }
 
       // Calculate delay with exponential backoff
       const baseDelay = Math.min(
         initialDelay * Math.pow(backoffMultiplier, attempt - 1),
-        maxDelay
+        maxDelay,
       );
 
       // Add jitter to prevent thundering herd
@@ -182,7 +182,7 @@ export async function retryWithBackoff<T>(
  */
 export async function fallbackToCache<T>(
   fn: () => Promise<T>,
-  options: CacheFallbackOptions<T>
+  options: CacheFallbackOptions<T>,
 ): Promise<T> {
   const {
     key,
@@ -213,7 +213,7 @@ export async function fallbackToCache<T>(
       if (age <= ttl || useStaleOnError) {
         console.warn(
           `[ErrorRecovery] Using cached value for "${key}" (age: ${age}ms)`,
-          error
+          error,
         );
         return cached.value;
       }
@@ -246,13 +246,16 @@ export async function fallbackToCache<T>(
 export async function gracefulDegradation<T>(
   primaryFn: () => Promise<T>,
   degradedFn: () => Promise<T>,
-  options: RetryOptions = {}
+  options: RetryOptions = {},
 ): Promise<T> {
   try {
     // Try primary function with retry
     return await retryWithBackoff(primaryFn, options);
   } catch (error) {
-    console.warn('[ErrorRecovery] Primary function failed, using degraded fallback', error);
+    console.warn(
+      '[ErrorRecovery] Primary function failed, using degraded fallback',
+      error,
+    );
 
     // Fall back to degraded function
     return await degradedFn();
@@ -270,7 +273,7 @@ export class CircuitBreaker {
   private failures: number[] = []; // Timestamps of failures
   private consecutiveSuccesses = 0;
   private options: Required<CircuitBreakerOptions>;
-  private resetTimer?: NodeJS.Timeout;
+  private resetTimer?: ReturnType<typeof setTimeout>;
 
   constructor(options: CircuitBreakerOptions = {}) {
     this.options = {
@@ -296,8 +299,9 @@ export class CircuitBreaker {
         ErrorSeverity.HIGH,
         {
           retryable: false,
-          userMessage: 'Service temporarily unavailable. Please try again later.',
-        }
+          userMessage:
+            'Service temporarily unavailable. Please try again later.',
+        },
       );
     }
 
@@ -341,7 +345,7 @@ export class CircuitBreaker {
 
     // Remove old failures outside time window
     this.failures = this.failures.filter(
-      (timestamp) => now - timestamp <= this.options.timeWindow
+      (timestamp) => now - timestamp <= this.options.timeWindow,
     );
 
     // Check if we should open circuit
@@ -365,7 +369,7 @@ export class CircuitBreaker {
     this.options.onOpen();
 
     console.warn(
-      `[CircuitBreaker] Circuit opened after ${this.failures.length} failures`
+      `[CircuitBreaker] Circuit opened after ${this.failures.length} failures`,
     );
 
     // Schedule half-open attempt
@@ -469,7 +473,7 @@ export class CircuitBreaker {
  */
 export async function withTimeout<T>(
   fn: () => Promise<T>,
-  timeoutMs: number
+  timeoutMs: number,
 ): Promise<T> {
   return Promise.race([
     fn(),
@@ -484,11 +488,11 @@ export async function withTimeout<T>(
               {
                 retryable: true,
                 userMessage: 'Request timed out. Please try again.',
-              }
-            )
+              },
+            ),
           ),
-        timeoutMs
-      )
+        timeoutMs,
+      ),
     ),
   ]);
 }
@@ -512,7 +516,7 @@ export async function withTimeout<T>(
  */
 export async function batchRetry<T>(
   operations: Array<() => Promise<T>>,
-  options: RetryOptions = {}
+  options: RetryOptions = {},
 ): Promise<{
   successes: T[];
   failures: Array<{ index: number; error: unknown }>;
@@ -520,7 +524,8 @@ export async function batchRetry<T>(
   const successes: T[] = [];
   const failures: Array<{ index: number; error: unknown }> = [];
 
-  await Promise.allSettled(
+  // Use Promise.all with wrapped promises that never reject
+  await Promise.all(
     operations.map(async (op, index) => {
       try {
         const result = await retryWithBackoff(op, options);
@@ -528,7 +533,7 @@ export async function batchRetry<T>(
       } catch (error) {
         failures.push({ index, error });
       }
-    })
+    }),
   );
 
   return { successes, failures };
@@ -552,9 +557,9 @@ function sleep(ms: number): Promise<void> {
  */
 export function debounceRetry<T extends (...args: any[]) => Promise<any>>(
   fn: T,
-  delay: number = 1000
+  delay: number = 1000,
 ): (...args: Parameters<T>) => Promise<ReturnType<T>> {
-  let timeoutId: NodeJS.Timeout | undefined;
+  let timeoutId: ReturnType<typeof setTimeout> | undefined;
   let lastPromise: Promise<ReturnType<T>> | undefined;
 
   return async (...args: Parameters<T>): Promise<ReturnType<T>> => {
@@ -608,7 +613,7 @@ export function withErrorRecovery(options: RetryOptions = {}) {
   return function (
     _target: any,
     _propertyKey: string,
-    descriptor: PropertyDescriptor
+    descriptor: PropertyDescriptor,
   ) {
     const originalMethod = descriptor.value;
 

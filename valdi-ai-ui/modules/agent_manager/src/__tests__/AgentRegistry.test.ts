@@ -5,7 +5,11 @@
  */
 
 import { describe, it, expect, beforeEach } from 'valdi_test';
-import { AgentRegistry, DEFAULT_AGENTS, registerDefaultAgents } from '../AgentRegistry';
+import {
+  AgentRegistry,
+  DEFAULT_AGENTS,
+  registerDefaultAgents,
+} from '../AgentRegistry';
 import { AgentDefinition } from '../types';
 import { MemoryStorage } from '@common/services/StorageProvider';
 

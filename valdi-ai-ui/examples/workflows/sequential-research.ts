@@ -258,7 +258,9 @@ async function simulateAgentExecution(
   const startTime = Date.now();
 
   // Simulate API call delay
-  await new Promise((resolve) => setTimeout(resolve, 1000 + Math.random() * 1000));
+  await new Promise((resolve) =>
+    setTimeout(resolve, 1000 + Math.random() * 1000),
+  );
 
   // Generate mock output based on agent type
   let output = '';

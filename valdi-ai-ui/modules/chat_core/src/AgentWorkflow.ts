@@ -8,7 +8,6 @@
 import { Message, ModelConfig } from '@common/types';
 import { ChatService } from './ChatService';
 import { MessageStore } from './MessageStore';
-import { StreamCallback } from './types';
 
 /**
  * Workflow Type
@@ -485,8 +484,8 @@ export abstract class WorkflowExecutor {
 export class WorkflowExecutorFactory {
   static create(
     config: WorkflowConfig,
-    chatService: ChatService,
-    messageStore: MessageStore,
+    _chatService: ChatService,
+    _messageStore: MessageStore,
   ): WorkflowExecutor {
     // Import specific executors dynamically to avoid circular dependencies
     // Implementation will be in specific workflow files

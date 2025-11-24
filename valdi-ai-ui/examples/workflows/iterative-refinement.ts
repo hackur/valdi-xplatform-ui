@@ -42,7 +42,8 @@ interface QualityScore {
 const generatorAgent: AgentDefinition = {
   id: 'generator-agent',
   name: 'Content Generator',
-  description: 'Generates and refines content based on requirements and feedback',
+  description:
+    'Generates and refines content based on requirements and feedback',
   systemPrompt: `You are an expert content creator. Your task is to:
 1. Create high-quality content that meets the requirements
 2. Incorporate feedback from evaluations to improve
@@ -178,7 +179,8 @@ export async function executeIterativeRefinement(
     results: [],
   };
 
-  const maxIterations = (workflowState.config.config?.maxIterations as number) || 5;
+  const maxIterations =
+    (workflowState.config.config?.maxIterations as number) || 5;
   const qualityThreshold =
     (workflowState.config.config?.qualityThreshold as number) || 85;
 
@@ -210,7 +212,9 @@ export async function executeIterativeRefinement(
     workflowState.results.push(currentContent);
     workflowState.currentStep++;
 
-    console.log(`Initial content generated (${currentContent.metadata?.executionTime}ms)`);
+    console.log(
+      `Initial content generated (${currentContent.metadata?.executionTime}ms)`,
+    );
 
     // Iterative Refinement Loop
     let currentScore: QualityScore | null = null;
@@ -311,11 +315,17 @@ Create an improved version that addresses all issues and suggestions.`,
       workflowState.results.push(currentContent);
       workflowState.currentStep++;
 
-      console.log(`  Content optimized (${currentContent.metadata?.executionTime}ms)`);
+      console.log(
+        `  Content optimized (${currentContent.metadata?.executionTime}ms)`,
+      );
     }
 
     // Final evaluation if we optimized
-    if (iteration > 0 && workflowState.results[workflowState.results.length - 1].agentId !== 'evaluator-agent') {
+    if (
+      iteration > 0 &&
+      workflowState.results[workflowState.results.length - 1].agentId !==
+        'evaluator-agent'
+    ) {
       console.log('\nFinal evaluation...');
       const finalEvaluationContext: AgentContext = {
         conversationId: workflowState.id,
@@ -417,7 +427,9 @@ async function simulateAgentExecution(
   context: AgentContext,
 ): Promise<AgentExecutionResult> {
   const startTime = Date.now();
-  await new Promise((resolve) => setTimeout(resolve, 1000 + Math.random() * 1000));
+  await new Promise((resolve) =>
+    setTimeout(resolve, 1000 + Math.random() * 1000),
+  );
 
   let output = '';
   const iteration = (context.sharedData?.iteration as number) || 0;
@@ -608,7 +620,9 @@ Length: Comprehensive but concise.`;
 
   // Show final content
   const finalContent = result.results
-    .filter((r) => r.agentId === 'generator-agent' || r.agentId === 'optimizer-agent')
+    .filter(
+      (r) => r.agentId === 'generator-agent' || r.agentId === 'optimizer-agent',
+    )
     .pop();
 
   console.log('\n=== Final Refined Content ===\n');

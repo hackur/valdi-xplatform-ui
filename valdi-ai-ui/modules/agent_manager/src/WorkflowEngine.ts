@@ -12,11 +12,9 @@ import {
   AgentExecutionResult,
   WorkflowConfig,
   WorkflowExecutionState,
-  WorkflowStatus,
 } from './types';
 import { AgentRegistry } from './AgentRegistry';
 import { AgentExecutor } from './AgentExecutor';
-import { MessageUtils } from '@common/types';
 
 /**
  * Workflow progress callback
@@ -82,7 +80,7 @@ export class WorkflowEngine {
   async execute(
     config: WorkflowConfig,
     context: AgentContext,
-    options?: WorkflowExecutionOptions
+    options?: WorkflowExecutionOptions,
   ): Promise<WorkflowExecutionState> {
     const workflowId = `workflow_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
 
@@ -120,14 +118,20 @@ export class WorkflowEngine {
       const timeoutPromise = config.timeout
         ? new Promise<never>((_, reject) => {
             setTimeout(
-              () => reject(new Error(`Workflow timeout after ${config.timeout}ms`)),
-              config.timeout
+              () =>
+                reject(new Error(`Workflow timeout after ${config.timeout}ms`)),
+              config.timeout,
             );
           })
         : null;
 
       // Execute workflow
-      const executionPromise = this.executeWorkflow(state, context, options, abortController.signal);
+      const executionPromise = this.executeWorkflow(
+        state,
+        context,
+        options,
+        abortController.signal,
+      );
 
       if (timeoutPromise) {
         await Promise.race([executionPromise, timeoutPromise]);
@@ -145,7 +149,7 @@ export class WorkflowEngine {
       state.endTime = new Date();
 
       this.log(
-        `Completed workflow: ${config.name} in ${state.endTime.getTime() - state.startTime.getTime()}ms`
+        `Completed workflow: ${config.name} in ${state.endTime.getTime() - state.startTime.getTime()}ms`,
       );
 
       // Final progress callback
@@ -153,13 +157,19 @@ export class WorkflowEngine {
         options.onProgress(state);
       }
     } catch (error) {
-      this.log(`Workflow failed: ${error instanceof Error ? error.message : String(error)}`);
+      this.log(
+        `Workflow failed: ${error instanceof Error ? error.message : String(error)}`,
+      );
 
-      const errorMessage = error instanceof Error ? error.message : String(error);
+      const errorMessage =
+        error instanceof Error ? error.message : String(error);
 
       if (errorMessage.includes('timeout')) {
         state.status = 'timeout';
-      } else if (errorMessage.includes('cancel') || errorMessage.includes('abort')) {
+      } else if (
+        errorMessage.includes('cancel') ||
+        errorMessage.includes('abort')
+      ) {
         state.status = 'stopped';
       } else {
         state.status = 'failed';
@@ -187,7 +197,7 @@ export class WorkflowEngine {
     state: WorkflowExecutionState,
     context: AgentContext,
     options: WorkflowExecutionOptions | undefined,
-    abortSignal: AbortSignal
+    abortSignal: AbortSignal,
   ): Promise<void> {
     const { config } = state;
 
@@ -205,7 +215,12 @@ export class WorkflowEngine {
         break;
 
       case 'evaluator-optimizer':
-        await this.executeEvaluatorOptimizer(state, context, options, abortSignal);
+        await this.executeEvaluatorOptimizer(
+          state,
+          context,
+          options,
+          abortSignal,
+        );
         break;
 
       default:
@@ -220,7 +235,7 @@ export class WorkflowEngine {
     state: WorkflowExecutionState,
     context: AgentContext,
     options: WorkflowExecutionOptions | undefined,
-    abortSignal: AbortSignal
+    abortSignal: AbortSignal,
   ): Promise<void> {
     const { config } = state;
     let currentContext = { ...context };
@@ -257,13 +272,19 @@ export class WorkflowEngine {
         }
       }
 
-      this.log(`Executing agent: ${agent.name} (step ${state.currentStep + 1})`);
+      this.log(
+        `Executing agent: ${agent.name} (step ${state.currentStep + 1})`,
+      );
 
       // Execute with retry logic
       let result: AgentExecutionResult | null = null;
       let lastError: Error | null = null;
 
-      for (let attempt = 0; attempt <= (errorRecovery === 'retry' ? maxRetries : 0); attempt++) {
+      for (
+        let attempt = 0;
+        attempt <= (errorRecovery === 'retry' ? maxRetries : 0);
+        attempt++
+      ) {
         if (abortSignal.aborted) {
           break;
         }
@@ -275,7 +296,7 @@ export class WorkflowEngine {
         try {
           result = await this.executor.execute(agent, currentContext, {
             abortSignal,
-            onProgress: (step, total) => {
+            onProgress: (_step, _total) => {
               // Update state and call progress callback
               if (options?.onProgress) {
                 options.onProgress(state);
@@ -324,7 +345,9 @@ export class WorkflowEngine {
           if (errorRecovery === 'stop') {
             throw new Error(`Agent ${agent.id} failed: ${result.error}`);
           } else {
-            this.log(`Agent ${agent.id} failed: ${result.error}, continuing...`);
+            this.log(
+              `Agent ${agent.id} failed: ${result.error}, continuing...`,
+            );
           }
         }
 
@@ -356,7 +379,7 @@ export class WorkflowEngine {
     state: WorkflowExecutionState,
     context: AgentContext,
     options: WorkflowExecutionOptions | undefined,
-    abortSignal: AbortSignal
+    abortSignal: AbortSignal,
   ): Promise<void> {
     const { config } = state;
 
@@ -381,7 +404,8 @@ export class WorkflowEngine {
     // Execute in parallel
     const results = await this.executor.executeParallel(agents, context, {
       abortSignal,
-      maxConcurrency: (config.config?.maxConcurrency as number) ?? agents.length,
+      maxConcurrency:
+        (config.config?.maxConcurrency as number) ?? agents.length,
     });
 
     state.results = results;
@@ -400,18 +424,23 @@ export class WorkflowEngine {
     state: WorkflowExecutionState,
     context: AgentContext,
     options: WorkflowExecutionOptions | undefined,
-    abortSignal: AbortSignal
+    abortSignal: AbortSignal,
   ): Promise<void> {
     const { config } = state;
 
     if (config.agents.length < 2) {
-      throw new Error('Routing workflow requires at least 2 agents (router + targets)');
+      throw new Error(
+        'Routing workflow requires at least 2 agents (router + targets)',
+      );
     }
 
     // Use first agent as router
     const routerAgentId = config.agents[0];
-    const routerAgent = this.registry.get(routerAgentId);
+    if (!routerAgentId) {
+      throw new Error('Router agent ID is undefined');
+    }
 
+    const routerAgent = this.registry.get(routerAgentId);
     if (!routerAgent) {
       throw new Error(`Router agent not found: ${routerAgentId}`);
     }
@@ -434,6 +463,9 @@ export class WorkflowEngine {
     // In a real implementation, this would parse the router's response
     // For now, we'll use the second agent as default
     let targetAgentId = config.agents[1];
+    if (!targetAgentId) {
+      throw new Error('Target agent ID is undefined');
+    }
 
     // Try to extract agent selection from output if available
     if (routerResult.output && typeof routerResult.output === 'object') {
@@ -450,12 +482,16 @@ export class WorkflowEngine {
 
     this.log(`Routing to: ${targetAgent.name}`);
 
-    const targetResult = await this.executor.execute(targetAgent, {
-      ...context,
-      messages: [...context.messages, ...routerResult.messages],
-    }, {
-      abortSignal,
-    });
+    const targetResult = await this.executor.execute(
+      targetAgent,
+      {
+        ...context,
+        messages: [...context.messages, ...routerResult.messages],
+      },
+      {
+        abortSignal,
+      },
+    );
 
     state.results.push(targetResult);
     state.currentStep++;
@@ -472,7 +508,7 @@ export class WorkflowEngine {
     state: WorkflowExecutionState,
     context: AgentContext,
     options: WorkflowExecutionOptions | undefined,
-    abortSignal: AbortSignal
+    abortSignal: AbortSignal,
   ): Promise<void> {
     const { config } = state;
 
@@ -483,7 +519,14 @@ export class WorkflowEngine {
     }
 
     const generatorAgentId = config.agents[0];
+    if (!generatorAgentId) {
+      throw new Error('Generator agent ID is undefined');
+    }
+
     const evaluatorAgentId = config.agents[1];
+    if (!evaluatorAgentId) {
+      throw new Error('Evaluator agent ID is undefined');
+    }
 
     const maxIterations = config.maxSteps || 3;
 
@@ -504,9 +547,13 @@ export class WorkflowEngine {
         throw new Error(`Generator agent not found: ${generatorAgentId}`);
       }
 
-      const generateResult = await this.executor.execute(generatorAgent, currentContext, {
-        abortSignal,
-      });
+      const generateResult = await this.executor.execute(
+        generatorAgent,
+        currentContext,
+        {
+          abortSignal,
+        },
+      );
 
       state.results.push(generateResult);
       state.currentStep++;
@@ -540,7 +587,7 @@ export class WorkflowEngine {
       const evaluateResult = await this.executor.execute(
         evaluatorAgent,
         evaluateContext,
-        { abortSignal }
+        { abortSignal },
       );
 
       state.results.push(evaluateResult);

@@ -5,14 +5,13 @@
  * in various scenarios.
  */
 
-import { messageStore, conversationStore } from '@chat_core/MessageStore';
-import { exportService } from '@chat_core/ExportService';
-import { MessagePersistence, ConversationPersistence } from '@chat_core';
-import {
-  StorageFactory,
-  MemoryStorageProvider,
-} from '@chat_core/StorageProvider';
-import { DefaultModels } from '@common';
+import { messageStore } from './src/MessageStore';
+import { conversationStore } from './src/ConversationStore';
+import { exportService } from './src/ExportService';
+import { MessagePersistence } from './src/MessagePersistence';
+import { ConversationPersistence } from './src/ConversationPersistence';
+import { MemoryStorageProvider } from './src/StorageProvider';
+import { DefaultModels } from '@common/types';
 
 // ============================================================================
 // Example 1: Basic App Initialization
@@ -152,8 +151,8 @@ export async function importConversationFromJSON(jsonData: string) {
 
   if (result.errors.length > 0) {
     console.error('Import errors:');
-    result.errors.forEach((error, index) => {
-      console.error(`  ${index + 1}. ${error}`);
+    result.errors.forEach((error) => {
+      console.error(`  - ${error}`);
     });
   }
 
@@ -167,7 +166,7 @@ export async function importConversationFromJSON(jsonData: string) {
 export async function exportAllConversations() {
   // Get all conversation IDs
   const conversations = conversationStore.getAllConversations();
-  const conversationIds = conversations.map((c) => c.id);
+  const conversationIds = conversations.map((c: { id: string }) => c.id);
 
   console.log(`Exporting ${conversationIds.length} conversations...`);
 
@@ -193,7 +192,7 @@ export async function searchConversations(query: string) {
 
   console.log(`Found ${results.length} conversations matching "${query}"`);
 
-  results.forEach((conv) => {
+  results.forEach((conv: { title: string; messageCount: number }) => {
     console.log(`- ${conv.title} (${conv.messageCount} messages)`);
   });
 
@@ -518,11 +517,11 @@ export async function completeUsageExample() {
 
   // 4. Export as Markdown
   console.log('\n4. Exporting as Markdown...');
-  const mdResult = await exportConversationAsMarkdown(conversationId);
+  await exportConversationAsMarkdown(conversationId);
 
   // 5. Export as JSON
   console.log('\n5. Exporting as JSON...');
-  const jsonData = await exportConversationAsJSON(conversationId);
+  await exportConversationAsJSON(conversationId);
 
   // 6. Search
   console.log('\n6. Searching conversations...');

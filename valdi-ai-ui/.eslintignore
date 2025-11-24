@@ -1,0 +1,25 @@
+# ESLint Ignore Patterns
+
+# Dependencies
+node_modules/
+vendor/
+
+# Build outputs
+dist/
+build/
+bazel-*/
+coverage/
+
+# Config files
+*.config.js
+*.config.mjs
+
+# Test artifacts
+**/__mocks__/
+**/test-utils/
+
+# Examples (not in tsconfig project)
+examples/
+
+# Logs
+*.log

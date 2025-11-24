@@ -21,7 +21,7 @@ import {
   WorkflowExecutionOptions,
   WorkflowExecutionResult,
   AgentDefinition,
-  WorkflowStep,
+  WorkflowProgressCallback,
 } from './AgentWorkflow';
 import { ChatService } from './ChatService';
 import { MessageStore } from './MessageStore';
@@ -175,7 +175,7 @@ export interface EvaluatorOptimizerWorkflowConfig extends WorkflowConfig {
  * ```
  */
 export class EvaluatorOptimizerWorkflow extends WorkflowExecutor {
-  protected config: EvaluatorOptimizerWorkflowConfig;
+  protected override config: EvaluatorOptimizerWorkflowConfig;
   private iterations: IterationResult[] = [];
 
   constructor(
@@ -190,7 +190,7 @@ export class EvaluatorOptimizerWorkflow extends WorkflowExecutor {
   /**
    * Execute the evaluator-optimizer workflow
    */
-  async execute(
+  override async execute(
     options: WorkflowExecutionOptions,
   ): Promise<WorkflowExecutionResult> {
     const { conversationId, input, onProgress, abortSignal } = options;
@@ -297,6 +297,9 @@ export class EvaluatorOptimizerWorkflow extends WorkflowExecutor {
 
       // Get final result
       const finalIteration = this.iterations[this.iterations.length - 1];
+      if (!finalIteration) {
+        throw new Error('No iterations completed');
+      }
       const finalResult = this.config.returnAllIterations
         ? this.formatAllIterations()
         : finalIteration.output;
@@ -363,7 +366,7 @@ export class EvaluatorOptimizerWorkflow extends WorkflowExecutor {
   private async generateOutput(
     input: string,
     conversationId: string,
-    onProgress?: any,
+    onProgress?: WorkflowProgressCallback,
   ): Promise<string> {
     const step = await this.executeAgentWithRetry(
       this.config.generatorAgent,
@@ -383,7 +386,7 @@ export class EvaluatorOptimizerWorkflow extends WorkflowExecutor {
     output: string,
     originalInput: string,
     conversationId: string,
-    onProgress?: any,
+    onProgress?: WorkflowProgressCallback,
   ): Promise<EvaluationResult> {
     const evaluationPrompt = this.config.evaluatorAgent.evaluationCriteria
       ? `${this.config.evaluatorAgent.evaluationCriteria}\n\nOriginal Request: ${originalInput}\n\nOutput to Evaluate:\n${output}`
@@ -410,7 +413,7 @@ export class EvaluatorOptimizerWorkflow extends WorkflowExecutor {
     evaluation: EvaluationResult,
     originalInput: string,
     conversationId: string,
-    onProgress?: any,
+    onProgress?: WorkflowProgressCallback,
   ): Promise<string> {
     const optimizationPrompt = `Original Request: ${originalInput}\n\nCurrent Output:\n${output}\n\nEvaluation Feedback (Score: ${evaluation.score}/100):\n${evaluation.feedback}\n\nPlease refine the output to address the feedback and improve quality.`;
 
@@ -444,21 +447,21 @@ export class EvaluatorOptimizerWorkflow extends WorkflowExecutor {
 
     // Try to extract score
     const scoreMatch = output.match(/(?:SCORE|Score|score):\s*(\d+)/i);
-    if (scoreMatch) {
+    if (scoreMatch && scoreMatch[1]) {
       result.score = parseInt(scoreMatch[1], 10);
     } else {
       // Look for score/rating pattern
       const ratingMatch = output.match(/(\d+)\s*\/\s*100/);
-      if (ratingMatch) {
+      if (ratingMatch && ratingMatch[1]) {
         result.score = parseInt(ratingMatch[1], 10);
       }
     }
 
     // Extract feedback
     const feedbackMatch = output.match(
-      /(?:FEEDBACK|Feedback|feedback):\s*(.+)/is,
+      /(?:FEEDBACK|Feedback|feedback):\s*([\s\S]+)/i,
     );
-    if (feedbackMatch) {
+    if (feedbackMatch && feedbackMatch[1]) {
       result.feedback = feedbackMatch[1].trim();
     }
 
@@ -468,9 +471,9 @@ export class EvaluatorOptimizerWorkflow extends WorkflowExecutor {
 
     // Try to extract issues
     const issuesMatch = output.match(
-      /(?:ISSUES|Issues|issues):\s*(.+?)(?=\n\n|$)/is,
+      /(?:ISSUES|Issues|issues):\s*([\s\S]+?)(?=\n\n|$)/i,
     );
-    if (issuesMatch) {
+    if (issuesMatch && issuesMatch[1]) {
       result.issues = issuesMatch[1]
         .split('\n')
         .map((i) => i.trim())
@@ -479,9 +482,9 @@ export class EvaluatorOptimizerWorkflow extends WorkflowExecutor {
 
     // Try to extract suggestions
     const suggestionsMatch = output.match(
-      /(?:SUGGESTIONS|Suggestions|suggestions):\s*(.+?)(?=\n\n|$)/is,
+      /(?:SUGGESTIONS|Suggestions|suggestions):\s*([\s\S]+?)(?=\n\n|$)/i,
     );
-    if (suggestionsMatch) {
+    if (suggestionsMatch && suggestionsMatch[1]) {
       result.suggestions = suggestionsMatch[1]
         .split('\n')
         .map((s) => s.trim())
@@ -530,7 +533,7 @@ export class EvaluatorOptimizerWorkflow extends WorkflowExecutor {
    * Format all iterations for output
    */
   private formatAllIterations(): string {
-    const sections = this.iterations.map((iter, index) => {
+    const sections = this.iterations.map((iter) => {
       return (
         `## Iteration ${iter.iteration}\n\n` +
         `**Score:** ${iter.evaluation.score}/100\n\n` +
@@ -540,6 +543,9 @@ export class EvaluatorOptimizerWorkflow extends WorkflowExecutor {
     });
 
     const finalIter = this.iterations[this.iterations.length - 1];
+    if (!finalIter) {
+      return sections.join('\n\n---\n\n');
+    }
 
     return (
       sections.join('\n\n---\n\n') +
@@ -572,7 +578,7 @@ export class EvaluatorOptimizerWorkflow extends WorkflowExecutor {
   /**
    * Reset iterations (allows reuse of workflow)
    */
-  reset(): void {
+  override reset(): void {
     super.reset();
     this.iterations = [];
   }

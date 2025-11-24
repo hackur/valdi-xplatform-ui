@@ -117,7 +117,12 @@ Be objective and give credit to each model's unique contributions.`,
 export const parallelAnalysisWorkflow: WorkflowConfig = {
   name: 'Parallel Multi-Model Analysis',
   type: 'parallel',
-  agents: ['claude-analyst', 'gpt-analyst', 'gemini-analyst', 'aggregator-agent'],
+  agents: [
+    'claude-analyst',
+    'gpt-analyst',
+    'gemini-analyst',
+    'aggregator-agent',
+  ],
   maxSteps: 8,
   timeout: 90000, // 90 seconds
   config: {

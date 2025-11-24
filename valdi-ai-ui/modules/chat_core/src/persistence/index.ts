@@ -5,8 +5,8 @@
  */
 
 // Storage Providers
+export type { StorageProvider } from '../StorageProvider';
 export {
-  StorageProvider,
   LocalStorageProvider,
   MemoryStorageProvider,
   StorageFactory,
@@ -14,28 +14,24 @@ export {
 } from '../StorageProvider';
 
 // Message Persistence
-export {
-  MessagePersistence,
-  MessagePersistenceConfig,
-  messagePersistence,
-} from '../MessagePersistence';
+export type { MessagePersistenceConfig } from '../MessagePersistence';
+export { MessagePersistence, messagePersistence } from '../MessagePersistence';
 
 // Conversation Persistence
+export type { ConversationPersistenceConfig } from '../ConversationPersistence';
 export {
   ConversationPersistence,
-  ConversationPersistenceConfig,
   conversationPersistence,
 } from '../ConversationPersistence';
 
 // Export Service
-export {
-  ExportService,
+export type {
   ExportOptions,
   ExportResult,
   ImportResult,
   ExportFormat,
-  exportService,
 } from '../ExportService';
+export { ExportService, exportService } from '../ExportService';
 
 // Re-export stores with persistence
 export { MessageStore, messageStore } from '../MessageStore';

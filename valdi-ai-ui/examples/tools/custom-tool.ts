@@ -30,7 +30,9 @@ export const queryUserDatabase = tool({
       .describe('The type of search to perform'),
     searchValue: z
       .string()
-      .describe('The value to search for (e.g., user ID, email address, username)'),
+      .describe(
+        'The value to search for (e.g., user ID, email address, username)',
+      ),
     includeMetadata: z
       .boolean()
       .optional()
@@ -96,8 +98,7 @@ export const queryUserDatabase = tool({
     } catch (error) {
       return {
         success: false,
-        error:
-          error instanceof Error ? error.message : 'Database query failed',
+        error: error instanceof Error ? error.message : 'Database query failed',
       };
     }
   },
@@ -185,7 +186,10 @@ export const analyzeTextMetrics = tool({
   execute: async ({ text, includeKeywords }) => {
     try {
       // Basic metrics
-      const words = text.trim().split(/\s+/).filter((w) => w.length > 0);
+      const words = text
+        .trim()
+        .split(/\s+/)
+        .filter((w) => w.length > 0);
       const sentences = text.split(/[.!?]+/).filter((s) => s.trim().length > 0);
       const characters = text.length;
       const charactersNoSpaces = text.replace(/\s/g, '').length;
@@ -203,7 +207,13 @@ export const analyzeTextMetrics = tool({
       );
 
       // Basic sentiment (simplified)
-      const positiveWords = ['good', 'great', 'excellent', 'amazing', 'wonderful'];
+      const positiveWords = [
+        'good',
+        'great',
+        'excellent',
+        'amazing',
+        'wonderful',
+      ];
       const negativeWords = ['bad', 'poor', 'terrible', 'awful', 'horrible'];
       const lowerText = text.toLowerCase();
 
@@ -285,9 +295,7 @@ export const readProjectFile = tool({
   description:
     'Read a file from the project directory. Useful for analyzing code, configuration files, or documentation.',
   parameters: z.object({
-    filePath: z
-      .string()
-      .describe('Path to the file relative to project root'),
+    filePath: z.string().describe('Path to the file relative to project root'),
     encoding: z
       .enum(['utf8', 'base64', 'hex'])
       .optional()
@@ -310,7 +318,8 @@ export const readProjectFile = tool({
           2,
         ),
         'README.md': '# Valdi AI UI\n\nA comprehensive AI workflow platform...',
-        '.env.example': 'OPENAI_API_KEY=your_key_here\nANTHROPIC_API_KEY=your_key_here',
+        '.env.example':
+          'OPENAI_API_KEY=your_key_here\nANTHROPIC_API_KEY=your_key_here',
       };
 
       const content = mockFiles[filePath];
@@ -400,8 +409,11 @@ export const calculateBusinessMetrics = tool({
             };
           }
           result =
-            data.avgPurchaseValue * data.purchaseFrequency * data.customerLifespan;
-          formula = 'Avg Purchase Value × Purchase Frequency × Customer Lifespan';
+            data.avgPurchaseValue *
+            data.purchaseFrequency *
+            data.customerLifespan;
+          formula =
+            'Avg Purchase Value × Purchase Frequency × Customer Lifespan';
           interpretation = `Expected lifetime value of $${result.toFixed(2)} per customer`;
           break;
 
@@ -426,7 +438,8 @@ export const calculateBusinessMetrics = tool({
           if (!data.previousPeriod || !data.currentPeriod) {
             return {
               success: false,
-              error: 'Growth calculation requires previousPeriod and currentPeriod',
+              error:
+                'Growth calculation requires previousPeriod and currentPeriod',
             };
           }
           result =
