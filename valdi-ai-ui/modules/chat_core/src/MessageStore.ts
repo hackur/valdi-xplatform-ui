@@ -6,6 +6,11 @@
  */
 
 import { Message, MessageUtils, MessageUpdateInput } from '@common/types';
+import {
+  StorageError,
+  ErrorCode,
+  handleError,
+} from '@common/errors';
 import { MessageStoreState, StreamingStatus } from './types';
 import { MessagePersistence } from './MessagePersistence';
 
@@ -51,7 +56,23 @@ export class MessageStore {
       };
       this.notify();
     } catch (error) {
-      console.error('[MessageStore] Error loading persisted messages:', error);
+      const errorInfo = handleError(error, {
+        operation: 'loadMessages',
+        store: 'MessageStore',
+      });
+      console.error('[MessageStore] Error loading persisted messages:', errorInfo.userMessage);
+
+      // Re-throw as StorageError for caller to handle
+      throw new StorageError(
+        'Failed to load persisted messages',
+        ErrorCode.STORAGE_READ_ERROR,
+        {
+          operation: 'read',
+          storageType: 'persistence',
+          cause: error instanceof Error ? error : undefined,
+          userMessage: errorInfo.userMessage,
+        }
+      );
     }
   }
 
@@ -120,7 +141,15 @@ export class MessageStore {
           this.getMessages(message.conversationId),
         );
       } catch (error) {
-        console.error('[MessageStore] Error persisting message:', error);
+        const errorInfo = handleError(error, {
+          operation: 'saveMessage',
+          conversationId: message.conversationId,
+          store: 'MessageStore',
+        });
+        console.error('[MessageStore] Error persisting message:', errorInfo.userMessage);
+
+        // Don't throw - allow the operation to continue even if persistence fails
+        // The message is already in memory state
       }
     }
   }
@@ -170,7 +199,13 @@ export class MessageStore {
           updatedMessages,
         );
       } catch (error) {
-        console.error('[MessageStore] Error persisting message update:', error);
+        const errorInfo = handleError(error, {
+          operation: 'updateMessage',
+          conversationId,
+          messageId,
+          store: 'MessageStore',
+        });
+        console.error('[MessageStore] Error persisting message update:', errorInfo.userMessage);
       }
     }
   }

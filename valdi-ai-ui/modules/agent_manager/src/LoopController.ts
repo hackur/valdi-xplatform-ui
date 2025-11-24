@@ -3,6 +3,7 @@
  *
  * Controls iterative agent loops with stop conditions and timeout management.
  * Useful for workflows that need to repeat until a condition is met.
+ * Production-ready with comprehensive error handling and cancellation support.
  */
 
 import {
@@ -13,7 +14,21 @@ import {
   LoopExecutionState,
 } from './types';
 import { AgentRegistry } from './AgentRegistry';
-import { WorkflowEngine } from './WorkflowEngine';
+import { AgentExecutor } from './AgentExecutor';
+
+/**
+ * Loop Controller Configuration
+ */
+export interface LoopControllerConfig {
+  /** Agent registry */
+  registry: AgentRegistry;
+
+  /** Agent executor */
+  executor: AgentExecutor;
+
+  /** Enable debug logging */
+  debug?: boolean;
+}
 
 /**
  * Loop Controller Class
@@ -23,12 +38,15 @@ import { WorkflowEngine } from './WorkflowEngine';
  */
 export class LoopController {
   private registry: AgentRegistry;
-  private workflowEngine: WorkflowEngine;
-  private state: LoopExecutionState | null = null;
+  private executor: AgentExecutor;
+  private debug: boolean;
+  private activeLoops: Map<string, LoopExecutionState> = new Map();
+  private abortControllers: Map<string, AbortController> = new Map();
 
-  constructor(registry: AgentRegistry, workflowEngine: WorkflowEngine) {
-    this.registry = registry;
-    this.workflowEngine = workflowEngine;
+  constructor(config: LoopControllerConfig) {
+    this.registry = config.registry;
+    this.executor = config.executor;
+    this.debug = config.debug ?? false;
   }
 
   /**
@@ -43,8 +61,10 @@ export class LoopController {
     context: AgentContext,
     config: LoopControlConfig,
   ): Promise<LoopExecutionState> {
+    const loopId = `loop_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+
     // Initialize state
-    this.state = {
+    const state: LoopExecutionState = {
       iteration: 0,
       startTime: new Date(),
       isRunning: true,
@@ -53,64 +73,116 @@ export class LoopController {
       totalTime: 0,
     };
 
+    // Create abort controller
+    const abortController = new AbortController();
+    this.abortControllers.set(loopId, abortController);
+    this.activeLoops.set(loopId, state);
+
     const agent = this.registry.get(agentId);
     if (!agent) {
       throw new Error(`Agent not found: ${agentId}`);
     }
 
-    console.log(`[LoopController] Starting loop with agent: ${agent.name}`);
-    console.log(`[LoopController] Max iterations: ${config.maxIterations}`);
+    this.log(`Starting loop with agent: ${agent.name}`);
+    this.log(`Max iterations: ${config.maxIterations}`);
 
     let currentContext = { ...context };
 
     try {
       while (
-        this.state.iteration < config.maxIterations &&
-        this.state.isRunning
+        state.iteration < config.maxIterations &&
+        state.isRunning &&
+        !abortController.signal.aborted
       ) {
         const iterationStart = Date.now();
-        this.state.iteration++;
+        state.iteration++;
 
-        console.log(
-          `[LoopController] Iteration ${this.state.iteration}/${config.maxIterations}`,
+        this.log(
+          `Iteration ${state.iteration}/${config.maxIterations}`,
         );
 
         // Check total timeout
         if (config.totalTimeout) {
-          const elapsed = Date.now() - this.state.startTime.getTime();
+          const elapsed = Date.now() - state.startTime.getTime();
           if (elapsed >= config.totalTimeout) {
-            console.log(`[LoopController] Total timeout reached: ${elapsed}ms`);
+            this.log(`Total timeout reached: ${elapsed}ms`);
+            state.isStopped = true;
             break;
           }
         }
 
-        // Execute agent with timeout
-        const result = await this.executeWithTimeout(
-          () => this.executeAgent(agent, currentContext),
-          config.iterationTimeout || 30000,
-        );
+        // Execute agent
+        let result: AgentExecutionResult;
 
-        this.state.iterationResults.push(result);
+        try {
+          result = await this.executor.execute(agent, currentContext, {
+            timeout: config.iterationTimeout,
+            abortSignal: abortController.signal,
+          });
+
+          // Check if execution failed
+          if (result.error) {
+            this.log(`Iteration ${state.iteration} failed: ${result.error}`);
+
+            // Call error callback
+            if (config.onError) {
+              config.onError(new Error(result.error));
+            }
+
+            // Decide whether to continue based on error
+            // For now, we'll stop on error
+            state.isStopped = true;
+            state.iterationResults.push(result);
+            break;
+          }
+
+        } catch (error) {
+          const errorMessage = error instanceof Error ? error.message : String(error);
+          this.log(`Iteration ${state.iteration} threw error: ${errorMessage}`);
+
+          // Call error callback
+          if (config.onError) {
+            config.onError(error instanceof Error ? error : new Error(errorMessage));
+          }
+
+          // Create error result
+          result = {
+            agentId: agent.id,
+            messages: [],
+            error: errorMessage,
+            metadata: {
+              steps: 0,
+              executionTime: Date.now() - iterationStart,
+              finishReason: 'error',
+            },
+          };
+
+          state.iterationResults.push(result);
+          state.isStopped = true;
+          break;
+        }
+
+        state.iterationResults.push(result);
 
         // Call iteration callback
         if (config.onIteration) {
-          config.onIteration(this.state.iteration, result);
+          config.onIteration(state.iteration, result);
         }
 
         // Check min iterations
         const pastMinIterations =
-          !config.minIterations || this.state.iteration >= config.minIterations;
+          !config.minIterations || state.iteration >= config.minIterations;
 
         // Check stop condition
         if (pastMinIterations && config.stopWhen) {
           const shouldStop = config.stopWhen(
-            this.state.iteration,
-            this.state.iterationResults,
+            state.iteration,
+            state.iterationResults,
           );
 
           if (shouldStop) {
-            console.log(
-              `[LoopController] Stop condition met at iteration ${this.state.iteration}`,
+            this.log(
+              `Stop condition met at iteration ${state.iteration}`,
             );
             break;
           }
@@ -124,31 +196,41 @@ export class LoopController {
           ];
         }
 
+        // Pass output to next iteration
+        if (result.output) {
+          currentContext.sharedData = {
+            ...currentContext.sharedData,
+            previousOutput: result.output,
+            previousIteration: state.iteration,
+            iterationResults: state.iterationResults,
+          };
+        }
+
         // Track iteration time
         const iterationTime = Date.now() - iterationStart;
-        console.log(
-          `[LoopController] Iteration ${this.state.iteration} completed in ${iterationTime}ms`,
+        this.log(
+          `Iteration ${state.iteration} completed in ${iterationTime}ms`,
         );
       }
 
-      this.state.isRunning = false;
-      this.state.totalTime = Date.now() - this.state.startTime.getTime();
+      state.isRunning = false;
+      state.totalTime = Date.now() - state.startTime.getTime();
 
-      console.log(
-        `[LoopController] Loop completed: ${this.state.iteration} iterations in ${this.state.totalTime}ms`,
+      this.log(
+        `Loop completed: ${state.iteration} iterations in ${state.totalTime}ms`,
       );
 
       // Call complete callback
       if (config.onComplete) {
-        config.onComplete(this.state.iterationResults);
+        config.onComplete(state.iterationResults);
       }
 
-      return this.state;
+      return state;
     } catch (error) {
-      this.state.isRunning = false;
-      this.state.totalTime = Date.now() - this.state.startTime.getTime();
+      state.isRunning = false;
+      state.totalTime = Date.now() - state.startTime.getTime();
 
-      console.error(`[LoopController] Loop failed:`, error);
+      this.log(`Loop failed: ${error instanceof Error ? error.message : String(error)}`);
 
       // Call error callback
       if (config.onError) {
@@ -158,93 +240,154 @@ export class LoopController {
       }
 
       throw error;
+    } finally {
+      this.activeLoops.delete(loopId);
+      this.abortControllers.delete(loopId);
     }
   }
 
   /**
-   * Stop the loop
+   * Execute multiple loops in sequence
+   * @param agents Array of agent IDs to loop through
+   * @param context Initial context
+   * @param config Loop configuration
+   * @returns Array of loop states
    */
-  stop(): void {
-    if (this.state && this.state.isRunning) {
-      console.log(
-        `[LoopController] Stopping loop at iteration ${this.state.iteration}`,
-      );
-      this.state.isRunning = false;
-      this.state.isStopped = true;
-    }
-  }
-
-  /**
-   * Get current loop state
-   */
-  getState(): LoopExecutionState | null {
-    return this.state;
-  }
-
-  /**
-   * Execute with timeout
-   */
-  private async executeWithTimeout<T>(
-    fn: () => Promise<T>,
-    timeout: number,
-  ): Promise<T> {
-    return Promise.race([
-      fn(),
-      new Promise<T>((_, reject) =>
-        setTimeout(
-          () => reject(new Error(`Timeout after ${timeout}ms`)),
-          timeout,
-        ),
-      ),
-    ]);
-  }
-
-  /**
-   * Execute a single agent
-   * Note: This duplicates logic from WorkflowEngine
-   * In a real implementation, this would be refactored into a shared service
-   */
-  private async executeAgent(
-    agent: AgentDefinition,
+  async executeMultipleLoops(
+    agents: string[],
     context: AgentContext,
-  ): Promise<AgentExecutionResult> {
-    const startTime = Date.now();
+    config: LoopControlConfig,
+  ): Promise<LoopExecutionState[]> {
+    const states: LoopExecutionState[] = [];
+    let currentContext = { ...context };
 
-    try {
-      // For now, return a mock result
-      // In a real implementation, this would use ChatService
-      await new Promise((resolve) => setTimeout(resolve, 100));
+    for (const agentId of agents) {
+      const state = await this.executeLoop(agentId, currentContext, config);
+      states.push(state);
 
-      const executionTime = Date.now() - startTime;
+      // Pass results to next loop
+      if (state.iterationResults.length > 0) {
+        const lastResult = state.iterationResults[state.iterationResults.length - 1];
+        if (lastResult.messages.length > 0) {
+          currentContext.messages = [
+            ...currentContext.messages,
+            ...lastResult.messages,
+          ];
+        }
+        if (lastResult.output) {
+          currentContext.sharedData = {
+            ...currentContext.sharedData,
+            previousLoopOutput: lastResult.output,
+            previousAgentId: agentId,
+          };
+        }
+      }
+    }
 
-      return {
-        agentId: agent.id,
-        messages: [],
-        metadata: {
-          steps: 1,
-          executionTime,
-          finishReason: 'completed',
-        },
-      };
-    } catch (error) {
-      const executionTime = Date.now() - startTime;
+    return states;
+  }
 
-      return {
-        agentId: agent.id,
-        messages: [],
-        error: error instanceof Error ? error.message : String(error),
-        metadata: {
-          steps: 0,
-          executionTime,
-          finishReason: 'error',
-        },
-      };
+  /**
+   * Execute loop until a specific output is achieved
+   * @param agentId Agent ID
+   * @param context Context
+   * @param targetCondition Condition to check output against
+   * @param maxIterations Max iterations
+   * @returns Loop state
+   */
+  async executeUntil(
+    agentId: string,
+    context: AgentContext,
+    targetCondition: (output: unknown) => boolean,
+    maxIterations: number = 10,
+  ): Promise<LoopExecutionState> {
+    return this.executeLoop(agentId, context, {
+      maxIterations,
+      stopWhen: (iteration, results) => {
+        if (results.length === 0) {
+          return false;
+        }
+
+        const lastResult = results[results.length - 1];
+        return lastResult.output !== undefined && targetCondition(lastResult.output);
+      },
+    });
+  }
+
+  /**
+   * Get all active loops
+   * @returns Array of active loop states
+   */
+  getActiveLoops(): LoopExecutionState[] {
+    return Array.from(this.activeLoops.values());
+  }
+
+  /**
+   * Stop a specific loop
+   * @param loopId Loop ID to stop
+   * @returns True if loop was stopped
+   */
+  stopLoop(loopId: string): boolean {
+    const abortController = this.abortControllers.get(loopId);
+    const state = this.activeLoops.get(loopId);
+
+    if (!abortController || !state) {
+      return false;
+    }
+
+    abortController.abort();
+    state.isRunning = false;
+    state.isStopped = true;
+
+    this.log(`Stopped loop: ${loopId}`);
+    return true;
+  }
+
+  /**
+   * Stop all active loops
+   * @returns Number of loops stopped
+   */
+  stopAllLoops(): number {
+    const count = this.activeLoops.size;
+
+    for (const loopId of this.activeLoops.keys()) {
+      this.stopLoop(loopId);
+    }
+
+    this.log(`Stopped ${count} loops`);
+    return count;
+  }
+
+  /**
+   * Check if any loops are active
+   * @returns True if loops are running
+   */
+  hasActiveLoops(): boolean {
+    return this.activeLoops.size > 0;
+  }
+
+  /**
+   * Get count of active loops
+   * @returns Number of active loops
+   */
+  getActiveCount(): number {
+    return this.activeLoops.size;
+  }
+
+  /**
+   * Log message if debug is enabled
+   */
+  private log(message: string): void {
+    if (this.debug) {
+      console.log(`[LoopController] ${message}`);
     }
   }
 }
 
 /**
  * Create a simple stop condition based on keyword
+ * @param keyword Keyword to search for in message content
+ * @returns Stop condition function
  */
 export function createKeywordStopCondition(
   keyword: string,
@@ -269,6 +412,8 @@ export function createKeywordStopCondition(
 
 /**
  * Create a stop condition based on iteration count
+ * @param maxIterations Maximum iterations
+ * @returns Stop condition function
  */
 export function createIterationStopCondition(
   maxIterations: number,
@@ -278,6 +423,8 @@ export function createIterationStopCondition(
 
 /**
  * Create a stop condition based on success criteria
+ * @param evaluator Function to evaluate if result is successful
+ * @returns Stop condition function
  */
 export function createSuccessStopCondition(
   evaluator: (result: AgentExecutionResult) => boolean,
@@ -289,5 +436,52 @@ export function createSuccessStopCondition(
 
     const lastResult = results[results.length - 1];
     return evaluator(lastResult);
+  };
+}
+
+/**
+ * Create a stop condition based on error threshold
+ * @param maxErrors Maximum number of consecutive errors before stopping
+ * @returns Stop condition function
+ */
+export function createErrorThresholdStopCondition(
+  maxErrors: number,
+): (iteration: number, results: AgentExecutionResult[]) => boolean {
+  return (iteration, results) => {
+    if (results.length < maxErrors) {
+      return false;
+    }
+
+    // Check last N results for errors
+    const recentResults = results.slice(-maxErrors);
+    return recentResults.every((result) => result.error !== undefined);
+  };
+}
+
+/**
+ * Create a stop condition based on output stability
+ * @param stableIterations Number of iterations with same output to consider stable
+ * @param comparator Optional custom comparator for outputs
+ * @returns Stop condition function
+ */
+export function createStabilityStopCondition(
+  stableIterations: number,
+  comparator?: (a: unknown, b: unknown) => boolean,
+): (iteration: number, results: AgentExecutionResult[]) => boolean {
+  const defaultComparator = (a: unknown, b: unknown) =>
+    JSON.stringify(a) === JSON.stringify(b);
+
+  const compare = comparator || defaultComparator;
+
+  return (iteration, results) => {
+    if (results.length < stableIterations) {
+      return false;
+    }
+
+    const recentResults = results.slice(-stableIterations);
+
+    // Check if all outputs are the same
+    const firstOutput = recentResults[0].output;
+    return recentResults.every((result) => compare(result.output, firstOutput));
   };
 }

@@ -10,7 +10,7 @@ valdi_module(
     deps = [
         "@valdi//src/valdi_modules/src/valdi/valdi_core",
         "@valdi//src/valdi_modules/src/valdi/valdi_tsx",
-        "//modules/common",
-        "//modules/chat_core",
+        "//apps/valdi_ai_ui/modules/common",
+        "//apps/valdi_ai_ui/modules/chat_core",
     ],
 )

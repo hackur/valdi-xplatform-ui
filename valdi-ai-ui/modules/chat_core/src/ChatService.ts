@@ -13,6 +13,12 @@ import {
   AIProvider,
   ModelConfig,
 } from '@common/types';
+import {
+  APIError,
+  ErrorCode,
+  handleError,
+  retryWithBackoff,
+} from '@common/errors';
 import { MessageStore } from './MessageStore';
 import {
   ChatRequestOptions,
@@ -52,6 +58,31 @@ export class ChatService {
       anthropic: new HTTPClient(PROVIDER_ENDPOINTS.anthropic),
       google: new HTTPClient(PROVIDER_ENDPOINTS.google),
     };
+  }
+
+  /**
+   * Map HTTP status code to error code
+   */
+  private getErrorCodeFromStatus(statusCode: number): ErrorCode {
+    switch (statusCode) {
+      case 401:
+        return ErrorCode.API_AUTHENTICATION;
+      case 403:
+        return ErrorCode.API_AUTHORIZATION;
+      case 404:
+        return ErrorCode.API_NOT_FOUND;
+      case 408:
+        return ErrorCode.API_TIMEOUT;
+      case 429:
+        return ErrorCode.API_RATE_LIMIT;
+      case 500:
+      case 502:
+      case 503:
+      case 504:
+        return ErrorCode.API_SERVER_ERROR;
+      default:
+        return ErrorCode.API_INVALID_REQUEST;
+    }
   }
 
   /**
@@ -103,7 +134,14 @@ export class ChatService {
   ): Promise<string> {
     const apiKey = this.config.apiKeys.openai;
     if (!apiKey) {
-      throw new Error('OpenAI API key not configured');
+      throw new APIError(
+        'OpenAI API key not configured',
+        ErrorCode.API_AUTHENTICATION,
+        {
+          provider: 'openai',
+          userMessage: 'Please add your OpenAI API key in Settings',
+        }
+      );
     }
 
     const requestBody = JSON.stringify({
@@ -118,31 +156,72 @@ export class ChatService {
 
     const encodedBody = new TextEncoder().encode(requestBody);
 
-    try {
-      const response = await this.httpClients.openai.post(
-        '/chat/completions',
-        encodedBody,
-        {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${apiKey}`,
+    return retryWithBackoff(
+      async () => {
+        try {
+          const response = await this.httpClients.openai.post(
+            '/chat/completions',
+            encodedBody,
+            {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${apiKey}`,
+            },
+          );
+
+          if (!response.body) {
+            throw new APIError(
+              'Empty response from OpenAI',
+              ErrorCode.API_INVALID_RESPONSE,
+              {
+                provider: 'openai',
+                url: '/chat/completions',
+              }
+            );
+          }
+
+          const text = new TextDecoder().decode(response.body);
+          const result = JSON.parse(text);
+
+          if (result.error) {
+            const statusCode = response.status || 500;
+            const errorCode = this.getErrorCodeFromStatus(statusCode);
+            throw new APIError(
+              result.error.message || 'OpenAI API error',
+              errorCode,
+              {
+                statusCode,
+                provider: 'openai',
+                url: '/chat/completions',
+              }
+            );
+          }
+
+          return result.choices?.[0]?.message?.content || '';
+        } catch (error: any) {
+          if (error instanceof APIError) {
+            throw error;
+          }
+          throw new APIError(
+            `OpenAI request failed: ${error.toString()}`,
+            ErrorCode.API_NETWORK_ERROR,
+            {
+              provider: 'openai',
+              cause: error,
+            }
+          );
+        }
+      },
+      {
+        maxRetries: 3,
+        initialDelay: 1000,
+        onRetry: (error, attempt, delay) => {
+          console.log(
+            `[ChatService] Retrying OpenAI request (attempt ${attempt}) after ${delay}ms`,
+            error
+          );
         },
-      );
-
-      if (!response.body) {
-        throw new Error('Empty response from OpenAI');
       }
-
-      const text = new TextDecoder().decode(response.body);
-      const result = JSON.parse(text);
-
-      if (result.error) {
-        throw new Error(result.error.message || 'OpenAI API error');
-      }
-
-      return result.choices?.[0]?.message?.content || '';
-    } catch (error: any) {
-      throw new Error(`OpenAI request failed: ${error.toString()}`);
-    }
+    );
   }
 
   /**
@@ -337,17 +416,24 @@ export class ChatService {
         finishReason: 'stop',
       };
     } catch (error: any) {
+      // Handle and format error
+      const errorInfo = handleError(error, {
+        conversationId,
+        provider,
+        operation: 'sendMessage',
+      });
+
       // Create error message
       const now = new Date();
       const errorMsg: Message = {
         id: MessageUtils.generateId(),
         conversationId,
         role: 'assistant',
-        content: `Error: ${error.message || error.toString()}`,
+        content: `Error: ${errorInfo.userMessage}`,
         createdAt: now,
         updatedAt: now,
         status: 'error',
-        error: error.message || error.toString(),
+        error: errorInfo.message,
       };
       await this.messageStore.addMessage(errorMsg);
 

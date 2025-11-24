@@ -11,6 +11,6 @@ valdi_module(
         "@valdi//src/valdi_modules/src/valdi/valdi_core",
         "@valdi//src/valdi_modules/src/valdi/valdi_tsx",
         "@valdi//src/valdi_modules/src/valdi/valdi_navigation",
-        "//modules/common",
+        "//apps/valdi_ai_ui/modules/common",
     ],
 )
