@@ -7,7 +7,7 @@
  * @example
  * ```tsx
  * <ErrorBoundary
- *   fallback={(error) => <ErrorScreen error={error} />}
+ *   fallback={(error: Error) => <ErrorScreen error={error} />}
  *   onError={(error, errorInfo) => console.error('Error:', error)}
  * >
  *   <MyComponent />

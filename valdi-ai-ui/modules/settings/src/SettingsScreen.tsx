@@ -9,8 +9,7 @@
  * - About section
  */
 
-import { NavigationPageComponent } from 'valdi_core/src/Component';
-import { Style } from 'valdi_core/src/Style';
+import { NavigationPageStatefulComponent } from 'valdi_core/src/Component';
 import { NavigationController } from 'valdi_navigation/src/NavigationController';
 import {
   Colors,
@@ -70,7 +69,7 @@ interface SettingsScreenState {
 /**
  * SettingsScreen Component
  */
-export class SettingsScreen extends NavigationPageComponent<
+export class SettingsScreen extends NavigationPageStatefulComponent<
   SettingsScreenProps,
   SettingsScreenState
 > {
@@ -103,7 +102,7 @@ export class SettingsScreen extends NavigationPageComponent<
     };
   }
 
-  async onMount() {
+  override async onMount() {
     await this.loadSettings();
   }
 
@@ -343,7 +342,7 @@ export class SettingsScreen extends NavigationPageComponent<
               value={this.state.openAiKey}
               placeholder="sk-..."
               secureTextEntry={!this.state.showOpenAiKey}
-              onChangeText={(value) => this.handleApiKeyChange('openai', value)}
+              onChangeText={(value: string) => this.handleApiKeyChange('openai', value)}
               style={{ marginTop: Spacing.sm }}
             />
 
@@ -382,7 +381,7 @@ export class SettingsScreen extends NavigationPageComponent<
               value={this.state.anthropicKey}
               placeholder="sk-ant-..."
               secureTextEntry={!this.state.showAnthropicKey}
-              onChangeText={(value) =>
+              onChangeText={(value: string) =>
                 this.handleApiKeyChange('anthropic', value)
               }
               style={{ marginTop: Spacing.sm }}
@@ -423,7 +422,7 @@ export class SettingsScreen extends NavigationPageComponent<
               value={this.state.googleKey}
               placeholder="AIza..."
               secureTextEntry={!this.state.showGoogleKey}
-              onChangeText={(value) => this.handleApiKeyChange('google', value)}
+              onChangeText={(value: string) => this.handleApiKeyChange('google', value)}
               style={{ marginTop: Spacing.sm }}
             />
 
@@ -706,7 +705,7 @@ export class SettingsScreen extends NavigationPageComponent<
     console.error('Settings error:', error);
   };
 
-  onRender() {
+  override onRender() {
     return (
       <ErrorBoundary
         fallback={(error: Error) => (
@@ -789,82 +788,82 @@ export class SettingsScreen extends NavigationPageComponent<
 }
 
 const styles = {
-  container: new Style({
+  container: {
     flex: 1,
     backgroundColor: Colors.background,
-  }),
+  } as Record<string, unknown>,
 
-  header: new Style({
+  header: {
     paddingHorizontal: SemanticSpacing.screenPaddingHorizontal,
     paddingTop: Spacing.xl,
     paddingBottom: Spacing.base,
     borderBottomWidth: 1,
     borderBottomColor: Colors.border,
-  }),
+  } as Record<string, unknown>,
 
-  content: new Style({
+  content: {
     flex: 1,
     paddingHorizontal: SemanticSpacing.screenPaddingHorizontal,
     paddingVertical: Spacing.base,
-  }),
+  } as Record<string, unknown>,
 
-  section: new Style({
+  section: {
     marginBottom: Spacing.xxl,
-  }),
+  } as Record<string, unknown>,
 
-  providerGrid: new Style({
+  providerGrid: {
     flexDirection: 'row',
     gap: Spacing.base,
-  }),
+  } as Record<string, unknown>,
 
-  providerCard: new Style({
+  providerCard: {
     flex: 1,
     aspectRatio: 1,
-  }),
+  } as Record<string, unknown>,
 
-  providerContent: new Style({
+  providerContent: {
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-  }),
+  } as Record<string, unknown>,
 
-  apiKeyCard: new Style({
+  apiKeyCard: {
     marginBottom: Spacing.base,
-  }),
+  } as Record<string, unknown>,
 
-  apiKeyHeader: new Style({
+  apiKeyHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-  }),
+  } as Record<string, unknown>,
 
-  modelCard: new Style({
+  modelCard: {
     marginBottom: Spacing.base,
-  }),
+  } as Record<string, unknown>,
 
-  preferenceCard: new Style({
+  preferenceCard: {
     marginBottom: Spacing.base,
-  }),
+  } as Record<string, unknown>,
 
-  preferenceRow: new Style({
+  preferenceRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-  }),
+  } as Record<string, unknown>,
 
-  preferenceText: new Style({
+  preferenceText: {
     flex: 1,
     marginRight: Spacing.base,
-  }),
+  } as Record<string, unknown>,
 
-  aboutLinks: new Style({
+  aboutLinks: {
     flexDirection: 'row',
     gap: Spacing.sm,
     marginTop: Spacing.base,
-  }),
+  } as Record<string, unknown>,
 
-  saveSection: new Style({
+  saveSection: {
     marginTop: Spacing.xl,
     paddingBottom: Spacing.xxl,
-  }),
+  } as Record<string, unknown>,
 };

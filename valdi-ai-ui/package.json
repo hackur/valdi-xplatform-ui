@@ -21,6 +21,9 @@
     "format": "prettier --write \"**/*.{ts,tsx,json,md}\"",
     "format:check": "prettier --check \"**/*.{ts,tsx,json,md}\"",
     "validate": "npm run type-check && npm run lint && npm run test",
+    "validate:all": "npm run type-check && npm run lint && npm run test:coverage && npm audit --audit-level=high",
+    "validate:quick": "npm run type-check && npm run lint",
+    "audit:fix": "npm audit fix",
     "clean": "bazel clean",
     "clean:full": "bazel clean --expunge && rm -rf node_modules coverage"
   },
