@@ -1,0 +1,73 @@
+{
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "if [[ \"$CLAUDE_FILE_PATHS\" =~ \\.(ts|tsx)$ ]]; then echo '🔍 Type-checking edited file...' && npx tsc --noEmit --skipLibCheck \"$CLAUDE_FILE_PATHS\" 2>&1 | head -20 || echo '⚠️  TypeScript errors detected in edited file'; fi",
+            "description": "Type-check TypeScript files after edits"
+          },
+          {
+            "type": "command",
+            "command": "if [[ \"$CLAUDE_FILE_PATHS\" =~ \\.(ts|tsx)$ ]]; then echo '🎨 Linting edited file...' && npx eslint --quiet \"$CLAUDE_FILE_PATHS\" 2>&1 | head -10 || echo '⚠️  ESLint warnings in edited file'; fi",
+            "description": "Lint TypeScript files after edits"
+          },
+          {
+            "type": "command",
+            "command": "if [[ \"$CLAUDE_FILE_PATHS\" =~ \\.json$ ]]; then echo '📋 Validating JSON...' && jq empty \"$CLAUDE_FILE_PATHS\" 2>&1 || echo '❌ Invalid JSON syntax'; fi",
+            "description": "Validate JSON files after edits"
+          }
+        ]
+      },
+      {
+        "matcher": "Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "if [[ \"$CLAUDE_FILE_PATHS\" =~ \\.(ts|tsx)$ ]]; then echo '🔍 Type-checking new file...' && npx tsc --noEmit --skipLibCheck \"$CLAUDE_FILE_PATHS\" 2>&1 | head -20 || echo '⚠️  TypeScript errors in new file'; fi",
+            "description": "Type-check new TypeScript files"
+          },
+          {
+            "type": "command",
+            "command": "if [[ \"$CLAUDE_FILE_PATHS\" =~ \\.(ts|tsx)$ ]]; then echo '🎨 Linting new file...' && npx eslint --quiet \"$CLAUDE_FILE_PATHS\" 2>&1 | head -10 || echo '⚠️  ESLint warnings in new file'; fi",
+            "description": "Lint new TypeScript files"
+          },
+          {
+            "type": "command",
+            "command": "if [[ \"$CLAUDE_FILE_PATHS\" =~ \\.json$ ]]; then echo '📋 Validating JSON...' && jq empty \"$CLAUDE_FILE_PATHS\" 2>&1 || echo '❌ Invalid JSON syntax'; fi",
+            "description": "Validate new JSON files"
+          },
+          {
+            "type": "command",
+            "command": "if [[ \"$CLAUDE_FILE_PATHS\" =~ package\\.json$ ]]; then echo '📦 Validating package.json structure...' && npm pkg fix 2>&1 || echo '⚠️  package.json validation warnings'; fi",
+            "description": "Validate package.json structure"
+          }
+        ]
+      },
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "if [[ \"$CLAUDE_TOOL_PARAMS\" =~ (rm|rmdir|mv.*\\/dev\\/null|>.*\\/dev\\/null) ]]; then echo '⚠️  WARNING: Potentially destructive command detected!'; fi",
+            "description": "Warn about destructive commands"
+          }
+        ]
+      }
+    ],
+    "PreToolUse": [
+      {
+        "matcher": "Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "if [[ \"$CLAUDE_FILE_PATHS\" =~ \\.(ts|tsx)$ ]] && [[ -f \"$CLAUDE_FILE_PATHS\" ]]; then echo '📸 Creating backup: ${CLAUDE_FILE_PATHS}.backup' && cp \"$CLAUDE_FILE_PATHS\" \"${CLAUDE_FILE_PATHS}.backup\" 2>/dev/null || true; fi",
+            "description": "Backup TypeScript files before editing"
+          }
+        ]
+      }
+    ]
+  }
+}
