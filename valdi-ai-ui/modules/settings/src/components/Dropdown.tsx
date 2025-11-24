@@ -86,7 +86,7 @@ export class Dropdown extends Component<DropdownProps, DropdownState> {
     return selected ? selected.label : placeholder || '';
   };
 
-  onRender() {
+  override onRender() {
     const {
       options,
       selectedValue,
@@ -160,7 +160,7 @@ export class Dropdown extends Component<DropdownProps, DropdownState> {
 }
 
 const styles = {
-  selector: new Style<View>({
+  selector: new Style({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
@@ -171,7 +171,7 @@ const styles = {
     minHeight: 44,
   }),
 
-  optionsList: new Style<View>({
+  optionsList: new Style({
     position: 'absolute',
     top: '100%',
     left: 0,
@@ -190,7 +190,7 @@ const styles = {
     overflow: 'auto',
   }),
 
-  option: new Style<View>({
+  option: new Style({
     paddingHorizontal: Spacing.base,
     paddingVertical: Spacing.sm,
     minHeight: 44,

@@ -5,9 +5,9 @@
  * Fully integrated with ChatIntegrationService.
  */
 
-import { NavigationPageComponent } from 'valdi_core/src/Component';
+import { NavigationPageStatefulComponent } from 'valdi_core/src/Component';
 import { Style } from 'valdi_core/src/Style';
-import { View, ScrollView, Label } from 'valdi_tsx/src/NativeTemplateElements';
+import { ScrollView } from 'valdi_tsx/src/NativeTemplateElements';
 import { NavigationController } from 'valdi_navigation/src/NavigationController';
 import { Colors, Spacing } from '@common';
 import { Message } from '@common';
@@ -41,14 +41,14 @@ export interface ChatViewStreamingState {
  * Real-time chat with streaming AI responses.
  * Follows KISS principle - simple, focused on chat functionality.
  */
-export class ChatViewStreaming extends NavigationPageComponent<
+export class ChatViewStreaming extends NavigationPageStatefulComponent<
   ChatViewStreamingProps,
   ChatViewStreamingState
 > {
   private unsubscribeMessages?: () => void;
   private scrollViewRef?: ScrollView;
 
-  state: ChatViewStreamingState = {
+  override state: ChatViewStreamingState = {
     messages: [],
     isLoading: true,
     isStreaming: false,
@@ -60,8 +60,8 @@ export class ChatViewStreaming extends NavigationPageComponent<
 
     // Subscribe to message updates
     this.unsubscribeMessages =
-      this.props.integrationService.subscribeToMessages(
-        this.props.conversationId,
+      this.viewModel.integrationService.subscribeToMessages(
+        this.viewModel.conversationId,
         (messages) => {
           this.setState({ messages, isLoading: false });
           this.scrollToBottom();
@@ -75,7 +75,7 @@ export class ChatViewStreaming extends NavigationPageComponent<
     }
   }
 
-  onRender() {
+  override onRender() {
     const { messages, isLoading, isStreaming, error } = this.state;
 
     return (
@@ -129,8 +129,8 @@ export class ChatViewStreaming extends NavigationPageComponent<
     this.setState({ isLoading: true, error: undefined });
 
     try {
-      const messages = this.props.integrationService.loadConversationMessages(
-        this.props.conversationId,
+      const messages = this.viewModel.integrationService.loadConversationMessages(
+        this.viewModel.conversationId,
       );
 
       this.setState({
@@ -160,10 +160,10 @@ export class ChatViewStreaming extends NavigationPageComponent<
     this.setState({ isStreaming: true, error: undefined });
 
     try {
-      await this.props.integrationService.sendMessage(
-        this.props.conversationId,
+      await this.viewModel.integrationService.sendMessage(
+        this.viewModel.conversationId,
         content,
-        (delta: string, fullText: string) => {
+        (_delta: string, _fullText: string) => {
           // Stream progress - messages are automatically updated via subscription
           this.scrollToBottom();
         },
@@ -193,57 +193,57 @@ export class ChatViewStreaming extends NavigationPageComponent<
 }
 
 const styles = {
-  container: new Style<View>({
+  container: new Style({
     flex: 1,
     backgroundColor: Colors.background,
   }),
 
-  scrollView: new Style<ScrollView>({
+  scrollView: new Style({
     flex: 1,
   }),
 
-  messageList: new Style<View>({
+  messageList: new Style({
     padding: Spacing.base,
   }),
 
-  errorContainer: new Style<View>({
+  errorContainer: new Style({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
     padding: Spacing.xl,
   }),
 
-  errorIcon: new Style<Label>({
+  errorIcon: new Style({
     fontSize: 48,
     marginBottom: Spacing.base,
   }),
 
-  errorText: new Style<Label>({
+  errorText: new Style({
     fontSize: 16,
     color: Colors.error,
     textAlign: 'center',
   }),
 
-  emptyContainer: new Style<View>({
+  emptyContainer: new Style({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
     padding: Spacing.xl,
   }),
 
-  emptyIcon: new Style<Label>({
+  emptyIcon: new Style({
     fontSize: 64,
     marginBottom: Spacing.base,
   }),
 
-  emptyText: new Style<Label>({
+  emptyText: new Style({
     fontSize: 18,
     fontWeight: '600',
     color: Colors.textSecondary,
     marginBottom: Spacing.sm,
   }),
 
-  emptySubtext: new Style<Label>({
+  emptySubtext: new Style({
     fontSize: 14,
     color: Colors.textTertiary,
     textAlign: 'center',

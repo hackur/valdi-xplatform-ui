@@ -48,13 +48,13 @@ export class SearchBar extends StatefulComponent<
 > {
   private debounceTimer?: NodeJS.Timeout;
 
-  state: SearchBarState = {
+  override state: SearchBarState = {
     query: '',
     isActive: false,
   };
 
-  onRender() {
-    const { placeholder = 'Search conversations...' } = this.props;
+  override onRender() {
+    const { placeholder = 'Search conversations...' } = this.viewModel;
     const { query, isActive } = this.state;
 
     return (
@@ -96,11 +96,11 @@ export class SearchBar extends StatefulComponent<
       clearTimeout(this.debounceTimer);
     }
 
-    const debounceMs = this.props.debounceMs || 300;
+    const debounceMs = this.viewModel.debounceMs || 300;
 
     this.debounceTimer = setTimeout(() => {
-      if (this.props.onSearch) {
-        this.props.onSearch(text);
+      if (this.viewModel.onSearch) {
+        this.viewModel.onSearch(text);
       }
     }, debounceMs);
   };
@@ -129,12 +129,12 @@ export class SearchBar extends StatefulComponent<
       clearTimeout(this.debounceTimer);
     }
 
-    if (this.props.onClear) {
-      this.props.onClear();
+    if (this.viewModel.onClear) {
+      this.viewModel.onClear();
     }
 
-    if (this.props.onSearch) {
-      this.props.onSearch('');
+    if (this.viewModel.onSearch) {
+      this.viewModel.onSearch('');
     }
   };
 
@@ -149,7 +149,7 @@ export class SearchBar extends StatefulComponent<
 }
 
 const styles = {
-  container: new Style<View>({
+  container: new Style({
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: Colors.surface,
@@ -161,7 +161,7 @@ const styles = {
     marginBottom: Spacing.base,
   }),
 
-  containerActive: new Style<View>({
+  containerActive: new Style({
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: Colors.surface,
@@ -174,20 +174,20 @@ const styles = {
     ...Shadows.sm,
   }),
 
-  searchIcon: new Style<Label>({
+  searchIcon: new Style({
     fontSize: 18,
     marginRight: Spacing.sm,
     color: Colors.textTertiary,
   }),
 
-  input: new Style<TextInput>({
+  input: new Style({
     flex: 1,
     ...Fonts.bodyRegular,
     color: Colors.textPrimary,
     padding: 0,
   }),
 
-  clearButton: new Style<View>({
+  clearButton: new Style({
     width: 24,
     height: 24,
     borderRadius: 12,
@@ -197,7 +197,7 @@ const styles = {
     marginLeft: Spacing.sm,
   }),
 
-  clearIcon: new Style<Label>({
+  clearIcon: new Style({
     fontSize: 14,
     color: Colors.textSecondary,
   }),

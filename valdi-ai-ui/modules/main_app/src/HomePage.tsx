@@ -250,7 +250,7 @@ export class HomePage extends NavigationPageComponent<HomePageProps> {
     );
   };
 
-  onRender() {
+  override onRender() {
     return (
       <view style={styles.container}>
         {/* Header */}
@@ -327,42 +327,42 @@ export class HomePage extends NavigationPageComponent<HomePageProps> {
 }
 
 const styles = {
-  container: new Style<View>({
+  container: new Style({
     flex: 1,
     backgroundColor: Colors.background,
     paddingHorizontal: SemanticSpacing.screenPaddingHorizontal,
     paddingVertical: SemanticSpacing.screenPaddingVertical,
   }),
 
-  header: new Style<View>({
+  header: new Style({
     marginBottom: Spacing.xl,
     paddingTop: Spacing.xl,
   }),
 
-  welcomeCard: new Style<View>({
+  welcomeCard: new Style({
     marginBottom: Spacing.xxl,
   }),
 
-  featuresSection: new Style<View>({
+  featuresSection: new Style({
     flex: 1,
   }),
 
-  featuresGrid: new Style<View>({
+  featuresGrid: new Style({
     flexDirection: 'column',
     gap: Spacing.base,
   }),
 
-  featureCard: new Style<View>({
+  featureCard: new Style({
     width: '100%',
   }),
 
-  featureContent: new Style<View>({
+  featureContent: new Style({
     flexDirection: 'row',
     alignItems: 'center',
     gap: Spacing.base,
   }),
 
-  featureIcon: new Style<View>({
+  featureIcon: new Style({
     width: 64,
     height: 64,
     alignItems: 'center',
@@ -371,11 +371,11 @@ const styles = {
     borderRadius: BorderRadius.md,
   }),
 
-  featureText: new Style<View>({
+  featureText: new Style({
     flex: 1,
   }),
 
-  footer: new Style<View>({
+  footer: new Style({
     paddingVertical: Spacing.xl,
     alignItems: 'center',
   }),

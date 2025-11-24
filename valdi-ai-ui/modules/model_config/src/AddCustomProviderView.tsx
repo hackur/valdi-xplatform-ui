@@ -76,7 +76,7 @@ export class AddCustomProviderView extends StatefulComponent<
   AddCustomProviderViewProps,
   AddCustomProviderViewState
 > {
-  state: AddCustomProviderViewState = {
+  override state: AddCustomProviderViewState = {
     name: '',
     baseUrl: '',
     apiKey: '',
@@ -114,7 +114,7 @@ export class AddCustomProviderView extends StatefulComponent<
     }
   }
 
-  onRender() {
+  override onRender() {
     const {
       name,
       baseUrl,
@@ -573,49 +573,49 @@ export class AddCustomProviderView extends StatefulComponent<
 }
 
 const styles = {
-  container: new Style<View>({
+  container: new Style({
     flex: 1,
     backgroundColor: Colors.background,
   }),
 
-  header: new Style<View>({
+  header: new Style({
     padding: Spacing.base,
     backgroundColor: Colors.surface,
     borderBottomWidth: 1,
     borderBottomColor: Colors.border,
   }),
 
-  headerTitle: new Style<Label>({
+  headerTitle: new Style({
     ...Fonts.h2,
     color: Colors.textPrimary,
     marginBottom: Spacing.xs,
   }),
 
-  headerSubtitle: new Style<Label>({
+  headerSubtitle: new Style({
     ...Fonts.bodyRegular,
     color: Colors.textSecondary,
   }),
 
-  scrollView: new Style<ScrollView>({
+  scrollView: new Style({
     flex: 1,
   }),
 
-  form: new Style<View>({
+  form: new Style({
     padding: Spacing.base,
   }),
 
-  field: new Style<View>({
+  field: new Style({
     marginBottom: Spacing.base,
   }),
 
-  label: new Style<Label>({
+  label: new Style({
     ...Fonts.bodyMedium,
     color: Colors.textPrimary,
     marginBottom: Spacing.xs,
     fontWeight: '600',
   }),
 
-  input: new Style<TextInput>({
+  input: new Style({
     ...Fonts.bodyRegular,
     color: Colors.textPrimary,
     backgroundColor: Colors.surface,
@@ -625,7 +625,7 @@ const styles = {
     padding: Spacing.sm,
   }),
 
-  inputError: new Style<TextInput>({
+  inputError: new Style({
     ...Fonts.bodyRegular,
     color: Colors.textPrimary,
     backgroundColor: Colors.surface,
@@ -635,38 +635,38 @@ const styles = {
     padding: Spacing.sm,
   }),
 
-  helpText: new Style<Label>({
+  helpText: new Style({
     ...Fonts.bodySmall,
     color: Colors.textTertiary,
     marginTop: Spacing.xs,
   }),
 
-  errorText: new Style<Label>({
+  errorText: new Style({
     ...Fonts.bodySmall,
     color: Colors.error,
     marginTop: Spacing.xs,
   }),
 
-  successText: new Style<Label>({
+  successText: new Style({
     ...Fonts.bodyMedium,
     color: Colors.success,
   }),
 
-  sectionTitle: new Style<Label>({
+  sectionTitle: new Style({
     ...Fonts.h3,
     color: Colors.textPrimary,
     marginTop: Spacing.lg,
     marginBottom: Spacing.base,
   }),
 
-  checkbox: new Style<View>({
+  checkbox: new Style({
     flexDirection: 'row',
     alignItems: 'center',
     marginBottom: Spacing.sm,
     padding: Spacing.sm,
   }),
 
-  checkboxUnchecked: new Style<View>({
+  checkboxUnchecked: new Style({
     width: 24,
     height: 24,
     borderWidth: 2,
@@ -677,7 +677,7 @@ const styles = {
     alignItems: 'center',
   }),
 
-  checkboxChecked: new Style<View>({
+  checkboxChecked: new Style({
     width: 24,
     height: 24,
     borderWidth: 2,
@@ -689,37 +689,37 @@ const styles = {
     alignItems: 'center',
   }),
 
-  checkmark: new Style<Label>({
+  checkmark: new Style({
     color: Colors.white,
     fontSize: 16,
     fontWeight: 'bold',
   }),
 
-  checkboxLabel: new Style<Label>({
+  checkboxLabel: new Style({
     ...Fonts.bodyMedium,
     color: Colors.textPrimary,
   }),
 
-  testSection: new Style<View>({
+  testSection: new Style({
     marginTop: Spacing.lg,
     marginBottom: Spacing.base,
   }),
 
-  testResult: new Style<View>({
+  testResult: new Style({
     marginTop: Spacing.sm,
     padding: Spacing.sm,
     backgroundColor: Colors.surface,
     borderRadius: Spacing.radiusMd,
   }),
 
-  errorContainer: new Style<View>({
+  errorContainer: new Style({
     padding: Spacing.sm,
     backgroundColor: Colors.error + '20',
     borderRadius: Spacing.radiusMd,
     marginBottom: Spacing.base,
   }),
 
-  footer: new Style<View>({
+  footer: new Style({
     flexDirection: 'row',
     justifyContent: 'space-between',
     padding: Spacing.base,
@@ -729,7 +729,7 @@ const styles = {
     gap: Spacing.sm,
   }),
 
-  loadingOverlay: new Style<View>({
+  loadingOverlay: new Style({
     position: 'absolute',
     top: 0,
     left: 0,

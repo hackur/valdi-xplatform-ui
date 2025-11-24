@@ -43,7 +43,7 @@ export class InputBar extends StatefulComponent<InputBarProps, InputBarState> {
     placeholder: 'Type a message...',
   };
 
-  state: InputBarState = {
+  override state: InputBarState = {
     text: '',
   };
 
@@ -63,7 +63,7 @@ export class InputBar extends StatefulComponent<InputBarProps, InputBarState> {
     this.setState({ text: '' });
   };
 
-  onRender() {
+  override onRender() {
     const { disabled, placeholder } = this.viewModel;
     const { text } = this.state;
 
@@ -103,7 +103,7 @@ export class InputBar extends StatefulComponent<InputBarProps, InputBarState> {
 }
 
 const styles = {
-  container: new Style<View>({
+  container: new Style({
     backgroundColor: Colors.surface,
     borderTopWidth: 1,
     borderTopColor: Colors.border,
@@ -112,13 +112,13 @@ const styles = {
     ...SemanticShadows.inputBar,
   }),
 
-  inputContainer: new Style<View>({
+  inputContainer: new Style({
     flexDirection: 'row',
     alignItems: 'flex-end',
     gap: Spacing.sm,
   }),
 
-  input: new Style<View>({
+  input: new Style({
     flex: 1,
     minHeight: 40,
     maxHeight: 120,
@@ -130,7 +130,7 @@ const styles = {
     borderColor: Colors.border,
   }),
 
-  sendButtonContainer: new Style<View>({
+  sendButtonContainer: new Style({
     marginBottom: Spacing.xs,
   }),
 };

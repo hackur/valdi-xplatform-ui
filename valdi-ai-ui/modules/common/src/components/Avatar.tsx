@@ -151,7 +151,7 @@ export class Avatar extends Component<AvatarProps> {
     elevated: boolean | undefined,
     customStyle?: Record<string, unknown>,
   ): Style<View> {
-    return new Style<View>({
+    return new Style({
       ...styles.container,
       width: size,
       height: size,
@@ -165,7 +165,7 @@ export class Avatar extends Component<AvatarProps> {
   }
 
   private getImageStyle(size: number): Style<View> {
-    return new Style<View>({
+    return new Style({
       width: size,
       height: size,
       borderRadius: size / 2,
@@ -173,13 +173,13 @@ export class Avatar extends Component<AvatarProps> {
   }
 
   private getLabelStyle(fontSize: number, textColor: string): Style<Label> {
-    return new Style<Label>({
+    return new Style({
       font: systemBoldFont(fontSize),
       color: textColor,
     });
   }
 
-  onRender() {
+  override onRender() {
     const { imageUrl, elevated, onTap, style: customStyle } = this.viewModel;
 
     const size = this.getSize();
@@ -210,7 +210,7 @@ export class Avatar extends Component<AvatarProps> {
 }
 
 const styles = {
-  container: new Style<View>({
+  container: new Style({
     // Note: overflow property not supported in Valdi Style
   }),
 };

@@ -87,7 +87,7 @@ export interface SequentialWorkflowConfig extends WorkflowConfig {
  * ```
  */
 export class SequentialWorkflow extends WorkflowExecutor {
-  protected config: SequentialWorkflowConfig;
+  protected override config: SequentialWorkflowConfig;
 
   constructor(
     config: SequentialWorkflowConfig,
@@ -124,7 +124,6 @@ export class SequentialWorkflow extends WorkflowExecutor {
 
     try {
       let currentInput = input;
-      const _messages = this.messageStore.getMessages(conversationId);
 
       // Execute each agent in sequence
       for (let i = 0; i < this.config.agents.length; i++) {

@@ -94,7 +94,7 @@ export class Card extends Component<CardProps> {
     shadowStyle: Record<string, unknown>,
     customStyle?: Record<string, unknown>,
   ): Style<View> {
-    return new Style<View>({
+    return new Style({
       ...styles.container,
       backgroundColor: backgroundColor ?? Colors.surface,
       borderRadius: borderRadius ?? BorderRadius.md,
@@ -110,7 +110,7 @@ export class Card extends Component<CardProps> {
     });
   }
 
-  onRender() {
+  override onRender() {
     const {
       children,
       padding,
@@ -140,7 +140,7 @@ export class Card extends Component<CardProps> {
 }
 
 const styles = {
-  container: new Style<View>({
+  container: new Style({
     width: '100%',
   }),
 };

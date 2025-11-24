@@ -93,8 +93,24 @@ export class ToolExecutor {
         };
       }
 
+      // Check if execute function exists
+      if (!tool.execute) {
+        return {
+          toolCallId: toolCall.toolCallId,
+          toolName: toolCall.toolName,
+          success: false,
+          error: `Tool '${toolCall.toolName}' has no execute function`,
+          executionTime: Date.now() - startTime,
+          timestamp,
+        };
+      }
+
       // Execute the tool
-      const result = await tool.execute(toolCall.args);
+      // Note: AI SDK v5 tool.execute() requires args and options parameters
+      const result = await tool.execute(toolCall.args, {
+        messages: [],
+        toolCallId: toolCall.toolCallId,
+      } as any);
 
       return {
         toolCallId: toolCall.toolCallId,

@@ -63,7 +63,7 @@ export class ChatView extends NavigationPageStatefulComponent<
   private chatService: ChatService;
   private unsubscribeMessageStore?: () => void;
 
-  state: ChatViewState = {
+  override state: ChatViewState = {
     messages: [],
     isLoading: false,
     isStreaming: false,
@@ -105,7 +105,7 @@ export class ChatView extends NavigationPageStatefulComponent<
     }
   }
 
-  onCreate() {
+  override onCreate() {
     // Load initial messages from store
     this.loadMessages();
 
@@ -117,7 +117,7 @@ export class ChatView extends NavigationPageStatefulComponent<
     );
   }
 
-  onDestroy() {
+  override onDestroy() {
     // Unsubscribe from message store
     if (this.unsubscribeMessageStore) {
       this.unsubscribeMessageStore();
@@ -245,7 +245,7 @@ export class ChatView extends NavigationPageStatefulComponent<
     return <MessageBubble key={message.id} message={message} />;
   };
 
-  onRender() {
+  override onRender() {
     const { messages, isLoading, isStreaming, error } = this.state;
 
     return (
@@ -286,7 +286,7 @@ export class ChatView extends NavigationPageStatefulComponent<
         )}
 
         {/* Messages List */}
-        <ScrollView style={styles.messagesList}>
+        <scrollView style={styles.messagesList}>
           <view style={styles.messagesContent}>
             {messages.length === 0 ? (
               <view style={styles.emptyState}>
@@ -302,7 +302,7 @@ export class ChatView extends NavigationPageStatefulComponent<
               messages.map((message) => this.renderMessage(message))
             )}
           </view>
-        </ScrollView>
+        </scrollView>
 
         {/* Input Bar */}
         <InputBar
@@ -315,12 +315,12 @@ export class ChatView extends NavigationPageStatefulComponent<
 }
 
 const styles = {
-  container: new Style<View>({
+  container: new Style({
     flex: 1,
     backgroundColor: Colors.background,
   }),
 
-  header: new Style<View>({
+  header: new Style({
     paddingHorizontal: SemanticSpacing.screenPaddingHorizontal,
     paddingVertical: Spacing.base,
     borderBottomWidth: 1,
@@ -328,23 +328,23 @@ const styles = {
     backgroundColor: Colors.surface,
   }),
 
-  errorContainer: new Style<View>({
+  errorContainer: new Style({
     paddingHorizontal: SemanticSpacing.screenPaddingHorizontal,
     paddingVertical: Spacing.sm,
     backgroundColor: Colors.errorBackground || '#ffebee',
   }),
 
-  messagesList: new Style<View>({
+  messagesList: new Style({
     flex: 1,
   }),
 
-  messagesContent: new Style<View>({
+  messagesContent: new Style({
     paddingHorizontal: SemanticSpacing.screenPaddingHorizontal,
     paddingVertical: Spacing.base,
     gap: Spacing.sm,
   }),
 
-  emptyState: new Style<View>({
+  emptyState: new Style({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',

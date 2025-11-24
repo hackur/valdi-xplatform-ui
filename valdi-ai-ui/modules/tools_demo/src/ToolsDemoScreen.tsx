@@ -36,7 +36,7 @@ interface ToolsDemoScreenState {
  * ToolsDemo Screen Component
  */
 export class ToolsDemoScreen extends Component<{}, ToolsDemoScreenState> {
-  state: ToolsDemoScreenState = {
+  override state: ToolsDemoScreenState = {
     executionResults: [],
     currentlyExecuting: null,
   };
@@ -138,11 +138,11 @@ export class ToolsDemoScreen extends Component<{}, ToolsDemoScreenState> {
     });
   };
 
-  onRender() {
+  override onRender() {
     const { executionResults, currentlyExecuting } = this.state;
 
     return (
-      <ScrollView style={styles.container}>
+      <scrollView style={styles.container}>
         {/* Header */}
         <view style={styles.header}>
           <label value="Tools Demo" style={Fonts.h1} />
@@ -261,48 +261,48 @@ export class ToolsDemoScreen extends Component<{}, ToolsDemoScreenState> {
             />
           </view>
         )}
-      </ScrollView>
+      </scrollView>
     );
   }
 }
 
 const styles = {
-  container: new Style<ScrollView>({
+  container: new Style({
     flex: 1,
     backgroundColor: Colors.background,
   }),
 
-  header: new Style<View>({
+  header: new Style({
     padding: Spacing.xl,
     backgroundColor: Colors.surface,
     borderBottomWidth: 1,
     borderBottomColor: Colors.border,
   }),
 
-  section: new Style<View>({
+  section: new Style({
     padding: Spacing.xl,
   }),
 
-  toolGrid: new Style<View>({
+  toolGrid: new Style({
     marginTop: Spacing.base,
     gap: Spacing.base,
   }),
 
-  toolCard: new Style<View>({
+  toolCard: new Style({
     padding: Spacing.xl,
   }),
 
-  toolCardHeader: new Style<View>({
+  toolCardHeader: new Style({
     flexDirection: 'row',
     alignItems: 'center',
     marginBottom: Spacing.sm,
   }),
 
-  exampleInputContainer: new Style<View>({
+  exampleInputContainer: new Style({
     marginTop: Spacing.md,
   }),
 
-  codeBlock: new Style<View>({
+  codeBlock: new Style({
     backgroundColor: Colors.codeBackground,
     padding: Spacing.md,
     borderRadius: BorderRadius.sm,
@@ -310,18 +310,18 @@ const styles = {
     borderColor: Colors.codeBorder,
   }),
 
-  resultsHeader: new Style<View>({
+  resultsHeader: new Style({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
     marginBottom: Spacing.base,
   }),
 
-  resultsContainer: new Style<View>({
+  resultsContainer: new Style({
     gap: Spacing.base,
   }),
 
-  emptyState: new Style<View>({
+  emptyState: new Style({
     alignItems: 'center',
     padding: Spacing.xxxl,
   }),

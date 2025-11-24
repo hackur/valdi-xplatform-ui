@@ -77,7 +77,7 @@ export class ConfirmDialog extends Component<ConfirmDialogProps> {
     }
   };
 
-  onRender() {
+  override onRender() {
     const { isVisible, title, message, confirmText, cancelText, confirmColor } =
       this.viewModel;
 
@@ -110,7 +110,7 @@ export class ConfirmDialog extends Component<ConfirmDialogProps> {
             {/* Confirm Button */}
             <view
               style={
-                new Style<View>({
+                new Style({
                   ...styles.confirmButton,
                   backgroundColor: confirmBackgroundColor,
                 })
@@ -130,7 +130,7 @@ export class ConfirmDialog extends Component<ConfirmDialogProps> {
 }
 
 const styles = {
-  overlay: new Style<View>({
+  overlay: new Style({
     position: 'absolute',
     top: 0,
     left: 0,
@@ -142,7 +142,7 @@ const styles = {
     zIndex: 1000,
   }),
 
-  dialog: new Style<View>({
+  dialog: new Style({
     backgroundColor: Colors.surface,
     borderRadius: BorderRadius.lg,
     padding: Spacing.xl,
@@ -151,25 +151,25 @@ const styles = {
     ...SemanticShadows.modal,
   }),
 
-  title: new Style<Label>({
+  title: new Style({
     font: systemBoldFont(20),
     color: Colors.textPrimary,
     marginBottom: Spacing.base,
   }),
 
-  message: new Style<Label>({
+  message: new Style({
     font: systemFont(16),
     color: Colors.textSecondary,
     marginBottom: Spacing.xl,
     lineHeight: 24,
   }),
 
-  buttonsContainer: new Style<View>({
+  buttonsContainer: new Style({
     flexDirection: 'row',
     justifyContent: 'flex-end',
   }),
 
-  cancelButton: new Style<View>({
+  cancelButton: new Style({
     backgroundColor: Colors.surface,
     borderWidth: 2,
     borderColor: Colors.border,
@@ -184,12 +184,12 @@ const styles = {
     marginRight: Spacing.base,
   }),
 
-  cancelButtonText: new Style<Label>({
+  cancelButtonText: new Style({
     font: systemBoldFont(16),
     color: Colors.textPrimary,
   }),
 
-  confirmButton: new Style<View>({
+  confirmButton: new Style({
     borderRadius: BorderRadius.base,
     paddingTop: Spacing.sm,
     paddingBottom: Spacing.sm,
@@ -201,7 +201,7 @@ const styles = {
     ...SemanticShadows.button,
   }),
 
-  confirmButtonText: new Style<Label>({
+  confirmButtonText: new Style({
     font: systemBoldFont(16),
     color: Colors.textInverse,
   }),

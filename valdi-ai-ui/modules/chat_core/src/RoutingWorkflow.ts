@@ -172,7 +172,7 @@ interface ClassificationResult {
  * ```
  */
 export class RoutingWorkflow extends WorkflowExecutor {
-  protected config: RoutingWorkflowConfig;
+  protected override config: RoutingWorkflowConfig;
 
   constructor(
     config: RoutingWorkflowConfig,

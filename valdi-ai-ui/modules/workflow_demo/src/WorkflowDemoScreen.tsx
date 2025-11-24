@@ -48,7 +48,7 @@ interface WorkflowDemoScreenState {
  * WorkflowDemo Screen Component
  */
 export class WorkflowDemoScreen extends Component<{}, WorkflowDemoScreenState> {
-  state: WorkflowDemoScreenState = {
+  override state: WorkflowDemoScreenState = {
     selectedTab: 'sequential',
     executionStates: {
       sequential: { status: 'idle', steps: [], currentStep: 0 },
@@ -195,7 +195,7 @@ export class WorkflowDemoScreen extends Component<{}, WorkflowDemoScreenState> {
    */
   private updateWorkflowState = (
     workflowType: WorkflowType,
-    state: Partial<WorkflowExecutionState>,
+    override state: Partial<WorkflowExecutionState>,
   ): void => {
     this.setState({
       executionStates: {
@@ -214,7 +214,7 @@ export class WorkflowDemoScreen extends Component<{}, WorkflowDemoScreenState> {
     const executionState = executionStates[selectedTab];
 
     return (
-      <ScrollView style={styles.container}>
+      <scrollView style={styles.container}>
         {/* Header */}
         <view style={styles.header}>
           <label value="Workflow Patterns Demo" style={Fonts.h1} />
@@ -230,7 +230,7 @@ export class WorkflowDemoScreen extends Component<{}, WorkflowDemoScreenState> {
 
         {/* Tabs */}
         <view style={styles.tabsContainer}>
-          <ScrollView horizontal={true} style={styles.tabsScroll}>
+          <scrollView horizontal={true} style={styles.tabsScroll}>
             {this.workflows.map((workflow) => (
               <view
                 key={workflow.id}
@@ -260,13 +260,13 @@ export class WorkflowDemoScreen extends Component<{}, WorkflowDemoScreenState> {
                 />
               </view>
             ))}
-          </ScrollView>
+          </scrollView>
         </view>
 
         {/* Selected Workflow Content */}
         <view style={styles.content}>
           {/* Workflow Info Card */}
-          <Card elevation="md" style={styles.infoCard}>
+          <Card elevation="md" style={styles.infoCard as unknown as Record<string, unknown>}>
             <label
               value={`${selectedWorkflow.icon} ${selectedWorkflow.name}`}
               style={Fonts.h2}
@@ -329,55 +329,55 @@ export class WorkflowDemoScreen extends Component<{}, WorkflowDemoScreenState> {
             executionState={executionState}
           />
         </view>
-      </ScrollView>
+      </scrollView>
     );
   }
 }
 
 const styles = {
-  container: new Style<ScrollView>({
+  container: new Style({
     flex: 1,
     backgroundColor: Colors.background,
   }),
 
-  header: new Style<View>({
+  header: new Style({
     padding: Spacing.xl,
     backgroundColor: Colors.surface,
     borderBottomWidth: 1,
     borderBottomColor: Colors.border,
   }),
 
-  tabsContainer: new Style<View>({
+  tabsContainer: new Style({
     backgroundColor: Colors.surface,
     borderBottomWidth: 1,
     borderBottomColor: Colors.border,
   }),
 
-  tabsScroll: new Style<ScrollView>({
+  tabsScroll: new Style({
     padding: Spacing.base,
   }),
 
-  tab: new Style<View>({
+  tab: new Style({
     paddingHorizontal: Spacing.xl,
     paddingVertical: Spacing.md,
     borderRadius: BorderRadius.base,
     marginRight: Spacing.sm,
   }),
 
-  content: new Style<View>({
+  content: new Style({
     padding: Spacing.xl,
     gap: Spacing.xl,
   }),
 
-  infoCard: new Style<View>({
+  infoCard: new Style({
     padding: Spacing.xl,
   }),
 
-  useCasesContainer: new Style<View>({
+  useCasesContainer: new Style({
     marginTop: Spacing.xl,
   }),
 
-  useCaseItem: new Style<View>({
+  useCaseItem: new Style({
     flexDirection: 'row',
     alignItems: 'flex-start',
     marginBottom: Spacing.xs,

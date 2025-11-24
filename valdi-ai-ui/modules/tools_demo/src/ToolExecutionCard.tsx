@@ -88,8 +88,8 @@ export class ToolExecutionCard extends Component<ToolExecutionCardProps> {
     }
   }
 
-  onRender() {
-    const { result } = this.props;
+  override onRender() {
+    const { result } = this.viewModel;
 
     return (
       <Card elevation="md" style={styles.container}>
@@ -215,50 +215,50 @@ export class ToolExecutionCard extends Component<ToolExecutionCardProps> {
 }
 
 const styles = {
-  container: new Style<View>({
+  container: new Style({
     padding: Spacing.xl,
   }),
 
-  header: new Style<View>({
+  header: new Style({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'flex-start',
     marginBottom: Spacing.md,
   }),
 
-  headerLeft: new Style<View>({
+  headerLeft: new Style({
     flex: 1,
     gap: Spacing.xs,
   }),
 
-  headerRight: new Style<View>({
+  headerRight: new Style({
     alignItems: 'flex-end',
   }),
 
-  statusBadge: new Style<View>({
+  statusBadge: new Style({
     flexDirection: 'row',
     alignItems: 'center',
     gap: Spacing.xs,
   }),
 
-  statusIndicator: new Style<View>({
+  statusIndicator: new Style({
     width: 8,
     height: 8,
     borderRadius: 4,
   }),
 
-  metadataRow: new Style<View>({
+  metadataRow: new Style({
     flexDirection: 'row',
     alignItems: 'center',
     gap: Spacing.sm,
     marginBottom: Spacing.md,
   }),
 
-  section: new Style<View>({
+  section: new Style({
     marginTop: Spacing.md,
   }),
 
-  codeBlock: new Style<View>({
+  codeBlock: new Style({
     backgroundColor: Colors.codeBackground,
     padding: Spacing.md,
     borderRadius: BorderRadius.sm,

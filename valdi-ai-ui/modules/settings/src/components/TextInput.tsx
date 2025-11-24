@@ -102,7 +102,7 @@ export class TextInput extends Component<TextInputProps, TextInputState> {
     return value;
   };
 
-  onRender() {
+  override onRender() {
     const {
       value,
       placeholder,
@@ -150,7 +150,7 @@ export class TextInput extends Component<TextInputProps, TextInputState> {
 }
 
 const styles = {
-  container: new Style<View>({
+  container: new Style({
     width: '100%',
     borderWidth: 1,
     borderRadius: BorderRadius.base,

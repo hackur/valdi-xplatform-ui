@@ -36,7 +36,7 @@ export class MessageBubble extends Component<MessageBubbleProps> {
     return typeof message.content === 'string' ? message.content : '';
   }
 
-  onRender() {
+  override onRender() {
     const { message } = this.viewModel;
     const isUser = MessageTypeGuards.isUserMessage(message);
     const text = this.getMessageText();
@@ -133,28 +133,28 @@ export class MessageBubble extends Component<MessageBubbleProps> {
 }
 
 const styles = {
-  container: new Style<View>({
+  container: new Style({
     width: '100%',
     marginBottom: SemanticSpacing.messageBubbleGap,
   }),
 
-  messageRow: new Style<View>({
+  messageRow: new Style({
     flexDirection: 'row',
     alignItems: 'flex-start',
     gap: Spacing.sm,
     maxWidth: '80%',
   }),
 
-  bubble: new Style<View>({
+  bubble: new Style({
     padding: SemanticSpacing.messageBubblePadding,
     maxWidth: '100%',
   }),
 
-  timestampContainer: new Style<View>({
+  timestampContainer: new Style({
     marginTop: Spacing.xs,
   }),
 
-  statusContainer: new Style<View>({
+  statusContainer: new Style({
     marginTop: Spacing.xs,
     marginLeft: 40, // Account for avatar width + gap
   }),

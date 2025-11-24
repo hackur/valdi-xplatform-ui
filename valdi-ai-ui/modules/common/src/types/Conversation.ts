@@ -84,6 +84,9 @@ export interface Conversation {
   /** Total token count (approximate) */
   tokenCount?: number;
 
+  /** Tools enabled for this conversation */
+  toolsEnabled?: boolean;
+
   /** Additional metadata */
   metadata?: {
     /** Agent workflow type (if any) */
@@ -99,6 +102,9 @@ export interface Conversation {
 
     /** Tools used in this conversation */
     tools?: string[];
+
+    /** Tags for organization and filtering */
+    tags?: string[];
 
     /** Custom user metadata */
     [key: string]: unknown;

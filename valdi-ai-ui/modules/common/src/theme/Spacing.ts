@@ -148,7 +148,7 @@ export const SpacingUtils = {
    *
    * @example
    * ```typescript
-   * const style = new Style<View>({
+   * const style = new Style({
    *   ...SpacingUtils.padding(Spacing.base)
    * });
    * ```
@@ -165,7 +165,7 @@ export const SpacingUtils = {
    *
    * @example
    * ```typescript
-   * const style = new Style<View>({
+   * const style = new Style({
    *   ...SpacingUtils.paddingHorizontal(Spacing.lg)
    * });
    * ```
@@ -182,7 +182,7 @@ export const SpacingUtils = {
    *
    * @example
    * ```typescript
-   * const style = new Style<View>({
+   * const style = new Style({
    *   ...SpacingUtils.paddingVertical(Spacing.md)
    * });
    * ```
@@ -204,7 +204,7 @@ export const SpacingUtils = {
    *
    * @example
    * ```typescript
-   * const style = new Style<View>({
+   * const style = new Style({
    *   ...SpacingUtils.paddingCustom(
    *     Spacing.lg,    // top: 20
    *     Spacing.base,  // right: 16
@@ -241,7 +241,7 @@ export const SpacingUtils = {
    *
    * @example
    * ```typescript
-   * const style = new Style<View>({
+   * const style = new Style({
    *   ...SpacingUtils.margin(Spacing.base)
    * });
    * ```
@@ -260,7 +260,7 @@ export const SpacingUtils = {
    *
    * @example
    * ```typescript
-   * const containerStyle = new Style<View>({
+   * const containerStyle = new Style({
    *   flexDirection: 'row',
    *   ...SpacingUtils.gap(Spacing.sm)
    * });

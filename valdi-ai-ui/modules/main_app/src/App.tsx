@@ -16,7 +16,7 @@ import { HomePage } from './HomePage';
  * and renders the home page.
  */
 export class App extends Component<Record<string, never>> {
-  onRender() {
+  override onRender() {
     return (
       <NavigationRoot>
         {$slot((navigationController) => {

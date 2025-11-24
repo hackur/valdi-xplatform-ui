@@ -43,7 +43,7 @@ export class Switch extends Component<SwitchProps> {
     }
   };
 
-  onRender() {
+  override onRender() {
     const { value, disabled, style: customStyle } = this.viewModel;
 
     const trackColor = value
@@ -78,7 +78,7 @@ export class Switch extends Component<SwitchProps> {
 }
 
 const styles = {
-  track: new Style<View>({
+  track: new Style({
     width: 48,
     height: 28,
     borderRadius: BorderRadius.round,
@@ -86,7 +86,7 @@ const styles = {
     justifyContent: 'center',
   }),
 
-  thumb: new Style<View>({
+  thumb: new Style({
     width: 24,
     height: 24,
     borderRadius: BorderRadius.round,

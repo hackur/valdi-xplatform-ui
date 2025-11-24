@@ -117,7 +117,7 @@ export class ConversationListItem extends Component<ConversationListItemProps> {
     }
   }
 
-  onRender() {
+  override onRender() {
     const { conversation, unreadCount, style: customStyle } = this.viewModel;
 
     const previewText = this.getPreviewText();
@@ -289,7 +289,7 @@ export class ConversationListItem extends Component<ConversationListItemProps> {
 }
 
 const styles = {
-  container: new Style<View>({
+  container: new Style({
     width: '100%',
     paddingHorizontal: Spacing.base,
     paddingVertical: Spacing.md,
@@ -297,17 +297,17 @@ const styles = {
     borderBottomColor: Colors.border,
   }),
 
-  mainContent: new Style<View>({
+  mainContent: new Style({
     flexDirection: 'row',
     alignItems: 'flex-start',
     gap: Spacing.sm,
   }),
 
-  providerIconContainer: new Style<View>({
+  providerIconContainer: new Style({
     paddingTop: Spacing.xs / 2,
   }),
 
-  providerIcon: new Style<View>({
+  providerIcon: new Style({
     width: 28,
     height: 28,
     borderRadius: BorderRadius.full,
@@ -315,50 +315,50 @@ const styles = {
     justifyContent: 'center',
   }),
 
-  centerContent: new Style<View>({
+  centerContent: new Style({
     flex: 1,
     gap: Spacing.xs,
   }),
 
-  titleRow: new Style<View>({
+  titleRow: new Style({
     flexDirection: 'row',
     alignItems: 'center',
     gap: Spacing.xs,
   }),
 
-  pinnedIndicator: new Style<View>({
+  pinnedIndicator: new Style({
     width: 16,
     height: 16,
     alignItems: 'center',
     justifyContent: 'center',
   }),
 
-  previewRow: new Style<View>({
+  previewRow: new Style({
     flexDirection: 'row',
     alignItems: 'center',
   }),
 
-  tagsRow: new Style<View>({
+  tagsRow: new Style({
     flexDirection: 'row',
     alignItems: 'center',
     gap: Spacing.xs,
     flexWrap: 'wrap',
   }),
 
-  tag: new Style<View>({
+  tag: new Style({
     backgroundColor: Colors.primaryLight,
     paddingHorizontal: Spacing.xs,
     paddingVertical: 2,
     borderRadius: BorderRadius.sm,
   }),
 
-  rightContent: new Style<View>({
+  rightContent: new Style({
     alignItems: 'flex-end',
     gap: Spacing.xs,
     minWidth: 50,
   }),
 
-  unreadBadge: new Style<View>({
+  unreadBadge: new Style({
     backgroundColor: Colors.primary,
     paddingHorizontal: 6,
     paddingVertical: 2,
@@ -368,7 +368,7 @@ const styles = {
     justifyContent: 'center',
   }),
 
-  archivedBanner: new Style<View>({
+  archivedBanner: new Style({
     marginTop: Spacing.xs,
     paddingTop: Spacing.xs,
     borderTopWidth: 1,

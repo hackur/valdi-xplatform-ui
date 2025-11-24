@@ -33,8 +33,8 @@ export interface ConversationCardProps {
  * Card component for displaying conversation in a list.
  */
 export class ConversationCard extends Component<ConversationCardProps> {
-  onRender() {
-    const { conversation, onTap, onLongPress, isSelected } = this.props;
+  override onRender() {
+    const { conversation, onTap, onLongPress, isSelected } = this.viewModel;
 
     // Format time
     const timeStr = conversation.lastMessageTime
@@ -167,7 +167,7 @@ export class ConversationCard extends Component<ConversationCardProps> {
 }
 
 const styles = {
-  card: new Style<View>({
+  card: new Style({
     flexDirection: 'row',
     alignItems: 'flex-start',
     padding: Spacing.base,
@@ -179,7 +179,7 @@ const styles = {
     minHeight: 80,
   }),
 
-  cardSelected: new Style<View>({
+  cardSelected: new Style({
     flexDirection: 'row',
     alignItems: 'flex-start',
     padding: Spacing.base,
@@ -191,12 +191,12 @@ const styles = {
     minHeight: 80,
   }),
 
-  leftSection: new Style<View>({
+  leftSection: new Style({
     marginRight: Spacing.sm,
     alignItems: 'center',
   }),
 
-  avatar: new Style<View>({
+  avatar: new Style({
     width: 48,
     height: 48,
     borderRadius: 24,
@@ -205,73 +205,73 @@ const styles = {
     alignItems: 'center',
   }),
 
-  avatarText: new Style<Label>({
+  avatarText: new Style({
     ...Fonts.bodyMedium,
     color: Colors.primary,
   }),
 
-  pinIndicator: new Style<View>({
+  pinIndicator: new Style({
     position: 'absolute',
     top: -4,
     right: -4,
   }),
 
-  pinIcon: new Style<Label>({
+  pinIcon: new Style({
     fontSize: 12,
   }),
 
-  centerSection: new Style<View>({
+  centerSection: new Style({
     flex: 1,
     justifyContent: 'space-between',
   }),
 
-  header: new Style<View>({
+  header: new Style({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'flex-start',
     marginBottom: Spacing.xs,
   }),
 
-  title: new Style<Label>({
+  title: new Style({
     ...Fonts.bodyLargeMedium,
     color: Colors.textPrimary,
     flex: 1,
   }),
 
-  time: new Style<Label>({
+  time: new Style({
     ...Fonts.caption,
     color: Colors.textTertiary,
     marginLeft: Spacing.xs,
   }),
 
-  preview: new Style<Label>({
+  preview: new Style({
     ...Fonts.bodyRegular,
     color: Colors.textSecondary,
     marginBottom: Spacing.xs,
   }),
 
-  footer: new Style<View>({
+  footer: new Style({
     flexDirection: 'row',
     gap: Spacing.sm,
   }),
 
-  metadata: new Style<Label>({
+  metadata: new Style({
     ...Fonts.caption,
     color: Colors.textTertiary,
   }),
 
-  rightSection: new Style<View>({
+  rightSection: new Style({
     alignItems: 'flex-end',
     gap: Spacing.xs,
   }),
 
-  statusDot: new Style<View>({
+  statusDot: new Style({
     width: 8,
     height: 8,
     borderRadius: 4,
   }),
 
-  unreadBadge: new Style<View>({
+  unreadBadge: new Style({
     backgroundColor: Colors.primary,
     borderRadius: 10,
     minWidth: 20,
@@ -281,7 +281,7 @@ const styles = {
     paddingHorizontal: Spacing.xs,
   }),
 
-  unreadText: new Style<Label>({
+  unreadText: new Style({
     ...Fonts.caption,
     color: Colors.white,
     fontWeight: '600',

@@ -99,9 +99,6 @@ export class ChatIntegrationService {
 
       this.messageStore.addMessage(assistantMessage);
 
-      // Get conversation messages
-      const messages = this.messageStore.getMessages(conversationId);
-
       // Stream response
       let fullResponse = '';
 

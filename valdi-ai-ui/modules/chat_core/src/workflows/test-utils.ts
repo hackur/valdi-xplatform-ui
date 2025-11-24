@@ -496,11 +496,11 @@ export async function exampleTestUsage() {
     summarizer: 'Summary: AI in healthcare shows promising results...',
   });
 
-  // Collect events
-  const _collector = new ProgressEventCollector();
+  // Collect events (for testing purposes)
+  // const collector = new ProgressEventCollector();
 
-  // Track metrics
-  const _metrics = new WorkflowMetrics();
+  // Track metrics (for testing purposes)
+  // const metrics = new WorkflowMetrics();
 
   // Execute workflow (example - you would create actual workflow here)
   // const workflow = createWorkflow(suite.getChatService(), suite.getMessageStore());

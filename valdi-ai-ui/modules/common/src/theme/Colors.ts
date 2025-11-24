@@ -30,6 +30,7 @@ export const Colors = {
   error: '#EF4444', // Red - Error states
   errorDark: '#DC2626', // Darker red
   errorLight: '#FEE2E2', // Light red background
+  errorBackground: '#FEE2E2', // Error background (alias for errorLight)
 
   info: '#3B82F6', // Blue - Info states
   infoDark: '#2563EB', // Darker blue

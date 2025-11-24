@@ -64,7 +64,7 @@ export class ConversationListView extends StatefulComponent<
   ConversationListViewProps,
   ConversationListViewState
 > {
-  state: ConversationListViewState = {
+  override state: ConversationListViewState = {
     conversations: [],
     isLoading: true,
     error: undefined,
@@ -78,7 +78,7 @@ export class ConversationListView extends StatefulComponent<
     await this.loadConversations();
   }
 
-  onRender() {
+  override onRender() {
     const {
       conversations,
       isLoading,
@@ -247,7 +247,7 @@ export class ConversationListView extends StatefulComponent<
     this.setState({ isLoading: true, error: undefined });
 
     try {
-      const { historyManager } = this.props;
+      const { historyManager } = this.viewModel;
       const { viewMode, searchQuery } = this.state;
 
       let conversations: ConversationListItemData[];
@@ -287,8 +287,8 @@ export class ConversationListView extends StatefulComponent<
       this.toggleSelection(conversationId);
     } else {
       // Normal mode - navigate to conversation
-      if (this.props.onConversationSelected) {
-        this.props.onConversationSelected(conversationId);
+      if (this.viewModel.onConversationSelected) {
+        this.viewModel.onConversationSelected(conversationId);
       }
     }
   };
@@ -345,7 +345,7 @@ export class ConversationListView extends StatefulComponent<
    * Handle archive selected
    */
   private handleArchiveSelected = async (): Promise<void> => {
-    const { historyManager } = this.props;
+    const { historyManager } = this.viewModel;
     const ids = Array.from(this.state.selectedIds);
 
     await historyManager.archiveConversations(ids);
@@ -365,7 +365,7 @@ export class ConversationListView extends StatefulComponent<
    * Confirm delete selected conversations
    */
   private confirmDeleteSelected = async (): Promise<void> => {
-    const { historyManager } = this.props;
+    const { historyManager } = this.viewModel;
     const ids = Array.from(this.state.selectedIds);
 
     this.setState({ showDeleteConfirm: false });
@@ -390,114 +390,114 @@ export class ConversationListView extends StatefulComponent<
 }
 
 const styles = {
-  container: new Style<View>({
+  container: new Style({
     flex: 1,
     backgroundColor: Colors.background,
   }),
 
-  header: new Style<View>({
+  header: new Style({
     padding: Spacing.base,
     backgroundColor: Colors.surface,
     borderBottomWidth: 1,
     borderBottomColor: Colors.border,
   }),
 
-  headerTitle: new Style<Label>({
+  headerTitle: new Style({
     ...Fonts.h2,
     color: Colors.textPrimary,
     marginBottom: Spacing.sm,
   }),
 
-  tabs: new Style<View>({
+  tabs: new Style({
     flexDirection: 'row',
     gap: Spacing.sm,
   }),
 
-  tab: new Style<View>({
+  tab: new Style({
     paddingHorizontal: Spacing.base,
     paddingVertical: Spacing.sm,
     borderRadius: Spacing.radiusMd,
     backgroundColor: 'transparent',
   }),
 
-  tabActive: new Style<View>({
+  tabActive: new Style({
     paddingHorizontal: Spacing.base,
     paddingVertical: Spacing.sm,
     borderRadius: Spacing.radiusMd,
     backgroundColor: Colors.primary100,
   }),
 
-  tabText: new Style<Label>({
+  tabText: new Style({
     ...Fonts.bodyMedium,
     color: Colors.textSecondary,
   }),
 
-  tabTextActive: new Style<Label>({
+  tabTextActive: new Style({
     ...Fonts.bodyMedium,
     color: Colors.primary,
     fontWeight: '600',
   }),
 
-  searchContainer: new Style<View>({
+  searchContainer: new Style({
     padding: Spacing.base,
     backgroundColor: Colors.background,
   }),
 
-  content: new Style<View>({
+  content: new Style({
     flex: 1,
   }),
 
-  scrollView: new Style<ScrollView>({
+  scrollView: new Style({
     flex: 1,
   }),
 
-  list: new Style<View>({
+  list: new Style({
     padding: Spacing.base,
   }),
 
-  errorContainer: new Style<View>({
+  errorContainer: new Style({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
     padding: Spacing.xl,
   }),
 
-  errorIcon: new Style<Label>({
+  errorIcon: new Style({
     fontSize: 48,
     marginBottom: Spacing.base,
   }),
 
-  errorText: new Style<Label>({
+  errorText: new Style({
     ...Fonts.bodyLarge,
     color: Colors.error,
     textAlign: 'center',
   }),
 
-  emptyContainer: new Style<View>({
+  emptyContainer: new Style({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
     padding: Spacing.xl,
   }),
 
-  emptyIcon: new Style<Label>({
+  emptyIcon: new Style({
     fontSize: 64,
     marginBottom: Spacing.base,
   }),
 
-  emptyText: new Style<Label>({
+  emptyText: new Style({
     ...Fonts.h3,
     color: Colors.textSecondary,
     marginBottom: Spacing.sm,
   }),
 
-  emptySubtext: new Style<Label>({
+  emptySubtext: new Style({
     ...Fonts.bodyRegular,
     color: Colors.textTertiary,
     textAlign: 'center',
   }),
 
-  selectionBar: new Style<View>({
+  selectionBar: new Style({
     position: 'absolute',
     bottom: 0,
     left: 0,
@@ -509,24 +509,24 @@ const styles = {
     alignItems: 'center',
   }),
 
-  selectionText: new Style<Label>({
+  selectionText: new Style({
     ...Fonts.bodyMedium,
     color: Colors.white,
   }),
 
-  selectionActions: new Style<View>({
+  selectionActions: new Style({
     flexDirection: 'row',
     gap: Spacing.sm,
   }),
 
-  actionButton: new Style<View>({
+  actionButton: new Style({
     paddingHorizontal: Spacing.base,
     paddingVertical: Spacing.sm,
     backgroundColor: 'rgba(255, 255, 255, 0.2)',
     borderRadius: Spacing.radiusSm,
   }),
 
-  actionButtonText: new Style<Label>({
+  actionButtonText: new Style({
     ...Fonts.bodyMedium,
     color: Colors.white,
   }),

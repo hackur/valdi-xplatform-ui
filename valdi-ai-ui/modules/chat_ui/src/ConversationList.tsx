@@ -7,7 +7,7 @@
 
 import { StatefulComponent } from 'valdi_core/src/Component';
 import { Style } from 'valdi_core/src/Style';
-import { View } from 'valdi_tsx/src/NativeTemplateElements';
+import { View, ScrollView } from 'valdi_tsx/src/NativeTemplateElements';
 import {
   Colors,
   Fonts,
@@ -15,7 +15,6 @@ import {
   SemanticSpacing,
   BorderRadius,
   Conversation,
-  ConversationStatus,
   LoadingSpinner,
 } from '@common';
 import { ConversationListItem } from './ConversationListItem';
@@ -90,21 +89,22 @@ export class ConversationList extends StatefulComponent<
     unreadCounts: {},
   };
 
-  state: ConversationListState = {
+  override state: ConversationListState = {
     filter: this.viewModel.initialFilter || 'all',
     searchQuery: '',
     filteredConversations: [],
   };
 
-  onCreate() {
+  override onCreate() {
     this.updateFilteredConversations();
   }
 
-  onUpdate(prevProps: ConversationListProps) {
+  override onViewModelUpdate(prevProps?: ConversationListProps) {
     // Update filtered list when conversations or filter changes
     if (
-      prevProps.conversations !== this.viewModel.conversations ||
-      prevProps.initialFilter !== this.viewModel.initialFilter
+      prevProps &&
+      (prevProps.conversations !== this.viewModel.conversations ||
+        prevProps.initialFilter !== this.viewModel.initialFilter)
     ) {
       this.updateFilteredConversations();
     }
@@ -252,7 +252,7 @@ export class ConversationList extends StatefulComponent<
     );
   }
 
-  onRender() {
+  override onRender() {
     const {
       conversations,
       lastMessagePreviews,
@@ -264,7 +264,7 @@ export class ConversationList extends StatefulComponent<
       style: customStyle,
     } = this.viewModel;
 
-    const { filter, searchQuery, filteredConversations } = this.state;
+    const { searchQuery, filteredConversations } = this.state;
 
     // Calculate filter counts
     const pinnedCount = conversations.filter((c) => c.isPinned).length;
@@ -309,7 +309,7 @@ export class ConversationList extends StatefulComponent<
             <LoadingSpinner size="large" showText={true} text="Loading" />
           </view>
         ) : (
-          <ScrollView
+          <scrollView
             style={styles.scrollView}
             refreshControl={
               isRefreshing !== undefined
@@ -344,7 +344,7 @@ export class ConversationList extends StatefulComponent<
             ) : (
               this.renderEmptyState()
             )}
-          </ScrollView>
+          </scrollView>
         )}
       </view>
     );
@@ -352,12 +352,12 @@ export class ConversationList extends StatefulComponent<
 }
 
 const styles = {
-  container: new Style<View>({
+  container: new Style({
     flex: 1,
     backgroundColor: Colors.background,
   }),
 
-  searchContainer: new Style<View>({
+  searchContainer: new Style({
     paddingHorizontal: SemanticSpacing.screenPaddingHorizontal,
     paddingVertical: Spacing.md,
     backgroundColor: Colors.surface,
@@ -365,7 +365,7 @@ const styles = {
     borderBottomColor: Colors.border,
   }),
 
-  searchInput: new Style<View>({
+  searchInput: new Style({
     width: '100%',
     height: 40,
     backgroundColor: Colors.background,
@@ -375,7 +375,7 @@ const styles = {
     borderColor: Colors.border,
   }),
 
-  filterContainer: new Style<View>({
+  filterContainer: new Style({
     flexDirection: 'row',
     paddingHorizontal: SemanticSpacing.screenPaddingHorizontal,
     paddingVertical: Spacing.md,
@@ -385,7 +385,7 @@ const styles = {
     borderBottomColor: Colors.border,
   }),
 
-  filterButton: new Style<View>({
+  filterButton: new Style({
     paddingHorizontal: Spacing.base,
     paddingVertical: Spacing.sm,
     borderRadius: BorderRadius.base,
@@ -394,28 +394,28 @@ const styles = {
     justifyContent: 'center',
   }),
 
-  scrollView: new Style<View>({
+  scrollView: new Style({
     flex: 1,
   }),
 
-  listContent: new Style<View>({
+  listContent: new Style({
     flexDirection: 'column',
   }),
 
-  loadingContainer: new Style<View>({
+  loadingContainer: new Style({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
     paddingVertical: Spacing.massive,
   }),
 
-  refreshingIndicator: new Style<View>({
+  refreshingIndicator: new Style({
     paddingVertical: Spacing.md,
     alignItems: 'center',
     justifyContent: 'center',
   }),
 
-  emptyState: new Style<View>({
+  emptyState: new Style({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',

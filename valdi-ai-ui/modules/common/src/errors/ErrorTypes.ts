@@ -100,7 +100,7 @@ export class AppError extends Error {
   public readonly retryable: boolean;
 
   /** Original error if this wraps another error */
-  public readonly cause?: Error;
+  public override readonly cause?: Error;
 
   /** User-friendly message */
   public readonly userMessage?: string;
@@ -213,7 +213,7 @@ export class APIError extends AppError {
     this.url = options?.url;
   }
 
-  toJSON(): Record<string, unknown> {
+  override toJSON(): Record<string, unknown> {
     return {
       ...super.toJSON(),
       statusCode: this.statusCode,
@@ -265,7 +265,7 @@ export class ValidationError extends AppError {
     this.received = options?.received;
   }
 
-  toJSON(): Record<string, unknown> {
+  override toJSON(): Record<string, unknown> {
     return {
       ...super.toJSON(),
       field: this.field,
@@ -326,7 +326,7 @@ export class StorageError extends AppError {
     this.storageType = options?.storageType;
   }
 
-  toJSON(): Record<string, unknown> {
+  override toJSON(): Record<string, unknown> {
     return {
       ...super.toJSON(),
       key: this.key,
@@ -384,7 +384,7 @@ export class StreamError extends AppError {
     this.bytesReceived = options?.bytesReceived;
   }
 
-  toJSON(): Record<string, unknown> {
+  override toJSON(): Record<string, unknown> {
     return {
       ...super.toJSON(),
       streamId: this.streamId,
@@ -445,7 +445,7 @@ export class WorkflowError extends AppError {
     this.attempt = options?.attempt;
   }
 
-  toJSON(): Record<string, unknown> {
+  override toJSON(): Record<string, unknown> {
     return {
       ...super.toJSON(),
       workflowId: this.workflowId,

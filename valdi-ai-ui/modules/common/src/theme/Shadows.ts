@@ -231,7 +231,7 @@ export const ShadowUtils = {
    *   4
    * );
    *
-   * const style = new Style<View>({
+   * const style = new Style({
    *   ...customShadow,
    *   backgroundColor: Colors.surface
    * });

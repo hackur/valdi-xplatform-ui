@@ -9,7 +9,7 @@ import { StatefulComponent } from 'valdi_core/src/Component';
 import { Style } from 'valdi_core/src/Style';
 import { View, ScrollView, Label } from 'valdi_tsx/src/NativeTemplateElements';
 import { NavigationController } from 'valdi_navigation/src/NavigationController';
-import { Colors, Fonts, Spacing } from '@common';
+import { Colors, Fonts, Spacing, BorderRadius } from '@common';
 import { Conversation } from '@common';
 import { LoadingSpinner } from '@common';
 import { Card } from '@common';
@@ -46,7 +46,7 @@ export class ConversationListConnected extends StatefulComponent<
 > {
   private unsubscribe?: () => void;
 
-  state: ConversationListConnectedState = {
+  override state: ConversationListConnectedState = {
     conversations: [],
     isLoading: true,
     filter: 'all',
@@ -57,7 +57,7 @@ export class ConversationListConnected extends StatefulComponent<
     await this.loadConversations();
 
     // Subscribe to updates
-    this.unsubscribe = this.props.integrationService.subscribeToConversations(
+    this.unsubscribe = this.viewModel.integrationService.subscribeToConversations(
       (conversations) => {
         this.setState({
           conversations: this.filterConversations(conversations),
@@ -73,8 +73,8 @@ export class ConversationListConnected extends StatefulComponent<
     }
   }
 
-  onRender() {
-    const { conversations, isLoading, filter, searchQuery } = this.state;
+  override onRender() {
+    const { conversations, isLoading, filter } = this.state;
 
     return (
       <view style={styles.container}>
@@ -85,7 +85,7 @@ export class ConversationListConnected extends StatefulComponent<
           {/* New Conversation Button */}
           <Button
             title="+ New"
-            onPress={this.handleNewConversation}
+            onTap={this.handleNewConversation}
             variant="primary"
             size="small"
           />
@@ -146,7 +146,7 @@ export class ConversationListConnected extends StatefulComponent<
               {conversations.map((conversation) => (
                 <Card
                   key={conversation.id}
-                  style={styles.conversationCard}
+                  style={styles.conversationCard as unknown as Record<string, unknown>}
                   onTap={() => this.handleConversationTap(conversation.id)}
                 >
                   <view style={styles.conversationContent}>
@@ -181,7 +181,7 @@ export class ConversationListConnected extends StatefulComponent<
     this.setState({ isLoading: true });
 
     const conversations =
-      this.props.integrationService.loadConversationsFiltered({
+      this.viewModel.integrationService.loadConversationsFiltered({
         status: this.state.filter === 'all' ? undefined : this.state.filter,
         searchQuery: this.state.searchQuery || undefined,
       });
@@ -235,7 +235,7 @@ export class ConversationListConnected extends StatefulComponent<
    * Handle conversation tap
    */
   private handleConversationTap = (conversationId: string): void => {
-    this.props.integrationService.navigateToConversation(
+    this.viewModel.integrationService.navigateToConversation(
       conversationId,
       ChatView,
     );
@@ -245,7 +245,7 @@ export class ConversationListConnected extends StatefulComponent<
    * Handle new conversation
    */
   private handleNewConversation = async (): Promise<void> => {
-    await this.props.integrationService.createAndNavigateToConversation(
+    await this.viewModel.integrationService.createAndNavigateToConversation(
       'New Conversation',
       ChatView,
     );
@@ -254,10 +254,10 @@ export class ConversationListConnected extends StatefulComponent<
   /**
    * Format date
    */
-  private formatDate(dateString: string): string {
-    const date = new Date(dateString);
+  private formatDate(date: Date | string): string {
+    const dateObj = typeof date === 'string' ? new Date(date) : date;
     const now = new Date();
-    const diff = now.getTime() - date.getTime();
+    const diff = now.getTime() - dateObj.getTime();
     const days = Math.floor(diff / (1000 * 60 * 60 * 24));
 
     if (days === 0) {
@@ -267,18 +267,18 @@ export class ConversationListConnected extends StatefulComponent<
     } else if (days < 7) {
       return `${days} days ago`;
     } else {
-      return date.toLocaleDateString();
+      return dateObj.toLocaleDateString();
     }
   }
 }
 
 const styles = {
-  container: new Style<View>({
+  container: new Style({
     flex: 1,
     backgroundColor: Colors.background,
   }),
 
-  header: new Style<View>({
+  header: new Style({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
@@ -288,96 +288,96 @@ const styles = {
     borderBottomColor: Colors.border,
   }),
 
-  headerTitle: new Style<Label>({
+  headerTitle: new Style({
     ...Fonts.h2,
     color: Colors.textPrimary,
   }),
 
-  tabs: new Style<View>({
+  tabs: new Style({
     flexDirection: 'row',
     padding: Spacing.base,
     gap: Spacing.sm,
     backgroundColor: Colors.surface,
   }),
 
-  tab: new Style<View>({
+  tab: new Style({
     paddingHorizontal: Spacing.base,
     paddingVertical: Spacing.sm,
-    borderRadius: Spacing.radiusMd,
+    borderRadius: BorderRadius.md,
   }),
 
-  tabActive: new Style<View>({
+  tabActive: new Style({
     paddingHorizontal: Spacing.base,
     paddingVertical: Spacing.sm,
-    borderRadius: Spacing.radiusMd,
-    backgroundColor: Colors.primary100,
+    borderRadius: BorderRadius.md,
+    backgroundColor: Colors.primaryLighter,
   }),
 
-  tabText: new Style<Label>({
+  tabText: new Style({
     ...Fonts.bodyMedium,
     color: Colors.textSecondary,
   }),
 
-  tabTextActive: new Style<Label>({
+  tabTextActive: new Style({
     ...Fonts.bodyMedium,
     color: Colors.primary,
     fontWeight: '600',
   }),
 
-  scrollView: new Style<ScrollView>({
+  scrollView: new Style({
     flex: 1,
   }),
 
-  list: new Style<View>({
+  list: new Style({
     padding: Spacing.base,
   }),
 
-  emptyContainer: new Style<View>({
+  emptyContainer: new Style({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
     padding: Spacing.xl,
   }),
 
-  emptyIcon: new Style<Label>({
+  emptyIcon: new Style({
     fontSize: 64,
     marginBottom: Spacing.base,
   }),
 
-  emptyText: new Style<Label>({
+  emptyText: new Style({
     ...Fonts.h3,
     color: Colors.textSecondary,
     marginBottom: Spacing.sm,
   }),
 
-  emptySubtext: new Style<Label>({
-    ...Fonts.bodyRegular,
+  emptySubtext: new Style({
+    ...Fonts.body,
     color: Colors.textTertiary,
     textAlign: 'center',
   }),
 
-  conversationCard: new Style<View>({
+  conversationCard: new Style({
     marginBottom: Spacing.sm,
   }),
 
-  conversationContent: new Style<View>({
+  conversationContent: new Style({
     padding: Spacing.sm,
   }),
 
-  title: new Style<Label>({
+  title: new Style({
     ...Fonts.bodyLarge,
     color: Colors.textPrimary,
     marginBottom: Spacing.xs,
     fontWeight: '600',
   }),
 
-  date: new Style<Label>({
+  date: new Style({
     ...Fonts.bodySmall,
     color: Colors.textSecondary,
     marginBottom: Spacing.xs,
   }),
 
-  messageCount: new Style<Label>({
+  messageCount: new Style({
     ...Fonts.bodySmall,
     color: Colors.textTertiary,
   }),

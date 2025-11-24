@@ -57,7 +57,7 @@ export class ProviderSettingsView extends StatefulComponent<
   ProviderSettingsViewProps,
   ProviderSettingsViewState
 > {
-  state: ProviderSettingsViewState = {
+  override state: ProviderSettingsViewState = {
     providers: [],
     isLoading: true,
     showDeleteConfirm: false,
@@ -67,7 +67,7 @@ export class ProviderSettingsView extends StatefulComponent<
     await this.loadProviders();
   }
 
-  onRender() {
+  override onRender() {
     const { providers, isLoading, error } = this.state;
 
     return (
@@ -268,7 +268,7 @@ export class ProviderSettingsView extends StatefulComponent<
     this.setState({ isLoading: true, error: undefined });
 
     try {
-      const providers = this.props.customProviderStore.getAllProviders();
+      const providers = this.viewModel.customProviderStore.getAllProviders();
       this.setState({ providers, isLoading: false });
     } catch (error) {
       console.error('Failed to load providers:', error);
@@ -284,8 +284,8 @@ export class ProviderSettingsView extends StatefulComponent<
    * Handle add provider
    */
   private handleAddProvider = (): void => {
-    this.props.navigationController.push(AddCustomProviderView, {
-      customProviderStore: this.props.customProviderStore,
+    this.viewModel.navigationController.push(AddCustomProviderView, {
+      customProviderStore: this.viewModel.customProviderStore,
       onSaved: async () => {
         await this.loadProviders();
       },
@@ -296,8 +296,8 @@ export class ProviderSettingsView extends StatefulComponent<
    * Handle edit provider
    */
   private handleEditProvider = (provider: CustomProviderConfig): void => {
-    this.props.navigationController.push(AddCustomProviderView, {
-      customProviderStore: this.props.customProviderStore,
+    this.viewModel.navigationController.push(AddCustomProviderView, {
+      customProviderStore: this.viewModel.customProviderStore,
       existingProvider: provider,
       onSaved: async () => {
         await this.loadProviders();
@@ -311,7 +311,7 @@ export class ProviderSettingsView extends StatefulComponent<
   private handleTestProvider = async (providerId: string): Promise<void> => {
     try {
       const result =
-        await this.props.customProviderStore.testProvider(providerId);
+        await this.viewModel.customProviderStore.testProvider(providerId);
 
       if (result.success) {
         alert(
@@ -335,7 +335,7 @@ export class ProviderSettingsView extends StatefulComponent<
     enabled: boolean,
   ): Promise<void> => {
     try {
-      await this.props.customProviderStore.updateProvider(providerId, {
+      await this.viewModel.customProviderStore.updateProvider(providerId, {
         isEnabled: enabled,
       });
       await this.loadProviders();
@@ -369,7 +369,7 @@ export class ProviderSettingsView extends StatefulComponent<
     this.setState({ showDeleteConfirm: false, providerToDelete: undefined });
 
     try {
-      await this.props.customProviderStore.deleteProvider(providerToDelete);
+      await this.viewModel.customProviderStore.deleteProvider(providerToDelete);
       await this.loadProviders();
     } catch (error) {
       alert(
@@ -409,209 +409,209 @@ export class ProviderSettingsView extends StatefulComponent<
 }
 
 const styles = {
-  container: new Style<View>({
+  container: new Style({
     flex: 1,
     backgroundColor: Colors.background,
   }),
 
-  header: new Style<View>({
+  header: new Style({
     padding: Spacing.base,
     backgroundColor: Colors.surface,
     borderBottomWidth: 1,
     borderBottomColor: Colors.border,
   }),
 
-  headerTitle: new Style<Label>({
+  headerTitle: new Style({
     ...Fonts.h2,
     color: Colors.textPrimary,
     marginBottom: Spacing.xs,
   }),
 
-  headerSubtitle: new Style<Label>({
+  headerSubtitle: new Style({
     ...Fonts.bodyRegular,
     color: Colors.textSecondary,
   }),
 
-  content: new Style<View>({
+  content: new Style({
     flex: 1,
   }),
 
-  addButtonContainer: new Style<View>({
+  addButtonContainer: new Style({
     padding: Spacing.base,
   }),
 
-  scrollView: new Style<ScrollView>({
+  scrollView: new Style({
     flex: 1,
   }),
 
-  list: new Style<View>({
+  list: new Style({
     padding: Spacing.base,
   }),
 
-  errorContainer: new Style<View>({
+  errorContainer: new Style({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
     padding: Spacing.xl,
   }),
 
-  errorIcon: new Style<Label>({
+  errorIcon: new Style({
     fontSize: 48,
     marginBottom: Spacing.base,
   }),
 
-  errorText: new Style<Label>({
+  errorText: new Style({
     ...Fonts.bodyLarge,
     color: Colors.error,
     textAlign: 'center',
   }),
 
-  emptyContainer: new Style<View>({
+  emptyContainer: new Style({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
     padding: Spacing.xl,
   }),
 
-  emptyIcon: new Style<Label>({
+  emptyIcon: new Style({
     fontSize: 64,
     marginBottom: Spacing.base,
   }),
 
-  emptyText: new Style<Label>({
+  emptyText: new Style({
     ...Fonts.h3,
     color: Colors.textSecondary,
     marginBottom: Spacing.sm,
   }),
 
-  emptySubtext: new Style<Label>({
+  emptySubtext: new Style({
     ...Fonts.bodyRegular,
     color: Colors.textTertiary,
     textAlign: 'center',
   }),
 
-  providerCard: new Style<View>({
+  providerCard: new Style({
     marginBottom: Spacing.base,
   }),
 
-  providerContent: new Style<View>({
+  providerContent: new Style({
     padding: Spacing.sm,
   }),
 
-  providerHeader: new Style<View>({
+  providerHeader: new Style({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'flex-start',
     marginBottom: Spacing.sm,
   }),
 
-  providerInfo: new Style<View>({
+  providerInfo: new Style({
     flex: 1,
   }),
 
-  providerName: new Style<Label>({
+  providerName: new Style({
     ...Fonts.bodyLarge,
     color: Colors.textPrimary,
     fontWeight: '600',
     marginBottom: Spacing.xs,
   }),
 
-  providerMeta: new Style<View>({
+  providerMeta: new Style({
     flexDirection: 'row',
     alignItems: 'center',
     gap: Spacing.sm,
   }),
 
-  providerUrl: new Style<Label>({
+  providerUrl: new Style({
     ...Fonts.bodySmall,
     color: Colors.textSecondary,
   }),
 
-  statusBadge: new Style<View>({
+  statusBadge: new Style({
     paddingHorizontal: Spacing.xs,
     paddingVertical: 2,
     backgroundColor: Colors.success + '20',
     borderRadius: Spacing.radiusSm,
   }),
 
-  statusText: new Style<Label>({
+  statusText: new Style({
     ...Fonts.bodySmall,
     color: Colors.success,
     fontSize: 10,
   }),
 
-  statusBadgeDisabled: new Style<View>({
+  statusBadgeDisabled: new Style({
     paddingHorizontal: Spacing.xs,
     paddingVertical: 2,
     backgroundColor: Colors.textTertiary + '20',
     borderRadius: Spacing.radiusSm,
   }),
 
-  statusTextDisabled: new Style<Label>({
+  statusTextDisabled: new Style({
     ...Fonts.bodySmall,
     color: Colors.textTertiary,
     fontSize: 10,
   }),
 
-  modelInfo: new Style<View>({
+  modelInfo: new Style({
     marginBottom: Spacing.sm,
   }),
 
-  modelText: new Style<Label>({
+  modelText: new Style({
     ...Fonts.bodySmall,
     color: Colors.textSecondary,
   }),
 
-  capabilities: new Style<View>({
+  capabilities: new Style({
     flexDirection: 'row',
     gap: Spacing.xs,
     marginBottom: Spacing.sm,
   }),
 
-  capabilityBadge: new Style<View>({
+  capabilityBadge: new Style({
     paddingHorizontal: Spacing.xs,
     paddingVertical: 2,
     backgroundColor: Colors.primary200,
     borderRadius: Spacing.radiusSm,
   }),
 
-  capabilityText: new Style<Label>({
+  capabilityText: new Style({
     ...Fonts.bodySmall,
     color: Colors.primary,
     fontSize: 10,
   }),
 
-  actions: new Style<View>({
+  actions: new Style({
     flexDirection: 'row',
     gap: Spacing.sm,
     marginBottom: Spacing.sm,
   }),
 
-  actionButton: new Style<View>({
+  actionButton: new Style({
     paddingHorizontal: Spacing.sm,
     paddingVertical: Spacing.xs,
     backgroundColor: Colors.primary100,
     borderRadius: Spacing.radiusSm,
   }),
 
-  actionButtonText: new Style<Label>({
+  actionButtonText: new Style({
     ...Fonts.bodySmall,
     color: Colors.primary,
   }),
 
-  actionButtonDanger: new Style<View>({
+  actionButtonDanger: new Style({
     paddingHorizontal: Spacing.sm,
     paddingVertical: Spacing.xs,
     backgroundColor: Colors.error + '20',
     borderRadius: Spacing.radiusSm,
   }),
 
-  actionButtonTextDanger: new Style<Label>({
+  actionButtonTextDanger: new Style({
     ...Fonts.bodySmall,
     color: Colors.error,
   }),
 
-  timestamp: new Style<Label>({
+  timestamp: new Style({
     ...Fonts.bodySmall,
     color: Colors.textTertiary,
   }),

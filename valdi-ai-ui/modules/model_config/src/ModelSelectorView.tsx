@@ -60,7 +60,7 @@ export class ModelSelectorView extends StatefulComponent<
   ModelSelectorViewProps,
   ModelSelectorViewState
 > {
-  state: ModelSelectorViewState = {
+  override state: ModelSelectorViewState = {
     models: [],
     modelsByProvider: new Map(),
     isLoading: true,
@@ -81,7 +81,7 @@ export class ModelSelectorView extends StatefulComponent<
     await this.loadModels();
   }
 
-  onRender() {
+  override onRender() {
     const {
       models,
       modelsByProvider,
@@ -251,7 +251,7 @@ export class ModelSelectorView extends StatefulComponent<
     this.setState({ isLoading: true });
 
     try {
-      const models = this.props.modelRegistry.getAllModels();
+      const models = this.viewModel.modelRegistry.getAllModels();
 
       // Group by provider
       const modelsByProvider = new Map<string, ModelDefinition[]>();
@@ -261,7 +261,7 @@ export class ModelSelectorView extends StatefulComponent<
 
         if (model.provider === 'custom-openai-compatible') {
           // Get custom provider name
-          const provider = this.props.modelRegistry.getProvider(
+          const provider = this.viewModel.modelRegistry.getProvider(
             'custom-openai-compatible',
             model.customProviderId,
           );
@@ -303,7 +303,7 @@ export class ModelSelectorView extends StatefulComponent<
     });
 
     // Callback
-    if (this.props.onModelSelected) {
+    if (this.viewModel.onModelSelected) {
       const selection: ModelSelection = {
         providerType: model.provider,
         modelId: model.id,
@@ -312,11 +312,11 @@ export class ModelSelectorView extends StatefulComponent<
         maxTokens: model.maxOutputTokens,
       };
 
-      this.props.onModelSelected(selection);
+      this.viewModel.onModelSelected(selection);
     }
 
     // Navigate back
-    this.props.navigationController.pop();
+    this.viewModel.navigationController.pop();
   };
 
   /**
@@ -333,155 +333,155 @@ export class ModelSelectorView extends StatefulComponent<
 }
 
 const styles = {
-  container: new Style<View>({
+  container: new Style({
     flex: 1,
     backgroundColor: Colors.background,
   }),
 
-  header: new Style<View>({
+  header: new Style({
     padding: Spacing.base,
     backgroundColor: Colors.surface,
     borderBottomWidth: 1,
     borderBottomColor: Colors.border,
   }),
 
-  headerTitle: new Style<Label>({
+  headerTitle: new Style({
     ...Fonts.h2,
     color: Colors.textPrimary,
     marginBottom: Spacing.xs,
   }),
 
-  headerSubtitle: new Style<Label>({
+  headerSubtitle: new Style({
     ...Fonts.bodyRegular,
     color: Colors.textSecondary,
   }),
 
-  scrollView: new Style<ScrollView>({
+  scrollView: new Style({
     flex: 1,
   }),
 
-  content: new Style<View>({
+  content: new Style({
     padding: Spacing.base,
   }),
 
-  emptyContainer: new Style<View>({
+  emptyContainer: new Style({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
     padding: Spacing.xl,
   }),
 
-  emptyIcon: new Style<Label>({
+  emptyIcon: new Style({
     fontSize: 64,
     marginBottom: Spacing.base,
   }),
 
-  emptyText: new Style<Label>({
+  emptyText: new Style({
     ...Fonts.h3,
     color: Colors.textSecondary,
     marginBottom: Spacing.sm,
   }),
 
-  emptySubtext: new Style<Label>({
+  emptySubtext: new Style({
     ...Fonts.bodyRegular,
     color: Colors.textTertiary,
     textAlign: 'center',
   }),
 
-  providerSection: new Style<View>({
+  providerSection: new Style({
     marginBottom: Spacing.lg,
   }),
 
-  providerTitle: new Style<Label>({
+  providerTitle: new Style({
     ...Fonts.h3,
     color: Colors.textPrimary,
     marginBottom: Spacing.sm,
   }),
 
-  modelCard: new Style<View>({
+  modelCard: new Style({
     marginBottom: Spacing.sm,
     backgroundColor: Colors.surface,
     borderWidth: 1,
     borderColor: Colors.border,
   }),
 
-  modelCardSelected: new Style<View>({
+  modelCardSelected: new Style({
     marginBottom: Spacing.sm,
     backgroundColor: Colors.primary100,
     borderWidth: 2,
     borderColor: Colors.primary,
   }),
 
-  modelContent: new Style<View>({
+  modelContent: new Style({
     padding: Spacing.sm,
   }),
 
-  modelHeader: new Style<View>({
+  modelHeader: new Style({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
     marginBottom: Spacing.xs,
   }),
 
-  modelName: new Style<Label>({
+  modelName: new Style({
     ...Fonts.bodyLarge,
     color: Colors.textPrimary,
     fontWeight: '600',
   }),
 
-  selectedIcon: new Style<Label>({
+  selectedIcon: new Style({
     fontSize: 20,
     color: Colors.primary,
   }),
 
-  modelId: new Style<Label>({
+  modelId: new Style({
     ...Fonts.bodySmall,
     color: Colors.textSecondary,
     marginBottom: Spacing.xs,
   }),
 
-  capabilities: new Style<View>({
+  capabilities: new Style({
     flexDirection: 'row',
     flexWrap: 'wrap',
     gap: Spacing.xs,
     marginBottom: Spacing.xs,
   }),
 
-  badge: new Style<View>({
+  badge: new Style({
     paddingHorizontal: Spacing.xs,
     paddingVertical: 2,
     backgroundColor: Colors.primary200,
     borderRadius: Spacing.radiusSm,
   }),
 
-  badgeText: new Style<Label>({
+  badgeText: new Style({
     ...Fonts.bodySmall,
     color: Colors.primary,
     fontSize: 10,
   }),
 
-  stats: new Style<View>({
+  stats: new Style({
     flexDirection: 'row',
     alignItems: 'center',
     gap: Spacing.xs,
     marginBottom: Spacing.xs,
   }),
 
-  statText: new Style<Label>({
+  statText: new Style({
     ...Fonts.bodySmall,
     color: Colors.textSecondary,
   }),
 
-  statSeparator: new Style<Label>({
+  statSeparator: new Style({
     ...Fonts.bodySmall,
     color: Colors.textTertiary,
   }),
 
-  pricing: new Style<View>({
+  pricing: new Style({
     marginTop: Spacing.xs,
   }),
 
-  pricingText: new Style<Label>({
+  pricingText: new Style({
     ...Fonts.bodySmall,
     color: Colors.textTertiary,
   }),

@@ -770,12 +770,12 @@ export class SettingsScreen extends NavigationPageComponent<
 }
 
 const styles = {
-  container: new Style<View>({
+  container: new Style({
     flex: 1,
     backgroundColor: Colors.background,
   }),
 
-  header: new Style<View>({
+  header: new Style({
     paddingHorizontal: SemanticSpacing.screenPaddingHorizontal,
     paddingTop: Spacing.xl,
     paddingBottom: Spacing.base,
@@ -783,68 +783,68 @@ const styles = {
     borderBottomColor: Colors.border,
   }),
 
-  content: new Style<View>({
+  content: new Style({
     flex: 1,
     paddingHorizontal: SemanticSpacing.screenPaddingHorizontal,
     paddingVertical: Spacing.base,
   }),
 
-  section: new Style<View>({
+  section: new Style({
     marginBottom: Spacing.xxl,
   }),
 
-  providerGrid: new Style<View>({
+  providerGrid: new Style({
     flexDirection: 'row',
     gap: Spacing.base,
   }),
 
-  providerCard: new Style<View>({
+  providerCard: new Style({
     flex: 1,
     aspectRatio: 1,
   }),
 
-  providerContent: new Style<View>({
+  providerContent: new Style({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
   }),
 
-  apiKeyCard: new Style<View>({
+  apiKeyCard: new Style({
     marginBottom: Spacing.base,
   }),
 
-  apiKeyHeader: new Style<View>({
+  apiKeyHeader: new Style({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
   }),
 
-  modelCard: new Style<View>({
+  modelCard: new Style({
     marginBottom: Spacing.base,
   }),
 
-  preferenceCard: new Style<View>({
+  preferenceCard: new Style({
     marginBottom: Spacing.base,
   }),
 
-  preferenceRow: new Style<View>({
+  preferenceRow: new Style({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
   }),
 
-  preferenceText: new Style<View>({
+  preferenceText: new Style({
     flex: 1,
     marginRight: Spacing.base,
   }),
 
-  aboutLinks: new Style<View>({
+  aboutLinks: new Style({
     flexDirection: 'row',
     gap: Spacing.sm,
     marginTop: Spacing.base,
   }),
 
-  saveSection: new Style<View>({
+  saveSection: new Style({
     marginTop: Spacing.xl,
     paddingBottom: Spacing.xxl,
   }),

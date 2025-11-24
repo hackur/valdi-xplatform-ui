@@ -343,18 +343,18 @@ export class WorkflowCard extends Component<WorkflowCardProps> {
 }
 
 const styles = {
-  container: new Style<View>({
+  container: new Style({
     padding: Spacing.xl,
   }),
 
-  header: new Style<View>({
+  header: new Style({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
     marginBottom: Spacing.lg,
   }),
 
-  progressContainer: new Style<View>({
+  progressContainer: new Style({
     padding: Spacing.md,
     backgroundColor: Colors.primaryLighter,
     borderRadius: BorderRadius.sm,
@@ -362,25 +362,25 @@ const styles = {
     alignItems: 'center',
   }),
 
-  stepsContainer: new Style<View>({
+  stepsContainer: new Style({
     gap: Spacing.none,
   }),
 
-  stepContainer: new Style<View>({
+  stepContainer: new Style({
     marginBottom: Spacing.none,
   }),
 
-  stepHeader: new Style<View>({
+  stepHeader: new Style({
     flexDirection: 'row',
     gap: Spacing.base,
   }),
 
-  stepIndicator: new Style<View>({
+  stepIndicator: new Style({
     alignItems: 'center',
     paddingTop: Spacing.xs,
   }),
 
-  stepIcon: new Style<View>({
+  stepIcon: new Style({
     width: 32,
     height: 32,
     borderRadius: 16,
@@ -388,33 +388,33 @@ const styles = {
     justifyContent: 'center',
   }),
 
-  stepConnector: new Style<View>({
+  stepConnector: new Style({
     width: 2,
     flex: 1,
     marginTop: Spacing.xs,
     marginBottom: Spacing.xs,
   }),
 
-  stepContent: new Style<View>({
+  stepContent: new Style({
     flex: 1,
     paddingBottom: Spacing.lg,
   }),
 
-  stepTitleRow: new Style<View>({
+  stepTitleRow: new Style({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
   }),
 
-  stepOutputContainer: new Style<View>({
+  stepOutputContainer: new Style({
     marginTop: Spacing.md,
   }),
 
-  stepErrorContainer: new Style<View>({
+  stepErrorContainer: new Style({
     marginTop: Spacing.md,
   }),
 
-  outputBox: new Style<View>({
+  outputBox: new Style({
     padding: Spacing.md,
     backgroundColor: Colors.gray100,
     borderRadius: BorderRadius.sm,
@@ -422,7 +422,7 @@ const styles = {
     borderColor: Colors.border,
   }),
 
-  errorBox: new Style<View>({
+  errorBox: new Style({
     padding: Spacing.md,
     backgroundColor: Colors.errorLight,
     borderRadius: BorderRadius.sm,
@@ -430,7 +430,7 @@ const styles = {
     borderColor: Colors.error,
   }),
 
-  resultContainer: new Style<View>({
+  resultContainer: new Style({
     marginTop: Spacing.xl,
     padding: Spacing.lg,
     backgroundColor: Colors.successLight,
@@ -439,17 +439,17 @@ const styles = {
     borderColor: Colors.success,
   }),
 
-  resultHeader: new Style<View>({
+  resultHeader: new Style({
     marginBottom: Spacing.md,
   }),
 
-  resultBox: new Style<View>({
+  resultBox: new Style({
     padding: Spacing.md,
     backgroundColor: Colors.surface,
     borderRadius: BorderRadius.sm,
   }),
 
-  errorContainer: new Style<View>({
+  errorContainer: new Style({
     marginTop: Spacing.xl,
     padding: Spacing.lg,
     backgroundColor: Colors.errorLight,
@@ -458,7 +458,7 @@ const styles = {
     borderColor: Colors.error,
   }),
 
-  errorHeader: new Style<View>({
+  errorHeader: new Style({
     marginBottom: Spacing.md,
   }),
 };
