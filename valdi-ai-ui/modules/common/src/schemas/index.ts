@@ -2,22 +2,19 @@
  * Schemas - Main Export
  *
  * Central export for all Zod validation schemas and validation middleware.
- *
- * NOTE: Schema files have been temporarily removed due to TypeScript compilation errors.
- * TODO: Re-implement schema validation when dependencies are available.
  */
 
-// Message schemas - REMOVED
-// export * from './MessageSchema';
+// Message schemas
+export * from './MessageSchemas';
 
-// Conversation schemas - REMOVED
-// export * from './ConversationSchema';
+// Conversation schemas
+export * from './ConversationSchemas';
 
-// Provider config schemas - REMOVED
-// export * from './ProviderConfigSchema';
+// Tool schemas
+export * from './ToolSchemas';
 
-// Agent & Workflow schemas - REMOVED
-// export * from './AgentSchema';
+// User input schemas
+export * from './UserInputSchemas';
 
-// Validation middleware - REMOVED
-// export * from './ValidationMiddleware';
+// Validation middleware
+export * from './ValidationMiddleware';

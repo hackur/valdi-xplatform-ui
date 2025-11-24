@@ -4,7 +4,7 @@
  * Manages conversation history with filtering, search, and export capabilities.
  */
 
-import { Conversation, ConversationUtils } from '@common';
+import { Conversation } from '@common';
 import { ConversationStore } from '@chat_core/ConversationStore';
 import { ExportService } from '@chat_core/ExportService';
 import {
@@ -12,7 +12,6 @@ import {
   SearchOptions,
   HistoryFilter,
   ExportOptions,
-  ExportFormat,
 } from './types';
 
 /**
@@ -23,14 +22,14 @@ import {
  */
 export class HistoryManager {
   private conversationStore: ConversationStore;
-  private exportService: ExportService;
+  private _exportService: ExportService;
 
   constructor(
     conversationStore: ConversationStore,
     exportService: ExportService,
   ) {
     this.conversationStore = conversationStore;
-    this.exportService = exportService;
+    this._exportService = exportService;
   }
 
   /**

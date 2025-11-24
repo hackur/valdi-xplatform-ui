@@ -125,14 +125,20 @@ export class SequentialWorkflow extends WorkflowExecutor {
     try {
       let currentInput = input;
 
-      // Execute each agent in sequence
+      /*
+       * Sequential execution loop
+       * Each agent processes the output of the previous agent
+       * This creates a processing pipeline where each step refines the result
+       */
       for (let i = 0; i < this.config.agents.length; i++) {
-        // Check for cancellation
+        // Check for cancellation before starting each step
+        // Allows graceful shutdown of long-running workflows
         if (abortSignal?.aborted) {
           throw new Error('Workflow cancelled by user');
         }
 
-        // Check timeout
+        // Check timeout to prevent infinite execution
+        // Timeout is cumulative across all steps in workflow
         if (this.config.timeout) {
           const elapsed = Date.now() - startTime;
           if (elapsed > this.config.timeout) {
@@ -155,6 +161,7 @@ export class SequentialWorkflow extends WorkflowExecutor {
         }
 
         // Execute the agent with retry logic
+        // Retry provides resilience against transient failures
         const step = await this.executeAgentWithRetry(
           agent,
           currentInput,
@@ -162,16 +169,19 @@ export class SequentialWorkflow extends WorkflowExecutor {
           onProgress,
         );
 
-        // Add step to state
+        // Track step in workflow state for debugging and monitoring
         this.addStep(step);
 
         // Transform output if transformer is provided
+        // Transformer allows custom post-processing (e.g., formatting, filtering)
         let output = step.output;
         if (this.config.transformOutput) {
           output = this.config.transformOutput(output, i);
         }
 
         // Check early stopping condition
+        // Allows workflow to terminate when goal is achieved early
+        // Saves API costs and execution time
         if (this.config.shouldStop && this.config.shouldStop(output, i)) {
           if (this.config.debug) {
             console.log(
@@ -179,19 +189,30 @@ export class SequentialWorkflow extends WorkflowExecutor {
             );
           }
           currentInput = output;
-          break;
+          break; // Exit loop early
         }
 
-        // Prepare input for next agent
+        /*
+         * State transition logic for next agent
+         * Two modes of context passing:
+         * 1. Full context: Each agent sees all previous outputs
+         *    - Better for tasks requiring full history
+         *    - Higher token usage
+         * 2. Chain mode: Each agent only sees previous output
+         *    - Better for simple transformations
+         *    - Lower token usage
+         */
         if (i < this.config.agents.length - 1) {
           if (this.config.includePreviousContext) {
             // Include full context from previous steps
+            // This provides complete history for context-aware processing
             const previousOutputs = this.state.steps
               .map((s, idx) => `Step ${idx + 1} (${s.agentName}): ${s.output}`)
               .join('\n\n');
             currentInput = `${previousOutputs}\n\nNow process the following:\n${input}`;
           } else {
-            // Only use the output from the previous step
+            // Only use the output from the previous step (chain mode)
+            // This implements a simple processing pipeline
             currentInput = output;
           }
         } else {

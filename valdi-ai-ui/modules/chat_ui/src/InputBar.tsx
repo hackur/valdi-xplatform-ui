@@ -7,7 +7,6 @@
 
 import { StatefulComponent } from 'valdi_core/src/Component';
 import { Style } from 'valdi_core/src/Style';
-import { View } from 'valdi_tsx/src/NativeTemplateElements';
 import {
   Colors,
   Fonts,

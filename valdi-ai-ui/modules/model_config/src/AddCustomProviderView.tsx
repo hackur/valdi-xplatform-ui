@@ -15,7 +15,6 @@ import { CustomProviderStore } from './CustomProviderStore';
 import {
   CustomProviderConfig,
   ProviderTestResult,
-  ValidationResult,
 } from './types';
 
 /**

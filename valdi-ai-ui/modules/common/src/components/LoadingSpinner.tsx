@@ -6,7 +6,6 @@
  * Supports fullscreen overlay mode with optional text label.
  */
 
-import { Component } from 'valdi_core/src/Component';
 import { StatefulComponent } from 'valdi_core/src/Component';
 import { Style } from 'valdi_core/src/Style';
 import { View, Label } from 'valdi_tsx/src/NativeTemplateElements';

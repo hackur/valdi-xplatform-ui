@@ -10,7 +10,6 @@ import {
   BuiltInProviderConfig,
   CustomProviderConfig,
   ProviderConfig,
-  ModelSelection,
   ModelRegistryStats,
   ProviderType,
   ModelCapabilities,

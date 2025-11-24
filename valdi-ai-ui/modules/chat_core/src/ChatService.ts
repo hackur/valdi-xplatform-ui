@@ -39,7 +39,34 @@ const PROVIDER_ENDPOINTS = {
 /**
  * ChatService Class
  *
- * Manages AI chat interactions using native HTTP requests
+ * Manages AI chat interactions using native HTTP requests across multiple AI providers.
+ * Handles message formatting, API communication, error handling, and retry logic.
+ * Supports OpenAI, Anthropic, and Google AI providers with automatic retries and backoff.
+ *
+ * @example
+ * ```typescript
+ * const chatService = new ChatService(
+ *   {
+ *     apiKeys: {
+ *       openai: 'sk-...',
+ *       anthropic: 'sk-ant-...',
+ *     },
+ *     defaultModelConfig: {
+ *       provider: 'openai',
+ *       modelId: 'gpt-4',
+ *       temperature: 0.7,
+ *       maxTokens: 2000,
+ *     },
+ *   },
+ *   messageStore
+ * );
+ *
+ * const response = await chatService.sendMessage({
+ *   conversationId: 'conv_123',
+ *   message: 'Hello, how are you?',
+ * });
+ * ```
+ *
  * Note: Streaming is simulated as Valdi doesn't have native SSE support yet
  */
 export class ChatService {
@@ -47,6 +74,12 @@ export class ChatService {
   private messageStore: MessageStore;
   private httpClients: Record<string, HTTPClient>;
 
+  /**
+   * Creates a new ChatService instance
+   *
+   * @param config - Service configuration including API keys and default model settings
+   * @param messageStore - Message store for managing conversation messages
+   */
   constructor(config: ChatServiceConfig, messageStore: MessageStore) {
     this.config = config;
     this.messageStore = messageStore;
@@ -60,7 +93,13 @@ export class ChatService {
   }
 
   /**
-   * Map HTTP status code to error code
+   * Map HTTP status code to standardized error code
+   *
+   * Converts HTTP status codes to application-specific error codes
+   * for consistent error handling across the application.
+   *
+   * @param statusCode - HTTP status code from API response
+   * @returns Corresponding ErrorCode enum value
    */
   private getErrorCodeFromStatus(statusCode: number): ErrorCode {
     switch (statusCode) {
@@ -86,6 +125,13 @@ export class ChatService {
 
   /**
    * Convert conversation messages to provider-specific format
+   *
+   * Transforms generic Message objects into the format expected by each AI provider.
+   * Filters out system messages (handled separately) and adapts role names for provider compatibility.
+   *
+   * @param messages - Array of conversation messages to convert
+   * @param provider - Target AI provider ('openai' | 'anthropic' | 'google')
+   * @returns Array of messages in provider-specific format
    */
   private convertMessages(messages: Message[], provider: AIProvider) {
     const converted = messages
@@ -108,6 +154,13 @@ export class ChatService {
 
   /**
    * Get system prompt from messages or options
+   *
+   * Extracts the system prompt from either the request options or conversation messages.
+   * Prioritizes the system prompt from options if provided.
+   *
+   * @param messages - Array of conversation messages
+   * @param options - Chat request options that may contain a system prompt
+   * @returns System prompt string or undefined if none found
    */
   private getSystemPrompt(
     messages: Message[],
@@ -124,7 +177,16 @@ export class ChatService {
   }
 
   /**
-   * Send message to OpenAI
+   * Send message to OpenAI API
+   *
+   * Handles communication with OpenAI's chat completions endpoint with automatic
+   * retry logic and comprehensive error handling.
+   *
+   * @param messages - Conversation messages to send
+   * @param modelConfig - Model configuration (model ID, temperature, etc.)
+   * @param systemPrompt - Optional system prompt for the request
+   * @returns The AI's text response
+   * @throws {APIError} When API key is missing, request fails, or response is invalid
    */
   private async sendToOpenAI(
     messages: Message[],
@@ -224,7 +286,16 @@ export class ChatService {
   }
 
   /**
-   * Send message to Anthropic
+   * Send message to Anthropic API
+   *
+   * Handles communication with Anthropic's messages endpoint using their specific
+   * API format and requirements.
+   *
+   * @param messages - Conversation messages to send
+   * @param modelConfig - Model configuration (model ID, temperature, etc.)
+   * @param systemPrompt - Optional system prompt for the request
+   * @returns The AI's text response
+   * @throws {Error} When API key is missing, request fails, or response is invalid
    */
   private async sendToAnthropic(
     messages: Message[],
@@ -275,7 +346,16 @@ export class ChatService {
   }
 
   /**
-   * Send message to Google
+   * Send message to Google Gemini API
+   *
+   * Handles communication with Google's Generative Language API using the
+   * Gemini model format with system instructions support.
+   *
+   * @param messages - Conversation messages to send
+   * @param modelConfig - Model configuration (model ID, temperature, etc.)
+   * @param systemPrompt - Optional system instruction for the request
+   * @returns The AI's text response
+   * @throws {Error} When API key is missing, request fails, or response is invalid
    */
   private async sendToGoogle(
     messages: Message[],
@@ -338,7 +418,29 @@ export class ChatService {
   }
 
   /**
-   * Send a message (non-streaming)
+   * Send a message to the AI model (non-streaming)
+   *
+   * Main method for sending chat messages. Handles message storage, provider routing,
+   * error handling, and response formatting. Automatically stores both user and
+   * assistant messages in the message store.
+   *
+   * @example
+   * ```typescript
+   * const response = await chatService.sendMessage({
+   *   conversationId: 'conv_123',
+   *   message: 'What is the capital of France?',
+   *   modelConfig: {
+   *     provider: 'openai',
+   *     modelId: 'gpt-4',
+   *     temperature: 0.7,
+   *   },
+   * });
+   *
+   * console.log(response.message.content); // "The capital of France is Paris."
+   * ```
+   *
+   * @param options - Chat request options including conversation ID, message, and model config
+   * @returns Promise resolving to chat response with message and finish reason
    */
   async sendMessage(options: ChatRequestOptions): Promise<ChatResponse> {
     const {
@@ -445,8 +547,41 @@ export class ChatService {
 
   /**
    * Send message with simulated streaming
+   *
+   * Provides a streaming-like experience by chunking the complete response.
+   * Calls the callback with stream events (start, chunk, complete, error) to
+   * enable progressive UI updates.
+   *
+   * @example
+   * ```typescript
+   * const message = await chatService.sendMessageStreaming(
+   *   {
+   *     conversationId: 'conv_123',
+   *     message: 'Tell me a story',
+   *   },
+   *   (event) => {
+   *     switch (event.type) {
+   *       case 'start':
+   *         console.log('Streaming started');
+   *         break;
+   *       case 'chunk':
+   *         console.log('Received chunk:', event.delta);
+   *         break;
+   *       case 'complete':
+   *         console.log('Streaming complete');
+   *         break;
+   *     }
+   *   }
+   * );
+   * ```
+   *
    * Note: Valdi doesn't have native SSE support, so we simulate streaming
-   * by sending the complete response in chunks
+   * by sending the complete response in chunks with artificial delays.
+   *
+   * @param options - Chat request options
+   * @param callback - Callback function for stream events
+   * @returns Promise resolving to the final message
+   * @throws When the underlying sendMessage call fails
    */
   async sendMessageStreaming(
     options: ChatRequestOptions,

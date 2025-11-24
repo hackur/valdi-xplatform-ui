@@ -32,7 +32,7 @@ export class Component<TViewModel = any, TState = any> {
     // Lifecycle method
   }
 
-  onViewModelUpdate(previousViewModel?: TViewModel): void {
+  onViewModelUpdate(_previousViewModel?: TViewModel): void {
     // Lifecycle method - called when viewModel changes
   }
 

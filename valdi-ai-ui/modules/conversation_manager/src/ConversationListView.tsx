@@ -6,10 +6,9 @@
 
 import { StatefulComponent } from 'valdi_core/src/Component';
 import { Style } from 'valdi_core/src/Style';
-import { View, Label, ScrollView } from 'valdi_tsx/src/NativeTemplateElements';
 import { NavigationController } from 'valdi_navigation/src/NavigationController';
 import { Colors, Fonts, Spacing, LoadingSpinner, ConfirmDialog } from '@common';
-import { ConversationListItemData, SearchOptions } from './types';
+import { ConversationListItemData } from './types';
 import { HistoryManager } from './HistoryManager';
 import { ConversationCard } from './ConversationCard';
 import { SearchBar } from './SearchBar';

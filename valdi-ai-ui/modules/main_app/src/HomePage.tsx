@@ -7,7 +7,6 @@
 
 import { NavigationPageComponent } from 'valdi_core/src/Component';
 import { Style } from 'valdi_core/src/Style';
-import { View } from 'valdi_tsx/src/NativeTemplateElements';
 import { NavigationController } from 'valdi_navigation/src/NavigationController';
 import {
   Colors,
@@ -15,7 +14,6 @@ import {
   Spacing,
   SemanticSpacing,
   BorderRadius,
-  Button,
   Card,
 } from '@common';
 

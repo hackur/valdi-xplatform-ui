@@ -65,12 +65,21 @@ export class AgentExecutor {
     this.activeExecutions.add(executionId);
 
     try {
-      // Check if already aborted
+      // Check if already aborted before starting execution
+      // Early exit saves resources and provides immediate feedback
       if (options?.abortSignal?.aborted) {
         throw new Error('Execution aborted before start');
       }
 
-      // Set up timeout
+      /*
+       * Promise.race pattern for lifecycle management
+       * Competing promises: execution, timeout, abort
+       * First promise to settle determines execution outcome
+       * This ensures proper cleanup and error handling
+       */
+
+      // Set up timeout promise for maximum execution time
+      // Rejects after timeout to prevent hanging operations
       const timeoutPromise = new Promise<never>((_, reject) => {
         setTimeout(
           () => reject(new Error(`Execution timeout after ${timeout}ms`)),
@@ -78,7 +87,8 @@ export class AgentExecutor {
         );
       });
 
-      // Set up abort handling
+      // Set up abort handling for user cancellation
+      // Listens to AbortSignal for graceful shutdown
       const abortPromise = new Promise<never>((_, reject) => {
         if (options?.abortSignal) {
           options.abortSignal.addEventListener('abort', () => {
@@ -90,6 +100,8 @@ export class AgentExecutor {
       // Execute agent with timeout and abort support
       const resultPromise = this.executeInternal(agent, context, options);
 
+      // Race between execution, timeout, and abort
+      // Whichever resolves/rejects first wins
       const result = await Promise.race([
         resultPromise,
         timeoutPromise,
@@ -168,13 +180,24 @@ export class AgentExecutor {
         options.onProgress(0, maxSteps);
       }
 
-      // Execute agent loop (for agentic behavior with tools)
+      /*
+       * Agent execution loop (agentic behavior with tools)
+       * Each iteration represents one interaction with the LLM
+       * Loop continues until:
+       * - Agent returns 'stop' (task complete)
+       * - Max steps reached (prevent infinite loops)
+       * - Error occurs
+       *
+       * This pattern enables multi-turn agentic workflows where
+       * agents can make tool calls and continue reasoning
+       */
       while (steps < maxSteps) {
         steps++;
 
         this.log(`Agent ${agent.id} step ${steps}/${maxSteps}`);
 
         // Send message to chat service
+        // Each step is a separate API call for fine-grained control
         const response = await this.chatService.sendMessage({
           conversationId: context.conversationId,
           message: userContent,
@@ -193,39 +216,48 @@ export class AgentExecutor {
 
         messages.push(response.message);
 
-        // Track token usage
+        // Track token usage for cost monitoring and quota management
         if (response.usage) {
           promptTokens += response.usage.promptTokens;
           completionTokens += response.usage.completionTokens;
         }
 
-        // Report progress
+        // Report progress for UI updates
         if (options?.onProgress) {
           options.onProgress(steps, maxSteps);
         }
 
-        // Check finish reason
+        /*
+         * Finish reason determines loop continuation
+         * - stop: Agent completed task, exit loop
+         * - tool-calls: Agent needs to execute tools, continue
+         * - error: Fatal error, throw exception
+         * - length: Token limit reached, continue to next step
+         * - unknown: Unexpected state, exit safely
+         */
         if (response.finishReason === 'stop') {
-          // Normal completion
+          // Normal completion - agent finished reasoning
           break;
         } else if (
           response.finishReason === 'tool-calls' &&
           response.toolCalls
         ) {
-          // Tool calls made, continue loop
+          // Tool calls made, continue loop for tool execution and response
+          // This enables the agent to use tools and continue reasoning
           this.log(
             `Agent ${agent.id} made ${response.toolCalls.length} tool calls`,
           );
           continue;
         } else if (response.finishReason === 'error') {
-          // Error occurred
+          // Error occurred - propagate up
           throw new Error(response.message.error || 'Unknown error');
         } else if (response.finishReason === 'length') {
           // Max tokens reached, but we can continue
+          // Agent may need more steps to complete task
           this.log(`Agent ${agent.id} reached max tokens, continuing...`);
           continue;
         } else {
-          // Unknown finish reason, stop
+          // Unknown finish reason, stop safely
           break;
         }
       }
@@ -282,21 +314,30 @@ export class AgentExecutor {
   private extractOutput(message: Message): unknown {
     const content = MessageUtils.getTextContent(message);
 
-    // Try to parse JSON from code blocks
+    /*
+     * Multi-strategy output extraction
+     * Tries to parse structured data in order of specificity:
+     * 1. JSON code blocks (most explicit)
+     * 2. Plain JSON (direct parsing)
+     * 3. Plain text (fallback)
+     */
+
+    // Try to parse JSON from code blocks first
+    // Pattern: ```json\n{...}\n```
     const jsonMatch = content.match(/```json\s*\n([\s\S]*?)\n```/);
     if (jsonMatch && jsonMatch[1]) {
       try {
         return JSON.parse(jsonMatch[1]);
       } catch {
-        // Not valid JSON
+        // Not valid JSON, continue to next strategy
       }
     }
 
-    // Try to parse plain JSON
+    // Try to parse plain JSON (entire content is JSON)
     try {
       return JSON.parse(content);
     } catch {
-      // Not JSON, return as text
+      // Not JSON, return as text (fallback)
       return content;
     }
   }
@@ -323,7 +364,20 @@ export class AgentExecutor {
       `Executing ${agents.length} agents in parallel (max concurrency: ${maxConcurrency})`,
     );
 
-    // Execute in batches if max concurrency is set
+    /*
+     * Batched parallel execution with concurrency control
+     * Prevents overwhelming system resources by limiting simultaneous executions
+     *
+     * Pattern:
+     * - Split agents into batches of maxConcurrency size
+     * - Execute each batch with Promise.all
+     * - Wait for batch completion before starting next batch
+     *
+     * Benefits:
+     * - Resource management (CPU, memory, API rate limits)
+     * - Progress tracking per batch
+     * - Better error isolation
+     */
     const results: AgentExecutionResult[] = [];
     for (let i = 0; i < agents.length; i += maxConcurrency) {
       const batch = agents.slice(i, i + maxConcurrency);

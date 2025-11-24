@@ -53,12 +53,19 @@ export class StreamHandler {
    * Process a chunk of streamed content
    */
   processChunk(messageId: string, delta: string): void {
+    // Transition from connecting to streaming state on first chunk
+    // This ensures status reflects actual data flow
     if (this.status !== 'streaming' && this.status !== 'connecting') {
       this.status = 'streaming';
     }
 
+    // Accumulate delta into buffer for complete content tracking
+    // Buffer maintains full message history for UI display
     this.contentBuffer += delta;
 
+    // Emit both incremental delta and accumulated content
+    // Delta allows for smooth character-by-character rendering
+    // Content provides complete text for immediate UI updates
     this.emit({
       type: 'chunk',
       messageId,
@@ -79,6 +86,8 @@ export class StreamHandler {
       message,
     });
 
+    // Clean up state after successful completion
+    // Reset prepares handler for next stream without state leakage
     this.reset();
   }
 
@@ -94,6 +103,8 @@ export class StreamHandler {
       error,
     });
 
+    // Reset state after error to prepare for new stream
+    // This prevents error state pollution across streams
     this.reset();
   }
 
@@ -159,16 +170,24 @@ export const StreamUtils = {
     let timeout: ReturnType<typeof setTimeout> | null = null;
 
     return (delta: string) => {
+      // Accumulate deltas into buffers
+      // buffer: holds deltas since last callback
+      // content: holds all deltas for complete text
       buffer += delta;
       content += delta;
 
+      // Cancel pending callback to implement debouncing
+      // This prevents excessive UI updates during rapid streaming
       if (timeout) {
         clearTimeout(timeout);
       }
 
+      // Schedule new callback after delay
+      // 16ms default provides smooth 60fps update rate
+      // Balances responsiveness with performance
       timeout = setTimeout(() => {
         callback(content, buffer);
-        buffer = '';
+        buffer = ''; // Reset buffer after processing
         timeout = null;
       }, delay);
     };
@@ -178,7 +197,12 @@ export const StreamUtils = {
    * Split stream into words for smoother animation
    */
   *wordSplitter(text: string): Generator<string> {
+    // Split on whitespace while preserving spaces in results
+    // Regex capture group (\s+) includes spaces in array
     const words = text.split(/(\s+)/);
+
+    // Yield each word/space individually for word-by-word streaming
+    // Generator pattern allows lazy evaluation for memory efficiency
     for (const word of words) {
       yield word;
     }

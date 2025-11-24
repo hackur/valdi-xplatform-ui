@@ -234,8 +234,11 @@ export class RoutingWorkflow extends WorkflowExecutor {
       }
 
       // Step 2: Select route(s) based on classification
+      // Route selection algorithm matches classification result to available routes
       const selectedRoutes = this.selectRoutes(input, classification);
 
+      // Fallback behavior: Use fallback agent when no routes match
+      // This ensures graceful degradation when classification doesn't match any route
       if (selectedRoutes.length === 0) {
         if (this.config.debug) {
           console.log(
@@ -247,6 +250,7 @@ export class RoutingWorkflow extends WorkflowExecutor {
           throw new Error('No routes matched and no fallback agent configured');
         }
 
+        // Add fallback as synthetic route for uniform processing
         selectedRoutes.push({
           id: 'fallback',
           name: 'Fallback',
@@ -256,6 +260,7 @@ export class RoutingWorkflow extends WorkflowExecutor {
       }
 
       // Limit number of routes if specified
+      // Prevents resource exhaustion when multiple routes match
       const routesToExecute = this.config.maxRoutesToExecute
         ? selectedRoutes.slice(0, this.config.maxRoutesToExecute)
         : selectedRoutes;
@@ -270,8 +275,18 @@ export class RoutingWorkflow extends WorkflowExecutor {
       // Step 3: Execute selected route(s)
       let results: string[];
 
+      /*
+       * Parallel vs Sequential execution strategy
+       * - Parallel: When multiple routes allowed and multiple selected
+       *   Benefits: Faster execution, get diverse perspectives
+       *   Trade-offs: Higher resource usage, may produce conflicting answers
+       * - Sequential: Single route execution (default behavior)
+       *   Benefits: Lower resource usage, focused response
+       *   Trade-offs: No alternative perspectives
+       */
       if (this.config.allowMultipleRoutes && routesToExecute.length > 1) {
-        // Execute multiple routes in parallel
+        // Execute multiple routes in parallel for maximum throughput
+        // Promise.all ensures all routes complete before proceeding
         const routePromises = routesToExecute.map((route) =>
           this.executeAgentWithRetry(
             route.agent,
@@ -285,7 +300,7 @@ export class RoutingWorkflow extends WorkflowExecutor {
         routeSteps.forEach((step) => this.addStep(step));
         results = routeSteps.map((step) => step.output);
       } else {
-        // Execute single route
+        // Execute single route (most common path)
         const route = routesToExecute[0];
         if (!route) {
           throw new Error('No route available to execute');
@@ -373,12 +388,19 @@ export class RoutingWorkflow extends WorkflowExecutor {
    * Parse classification from router output
    */
   private parseClassification(output: string): ClassificationResult {
-    // Try to extract structured classification
-    // Support JSON format or simple text classification
+    /*
+     * Classification parsing strategy with fallback
+     * 1. Try JSON format (structured output)
+     * 2. Fall back to text pattern matching (flexible output)
+     * This dual approach handles both strict and loose router agents
+     */
 
     const trimmed = output.trim();
 
-    // Try parsing as JSON
+    // Try parsing as JSON for structured classification
+    // Expected formats:
+    // - { "routes": ["route1", "route2"] }
+    // - { "route": "route1", "reasoning": "...", "confidence": 0.9 }
     try {
       const parsed = JSON.parse(trimmed);
       return {
@@ -391,28 +413,31 @@ export class RoutingWorkflow extends WorkflowExecutor {
       };
     } catch {
       // Not JSON, treat as simple text classification
-      // Extract route ID from text (look for route names)
+      // Pattern matching: search for route IDs and triggers in text
       const routeIds: string[] = [];
 
       for (const route of this.config.routes) {
         const routeNameLower = route.id.toLowerCase();
         const outputLower = trimmed.toLowerCase();
 
+        // Direct route ID match
         if (outputLower.includes(routeNameLower)) {
           routeIds.push(route.id);
         }
 
-        // Also check triggers
+        // Check trigger keywords for fuzzy matching
+        // Allows flexible router agent responses
         if (route.triggers) {
           for (const trigger of route.triggers) {
             if (outputLower.includes(trigger.toLowerCase())) {
               routeIds.push(route.id);
-              break;
+              break; // One trigger match per route is sufficient
             }
           }
         }
       }
 
+      // Deduplicate route IDs using Set
       return {
         routeIds: routeIds.length > 0 ? [...new Set(routeIds)] : [],
         raw: output,
@@ -427,7 +452,16 @@ export class RoutingWorkflow extends WorkflowExecutor {
     input: string,
     classification: ClassificationResult,
   ): RouteDefinition[] {
-    // Use custom selector if provided
+    /*
+     * Route selection algorithm:
+     * 1. Use custom selector if provided (allows full override)
+     * 2. Match classification result to route definitions
+     * 3. Apply custom conditions for fine-grained filtering
+     * 4. Sort by priority to ensure deterministic selection
+     */
+
+    // Custom selector takes precedence over default logic
+    // Allows complete customization of routing behavior
     if (this.config.selectRoute) {
       const selected = this.config.selectRoute(
         input,
@@ -437,22 +471,25 @@ export class RoutingWorkflow extends WorkflowExecutor {
       return selected ? [selected] : [];
     }
 
-    // Default selection logic
+    // Default selection logic: Match classified route IDs to definitions
     const selectedRoutes: RouteDefinition[] = [];
 
     // Find routes matching classification
     for (const routeId of classification.routeIds) {
       const route = this.config.routes.find((r) => r.id === routeId);
       if (route) {
-        // Check custom condition if provided
+        // Apply custom condition for additional filtering
+        // Condition can validate input complexity, length, or other criteria
         if (route.condition && !route.condition(input, classification)) {
-          continue;
+          continue; // Skip route if condition fails
         }
         selectedRoutes.push(route);
       }
     }
 
-    // Sort by priority
+    // Sort by priority (higher priority first)
+    // Ensures deterministic route selection when multiple routes match
+    // Priority-based selection prevents random route choice
     selectedRoutes.sort((a, b) => (b.priority || 0) - (a.priority || 0));
 
     return selectedRoutes;

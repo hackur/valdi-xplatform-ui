@@ -277,8 +277,8 @@ export function withRetry(config?: RetryConfig) {
   const retry = createNetworkRetry(config);
 
   return function (
-    target: any,
-    propertyKey: string,
+    _target: any,
+    _propertyKey: string,
     descriptor: PropertyDescriptor,
   ) {
     const originalMethod = descriptor.value;

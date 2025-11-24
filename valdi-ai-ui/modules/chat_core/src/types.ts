@@ -5,7 +5,7 @@
  * Extends the common Message and Conversation types.
  */
 
-import { Message, Conversation, ModelConfig } from '../../common/src';
+import { Message, ModelConfig } from '../../common/src';
 
 /**
  * Chat Request Options

@@ -6,7 +6,7 @@
  * graceful degradation, and circuit breaker pattern.
  */
 
-import { AppError, ErrorCode, ErrorSeverity, isAppError } from './ErrorTypes';
+import { AppError, ErrorCode, ErrorSeverity } from './ErrorTypes';
 import { shouldRetry as shouldRetryError } from './ErrorHandler';
 
 /**

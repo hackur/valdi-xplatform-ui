@@ -13,9 +13,28 @@ import { MessagePersistence } from './MessagePersistence';
 /**
  * MessageStore Class
  *
- * Centralized store for managing conversation messages.
- * Uses observer pattern for reactive updates.
- * Integrates with MessagePersistence for automatic data persistence.
+ * Centralized store for managing conversation messages with reactive state management.
+ * Implements the observer pattern for UI updates and integrates with MessagePersistence
+ * for automatic data persistence to storage. Handles CRUD operations, streaming state,
+ * and provides query methods for message retrieval.
+ *
+ * @example
+ * ```typescript
+ * const messageStore = new MessageStore(true);
+ * await messageStore.init();
+ *
+ * // Subscribe to changes
+ * const unsubscribe = messageStore.subscribe((state) => {
+ *   console.log('Messages updated:', state.messagesByConversation);
+ * });
+ *
+ * // Add a message
+ * const message = MessageUtils.createUserMessage('conv_123', 'Hello!');
+ * await messageStore.addMessage(message);
+ *
+ * // Get messages
+ * const messages = messageStore.getMessages('conv_123');
+ * ```
  */
 export class MessageStore {
   private state: MessageStoreState = {
@@ -28,6 +47,12 @@ export class MessageStore {
   private persistence: MessagePersistence;
   private enablePersistence: boolean;
 
+  /**
+   * Creates a new MessageStore instance
+   *
+   * @param enablePersistence - Whether to enable automatic persistence to storage (default: true)
+   * @param persistence - Optional custom MessagePersistence instance
+   */
   constructor(
     enablePersistence: boolean = true,
     persistence?: MessagePersistence,
@@ -38,6 +63,11 @@ export class MessageStore {
 
   /**
    * Initialize the store by loading persisted data
+   *
+   * Must be called before using the store if persistence is enabled.
+   * Loads all persisted messages from storage and populates the store state.
+   *
+   * @throws {StorageError} If loading from storage fails
    */
   async init(): Promise<void> {
     if (!this.enablePersistence) {
@@ -77,6 +107,22 @@ export class MessageStore {
 
   /**
    * Subscribe to state changes
+   *
+   * Registers a listener that will be called whenever the store state changes.
+   * Useful for reactive UI updates.
+   *
+   * @param listener - Callback function that receives the updated state
+   * @returns Unsubscribe function to remove the listener
+   *
+   * @example
+   * ```typescript
+   * const unsubscribe = messageStore.subscribe((state) => {
+   *   updateUI(state.messagesByConversation);
+   * });
+   *
+   * // Later, clean up
+   * unsubscribe();
+   * ```
    */
   subscribe(listener: (state: MessageStoreState) => void): () => void {
     this.listeners.add(listener);
@@ -96,6 +142,8 @@ export class MessageStore {
 
   /**
    * Get current state
+   *
+   * @returns Current message store state including all messages and streaming status
    */
   getState(): MessageStoreState {
     return this.state;
@@ -103,13 +151,22 @@ export class MessageStore {
 
   /**
    * Get messages for a conversation
+   *
+   * Retrieves all messages for a given conversation ID in chronological order.
+   *
+   * @param conversationId - The conversation ID
+   * @returns Array of messages for the conversation (empty array if none exist)
    */
   getMessages(conversationId: string): Message[] {
     return this.state.messagesByConversation[conversationId] || [];
   }
 
   /**
-   * Get a specific message
+   * Get a specific message by ID
+   *
+   * @param conversationId - The conversation ID
+   * @param messageId - The message ID to retrieve
+   * @returns The message if found, undefined otherwise
    */
   getMessage(conversationId: string, messageId: string): Message | undefined {
     const messages = this.getMessages(conversationId);
@@ -118,6 +175,18 @@ export class MessageStore {
 
   /**
    * Add a message to a conversation
+   *
+   * Adds a new message to the store and automatically persists it to storage.
+   * Triggers state updates to all subscribers.
+   *
+   * @param message - The message to add
+   * @throws {StorageError} If persistence fails (logged but not thrown to prevent operation failure)
+   *
+   * @example
+   * ```typescript
+   * const message = MessageUtils.createUserMessage('conv_123', 'Hello!');
+   * await messageStore.addMessage(message);
+   * ```
    */
   async addMessage(message: Message): Promise<void> {
     const messages = this.getMessages(message.conversationId);
@@ -158,6 +227,21 @@ export class MessageStore {
 
   /**
    * Update an existing message
+   *
+   * Updates message properties while preserving immutable fields (id, conversationId, role, createdAt).
+   * Automatically updates the updatedAt timestamp and persists changes.
+   *
+   * @param conversationId - The conversation ID
+   * @param messageId - The message ID to update
+   * @param updates - Partial message updates (content, status, etc.)
+   *
+   * @example
+   * ```typescript
+   * await messageStore.updateMessage('conv_123', 'msg_456', {
+   *   content: 'Updated content',
+   *   status: 'completed',
+   * });
+   * ```
    */
   async updateMessage(
     conversationId: string,
@@ -230,6 +314,13 @@ export class MessageStore {
 
   /**
    * Append content to a message (for streaming)
+   *
+   * Appends new content to an existing message's content string.
+   * Designed for streaming scenarios where content arrives incrementally.
+   *
+   * @param conversationId - The conversation ID
+   * @param messageId - The message ID to update
+   * @param delta - The content chunk to append
    */
   appendContent(
     conversationId: string,
@@ -256,6 +347,11 @@ export class MessageStore {
 
   /**
    * Delete a message
+   *
+   * Removes a message from the store and persists the change to storage.
+   *
+   * @param conversationId - The conversation ID
+   * @param messageId - The message ID to delete
    */
   async deleteMessage(
     conversationId: string,
