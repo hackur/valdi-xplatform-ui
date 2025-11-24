@@ -1,0 +1,7 @@
+name: common
+description: Common shared utilities, types, and components
+version: 1.0.0
+
+dependencies:
+  # Valdi core dependencies
+  valdi_core: "^1.0.0"

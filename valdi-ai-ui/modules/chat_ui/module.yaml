@@ -1,0 +1,11 @@
+name: chat_ui
+description: Chat UI components and views
+version: 1.0.0
+
+dependencies:
+  # Valdi core dependencies
+  valdi_core: "^1.0.0"
+
+  # Application modules
+  common: "1.0.0"
+  chat_core: "1.0.0"

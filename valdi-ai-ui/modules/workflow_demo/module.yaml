@@ -1,0 +1,11 @@
+name: workflow_demo
+description: Demonstration of multi-step AI workflows
+version: 1.0.0
+
+dependencies:
+  # Valdi core dependencies
+  valdi_core: "^1.0.0"
+
+  # Application modules
+  common: "1.0.0"
+  chat_core: "1.0.0"

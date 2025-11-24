@@ -1,0 +1,18 @@
+name: main_app
+description: Main application entry point and root component
+version: 1.0.0
+
+dependencies:
+  # Valdi core dependencies
+  valdi_core: "^1.0.0"
+
+  # Application modules
+  common: "1.0.0"
+  chat_core: "1.0.0"
+  chat_ui: "1.0.0"
+  conversation_manager: "1.0.0"
+  settings: "1.0.0"
+  tools_demo: "1.0.0"
+  workflow_demo: "1.0.0"
+  agent_manager: "1.0.0"
+  model_config: "1.0.0"

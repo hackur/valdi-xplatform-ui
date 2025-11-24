@@ -3,60 +3,71 @@ module(
     version = "1.0.0",
 )
 
-# Valdi framework dependency from parent workspace
+# Valdi framework dependency
 bazel_dep(name = "valdi", version = "1.0.0")
 
-# Use parent Valdi workspace - working configuration
+# Use self-contained Valdi in vendor directory
 local_path_override(
     module_name = "valdi",
-    path = "../Valdi",
+    path = "vendor/valdi",
 )
+
+# Essential Bazel dependencies required by Valdi framework
+bazel_dep(name = "toolchains_llvm", version = "1.3.0")
+bazel_dep(name = "apple_support", version = "1.21.0", repo_name = "build_bazel_apple_support")
+bazel_dep(name = "rules_swift", version = "3.1.2", repo_name = "build_bazel_rules_swift")
+bazel_dep(name = "rules_apple", version = "4.0.0", repo_name = "build_bazel_rules_apple")
+bazel_dep(name = "rules_cc", version = "0.0.17")
+bazel_dep(name = "bazel_skylib", version = "1.2.0")
+bazel_dep(name = "platforms", version = "0.0.11")
+bazel_dep(name = "aspect_rules_js", version = "2.0.0")
+bazel_dep(name = "aspect_rules_ts", version = "3.7.0")
 
 # Override Valdi's local dependencies (required for transitive resolution)
 bazel_dep(name = "android_macros", version = "0.0.0")
 local_path_override(
     module_name = "android_macros",
-    path = "../Valdi/bzl/macros",
+    path = "vendor/valdi/bzl/macros",
 )
 
 bazel_dep(name = "snap_macros", version = "0.0.0")
 local_path_override(
     module_name = "snap_macros",
-    path = "../Valdi/bzl/valdi/snap_macros",
+    path = "vendor/valdi/bzl/valdi/snap_macros",
 )
 
 bazel_dep(name = "snap_client_toolchains", version = "0.0.0")
 local_path_override(
     module_name = "snap_client_toolchains",
-    path = "../Valdi/bzl/toolchains",
+    path = "vendor/valdi/bzl/toolchains",
 )
 
 bazel_dep(name = "snap_platforms", version = "0.0.0")
 local_path_override(
     module_name = "snap_platforms",
-    path = "../Valdi/bzl/platforms",
+    path = "vendor/valdi/bzl/platforms",
 )
 
 bazel_dep(name = "skia_user_config", version = "0.0.0")
 local_path_override(
     module_name = "skia_user_config",
-    path = "../Valdi/third-party/skia_user_config",
+    path = "vendor/valdi/third-party/skia_user_config",
 )
 
 bazel_dep(name = "rules_hdrs", version = "0.0.0")
 local_path_override(
     module_name = "rules_hdrs",
-    path = "../Valdi/third-party/rules_hdrs",
+    path = "vendor/valdi/third-party/rules_hdrs",
 )
 
 bazel_dep(name = "valdi_toolchain", version = "0.0.0")
 local_path_override(
     module_name = "valdi_toolchain",
-    path = "../Valdi/bin",
+    path = "vendor/valdi/bin",
 )
 
 bazel_dep(name = "resvg_libs", version = "0.0.0")
 local_path_override(
     module_name = "resvg_libs",
-    path = "../Valdi/third-party/resvg/resvg_libs",
+    path = "vendor/valdi/third-party/resvg/resvg_libs",
 )

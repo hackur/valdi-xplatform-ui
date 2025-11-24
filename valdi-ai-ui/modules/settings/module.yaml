@@ -1,0 +1,11 @@
+name: settings
+description: Application settings and configuration UI
+version: 1.0.0
+
+dependencies:
+  # Valdi core dependencies
+  valdi_core: "^1.0.0"
+
+  # Application modules
+  common: "1.0.0"
+  model_config: "1.0.0"
