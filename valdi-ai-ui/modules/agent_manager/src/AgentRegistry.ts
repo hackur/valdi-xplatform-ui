@@ -6,7 +6,7 @@
  */
 
 import { AgentDefinition } from './types';
-import { StorageProvider } from '../common/src';
+import { StorageProvider } from '@common';
 
 const STORAGE_KEY = 'agent_registry_agents';
 
@@ -226,9 +226,7 @@ export class AgentRegistry {
    * @param agents Array of agent definitions
    * @returns Results of registration attempts
    */
-  async registerBulk(
-    agents: AgentDefinition[],
-  ): Promise<{
+  async registerBulk(agents: AgentDefinition[]): Promise<{
     success: string[];
     failed: Array<{ id: string; error: string }>;
   }> {

@@ -4,7 +4,7 @@
  * Type definitions for conversation management UI and services.
  */
 
-import { Conversation } from '../common/src';
+import { Conversation } from '@common';
 
 /**
  * Conversation List Item Data

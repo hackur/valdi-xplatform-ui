@@ -7,7 +7,7 @@
 import { StatefulComponent } from 'valdi_core/src/Component';
 import { Style } from 'valdi_core/src/Style';
 import { View, Label, TextInput } from 'valdi_tsx/src/NativeTemplateElements';
-import { Colors, Fonts, Spacing, Shadows } from '../common/src';
+import { Colors, Fonts, Spacing, Shadows } from '@common';
 
 /**
  * SearchBar Props

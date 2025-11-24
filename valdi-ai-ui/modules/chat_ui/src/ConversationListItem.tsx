@@ -17,7 +17,7 @@ import {
   Conversation,
   ConversationUtils,
   MessageUtils,
-} from '../common/src';
+} from '@common';
 
 /**
  * ConversationListItem Props

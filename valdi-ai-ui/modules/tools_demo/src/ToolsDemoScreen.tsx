@@ -9,9 +9,9 @@
 import { Component } from 'valdi_core/src/Component';
 import { Style } from 'valdi_core/src/Style';
 import { View, ScrollView } from 'valdi_tsx/src/NativeTemplateElements';
-import { Card, Button, Colors, Fonts, Spacing, BorderRadius } from '../common/src';
+import { Card, Button, Colors, Fonts, Spacing, BorderRadius } from '@common';
 import { ToolExecutionCard, ToolExecutionResult } from './ToolExecutionCard';
-import { getAllTools } from '../chat_core/src/ToolDefinitions';
+import { getAllTools } from '@chat_core/ToolDefinitions';
 
 /**
  * Tool Demo Item

@@ -52,6 +52,10 @@ export async function runRoutingDemo(
 
   // Step 1: Classify the query
   const classifierStep = steps[0];
+  if (!classifierStep) {
+    return 'Error: Classifier step not found';
+  }
+
   classifierStep.status = 'running';
   classifierStep.startTime = Date.now();
 
@@ -63,9 +67,9 @@ export async function runRoutingDemo(
   await sleep(1200);
 
   // Randomly choose a query type for demo
-  const queryTypes = ['technical', 'business', 'general'];
+  const queryTypes = ['technical', 'business', 'general'] as const;
   const selectedType =
-    queryTypes[Math.floor(Math.random() * queryTypes.length)];
+    queryTypes[Math.floor(Math.random() * queryTypes.length)] || 'general';
 
   classifierStep.status = 'completed';
   classifierStep.output = `Query classified as: ${selectedType.toUpperCase()}. Confidence: 92%. Routing to ${selectedType} specialist.`;
@@ -79,6 +83,10 @@ export async function runRoutingDemo(
 
   // Step 2: Route to specialist
   const specialistStep = steps[1];
+  if (!specialistStep) {
+    return 'Error: Specialist step not found';
+  }
+
   specialistStep.name = `${selectedType.charAt(0).toUpperCase() + selectedType.slice(1)} Specialist`;
   specialistStep.status = 'running';
   specialistStep.startTime = Date.now();
@@ -119,6 +127,10 @@ export async function runRoutingDemo(
 
   // Step 3: Format response
   const formatterStep = steps[2];
+  if (!formatterStep) {
+    return 'Error: Formatter step not found';
+  }
+
   formatterStep.status = 'running';
   formatterStep.startTime = Date.now();
 
@@ -138,7 +150,7 @@ export async function runRoutingDemo(
   });
 
   const totalTime = Date.now() - startTime;
-  const finalResult = formatterStep.output || '';
+  const finalResult = formatterStep?.output || '';
 
   // Mark as completed
   onStateUpdate({

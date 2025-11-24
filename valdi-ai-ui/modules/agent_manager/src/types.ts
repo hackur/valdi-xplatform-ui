@@ -4,7 +4,7 @@
  * Type definitions for agent management, workflow orchestration, and loop control.
  */
 
-import { Message } from '../common/src';
+import { Message } from '@common';
 
 /**
  * Agent Definition

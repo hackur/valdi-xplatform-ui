@@ -18,7 +18,7 @@ import {
   Message,
   MessageTypeGuards,
   Avatar,
-} from '../common/src';
+} from '@common';
 
 /**
  * MessageBubble Props

@@ -6,8 +6,8 @@
  */
 
 import { AgentDefinition, AgentContext, AgentExecutionResult } from './types';
-import { ChatService } from '@chat_core/ChatService';
-import { MessageUtils, Message } from '../common/src';
+import { ChatService } from '../chat_core/src/ChatService';
+import { MessageUtils, Message } from '@common';
 
 /**
  * Agent Executor Configuration

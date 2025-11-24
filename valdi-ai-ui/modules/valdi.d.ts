@@ -16,11 +16,7 @@ declare global {
    * Global JSX factory function for creating Valdi elements
    * Configured via tsconfig.json: "jsxFactory": "$createElement"
    */
-  function $createElement(
-    type: any,
-    props: any,
-    ...children: any[]
-  ): any;
+  function $createElement(type: any, props: any, ...children: any[]): any;
 
   /**
    * Global JSX fragment component for Valdi
@@ -122,7 +118,11 @@ declare module 'valdi_core/src/Component' {
     readonly context: Readonly<ComponentContext>;
     readonly renderer: IRenderer;
 
-    constructor(renderer: IRenderer, viewModel: ViewModel, componentContext: any);
+    constructor(
+      renderer: IRenderer,
+      viewModel: ViewModel,
+      componentContext: any,
+    );
 
     /**
      * Called when the component is created for the first time
@@ -152,12 +152,16 @@ declare module 'valdi_core/src/Component' {
     /**
      * Register a cleanup function to be called on destroy
      */
-    registerDisposable(disposable: (() => void) | { unsubscribe: () => void }): void;
+    registerDisposable(
+      disposable: (() => void) | { unsubscribe: () => void },
+    ): void;
 
     /**
      * Register multiple cleanup functions
      */
-    registerDisposables(disposables: Array<(() => void) | { unsubscribe: () => void }>): void;
+    registerDisposables(
+      disposables: Array<(() => void) | { unsubscribe: () => void }>,
+    ): void;
 
     /**
      * Set a timeout that auto-clears on component destroy
@@ -196,7 +200,7 @@ declare module 'valdi_core/src/Component' {
   export class StatefulComponent<
     ViewModel = object,
     State = object,
-    ComponentContext = object
+    ComponentContext = object,
   > extends Component<ViewModel, ComponentContext> {
     state?: Readonly<State>;
 
@@ -208,12 +212,18 @@ declare module 'valdi_core/src/Component' {
     /**
      * Update state with animation
      */
-    setStateAnimated(state: Readonly<Partial<State>>, animationOptions: any): void;
+    setStateAnimated(
+      state: Readonly<Partial<State>>,
+      animationOptions: any,
+    ): void;
 
     /**
      * Update state with animation and return promise
      */
-    setStateAnimatedPromise(state: Readonly<Partial<State>>, animationOptions: any): Promise<void>;
+    setStateAnimatedPromise(
+      state: Readonly<Partial<State>>,
+      animationOptions: any,
+    ): Promise<void>;
   }
 
   /**
@@ -232,7 +242,11 @@ declare module 'valdi_core/src/Component' {
   /**
    * Component constructor type
    */
-  export type ComponentConstructor<T extends IComponent<ViewModel, Context>, ViewModel = any, Context = any> = {
+  export type ComponentConstructor<
+    T extends IComponent<ViewModel, Context>,
+    ViewModel = any,
+    Context = any,
+  > = {
     new (renderer: IRenderer, viewModel: ViewModel, context: Context): T;
     disallowNullViewModel?: boolean;
   };
@@ -273,13 +287,13 @@ declare module 'valdi_core/src/Style' {
     static merge<S1, S2, S3>(
       style1: Style<S1>,
       style2: Style<S2>,
-      style3: Style<S3>
+      style3: Style<S3>,
     ): Style<S1 & S2 & S3>;
     static merge<S1, S2, S3, S4>(
       style1: Style<S1>,
       style2: Style<S2>,
       style3: Style<S3>,
-      style4: Style<S4>
+      style4: Style<S4>,
     ): Style<S1 & S2 & S3 & S4>;
     static merge(...styles: Array<Style<any>>): Style<any>;
   }
@@ -320,7 +334,13 @@ declare module 'valdi_tsx/src/NativeTemplateElements' {
     margin?: string | number;
     flex?: number;
     flexDirection?: 'row' | 'column' | 'row-reverse' | 'column-reverse';
-    justifyContent?: 'flex-start' | 'flex-end' | 'center' | 'space-between' | 'space-around' | 'space-evenly';
+    justifyContent?:
+      | 'flex-start'
+      | 'flex-end'
+      | 'center'
+      | 'space-between'
+      | 'space-around'
+      | 'space-evenly';
     alignItems?: 'flex-start' | 'flex-end' | 'center' | 'stretch' | 'baseline';
     position?: 'relative' | 'absolute';
     top?: string | number;
@@ -511,10 +531,14 @@ declare module 'valdi_navigation/src/NavigationController' {
     /**
      * Push a new page onto the navigation stack
      */
-    push<T extends IComponent<ViewModel, Context>, ViewModel = any, Context = any>(
+    push<
+      T extends IComponent<ViewModel, Context>,
+      ViewModel = any,
+      Context = any,
+    >(
       componentConstructor: ComponentConstructor<T, ViewModel, Context>,
       viewModel: ViewModel,
-      options?: NavigationOptions
+      options?: NavigationOptions,
     ): void;
 
     /**
@@ -525,10 +549,14 @@ declare module 'valdi_navigation/src/NavigationController' {
     /**
      * Present a page modally
      */
-    present<T extends IComponent<ViewModel, Context>, ViewModel = any, Context = any>(
+    present<
+      T extends IComponent<ViewModel, Context>,
+      ViewModel = any,
+      Context = any,
+    >(
       componentConstructor: ComponentConstructor<T, ViewModel, Context>,
       viewModel: ViewModel,
-      options?: NavigationOptions
+      options?: NavigationOptions,
     ): void;
 
     /**
@@ -569,7 +597,7 @@ declare module 'valdi_navigation/src/NavigationPageComponent' {
    */
   export abstract class NavigationPageComponent<
     ViewModel,
-    ComponentContext extends NavigationPageContext = NavigationPageContext
+    ComponentContext extends NavigationPageContext = NavigationPageContext,
   > extends Component<ViewModel, ComponentContext> {
     navigationController: NavigationController;
     static componentPath: string;
@@ -582,7 +610,7 @@ declare module 'valdi_navigation/src/NavigationPageComponent' {
   export abstract class NavigationPageStatefulComponent<
     ViewModel,
     State = object,
-    ComponentContext extends NavigationPageContext = NavigationPageContext
+    ComponentContext extends NavigationPageContext = NavigationPageContext,
   > extends StatefulComponent<ViewModel, State, ComponentContext> {
     navigationController: NavigationController;
     static componentPath: string;
@@ -627,12 +655,20 @@ declare module 'valdi_http/src/HTTPClient' {
     /**
      * Make a POST request
      */
-    post(url: string, body?: any, options?: HTTPRequestOptions): Promise<HTTPResponse>;
+    post(
+      url: string,
+      body?: any,
+      options?: HTTPRequestOptions,
+    ): Promise<HTTPResponse>;
 
     /**
      * Make a PUT request
      */
-    put(url: string, body?: any, options?: HTTPRequestOptions): Promise<HTTPResponse>;
+    put(
+      url: string,
+      body?: any,
+      options?: HTTPRequestOptions,
+    ): Promise<HTTPResponse>;
 
     /**
      * Make a DELETE request
@@ -698,14 +734,23 @@ export type ValdiStyle<T> = import('valdi_core/src/Style').Style<T>;
 /**
  * Valdi component type helper
  */
-export type ValdiComponent<ViewModel = object, Context = object> =
-  import('valdi_core/src/Component').Component<ViewModel, Context>;
+export type ValdiComponent<
+  ViewModel = object,
+  Context = object,
+> = import('valdi_core/src/Component').Component<ViewModel, Context>;
 
 /**
  * Valdi stateful component type helper
  */
-export type ValdiStatefulComponent<ViewModel = object, State = object, Context = object> =
-  import('valdi_core/src/Component').StatefulComponent<ViewModel, State, Context>;
+export type ValdiStatefulComponent<
+  ViewModel = object,
+  State = object,
+  Context = object,
+> = import('valdi_core/src/Component').StatefulComponent<
+  ViewModel,
+  State,
+  Context
+>;
 
 // Export all declarations
 export {};

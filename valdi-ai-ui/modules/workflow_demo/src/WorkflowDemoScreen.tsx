@@ -11,7 +11,7 @@
 import { Component } from 'valdi_core/src/Component';
 import { Style } from 'valdi_core/src/Style';
 import { View, ScrollView } from 'valdi_tsx/src/NativeTemplateElements';
-import { Card, Button, Colors, Fonts, Spacing, BorderRadius } from '../common/src';
+import { Card, Button, Colors, Fonts, Spacing, BorderRadius } from '@common';
 import { WorkflowCard, WorkflowExecutionState } from './WorkflowCard';
 import {
   runSequentialDemo,

@@ -7,7 +7,12 @@
 
 // @ts-ignore - valdi_http is a vendor library without TypeScript definitions
 import { HTTPClient } from 'valdi_http/src/HTTPClient';
-import { Message, MessageUtils, AIProvider, ModelConfig } from '../../common/src';
+import {
+  Message,
+  MessageUtils,
+  AIProvider,
+  ModelConfig,
+} from '../../common/src';
 import {
   APIError,
   ErrorCode,

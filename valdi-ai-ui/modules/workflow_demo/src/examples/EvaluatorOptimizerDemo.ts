@@ -44,6 +44,10 @@ export async function runEvaluatorOptimizerDemo(
 
   // Step 1: Initial generation
   const generatorStep = steps[0];
+  if (!generatorStep) {
+    return 'Error: Generator step not found';
+  }
+
   generatorStep.status = 'running';
   generatorStep.startTime = Date.now();
 

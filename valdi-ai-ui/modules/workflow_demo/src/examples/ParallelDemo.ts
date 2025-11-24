@@ -67,26 +67,28 @@ export async function runParallelDemo(
 
   // Execute aggregation step
   const aggregationStep = steps[3];
-  aggregationStep.status = 'running';
-  aggregationStep.startTime = Date.now();
+  if (aggregationStep) {
+    aggregationStep.status = 'running';
+    aggregationStep.startTime = Date.now();
 
-  onStateUpdate({
-    steps: [...steps],
-    currentStep: 3,
-  });
+    onStateUpdate({
+      steps: [...steps],
+      currentStep: 3,
+    });
 
-  await sleep(1500);
+    await sleep(1500);
 
-  aggregationStep.status = 'completed';
-  aggregationStep.output = `Aggregated Results: Combined insights from ${parallelResults.length} sources. News coverage shows growing adoption of AI workflows. Academic research highlights efficiency gains of 40-60%. Social media indicates strong developer interest. Consensus: AI workflows are becoming essential for complex applications.`;
-  aggregationStep.endTime = Date.now();
+    aggregationStep.status = 'completed';
+    aggregationStep.output = `Aggregated Results: Combined insights from ${parallelResults.length} sources. News coverage shows growing adoption of AI workflows. Academic research highlights efficiency gains of 40-60%. Social media indicates strong developer interest. Consensus: AI workflows are becoming essential for complex applications.`;
+    aggregationStep.endTime = Date.now();
+  }
 
   onStateUpdate({
     steps: [...steps],
   });
 
   const totalTime = Date.now() - startTime;
-  const finalResult = aggregationStep.output || '';
+  const finalResult = aggregationStep?.output || '';
 
   // Mark as completed
   onStateUpdate({

@@ -51,6 +51,7 @@ export async function runSequentialDemo(
   // Execute each step sequentially
   for (let i = 0; i < steps.length; i++) {
     const step = steps[i];
+    if (!step) continue;
     step.status = 'running';
     step.startTime = Date.now();
 
@@ -93,7 +94,7 @@ export async function runSequentialDemo(
   }
 
   const totalTime = Date.now() - startTime;
-  const finalResult = steps[steps.length - 1].output || '';
+  const finalResult = steps[steps.length - 1]?.output || '';
 
   // Mark as completed
   onStateUpdate({
