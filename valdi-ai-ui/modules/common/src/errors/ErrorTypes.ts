@@ -100,7 +100,7 @@ export class AppError extends Error {
   public readonly retryable: boolean;
 
   /** Original error if this wraps another error */
-  public override readonly cause?: Error;
+  public readonly cause?: Error;
 
   /** User-friendly message */
   public readonly userMessage?: string;

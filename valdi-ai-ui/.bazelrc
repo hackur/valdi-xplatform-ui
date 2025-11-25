@@ -1,6 +1,6 @@
-# Enable both bzlmod and workspace for hybrid approach
-# bzlmod handles most dependencies, workspace handles legacy repos
-# common --noenable_bzlmod  # COMMENTED OUT - enabling bzlmod
+# Disable bzlmod - vendor/valdi requires pure WORKSPACE mode
+# The vendor/valdi framework is not bzlmod-compatible and needs WORKSPACE initialization
+common --noenable_bzlmod
 common --enable_workspace
 
 # Platform-specific configuration
@@ -21,8 +21,13 @@ build --java_language_version=11
 # Disable sandboxing for macOS (performance)
 build:macos --spawn_strategy=local
 
-# C++ configuration
+# C++ configuration - C++20 required for std::span and other features
 build --cxxopt=-std=c++20
+build --host_cxxopt=-std=c++20
+
+# Disable C++20 extension warnings (vendor/valdi uses them)
+build --cxxopt=-Wno-c++20-extensions
+build --host_cxxopt=-Wno-c++20-extensions
 
 # iOS configuration
 build --apple_platform_type=ios

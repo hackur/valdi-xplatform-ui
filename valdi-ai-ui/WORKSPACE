@@ -6,47 +6,46 @@ local_repository(
     path = "vendor/valdi",
 )
 
-# Define Valdi's internal sub-repositories
-# These match the local_path_override entries in MODULE.bazel
-local_repository(
-    name = "android_macros",
-    path = "vendor/valdi/bzl/macros",
+# Initialize vendor/valdi framework using its WORKSPACE initialization sequence
+# This follows the pattern from vendor/valdi/WORKSPACE
+
+# Step 1: Prepare workspace - sets up dependencies
+load("@valdi//bzl:workspace_prepare.bzl", "valdi_prepare_workspace")
+valdi_prepare_workspace("vendor/valdi")
+
+# Step 2: Pre-initialize - sets up rules_android, kotlin, java
+load("@valdi//bzl:workspace_preinit.bzl", "valdi_preinitialize_workspace")
+valdi_preinitialize_workspace()
+
+# Step 3: Setup aspect_bazel_lib (loaded by valdi_prepare_workspace)
+load("@aspect_bazel_lib//lib:repositories.bzl", "aspect_bazel_lib_dependencies", "aspect_bazel_lib_register_toolchains", "register_yq_toolchains")
+register_yq_toolchains()
+aspect_bazel_lib_dependencies()
+aspect_bazel_lib_register_toolchains()
+
+# Step 4: Setup rules_shell (required by aspect_bazel_lib)
+load("@rules_shell//shell:repositories.bzl", "rules_shell_dependencies", "rules_shell_toolchains")
+rules_shell_dependencies()
+rules_shell_toolchains()
+
+# Step 5: Create host platform repository (required by bazel-lib)
+load("@bazel_tools//tools/build_defs/repo:utils.bzl", "maybe")
+load("@platforms//host:extension.bzl", "host_platform_repo")
+maybe(
+    host_platform_repo,
+    name = "host_platform",
 )
 
-local_repository(
-    name = "snap_macros",
-    path = "vendor/valdi/bzl/valdi/snap_macros",
-)
+# Step 6: Initialize valdi workspace with platform dependencies
+load("@valdi//bzl:workspace_init.bzl", "platform_dependency_rule", "valdi_initialize_workspace")
+platform_dependency_rule(name = "platform_check")
+load("@platform_check//:target_platform.bzl", "VALDI_PLATFORM_DEPENDENCIES")
+valdi_initialize_workspace(VALDI_PLATFORM_DEPENDENCIES)
 
-local_repository(
-    name = "snap_client_toolchains",
-    path = "vendor/valdi/bzl/toolchains",
-)
+# Step 7: Setup valdi npm dependencies (@valdi_npm repository)
+load("@valdi_npm//:repositories.bzl", "npm_repositories")
+npm_repositories()
 
-local_repository(
-    name = "snap_platforms",
-    path = "vendor/valdi/bzl/platforms",
-)
-
-local_repository(
-    name = "skia_user_config",
-    path = "vendor/valdi/third-party/skia_user_config",
-)
-
-local_repository(
-    name = "rules_hdrs",
-    path = "vendor/valdi/third-party/rules_hdrs",
-)
-
-local_repository(
-    name = "valdi_toolchain",
-    path = "vendor/valdi/bin",
-)
-
-local_repository(
-    name = "resvg_libs",
-    path = "vendor/valdi/third-party/resvg/resvg_libs",
-)
-
-# Note: Not calling valdi_initialize_workspace() to avoid circular dependencies
-# bzlmod (MODULE.bazel) will handle most external dependencies
+# Step 8: Post-initialization
+load("@valdi//bzl:workspace_postinit.bzl", "valdi_post_initialize_workspace")
+valdi_post_initialize_workspace()

@@ -205,8 +205,8 @@ export class Button extends Component<ButtonProps> {
     padding: { paddingHorizontal: number; paddingVertical: number },
     fullWidth: boolean | undefined,
     customStyle?: Record<string, unknown>,
-  ): Style {
-    return new Style({
+  ): Style<View> {
+    return new Style<View>({
       ...styles.container,
       backgroundColor,
       ...(borderColor !== Colors.transparent
@@ -222,8 +222,8 @@ export class Button extends Component<ButtonProps> {
     });
   }
 
-  private getLabelStyle(fontSize: number, textColor: string): Style {
-    return new Style({
+  private getLabelStyle(fontSize: number, textColor: string): Style<Label> {
+    return new Style<Label>({
       font: systemBoldFont(fontSize),
       color: textColor,
     });
@@ -262,7 +262,7 @@ export class Button extends Component<ButtonProps> {
 }
 
 const styles = {
-  container: new Style({
+  container: new Style<View>({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
@@ -270,7 +270,7 @@ const styles = {
     minHeight: 44, // Minimum touch target size
   }),
 
-  loadingContainer: new Style({
+  loadingContainer: new Style<View>({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',

@@ -2,10 +2,20 @@ load("@valdi//bzl/valdi:valdi_module.bzl", "valdi_module")
 
 valdi_module(
     name = "common",
-    srcs = glob([
-        "src/**/*.ts",
-        "src/**/*.tsx",
-    ]),
+    srcs = glob(
+        [
+            "src/**/*.ts",
+            "src/**/*.tsx",
+        ],
+        exclude = [
+            "src/**/*.test.ts",
+            "src/**/*.test.tsx",
+            "src/**/*.spec.ts",
+            "src/**/*.spec.tsx",
+            "src/**/__tests__/**",
+            "src/schemas/**",  # Exclude schemas (require zod dependency)
+        ],
+    ),
     visibility = ["//visibility:public"],
     deps = [
         "@valdi//src/valdi_modules/src/valdi/valdi_core",

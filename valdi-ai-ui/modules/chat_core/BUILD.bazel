@@ -13,8 +13,8 @@ valdi_module(
             "**/*.test.tsx",
             "**/*.spec.ts",
             "**/*.spec.tsx",
-            "src/ToolDefinitions.ts",
-            "src/ToolExecutor.ts",
+            "src/ToolDefinitions.ts",  # Requires 'ai' and 'zod' packages
+            "src/ToolExecutor.ts",  # Requires 'ai' package
             "src/ToolDefinitions.test.example.ts",
             "src/workflows/test-utils.ts",
         ],

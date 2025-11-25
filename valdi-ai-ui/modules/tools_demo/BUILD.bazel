@@ -2,10 +2,17 @@ load("@valdi//bzl/valdi:valdi_module.bzl", "valdi_module")
 
 valdi_module(
     name = "tools_demo",
-    srcs = glob([
-        "src/**/*.ts",
-        "src/**/*.tsx",
-    ]),
+    srcs = glob(
+        [
+            "src/**/*.ts",
+            "src/**/*.tsx",
+        ],
+        exclude = [
+            "src/ToolsDemoScreen.tsx",  # Requires ToolDefinitions from chat_core which depends on 'ai' and 'zod'
+            "src/ToolExecutionCard.tsx",  # Referenced by ToolsDemoScreen
+            "src/index.ts",  # Exports excluded files
+        ],
+    ),
     visibility = ["//visibility:public"],
     deps = [
         "@valdi//src/valdi_modules/src/valdi/valdi_core",

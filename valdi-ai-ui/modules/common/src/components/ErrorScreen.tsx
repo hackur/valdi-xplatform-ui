@@ -7,6 +7,7 @@
 
 import { Component } from 'valdi_core/src/Component';
 import { Style } from 'valdi_core/src/Style';
+import { systemBoldFont, systemFont } from 'valdi_core/src/SystemFont';
 import { View, Label } from 'valdi_tsx/src/NativeTemplateElements';
 
 import { Colors } from '../theme/Colors';
@@ -187,28 +188,25 @@ const styles = {
     width: 80,
     height: 80,
     backgroundColor: Colors.errorLight + '20', // 20% opacity
-    borderRadius: BorderRadius.circle,
+    borderRadius: BorderRadius.full, // Circular
     alignItems: 'center',
     justifyContent: 'center',
     marginBottom: Spacing.xl,
   }),
 
   errorIcon: new Style<Label>({
-    font: {
-      ...Fonts.h1,
-      size: 48,
-    },
+    font: systemBoldFont(48),
   }),
 
   errorTitle: new Style<Label>({
-    font: Fonts.h2,
+    font: systemBoldFont(24),
     color: Colors.error,
     textAlign: 'center',
     marginBottom: Spacing.base,
   }),
 
   errorMessage: new Style<Label>({
-    font: Fonts.body,
+    font: systemFont(16),
     color: Colors.textPrimary,
     textAlign: 'center',
     marginBottom: Spacing.xl,
@@ -224,7 +222,7 @@ const styles = {
   }),
 
   detailsTitle: new Style<Label>({
-    font: Fonts.h5,
+    font: systemBoldFont(14),
     color: Colors.textPrimary,
     marginBottom: Spacing.sm,
   }),
@@ -239,20 +237,18 @@ const styles = {
   }),
 
   stackTrace: new Style<Label>({
-    font: Fonts.code,
+    font: systemFont(11),
     color: Colors.textSecondary,
-    fontSize: 11,
   }),
 
   buttonContainer: new Style<View>({
     width: '100%',
     flexDirection: 'row',
-    gap: Spacing.base,
     marginBottom: Spacing.base,
   }),
 
   helpText: new Style<Label>({
-    font: Fonts.caption,
+    font: systemFont(12),
     color: Colors.textTertiary,
     textAlign: 'center',
   }),

@@ -18,6 +18,7 @@
 import { StatefulComponent } from 'valdi_core/src/Component';
 import { Style } from 'valdi_core/src/Style';
 import { View, Label } from 'valdi_tsx/src/NativeTemplateElements';
+import { systemBoldFont, systemFont } from 'valdi_core/src/SystemFont';
 
 import { Colors } from '../theme/Colors';
 import { Fonts } from '../theme/Fonts';
@@ -38,7 +39,7 @@ export interface ErrorBoundaryViewModel {
    * Custom fallback UI to display when an error occurs
    * Can be a static element or a function that receives the error
    */
-  fallback?: ((error: Error, errorInfo?: ErrorInfo) => JSX.Element) | JSX.Element;
+  fallback?: ((error: Error, errorInfo?: ErrorInfo) => View) | View;
 
   /**
    * Callback when an error is caught
@@ -176,7 +177,7 @@ export class ErrorBoundary extends StatefulComponent<
   /**
    * Called when an error is thrown in a child component
    */
-  override onError(error: Error, errorInfo?: ErrorInfo) {
+  onError(error: Error, errorInfo?: ErrorInfo) {
     const { onError, logErrors = true } = this.viewModel;
 
     // Log error to console if enabled
@@ -243,19 +244,19 @@ const styles = {
   }),
 
   errorIcon: new Style<Label>({
-    font: Fonts.h1,
+    font: systemBoldFont(28),
     marginBottom: Spacing.base,
   }),
 
   errorTitle: new Style<Label>({
-    font: Fonts.h2,
+    font: systemBoldFont(24),
     color: Colors.error,
     marginBottom: Spacing.sm,
     textAlign: 'center',
   }),
 
   errorMessage: new Style<Label>({
-    font: Fonts.body,
+    font: systemFont(16),
     color: Colors.textPrimary,
     textAlign: 'center',
     marginBottom: Spacing.base,
@@ -274,19 +275,18 @@ const styles = {
   }),
 
   detailsTitle: new Style<Label>({
-    font: Fonts.h5,
+    font: systemBoldFont(14),
     color: Colors.textPrimary,
     marginBottom: Spacing.xs,
   }),
 
   detailsText: new Style<Label>({
-    font: Fonts.code,
+    font: systemFont(11),
     color: Colors.textSecondary,
-    fontSize: 11,
   }),
 
   helpText: new Style<Label>({
-    font: Fonts.caption,
+    font: systemFont(12),
     color: Colors.textTertiary,
     textAlign: 'center',
     marginTop: Spacing.base,

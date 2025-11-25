@@ -135,8 +135,8 @@ export class LoadingSpinner extends StatefulComponent<
     }
   }
 
-  private getTextLabelStyle(fontSize: number): Style {
-    return new Style({
+  private getTextLabelStyle(fontSize: number): Style<Label> {
+    return new Style<Label>({
       font: systemFont(fontSize),
       color: Colors.textPrimary,
     });
@@ -147,8 +147,8 @@ export class LoadingSpinner extends StatefulComponent<
     return '.'.repeat(dots);
   }
 
-  private getSpinnerContainerStyle(size: number): Style {
-    return new Style({
+  private getSpinnerContainerStyle(size: number): Style<View> {
+    return new Style<View>({
       width: size,
       height: size,
       alignItems: 'center',
@@ -160,8 +160,8 @@ export class LoadingSpinner extends StatefulComponent<
   private getOuterCircleStyle(
     size: number,
     color: string | undefined,
-  ): Style {
-    return new Style({
+  ): Style<View> {
+    return new Style<View>({
       width: size,
       height: size,
       borderRadius: size / 2,
@@ -176,8 +176,8 @@ export class LoadingSpinner extends StatefulComponent<
     size: number,
     color: string | undefined,
     dots: number,
-  ): Style {
-    return new Style({
+  ): Style<View> {
+    return new Style<View>({
       position: 'absolute',
       width: size / 3,
       height: size / 3,
@@ -233,8 +233,8 @@ export class LoadingSpinner extends StatefulComponent<
   private getFullscreenOverlayStyle(
     overlayColor: string | undefined,
     overlayOpacity: number | undefined,
-  ): Style {
-    return new Style({
+  ): Style<View> {
+    return new Style<View>({
       position: 'absolute',
       top: 0,
       left: 0,
@@ -252,8 +252,8 @@ export class LoadingSpinner extends StatefulComponent<
 
   private getContainerStyle(
     customStyle?: Record<string, unknown>,
-  ): Style {
-    return new Style({
+  ): Style<View> {
+    return new Style<View>({
       flexDirection: 'column',
       alignItems: 'center',
       justifyContent: 'center',
@@ -291,24 +291,24 @@ export class LoadingSpinner extends StatefulComponent<
 }
 
 const styles = {
-  container: new Style({
+  container: new Style<View>({
     flexDirection: 'column',
     alignItems: 'center',
     justifyContent: 'center',
   }),
 
-  contentContainer: new Style({
+  contentContainer: new Style<View>({
     flexDirection: 'column',
     alignItems: 'center',
     justifyContent: 'center',
   }),
 
-  textContainer: new Style({
+  textContainer: new Style<View>({
     minWidth: 80,
     alignItems: 'center',
   }),
 
-  fullscreenOverlay: new Style({
+  fullscreenOverlay: new Style<View>({
     position: 'absolute',
     top: 0,
     left: 0,
@@ -321,7 +321,7 @@ const styles = {
     zIndex: 9999,
   }),
 
-  fullscreenContent: new Style({
+  fullscreenContent: new Style<View>({
     backgroundColor: Colors.surface,
     padding: Spacing.xl,
     borderRadius: 12,

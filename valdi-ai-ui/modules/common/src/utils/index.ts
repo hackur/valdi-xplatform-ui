@@ -5,6 +5,6 @@
  */
 
 // Error handling
-export * from './ErrorBoundary';
+// export * from './ErrorBoundary'; // Exported from components/index.ts to avoid duplicate
 export * from './NetworkRetry';
 export * from './ErrorMessages';
