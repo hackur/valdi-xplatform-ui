@@ -33,6 +33,27 @@ This project combines the power of **Valdi's TypeScript-to-native compilation** 
 
 ---
 
+## ⚠️ IMPORTANT: Valdi Import Conventions
+
+**This project uses Valdi's compiler, which requires specific import syntax.**
+
+❌ **DO NOT** use TypeScript path aliases (`@common`, `@chat_core`, etc.) in imports
+✅ **ALWAYS** use full module paths (`common/src/...`, `chat_core/src/...`)
+
+```typescript
+// ❌ WRONG - Will fail in Valdi builds:
+import { Button } from '@common';
+
+// ✅ CORRECT - Will work in Valdi builds:
+import { Button } from 'common/src/components/Button';
+```
+
+**See [Valdi Import Conventions](docs/VALDI_IMPORT_CONVENTIONS.md) for complete details.**
+
+**Quick fix:** Run `./scripts/fix-valdi-imports.sh` to automatically fix all imports.
+
+---
+
 ## ✨ Features
 
 ### 🤖 AI Capabilities
