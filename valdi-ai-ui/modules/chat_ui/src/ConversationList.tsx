@@ -192,7 +192,7 @@ export class ConversationList extends StatefulComponent<
   private getFilterButtonLabelStyle(isActive: boolean) {
     return new Style<Label>({
       ...Fonts.bodySemibold,
-      fontSize: 14,
+      
       color: isActive ? Colors.textInverse : Colors.textPrimary,
     });
   }
@@ -273,7 +273,7 @@ export class ConversationList extends StatefulComponent<
 
     return (
       <view
-        style={customStyle ? { ...styles.container, ...customStyle } : styles.container}
+        style={styles.container}
       >
         {/* Search Bar */}
         <view style={styles.searchContainer}>
@@ -433,7 +433,7 @@ const styles = {
 
   emptyStateSubtext: new Style<Label>({
     ...Fonts.body,
-    fontSize: 14,
+    
     color: Colors.textTertiary,
     textAlign: 'center',
     marginTop: Spacing.sm,

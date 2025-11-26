@@ -97,9 +97,9 @@ export class ChatView extends StatefulComponent<
       // Default configuration - in production, this should come from settings
       const config: ChatServiceConfig = {
         apiKeys: {
-          openai: process.env.OPENAI_API_KEY || '',
-          anthropic: process.env.ANTHROPIC_API_KEY || '',
-          google: process.env.GOOGLE_API_KEY || '',
+          openai: '',
+          anthropic: '',
+          google: '',
         },
         defaultModelConfig: {
           provider: 'openai',
@@ -269,8 +269,8 @@ export class ChatView extends StatefulComponent<
             error={error}
             title="Chat Error"
             message="An error occurred while loading the chat. Please try again."
-            showDetails={process.env.NODE_ENV === 'development'}
-            onRetry={() => window.location.reload()}
+            showDetails={false}
+            onRetry={() => void 0}
           />
         )}
         onError={this.handleChatError}
