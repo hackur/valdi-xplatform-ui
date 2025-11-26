@@ -6,7 +6,7 @@
 
 import { Component } from 'valdi_core/src/Component';
 import { Style } from 'valdi_core/src/Style';
-import { Colors, BorderRadius } from '@common';
+import { Colors, BorderRadius } from 'common/src';
 
 /**
  * Switch Props

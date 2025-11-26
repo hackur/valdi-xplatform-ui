@@ -402,7 +402,7 @@ export const ReactComponentExample = `
 // In your React component:
 
 import { useEffect, useState } from 'react';
-import { conversationStore, messageStore } from '@chat_core';
+import { conversationStore, messageStore } from 'chat_core/src';
 
 function ChatApp() {
   const [conversations, setConversations] = useState([]);

@@ -7,6 +7,23 @@ Reference this for correct styling in Valdi components.
 
 Valdi's `Style` object maps directly to **native UI properties** (UIView on iOS, View on Android), NOT to CSS or React Native!
 
+## CRITICAL: Style Type Pattern
+
+NEVER use generic type parameters with Style. TypeScript infers the type automatically.
+
+```typescript
+// [FAIL] WRONG - Do not use type parameters
+new Style({...})
+new Style<Label>({...})
+: Style<View>
+
+// [PASS] CORRECT - Let TypeScript infer
+new Style({...})
+: Style
+```
+
+Run `./scripts/fix-style-types.sh` to auto-fix violations.
+
 ## Style Object Pattern
 ```typescript
 import { Style } from 'valdi_core/src/Style';
@@ -15,7 +32,7 @@ import { Colors, Spacing, Fonts, BorderRadius } from 'common/src/theme';
 
 // Define styles OUTSIDE component class
 const styles = {
-  container: new Style<View>({
+  container: new Style({
     flex: 1,
     backgroundColor: Colors.surface,
     paddingTop: Spacing.base,
@@ -47,7 +64,7 @@ export class MyComponent extends Component<Props> {
 
 ### Layout Properties
 ```typescript
-new Style<View>({
+new Style({
   // Flexbox
   flex: 1,                    // Flex grow factor
   flexDirection: 'row',       // 'row' | 'column' | 'row-reverse' | 'column-reverse'
@@ -77,7 +94,7 @@ new Style<View>({
 ### Spacing Properties (NO SHORTHANDS!)
 ```typescript
 // WRONG - React Native shorthands (NOT SUPPORTED)
-new Style<View>({
+new Style({
   gap: 16,                    // ERROR - gap doesn't exist
   paddingVertical: 8,         // ERROR - no shorthand
   paddingHorizontal: 16,      // ERROR - no shorthand
@@ -88,7 +105,7 @@ new Style<View>({
 })
 
 // CORRECT - Individual properties (SUPPORTED)
-new Style<View>({
+new Style({
   // Padding (individual sides only!)
   paddingTop: 8,
   paddingBottom: 8,
@@ -105,7 +122,7 @@ new Style<View>({
 
 ### Visual Properties
 ```typescript
-new Style<View>({
+new Style({
   // Background
   backgroundColor: Colors.surface,  // Hex or named color
   opacity: 0.8,                     // 0.0 to 1.0
@@ -131,7 +148,7 @@ new Style<View>({
 
 ### Shadow Properties (iOS Style)
 ```typescript
-new Style<View>({
+new Style({
   // Shadow (iOS-style API)
   shadowColor: '#000000',
   shadowOffset: { width: 0, height: 2 },
@@ -175,7 +192,7 @@ import { Colors, Spacing, Fonts, BorderRadius } from 'common/src/theme';
 
 // CORRECT - Use design tokens
 const styles = {
-  container: new Style<View>({
+  container: new Style({
     backgroundColor: Colors.surface,
     paddingTop: Spacing.base,
     paddingBottom: Spacing.base,
@@ -193,7 +210,7 @@ const styles = {
 
 // WRONG - Hardcoded values
 const styles = {
-  container: new Style<View>({
+  container: new Style({
     backgroundColor: '#FFFFFF',     // Use Colors.surface
     paddingTop: 16,                 // Use Spacing.base
     paddingBottom: 16,
@@ -255,7 +272,7 @@ BorderRadius.full          // 9999
 ### Container Pattern
 ```typescript
 const styles = {
-  container: new Style<View>({
+  container: new Style({
     flex: 1,
     backgroundColor: Colors.background,
     paddingTop: Spacing.base,
@@ -269,7 +286,7 @@ const styles = {
 ### Card Pattern
 ```typescript
 const styles = {
-  card: new Style<View>({
+  card: new Style({
     backgroundColor: Colors.surface,
     borderRadius: BorderRadius.md,
     paddingTop: Spacing.md,
@@ -292,14 +309,14 @@ const styles = {
 ### Row Layout Pattern
 ```typescript
 const styles = {
-  row: new Style<View>({
+  row: new Style({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
   }),
 
   // Children spacing (use marginRight on children)
-  rowItem: new Style<View>({
+  rowItem: new Style({
     marginRight: Spacing.sm, // Space between items
   }),
 };
@@ -308,13 +325,13 @@ const styles = {
 ### Column Layout Pattern
 ```typescript
 const styles = {
-  column: new Style<View>({
+  column: new Style({
     flexDirection: 'column',
     alignItems: 'stretch',
   }),
 
   // Children spacing (use marginBottom on children)
-  columnItem: new Style<View>({
+  columnItem: new Style({
     marginBottom: Spacing.base, // Space between items
   }),
 };
@@ -323,7 +340,7 @@ const styles = {
 ### Button Pattern
 ```typescript
 const styles = {
-  button: new Style<View>({
+  button: new Style({
     backgroundColor: Colors.primary,
     borderRadius: BorderRadius.base,
     paddingTop: Spacing.sm,
@@ -344,7 +361,7 @@ const styles = {
 ### Absolute Positioning Pattern
 ```typescript
 const styles = {
-  overlay: new Style<View>({
+  overlay: new Style({
     position: 'absolute',
     top: 0,
     left: 0,
@@ -362,14 +379,14 @@ const styles = {
 ### DON'T Use Shorthands
 ```typescript
 // WRONG
-new Style<View>({
+new Style({
   gap: Spacing.base,
   paddingVertical: Spacing.sm,
   paddingHorizontal: Spacing.lg,
 })
 
 // CORRECT
-new Style<View>({
+new Style({
   paddingTop: Spacing.sm,
   paddingBottom: Spacing.sm,
   paddingLeft: Spacing.lg,
@@ -381,13 +398,13 @@ new Style<View>({
 ### DON'T Hardcode Values
 ```typescript
 // WRONG
-new Style<View>({
+new Style({
   paddingTop: 16,
   backgroundColor: '#FFFFFF',
 })
 
 // CORRECT
-new Style<View>({
+new Style({
   paddingTop: Spacing.base,
   backgroundColor: Colors.surface,
 })
@@ -397,13 +414,13 @@ new Style<View>({
 ```typescript
 // WRONG - Creates new objects every render
 override onRender(): JSX.Element {
-  const containerStyle = new Style<View>({ /* ... */ });
+  const containerStyle = new Style({ /* ... */ });
   return <view style={containerStyle} />;
 }
 
 // CORRECT - Define outside component
 const styles = {
-  container: new Style<View>({ /* ... */ }),
+  container: new Style({ /* ... */ }),
 };
 
 export class MyComponent extends Component<Props> {
@@ -416,14 +433,14 @@ export class MyComponent extends Component<Props> {
 ### DON'T Use CSS-Style Units
 ```typescript
 // WRONG
-new Style<View>({
+new Style({
   width: '100px',      // NO px units
   padding: '1rem',     // NO rem units
   margin: '2em',       // NO em units
 })
 
 // CORRECT
-new Style<View>({
+new Style({
   width: 100,          // Numbers are points/dp
   width: '100%',       // Percentages OK
 })
@@ -432,8 +449,8 @@ new Style<View>({
 ## Dynamic Styles
 ```typescript
 // Conditional styles
-private getContainerStyle(): Style<View> {
-  return new Style<View>({
+private getContainerStyle(): Style {
+  return new Style({
     backgroundColor: this.viewModel.isActive
       ? Colors.primary
       : Colors.surface,

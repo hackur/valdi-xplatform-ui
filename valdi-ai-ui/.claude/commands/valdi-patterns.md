@@ -229,7 +229,7 @@ export class MyComponent extends Component<MyComponentProps> {
 }
 
 const styles = {
-  container: new Style<View>({
+  container: new Style({
     flex: 1,
     backgroundColor: Colors.surface,
     paddingTop: Spacing.base,
@@ -253,3 +253,4 @@ const styles = {
 6. **Styles outside component class** for reusability
 7. **Singleton stores** for global state management
 8. **Type-safe props and state** with explicit interfaces
+9. **Never use Style<T> type parameters** - use new Style({...}) not new Style<View>({...})

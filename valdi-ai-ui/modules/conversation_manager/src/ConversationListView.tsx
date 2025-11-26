@@ -7,7 +7,7 @@
 import { StatefulComponent } from 'valdi_core/src/Component';
 import { Style } from 'valdi_core/src/Style';
 import { NavigationController } from 'valdi_navigation/src/NavigationController';
-import { Colors, Fonts, Spacing, LoadingSpinner, ConfirmDialog } from '@common';
+import { Colors, Fonts, Spacing, LoadingSpinner, ConfirmDialog } from 'common/src';
 import { ConversationListItemData } from './types';
 import { HistoryManager } from './HistoryManager';
 import { ConversationCard } from './ConversationCard';

@@ -20,7 +20,7 @@ import {
   BorderRadius,
   ErrorBoundary,
   ErrorScreen,
-} from '@common';
+} from 'common/src';
 import { WorkflowCard, WorkflowExecutionState } from './WorkflowCard';
 import {
   runSequentialDemo,

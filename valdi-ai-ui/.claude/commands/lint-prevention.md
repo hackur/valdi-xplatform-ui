@@ -255,6 +255,20 @@ const { name, age } = user;
 const [first, second] = array;
 ```
 
+### Style Type Pattern (CRITICAL)
+```typescript
+// [FAIL] NEVER use generic type parameters with Style
+new Style<View>({...})       // ERROR - remove <View>
+new Style<Label>({...})      // ERROR - remove <Label>
+: Style<View>                // ERROR - use just Style
+
+// [PASS] Let TypeScript infer the type
+new Style({...})             // CORRECT
+: Style                      // CORRECT
+
+// Run ./scripts/fix-style-types.sh to auto-fix violations
+```
+
 ### Valdi-Specific Patterns
 ```typescript
 // [PASS] Always use 'override' keyword
@@ -305,6 +319,7 @@ const result = getValue();
 - [ ] console.log replaced with warn/error/info
 - [ ] Using const/let (never var)
 - [ ] Lifecycle methods use `override` keyword
+- [ ] Style uses NO type parameters (new Style({...}) not new Style<View>({...}))
 
 ## Hooks Integration
 After editing TypeScript files, hooks automatically run:

@@ -18,9 +18,9 @@ import {
   BorderRadius,
   ErrorBoundary,
   ErrorScreen,
-} from '@common';
+} from 'common/src';
 import { ToolExecutionCard, ToolExecutionResult } from './ToolExecutionCard';
-import { getAllTools } from '@chat_core/ToolDefinitions';
+import { getAllTools } from 'chat_core/src/ToolDefinitions';
 
 /**
  * Tool Demo Item

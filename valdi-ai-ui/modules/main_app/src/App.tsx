@@ -8,7 +8,7 @@
 
 import { Component } from 'valdi_core/src/Component';
 import { NavigationRoot } from 'valdi_navigation/src/NavigationController';
-import { ErrorBoundary, ErrorScreen } from '@common';
+import { ErrorBoundary, ErrorScreen } from 'common/src';
 import { HomePage } from './HomePage';
 
 /**

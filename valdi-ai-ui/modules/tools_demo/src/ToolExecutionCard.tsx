@@ -11,7 +11,7 @@
 
 import { Component } from 'valdi_core/src/Component';
 import { Style } from 'valdi_core/src/Style';
-import { Card, Colors, Fonts, Spacing, BorderRadius } from '@common';
+import { Card, Colors, Fonts, Spacing, BorderRadius } from 'common/src';
 
 /**
  * Tool Execution Result

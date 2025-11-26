@@ -6,7 +6,7 @@
 
 import { ConversationStore } from '../ConversationStore';
 import { ConversationPersistence } from '../ConversationPersistence';
-import { Conversation, ConversationUtils } from '@common';
+import { Conversation, ConversationUtils } from 'common/src';
 
 // Mock ConversationPersistence
 jest.mock('../ConversationPersistence');

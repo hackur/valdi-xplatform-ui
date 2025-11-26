@@ -15,17 +15,17 @@ import {
   SemanticSpacing,
   BorderRadius,
   Card,
-} from '@common';
+} from 'common/src';
 
 // Screen Imports
-import { ChatView } from '@chat_ui/ChatView';
-import { ConversationList } from '@chat_ui/ConversationList';
-import { ToolsDemoScreen } from '@tools_demo/ToolsDemoScreen';
-import { WorkflowDemoScreen } from '@workflow_demo/WorkflowDemoScreen';
-import { SettingsScreen } from '@settings/SettingsScreen';
+import { ChatView } from 'chat_ui/src/ChatView';
+import { ConversationList } from 'chat_ui/src/ConversationList';
+import { ToolsDemoScreen } from 'tools_demo/src/ToolsDemoScreen';
+import { WorkflowDemoScreen } from 'workflow_demo/src/WorkflowDemoScreen';
+import { SettingsScreen } from 'settings/src/SettingsScreen';
 
 // Store Imports
-import { conversationStore } from '@chat_core/ConversationStore';
+import { conversationStore } from 'chat_core/src/ConversationStore';
 
 /**
  * HomePage Props

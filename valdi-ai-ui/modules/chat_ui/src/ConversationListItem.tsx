@@ -13,7 +13,7 @@ import {
   Spacing,
   BorderRadius,
   Conversation,
-} from '@common';
+} from 'common/src';
 
 /**
  * ConversationListItem Props

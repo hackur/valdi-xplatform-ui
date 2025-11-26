@@ -15,7 +15,7 @@ import {
   BorderRadius,
   Conversation,
   LoadingSpinner,
-} from '@common';
+} from 'common/src';
 import { ConversationListItem } from './ConversationListItem';
 
 /**

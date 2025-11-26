@@ -11,10 +11,10 @@
  * Dependency Inversion: Depends on abstractions, not concretions
  */
 
-import { ChatService } from '@chat_core/ChatService';
-import { MessageStore } from '@chat_core/MessageStore';
-import { ConversationStore } from '@chat_core/ConversationStore';
-import { Message, Conversation } from '@common';
+import { ChatService } from 'chat_core/src/ChatService';
+import { MessageStore } from 'chat_core/src/MessageStore';
+import { ConversationStore } from 'chat_core/src/ConversationStore';
+import { Message, Conversation } from 'common/src';
 import { NavigationController } from 'valdi_navigation/src/NavigationController';
 
 /**

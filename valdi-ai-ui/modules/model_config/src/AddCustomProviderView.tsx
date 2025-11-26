@@ -6,9 +6,9 @@
 
 import { StatefulComponent } from 'valdi_core/src/Component';
 import { NavigationController } from 'valdi_navigation/src/NavigationController';
-import { Colors, Fonts, Spacing } from '@common';
-import { Button } from '@common';
-import { LoadingSpinner } from '@common';
+import { Colors, Fonts, Spacing } from 'common/src';
+import { Button } from 'common/src';
+import { LoadingSpinner } from 'common/src';
 import { CustomProviderStore } from './CustomProviderStore';
 import {
   CustomProviderConfig,

@@ -15,20 +15,20 @@ import {
   Message,
   ErrorBoundary,
   ErrorScreen,
-} from '@common';
+} from 'common/src';
 import { MessageBubble } from './MessageBubble';
 import { InputBar } from './InputBar';
-import { ChatService } from '@chat_core/ChatService';
-import { MessageStore, messageStore } from '@chat_core/MessageStore';
+import { ChatService } from 'chat_core/src/ChatService';
+import { MessageStore, messageStore } from 'chat_core/src/MessageStore';
 import {
   ConversationStore,
   conversationStore,
-} from '@chat_core/ConversationStore';
+} from 'chat_core/src/ConversationStore';
 import {
   MessageStoreState,
   StreamEvent,
   ChatServiceConfig,
-} from '@chat_core/types';
+} from 'chat_core/src/types';
 
 /**
  * ChatView Props

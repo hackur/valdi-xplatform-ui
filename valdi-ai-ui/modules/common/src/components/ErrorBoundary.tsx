@@ -223,7 +223,7 @@ export class ErrorBoundary extends StatefulComponent<
 }
 
 const styles = {
-  errorContainer: new Style<View>({
+  errorContainer: new Style({
     width: '100%',
     height: '100%',
     backgroundColor: Colors.background,
@@ -232,7 +232,7 @@ const styles = {
     padding: Spacing.lg,
   }),
 
-  errorCard: new Style<View>({
+  errorCard: new Style({
     width: '100%',
     maxWidth: 600,
     backgroundColor: Colors.errorLight + '10', // 10% opacity
@@ -243,19 +243,19 @@ const styles = {
     alignItems: 'center',
   }),
 
-  errorIcon: new Style<Label>({
+  errorIcon: new Style({
     font: systemBoldFont(28),
     marginBottom: Spacing.base,
   }),
 
-  errorTitle: new Style<Label>({
+  errorTitle: new Style({
     font: systemBoldFont(24),
     color: Colors.error,
     marginBottom: Spacing.sm,
     textAlign: 'center',
   }),
 
-  errorMessage: new Style<Label>({
+  errorMessage: new Style({
     font: systemFont(16),
     color: Colors.textPrimary,
     textAlign: 'center',
@@ -263,7 +263,7 @@ const styles = {
     lineHeight: 1.5,
   }),
 
-  detailsContainer: new Style<View>({
+  detailsContainer: new Style({
     width: '100%',
     backgroundColor: Colors.gray100,
     borderRadius: BorderRadius.sm,
@@ -274,18 +274,18 @@ const styles = {
     overflow: 'scroll',
   }),
 
-  detailsTitle: new Style<Label>({
+  detailsTitle: new Style({
     font: systemBoldFont(14),
     color: Colors.textPrimary,
     marginBottom: Spacing.xs,
   }),
 
-  detailsText: new Style<Label>({
+  detailsText: new Style({
     font: systemFont(11),
     color: Colors.textSecondary,
   }),
 
-  helpText: new Style<Label>({
+  helpText: new Style({
     font: systemFont(12),
     color: Colors.textTertiary,
     textAlign: 'center',

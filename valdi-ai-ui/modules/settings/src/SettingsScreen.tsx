@@ -20,7 +20,7 @@ import {
   Card,
   ErrorBoundary,
   ErrorScreen,
-} from '@common';
+} from 'common/src';
 import { ApiKeyStore, AIProvider } from './ApiKeyStore';
 import { PreferencesStore } from './PreferencesStore';
 import { TextInput } from './components/TextInput';

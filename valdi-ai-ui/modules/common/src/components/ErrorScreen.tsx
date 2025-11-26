@@ -169,7 +169,7 @@ export class ErrorScreen extends Component<ErrorScreenProps> {
 }
 
 const styles = {
-  container: new Style<View>({
+  container: new Style({
     width: '100%',
     height: '100%',
     backgroundColor: Colors.background,
@@ -178,13 +178,13 @@ const styles = {
     padding: Spacing.xl,
   }),
 
-  content: new Style<View>({
+  content: new Style({
     width: '100%',
     maxWidth: 600,
     alignItems: 'center',
   }),
 
-  iconContainer: new Style<View>({
+  iconContainer: new Style({
     width: 80,
     height: 80,
     backgroundColor: Colors.errorLight + '20', // 20% opacity
@@ -194,18 +194,18 @@ const styles = {
     marginBottom: Spacing.xl,
   }),
 
-  errorIcon: new Style<Label>({
+  errorIcon: new Style({
     font: systemBoldFont(48),
   }),
 
-  errorTitle: new Style<Label>({
+  errorTitle: new Style({
     font: systemBoldFont(24),
     color: Colors.error,
     textAlign: 'center',
     marginBottom: Spacing.base,
   }),
 
-  errorMessage: new Style<Label>({
+  errorMessage: new Style({
     font: systemFont(16),
     color: Colors.textPrimary,
     textAlign: 'center',
@@ -213,7 +213,7 @@ const styles = {
     lineHeight: 1.5,
   }),
 
-  detailsContainer: new Style<View>({
+  detailsContainer: new Style({
     width: '100%',
     backgroundColor: Colors.gray100,
     borderRadius: BorderRadius.md,
@@ -221,13 +221,13 @@ const styles = {
     marginBottom: Spacing.xl,
   }),
 
-  detailsTitle: new Style<Label>({
+  detailsTitle: new Style({
     font: systemBoldFont(14),
     color: Colors.textPrimary,
     marginBottom: Spacing.sm,
   }),
 
-  stackContainer: new Style<View>({
+  stackContainer: new Style({
     width: '100%',
     backgroundColor: Colors.gray200,
     borderRadius: BorderRadius.sm,
@@ -236,18 +236,18 @@ const styles = {
     overflow: 'scroll',
   }),
 
-  stackTrace: new Style<Label>({
+  stackTrace: new Style({
     font: systemFont(11),
     color: Colors.textSecondary,
   }),
 
-  buttonContainer: new Style<View>({
+  buttonContainer: new Style({
     width: '100%',
     flexDirection: 'row',
     marginBottom: Spacing.base,
   }),
 
-  helpText: new Style<Label>({
+  helpText: new Style({
     font: systemFont(12),
     color: Colors.textTertiary,
     textAlign: 'center',
