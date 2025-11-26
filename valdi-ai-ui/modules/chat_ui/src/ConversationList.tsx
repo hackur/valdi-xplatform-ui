@@ -7,7 +7,7 @@
 
 import { StatefulComponent } from 'valdi_core/src/Component';
 import { Style } from 'valdi_core/src/Style';
-import { View, EditTextEvent } from 'valdi_tsx/src/NativeTemplateElements';
+import { View, Label, EditTextEvent } from 'valdi_tsx/src/NativeTemplateElements';
 import {
   Colors,
   Fonts,
@@ -181,6 +181,22 @@ export class ConversationList extends StatefulComponent<
     }
   };
 
+  private getFilterButtonStyle(isActive: boolean) {
+    return new Style<View>({
+      ...styles.filterButton,
+      backgroundColor: isActive ? Colors.primary : Colors.surface,
+      borderColor: isActive ? Colors.primary : Colors.border,
+    });
+  }
+
+  private getFilterButtonLabelStyle(isActive: boolean) {
+    return new Style<Label>({
+      ...Fonts.bodySemibold,
+      fontSize: 14,
+      color: isActive ? Colors.textInverse : Colors.textPrimary,
+    });
+  }
+
   private renderFilterButton(
     filterType: ConversationFilter,
     label: string,
@@ -191,20 +207,12 @@ export class ConversationList extends StatefulComponent<
 
     return (
       <view
-        style={{
-          ...styles.filterButton,
-          backgroundColor: isActive ? Colors.primary : Colors.surface,
-          borderColor: isActive ? Colors.primary : Colors.border,
-        }}
+        style={this.getFilterButtonStyle(isActive)}
         onTap={() => this.handleFilterChange(filterType)}
       >
         <label
           value={count !== undefined ? `${label} (${count})` : label}
-          style={{
-            ...Fonts.bodySemibold,
-            fontSize: 14,
-            color: isActive ? Colors.textInverse : Colors.textPrimary,
-          }}
+          style={this.getFilterButtonLabelStyle(isActive)}
         />
       </view>
     );
@@ -226,12 +234,7 @@ export class ConversationList extends StatefulComponent<
       <view style={styles.emptyState}>
         <label
           value={message}
-          style={{
-            ...Fonts.body,
-            fontSize: 16,
-            color: Colors.textSecondary,
-            textAlign: 'center',
-          }}
+          style={styles.emptyStateMessage}
         />
         <label
           value={
@@ -239,13 +242,7 @@ export class ConversationList extends StatefulComponent<
               ? 'Try a different search term'
               : 'Start a new conversation to get started'
           }
-          style={{
-            ...Fonts.body,
-            fontSize: 14,
-            color: Colors.textTertiary,
-            textAlign: 'center',
-            marginTop: Spacing.sm,
-          }}
+          style={styles.emptyStateSubtext}
         />
       </view>
     );
@@ -276,10 +273,7 @@ export class ConversationList extends StatefulComponent<
 
     return (
       <view
-        style={{
-          ...styles.container,
-          ...customStyle,
-        }}
+        style={customStyle ? { ...styles.container, ...customStyle } : styles.container}
       >
         {/* Search Bar */}
         <view style={styles.searchContainer}>
@@ -287,11 +281,7 @@ export class ConversationList extends StatefulComponent<
             value={searchQuery}
             placeholder="Search conversations..."
             onChange={this.handleSearchChange}
-            style={{
-              ...styles.searchInput,
-              ...Fonts.body,
-              color: Colors.textPrimary,
-            }}
+            style={styles.searchInput}
           />
         </view>
 
@@ -375,6 +365,8 @@ const styles = {
     paddingRight: Spacing.base,
     borderWidth: 1,
     borderColor: Colors.border,
+    ...Fonts.body,
+    color: Colors.textPrimary,
   }),
 
   filterContainer: new Style<View>({
@@ -430,5 +422,20 @@ const styles = {
     paddingRight: SemanticSpacing.screenPaddingHorizontal,
     paddingTop: Spacing.massive,
     paddingBottom: Spacing.massive,
+  }),
+
+  emptyStateMessage: new Style<Label>({
+    ...Fonts.body,
+    fontSize: 16,
+    color: Colors.textSecondary,
+    textAlign: 'center',
+  }),
+
+  emptyStateSubtext: new Style<Label>({
+    ...Fonts.body,
+    fontSize: 14,
+    color: Colors.textTertiary,
+    textAlign: 'center',
+    marginTop: Spacing.sm,
   }),
 };

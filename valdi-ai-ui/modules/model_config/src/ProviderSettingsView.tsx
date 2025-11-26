@@ -13,6 +13,7 @@ import { Card } from 'common/src';
 import { Button } from 'common/src';
 import { LoadingSpinner } from 'common/src';
 import { ConfirmDialog } from 'common/src';
+import { systemFont } from 'valdi_core/src/SystemFont';
 import { CustomProviderStore } from './CustomProviderStore';
 import { CustomProviderConfig } from './types';
 import { AddCustomProviderView } from './AddCustomProviderView';
@@ -456,7 +457,7 @@ const styles = {
   }),
 
   errorIcon: new Style<Label>({
-    fontSize: 48,
+    font: systemFont(48),
     marginBottom: Spacing.base,
   }),
 
@@ -474,7 +475,7 @@ const styles = {
   }),
 
   emptyIcon: new Style<Label>({
-    fontSize: 64,
+    font: systemFont(64),
     marginBottom: Spacing.base,
   }),
 
@@ -512,7 +513,6 @@ const styles = {
   providerName: new Style<Label>({
     ...Fonts.bodyLarge,
     color: Colors.textPrimary,
-    fontWeight: '600',
     marginBottom: Spacing.xs,
   }),
 
@@ -538,7 +538,6 @@ const styles = {
   statusText: new Style<Label>({
     ...Fonts.bodySmall,
     color: Colors.success,
-    fontSize: 10,
   }),
 
   statusBadgeDisabled: new Style<View>({
@@ -553,7 +552,6 @@ const styles = {
   statusTextDisabled: new Style<Label>({
     ...Fonts.bodySmall,
     color: Colors.textTertiary,
-    fontSize: 10,
   }),
 
   modelInfo: new Style<View>({
@@ -582,7 +580,6 @@ const styles = {
   capabilityText: new Style<Label>({
     ...Fonts.bodySmall,
     color: Colors.primary,
-    fontSize: 10,
   }),
 
   actions: new Style<View>({

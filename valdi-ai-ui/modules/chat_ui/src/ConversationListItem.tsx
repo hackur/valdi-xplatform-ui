@@ -9,6 +9,7 @@ import { Component } from 'valdi_core/src/Component';
 import { Style } from 'valdi_core/src/Style';
 import { View } from 'valdi_tsx/src/NativeTemplateElements';
 import type { Label } from 'valdi_tsx/src/NativeTemplateElements';
+import { systemFont } from 'valdi_core/src/SystemFont';
 import {
   Colors,
   Fonts,
@@ -128,7 +129,6 @@ export class ConversationListItem extends Component<ConversationListItemProps> {
   private getPreviewStyle(hasUnread: boolean): Style<Label> {
     return new Style<Label>({
       ...Fonts.body,
-      fontSize: 14,
       color: hasUnread ? Colors.textSecondary : Colors.textTertiary,
       flexGrow: 1,
     });
@@ -261,9 +261,7 @@ const styles = {
 
   providerIconText: new Style<Label>({
     ...Fonts.caption,
-    fontSize: 12,
     color: Colors.textInverse,
-    fontWeight: '600',
   }),
 
   centerContent: new Style<View>({
@@ -284,12 +282,11 @@ const styles = {
   }),
 
   pinnedIcon: new Style<Label>({
-    fontSize: 12,
+    font: systemFont(12),
   }),
 
   titleText: new Style<Label>({
     ...Fonts.bodySemibold,
-    fontSize: 16,
     color: Colors.textPrimary,
     flexGrow: 1,
   }),
@@ -319,13 +316,11 @@ const styles = {
 
   tagText: new Style<Label>({
     ...Fonts.caption,
-    fontSize: 11,
     color: Colors.primary,
   }),
 
   moreTagsText: new Style<Label>({
     ...Fonts.caption,
-    fontSize: 11,
     color: Colors.textTertiary,
   }),
 
@@ -337,7 +332,6 @@ const styles = {
 
   timestampText: new Style<Label>({
     ...Fonts.caption,
-    fontSize: 12,
     color: Colors.textTertiary,
   }),
 
@@ -356,14 +350,11 @@ const styles = {
 
   unreadBadgeText: new Style<Label>({
     ...Fonts.caption,
-    fontSize: 11,
-    fontWeight: '600',
     color: Colors.textInverse,
   }),
 
   messageCountText: new Style<Label>({
     ...Fonts.caption,
-    fontSize: 11,
     color: Colors.textTertiary,
     marginTop: Spacing.xs,
   }),
@@ -377,7 +368,6 @@ const styles = {
 
   archivedText: new Style<Label>({
     ...Fonts.caption,
-    fontSize: 11,
     color: Colors.textTertiary,
   }),
 };

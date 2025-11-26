@@ -76,30 +76,34 @@ export class SettingsScreen extends StatefulComponent<
   private apiKeyStore: ApiKeyStore;
   private preferencesStore: PreferencesStore;
 
-  override state: SettingsScreenState = {
-    selectedProvider: 'openai',
-    openAiKey: '',
-    anthropicKey: '',
-    googleKey: '',
-    showOpenAiKey: false,
-    showAnthropicKey: false,
-    showGoogleKey: false,
-    openAiModel: 'gpt-4-turbo-preview',
-    anthropicModel: 'claude-3-opus-20240229',
-    googleModel: 'gemini-pro',
-    darkMode: false,
-    enableNotifications: true,
-    enableSoundEffects: true,
-    isSaving: false,
-    saveMessage: '',
-  };
+  constructor(props: SettingsScreenProps) {
+    super(props);
 
-  override onCreate() {
     this.apiKeyStore = new ApiKeyStore();
     this.preferencesStore = new PreferencesStore();
 
-    // Load settings asynchronously
-    void this.loadSettings();
+    // Initialize state
+    this.state = {
+      selectedProvider: 'openai',
+      openAiKey: '',
+      anthropicKey: '',
+      googleKey: '',
+      showOpenAiKey: false,
+      showAnthropicKey: false,
+      showGoogleKey: false,
+      openAiModel: 'gpt-4-turbo-preview',
+      anthropicModel: 'claude-3-opus-20240229',
+      googleModel: 'gemini-pro',
+      darkMode: false,
+      enableNotifications: true,
+      enableSoundEffects: true,
+      isSaving: false,
+      saveMessage: '',
+    };
+  }
+
+  override async onMount() {
+    await this.loadSettings();
   }
 
   private loadSettings = async (): Promise<void> => {

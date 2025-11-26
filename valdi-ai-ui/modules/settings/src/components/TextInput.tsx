@@ -135,7 +135,6 @@ export class TextInput extends Component<TextInputProps, TextInputState> {
           type="text"
           value={value}
           placeholder={placeholder}
-          editable={!disabled}
           onChange={this.handleChange}
           onFocus={this.handleFocus}
           onBlur={this.handleBlur}
@@ -143,7 +142,6 @@ export class TextInput extends Component<TextInputProps, TextInputState> {
             ...styles.input,
             ...Fonts.body,
             color: disabled ? Colors.textTertiary : Colors.textPrimary,
-            minHeight: multiline ? numberOfLines! * 24 : undefined,
           }}
         />
       </view>

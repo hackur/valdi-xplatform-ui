@@ -11,6 +11,7 @@ import { NavigationController } from 'valdi_navigation/src/NavigationController'
 import { Colors, Fonts, Spacing } from 'common/src';
 import { Button } from 'common/src';
 import { LoadingSpinner } from 'common/src';
+import { systemFont, systemBoldFont } from 'valdi_core/src/SystemFont';
 import { CustomProviderStore } from './CustomProviderStore';
 import {
   CustomProviderConfig,
@@ -611,7 +612,6 @@ const styles = {
     ...Fonts.bodyMedium,
     color: Colors.textPrimary,
     marginBottom: Spacing.xs,
-    fontWeight: '600',
   }),
 
   input: new Style<View>({
@@ -690,8 +690,7 @@ const styles = {
 
   checkmark: new Style<Label>({
     color: Colors.white,
-    fontSize: 16,
-    fontWeight: 'bold',
+    font: systemBoldFont(16),
   }),
 
   checkboxLabel: new Style<Label>({

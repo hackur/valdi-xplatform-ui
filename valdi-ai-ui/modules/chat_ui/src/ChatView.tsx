@@ -84,21 +84,14 @@ export class ChatView extends StatefulComponent<
     error: undefined,
   };
 
-  constructor(props: ChatViewProps) {
-    super(props, {
-      messages: [],
-      isLoading: false,
-      isStreaming: false,
-      error: undefined,
-    });
-
+  override onCreate() {
     // Initialize stores
     this.messageStore = messageStore;
     this.conversationStore = conversationStore;
 
     // Initialize ChatService (use provided or create new one)
-    if (props.chatService) {
-      this.chatService = props.chatService;
+    if (this.viewModel.chatService) {
+      this.chatService = this.viewModel.chatService;
     } else {
       // Default configuration - in production, this should come from settings
       const config: ChatServiceConfig = {
@@ -117,9 +110,7 @@ export class ChatView extends StatefulComponent<
       };
       this.chatService = new ChatService(config, this.messageStore);
     }
-  }
 
-  override onCreate() {
     // Load initial messages from store
     this.loadMessages();
 

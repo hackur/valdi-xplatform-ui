@@ -11,6 +11,7 @@ import { NavigationController } from 'valdi_navigation/src/NavigationController'
 import { Colors, Fonts, Spacing } from 'common/src';
 import { Card } from 'common/src';
 import { LoadingSpinner } from 'common/src';
+import { systemFont } from 'valdi_core/src/SystemFont';
 import { ModelRegistry } from './ModelRegistry';
 import { ModelDefinition, ModelSelection, ProviderType } from './types';
 
@@ -372,7 +373,7 @@ const styles = {
   }),
 
   emptyIcon: new Style<Label>({
-    fontSize: 64,
+    font: systemFont(64),
     marginBottom: Spacing.base,
   }),
 
@@ -426,11 +427,10 @@ const styles = {
   modelName: new Style<Label>({
     ...Fonts.bodyLarge,
     color: Colors.textPrimary,
-    fontWeight: '600',
   }),
 
   selectedIcon: new Style<Label>({
-    fontSize: 20,
+    font: systemFont(20),
     color: Colors.primary,
   }),
 
@@ -458,7 +458,6 @@ const styles = {
   badgeText: new Style<Label>({
     ...Fonts.bodySmall,
     color: Colors.primary,
-    fontSize: 10,
   }),
 
   stats: new Style<View>({

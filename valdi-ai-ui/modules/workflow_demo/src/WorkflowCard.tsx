@@ -124,6 +124,26 @@ export class WorkflowCard extends Component<WorkflowCardProps> {
   }
 
   /**
+   * Get step icon style
+   */
+  private getStepIconStyle(statusColor: string) {
+    return new Style<View>({
+      ...styles.stepIcon,
+      backgroundColor: statusColor,
+    });
+  }
+
+  /**
+   * Get step connector style
+   */
+  private getStepConnectorStyle(isCompleted: boolean) {
+    return new Style<View>({
+      ...styles.stepConnector,
+      backgroundColor: isCompleted ? Colors.success : Colors.gray300,
+    });
+  }
+
+  /**
    * Render workflow step
    */
   private renderStep(step: WorkflowStep, index: number, isLast: boolean) {
@@ -140,28 +160,16 @@ export class WorkflowCard extends Component<WorkflowCardProps> {
         <view style={styles.stepHeader}>
           <view style={styles.stepIndicator}>
             <view
-              style={{
-                ...styles.stepIcon,
-                backgroundColor: statusColor,
-              }}
+              style={this.getStepIconStyle(statusColor)}
             >
               <label
                 value={statusIcon}
-                style={{
-                  ...Fonts.h3,
-                  color: Colors.textInverse,
-                }}
+                style={styles.stepIconLabel}
               />
             </view>
             {!isLast && (
               <view
-                style={{
-                  ...styles.stepConnector,
-                  backgroundColor:
-                    step.status === 'completed'
-                      ? Colors.success
-                      : Colors.gray300,
-                }}
+                style={this.getStepConnectorStyle(step.status === 'completed')}
               />
             )}
           </view>
@@ -172,21 +180,14 @@ export class WorkflowCard extends Component<WorkflowCardProps> {
               {executionTime && (
                 <label
                   value={executionTime}
-                  style={{
-                    ...Fonts.caption,
-                    color: Colors.textSecondary,
-                  }}
+                  style={styles.stepExecutionTime}
                 />
               )}
             </view>
 
             <label
               value={step.description}
-              style={{
-                ...Fonts.body,
-                color: Colors.textSecondary,
-                marginTop: Spacing.xs,
-              }}
+              style={styles.stepDescription}
             />
 
             {/* Step Output */}
@@ -194,19 +195,12 @@ export class WorkflowCard extends Component<WorkflowCardProps> {
               <view style={styles.stepOutputContainer}>
                 <label
                   value="Output:"
-                  style={{
-                    ...Fonts.captionBold,
-                    color: Colors.textSecondary,
-                    marginBottom: Spacing.xs,
-                  }}
+                  style={styles.stepOutputLabel}
                 />
                 <view style={styles.outputBox}>
                   <label
                     value={step.output}
-                    style={{
-                      ...Fonts.body,
-                      color: Colors.textPrimary,
-                    }}
+                    style={styles.stepOutputText}
                   />
                 </view>
               </view>
@@ -217,19 +211,12 @@ export class WorkflowCard extends Component<WorkflowCardProps> {
               <view style={styles.stepErrorContainer}>
                 <label
                   value="Error:"
-                  style={{
-                    ...Fonts.captionBold,
-                    color: Colors.error,
-                    marginBottom: Spacing.xs,
-                  }}
+                  style={styles.stepErrorLabel}
                 />
                 <view style={styles.errorBox}>
                   <label
                     value={step.error}
-                    style={{
-                      ...Fonts.body,
-                      color: Colors.errorDark,
-                    }}
+                    style={styles.stepErrorText}
                   />
                 </view>
               </view>
@@ -256,10 +243,7 @@ export class WorkflowCard extends Component<WorkflowCardProps> {
           {executionState.totalTime && (
             <label
               value={`Total: ${this.formatTime(executionState.totalTime)}`}
-              style={{
-                ...Fonts.caption,
-                color: Colors.textSecondary,
-              }}
+              style={styles.headerTime}
             />
           )}
         </view>
@@ -269,10 +253,7 @@ export class WorkflowCard extends Component<WorkflowCardProps> {
           <view style={styles.progressContainer}>
             <label
               value={`Step ${executionState.currentStep + 1} of ${executionState.steps.length}`}
-              style={{
-                ...Fonts.body,
-                color: Colors.primary,
-              }}
+              style={styles.progressLabel}
             />
           </view>
         )}
@@ -296,19 +277,13 @@ export class WorkflowCard extends Component<WorkflowCardProps> {
             <view style={styles.resultHeader}>
               <label
                 value="✓ Final Result"
-                style={{
-                  ...Fonts.h3,
-                  color: Colors.success,
-                }}
+                style={styles.resultHeaderLabel}
               />
             </view>
             <view style={styles.resultBox}>
               <label
                 value={executionState.result}
-                style={{
-                  ...Fonts.body,
-                  color: Colors.textPrimary,
-                }}
+                style={styles.resultText}
               />
             </view>
           </view>
@@ -320,19 +295,13 @@ export class WorkflowCard extends Component<WorkflowCardProps> {
             <view style={styles.errorHeader}>
               <label
                 value="✗ Workflow Failed"
-                style={{
-                  ...Fonts.h3,
-                  color: Colors.error,
-                }}
+                style={styles.errorHeaderLabel}
               />
             </view>
             <view style={styles.errorBox}>
               <label
                 value={executionState.error}
-                style={{
-                  ...Fonts.body,
-                  color: Colors.errorDark,
-                }}
+                style={styles.workflowErrorText}
               />
             </view>
           </view>
@@ -354,12 +323,22 @@ const styles = {
     marginBottom: Spacing.lg,
   }),
 
+  headerTime: new Style<Label>({
+    ...Fonts.caption,
+    color: Colors.textSecondary,
+  }),
+
   progressContainer: new Style<View>({
     padding: Spacing.md,
     backgroundColor: Colors.primaryLighter,
     borderRadius: BorderRadius.sm,
     marginBottom: Spacing.lg,
     alignItems: 'center',
+  }),
+
+  progressLabel: new Style<Label>({
+    ...Fonts.body,
+    color: Colors.primary,
   }),
 
   stepsContainer: new Style<View>({

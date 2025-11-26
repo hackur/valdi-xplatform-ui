@@ -7,11 +7,12 @@
 
 import { StatefulComponent } from 'valdi_core/src/Component';
 import { Style } from 'valdi_core/src/Style';
-import { View, Label, ScrollView } from 'valdi_tsx/src/NativeTemplateElements';
+import { View, Label } from 'valdi_tsx/src/NativeTemplateElements';
 import { NavigationController } from 'valdi_navigation/src/NavigationController';
 import { Colors, Spacing } from 'common/src';
 import { Message } from 'common/src';
 import { LoadingSpinner } from 'common/src';
+import { systemFont, systemBoldFont } from 'valdi_core/src/SystemFont';
 import { MessageBubble } from './MessageBubble';
 import { InputBar } from './InputBar';
 import { ChatIntegrationService } from './ChatIntegrationService';
@@ -46,7 +47,6 @@ export class ChatViewStreaming extends StatefulComponent<
   ChatViewStreamingState
 > {
   private unsubscribeMessages?: () => void;
-  private scrollViewRef?: ScrollView;
 
   override state: ChatViewStreamingState = {
     messages: [],
@@ -99,9 +99,9 @@ export class ChatViewStreaming extends StatefulComponent<
           </view>
         ) : (
           <scroll
-            ref={(ref: ScrollView) => (this.scrollViewRef = ref)}
             style={styles.scrollView}
           >
+            {/* TODO: Implement IRenderedElementHolder pattern for scroll ref */}
             <view style={styles.messageList}>
               {messages.map((message) => (
                 <MessageBubble key={message.id} message={message} />
@@ -183,12 +183,11 @@ export class ChatViewStreaming extends StatefulComponent<
 
   /**
    * Scroll to bottom
+   * TODO: Implement using IRenderedElementHolder pattern when scroll ref is restored
    */
   private scrollToBottom(): void {
-    if (this.scrollViewRef) {
-      // Scroll to end (implementation depends on Valdi's ScrollView API)
-      // this.scrollViewRef.scrollToEnd({ animated: true });
-    }
+    // Disabled until IRenderedElementHolder pattern is implemented
+    // Will need to use proper ref pattern for scroll element
   }
 }
 
@@ -214,12 +213,12 @@ const styles = {
   }),
 
   errorIcon: new Style<Label>({
-    fontSize: 48,
+    font: systemFont(48),
     marginBottom: Spacing.base,
   }),
 
   errorText: new Style<Label>({
-    fontSize: 16,
+    font: systemFont(16),
     color: Colors.error,
     textAlign: 'center',
   }),
@@ -232,19 +231,18 @@ const styles = {
   }),
 
   emptyIcon: new Style<Label>({
-    fontSize: 64,
+    font: systemFont(64),
     marginBottom: Spacing.base,
   }),
 
   emptyText: new Style<Label>({
-    fontSize: 18,
-    fontWeight: '600',
+    font: systemBoldFont(18),
     color: Colors.textSecondary,
     marginBottom: Spacing.sm,
   }),
 
   emptySubtext: new Style<Label>({
-    fontSize: 14,
+    font: systemFont(14),
     color: Colors.textTertiary,
     textAlign: 'center',
   }),

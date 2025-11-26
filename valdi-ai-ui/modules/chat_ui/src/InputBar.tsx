@@ -77,9 +77,7 @@ export class InputBar extends StatefulComponent<InputBarProps, InputBarState> {
             value={text}
             placeholder={placeholder}
             onChange={this.handleTextChange}
-            
             style={styles.input}
-            editable={!disabled}
           />
 
           {/* Send Button */}
@@ -88,7 +86,7 @@ export class InputBar extends StatefulComponent<InputBarProps, InputBarState> {
               title="Send"
               variant="primary"
               size="small"
-              editable={canSend}
+              disabled={!canSend}
               onTap={this.handleSend}
             />
           </view>
