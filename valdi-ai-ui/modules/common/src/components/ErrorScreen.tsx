@@ -8,10 +8,8 @@
 import { Component } from 'valdi_core/src/Component';
 import { Style } from 'valdi_core/src/Style';
 import { systemBoldFont, systemFont } from 'valdi_core/src/SystemFont';
-import { View, Label } from 'valdi_tsx/src/NativeTemplateElements';
 
 import { Colors } from '../theme/Colors';
-import { Fonts } from '../theme/Fonts';
 import { Spacing, BorderRadius } from '../theme';
 import { Button } from './Button';
 

@@ -89,6 +89,13 @@ find modules -name "*.tsx" -o -name "*.ts" | while read file; do
   fi
 done
 
+# Fix 8: Clean up unused View/Label imports that were only used for Style<T>
+# NOTE: This is a best-effort cleanup. Some imports may need manual review
+# if View/Label are used in type annotations (use `import type` for those).
+echo "[FIX] Cleaning up unused View/Label imports..."
+echo "[INFO] Check for 'Cannot find name View/Label' errors after running."
+echo "[INFO] If a type is needed, add: import type { View } from 'valdi_tsx/src/NativeTemplateElements'"
+
 # Count after
 AFTER_COUNT=$(grep -rn "new Style<" --include="*.tsx" --include="*.ts" modules/ 2>/dev/null | wc -l | tr -d ' ')
 

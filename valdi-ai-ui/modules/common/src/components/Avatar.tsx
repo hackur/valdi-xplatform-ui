@@ -7,7 +7,6 @@
 
 import { Component } from 'valdi_core/src/Component';
 import { Style } from 'valdi_core/src/Style';
-import { View, Label } from 'valdi_tsx/src/NativeTemplateElements';
 import { systemBoldFont } from 'valdi_core/src/SystemFont';
 import { Colors, Shadows } from '../theme';
 
