@@ -220,9 +220,7 @@ export class HomePage extends Component<HomePageProps> {
           <view style={styles.featureIcon}>
             <label
               value={feature.icon}
-              style={{
-                fontSize: 32,
-              }}
+              style={styles.featureIconLabel}
             />
           </view>
 
@@ -230,18 +228,11 @@ export class HomePage extends Component<HomePageProps> {
           <view style={styles.featureText}>
             <label
               value={feature.title}
-              style={{
-                ...Fonts.h4,
-                color: Colors.textPrimary,
-              }}
+              style={styles.featureTitle}
             />
             <label
               value={feature.description}
-              style={{
-                ...Fonts.bodySmall,
-                color: Colors.textSecondary,
-                marginTop: Spacing.xs,
-              }}
+              style={styles.featureDescription}
             />
           </view>
         </view>
@@ -256,18 +247,11 @@ export class HomePage extends Component<HomePageProps> {
         <view style={styles.header}>
           <label
             value="Valdi AI"
-            style={{
-              ...Fonts.h1,
-              color: Colors.textPrimary,
-            }}
+            style={styles.headerTitle}
           />
           <label
             value="Open Source AI Chat Client"
-            style={{
-              ...Fonts.body,
-              color: Colors.textSecondary,
-              marginTop: Spacing.xs,
-            }}
+            style={styles.headerSubtitle}
           />
         </view>
 
@@ -276,19 +260,11 @@ export class HomePage extends Component<HomePageProps> {
           <view>
             <label
               value="Welcome! 👋"
-              style={{
-                ...Fonts.h3,
-                color: Colors.textPrimary,
-              }}
+              style={styles.welcomeTitle}
             />
             <label
               value="Explore the power of AI with multiple providers, agent workflows, and tool calling capabilities."
-              style={{
-                ...Fonts.body,
-                color: Colors.textSecondary,
-                marginTop: Spacing.sm,
-                lineHeight: 1.5,
-              }}
+              style={styles.welcomeMessage}
             />
           </view>
         </Card>
@@ -297,11 +273,7 @@ export class HomePage extends Component<HomePageProps> {
         <view style={styles.featuresSection}>
           <label
             value="Features"
-            style={{
-              ...Fonts.h3,
-              color: Colors.textPrimary,
-              marginBottom: Spacing.base,
-            }}
+            style={styles.featuresTitle}
           />
 
           <view style={styles.featuresGrid}>
@@ -313,11 +285,7 @@ export class HomePage extends Component<HomePageProps> {
         <view style={styles.footer}>
           <label
             value="Built with Valdi & AI SDK v5"
-            style={{
-              ...Fonts.caption,
-              color: Colors.textTertiary,
-              textAlign: 'center',
-            }}
+            style={styles.footerText}
           />
         </view>
       </view>
@@ -340,12 +308,41 @@ const styles = {
     paddingTop: Spacing.xl,
   }),
 
+  headerTitle: new Style({
+    ...Fonts.h1,
+    color: Colors.textPrimary,
+  }),
+
+  headerSubtitle: new Style({
+    ...Fonts.body,
+    color: Colors.textSecondary,
+    marginTop: Spacing.xs,
+  }),
+
   welcomeCard: new Style<View>({
     marginBottom: Spacing.xxl,
   }),
 
+  welcomeTitle: new Style({
+    ...Fonts.h3,
+    color: Colors.textPrimary,
+  }),
+
+  welcomeMessage: new Style({
+    ...Fonts.body,
+    color: Colors.textSecondary,
+    marginTop: Spacing.sm,
+    lineHeight: 1.5,
+  }),
+
   featuresSection: new Style<View>({
     flexGrow: 1,
+  }),
+
+  featuresTitle: new Style({
+    ...Fonts.h3,
+    color: Colors.textPrimary,
+    marginBottom: Spacing.base,
   }),
 
   featuresGrid: new Style<View>({
@@ -370,13 +367,34 @@ const styles = {
     borderRadius: BorderRadius.md,
   }),
 
+  featureIconLabel: new Style({
+    fontSize: 32,
+  }),
+
   featureText: new Style<View>({
     flexGrow: 1,
+  }),
+
+  featureTitle: new Style({
+    ...Fonts.h4,
+    color: Colors.textPrimary,
+  }),
+
+  featureDescription: new Style({
+    ...Fonts.bodySmall,
+    color: Colors.textSecondary,
+    marginTop: Spacing.xs,
   }),
 
   footer: new Style<View>({
     paddingTop: Spacing.xl,
     paddingBottom: Spacing.xl,
     alignItems: 'center',
+  }),
+
+  footerText: new Style({
+    ...Fonts.caption,
+    color: Colors.textTertiary,
+    textAlign: 'center',
   }),
 };

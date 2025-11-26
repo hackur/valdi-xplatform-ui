@@ -88,6 +88,35 @@ export class ToolExecutionCard extends Component<ToolExecutionCardProps> {
     }
   }
 
+  private getStatusIndicatorStyle(success: boolean) {
+    return new Style<View>({
+      ...styles.statusIndicator,
+      backgroundColor: success ? Colors.success : Colors.error,
+    });
+  }
+
+  private getStatusLabelStyle(success: boolean) {
+    return new Style<Label>({
+      ...Fonts.captionBold,
+      color: success ? Colors.success : Colors.error,
+    });
+  }
+
+  private getOutputCodeBlockStyle(success: boolean) {
+    return new Style<View>({
+      ...styles.codeBlock,
+      borderColor: success ? Colors.codeBorder : Colors.errorLight,
+      backgroundColor: success ? Colors.codeBackground : Colors.errorLight,
+    });
+  }
+
+  private getOutputLabelStyle(success: boolean) {
+    return new Style<Label>({
+      ...Fonts.code,
+      color: success ? Colors.codeText : Colors.errorDark,
+    });
+  }
+
   override onRender() {
     const { result } = this.viewModel;
 
@@ -98,19 +127,11 @@ export class ToolExecutionCard extends Component<ToolExecutionCardProps> {
           <view style={styles.headerLeft}>
             <view style={styles.statusBadge}>
               <view
-                style={{
-                  ...styles.statusIndicator,
-                  backgroundColor: result.success
-                    ? Colors.success
-                    : Colors.error,
-                }}
+                style={this.getStatusIndicatorStyle(result.success)}
               />
               <label
                 value={result.success ? 'Success' : 'Failed'}
-                style={{
-                  ...Fonts.captionBold,
-                  color: result.success ? Colors.success : Colors.error,
-                }}
+                style={this.getStatusLabelStyle(result.success)}
               />
             </view>
             <label value={result.toolName} style={Fonts.h3} />
@@ -118,10 +139,7 @@ export class ToolExecutionCard extends Component<ToolExecutionCardProps> {
           <view style={styles.headerRight}>
             <label
               value={this.formatTimestamp(result.timestamp)}
-              style={{
-                ...Fonts.caption,
-                color: Colors.textSecondary,
-              }}
+              style={styles.timestampLabel}
             />
           </view>
         </view>
@@ -129,28 +147,18 @@ export class ToolExecutionCard extends Component<ToolExecutionCardProps> {
         {/* Description */}
         <label
           value={result.description}
-          style={{
-            ...Fonts.body,
-            color: Colors.textSecondary,
-            marginBottom: Spacing.md,
-          }}
+          style={styles.descriptionLabel}
         />
 
         {/* Execution Time */}
         <view style={styles.metadataRow}>
           <label
             value="Execution Time:"
-            style={{
-              ...Fonts.captionBold,
-              color: Colors.textSecondary,
-            }}
+            style={styles.metadataLabel}
           />
           <label
             value={this.formatExecutionTime(result.executionTime)}
-            style={{
-              ...Fonts.caption,
-              color: Colors.primary,
-            }}
+            style={styles.metadataValue}
           />
         </view>
 
@@ -158,19 +166,12 @@ export class ToolExecutionCard extends Component<ToolExecutionCardProps> {
         <view style={styles.section}>
           <label
             value="Input Parameters"
-            style={{
-              ...Fonts.captionBold,
-              color: Colors.textSecondary,
-              marginBottom: Spacing.xs,
-            }}
+            style={styles.sectionLabel}
           />
           <view style={styles.codeBlock}>
             <label
               value={this.formatJson(result.input)}
-              style={{
-                ...Fonts.code,
-                color: Colors.codeText,
-              }}
+              style={styles.codeLabel}
             />
           </view>
         </view>
@@ -179,22 +180,10 @@ export class ToolExecutionCard extends Component<ToolExecutionCardProps> {
         <view style={styles.section}>
           <label
             value={result.success ? 'Output Result' : 'Error'}
-            style={{
-              ...Fonts.captionBold,
-              color: Colors.textSecondary,
-              marginBottom: Spacing.xs,
-            }}
+            style={styles.sectionLabel}
           />
           <view
-            style={{
-              ...styles.codeBlock,
-              borderColor: result.success
-                ? Colors.codeBorder
-                : Colors.errorLight,
-              backgroundColor: result.success
-                ? Colors.codeBackground
-                : Colors.errorLight,
-            }}
+            style={this.getOutputCodeBlockStyle(result.success)}
           >
             <label
               value={
@@ -202,10 +191,7 @@ export class ToolExecutionCard extends Component<ToolExecutionCardProps> {
                   ? this.formatJson(result.output)
                   : result.error || 'Unknown error occurred'
               }
-              style={{
-                ...Fonts.code,
-                color: result.success ? Colors.codeText : Colors.errorDark,
-              }}
+              style={this.getOutputLabelStyle(result.success)}
             />
           </view>
         </view>
@@ -245,14 +231,41 @@ const styles = {
     borderRadius: 4,
   }),
 
+  timestampLabel: new Style<Label>({
+    ...Fonts.caption,
+    color: Colors.textSecondary,
+  }),
+
+  descriptionLabel: new Style<Label>({
+    ...Fonts.body,
+    color: Colors.textSecondary,
+    marginBottom: Spacing.md,
+  }),
+
   metadataRow: new Style<View>({
     flexDirection: 'row',
     alignItems: 'center',
     marginBottom: Spacing.md,
   }),
 
+  metadataLabel: new Style<Label>({
+    ...Fonts.captionBold,
+    color: Colors.textSecondary,
+  }),
+
+  metadataValue: new Style<Label>({
+    ...Fonts.caption,
+    color: Colors.primary,
+  }),
+
   section: new Style<View>({
     marginTop: Spacing.md,
+  }),
+
+  sectionLabel: new Style<Label>({
+    ...Fonts.captionBold,
+    color: Colors.textSecondary,
+    marginBottom: Spacing.xs,
   }),
 
   codeBlock: new Style<View>({
@@ -261,5 +274,10 @@ const styles = {
     borderRadius: BorderRadius.sm,
     borderWidth: 1,
     borderColor: Colors.codeBorder,
+  }),
+
+  codeLabel: new Style<Label>({
+    ...Fonts.code,
+    color: Colors.codeText,
   }),
 };

@@ -9,6 +9,7 @@ import { Style } from 'valdi_core/src/Style';
 import { View, Label } from 'valdi_tsx/src/NativeTemplateElements';
 import { NavigationController } from 'valdi_navigation/src/NavigationController';
 import { Colors, Fonts, Spacing, LoadingSpinner, ConfirmDialog } from 'common/src';
+import { systemFont } from 'valdi_core/src/SystemFont';
 import { ConversationListItemData } from './types';
 import { HistoryManager } from './HistoryManager';
 import { ConversationCard } from './ConversationCard';
@@ -438,7 +439,6 @@ const styles = {
   tabTextActive: new Style<Label>({
     ...Fonts.bodyMedium,
     color: Colors.primary,
-    fontWeight: '600',
   }),
 
   searchContainer: new Style<View>({
@@ -466,7 +466,7 @@ const styles = {
   }),
 
   errorIcon: new Style<Label>({
-    fontSize: 48,
+    font: systemFont(48),
     marginBottom: Spacing.base,
   }),
 
@@ -484,7 +484,7 @@ const styles = {
   }),
 
   emptyIcon: new Style<Label>({
-    fontSize: 64,
+    font: systemFont(64),
     marginBottom: Spacing.base,
   }),
 

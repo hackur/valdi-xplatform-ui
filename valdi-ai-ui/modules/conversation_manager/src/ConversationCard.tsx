@@ -8,6 +8,7 @@ import { Component } from 'valdi_core/src/Component';
 import { Style } from 'valdi_core/src/Style';
 import { View, Label } from 'valdi_tsx/src/NativeTemplateElements';
 import { Colors, Fonts, Spacing } from 'common/src';
+import { systemFont } from 'valdi_core/src/SystemFont';
 import { ConversationListItemData } from './types';
 
 /**
@@ -217,7 +218,7 @@ const styles = {
   }),
 
   pinIcon: new Style<Label>({
-    fontSize: 12,
+    font: systemFont(12),
   }),
 
   centerSection: new Style<View>({
@@ -283,6 +284,5 @@ const styles = {
   unreadText: new Style<Label>({
     ...Fonts.caption,
     color: Colors.white,
-    fontWeight: '600',
   }),
 };

@@ -10,6 +10,7 @@
  */
 
 import { StatefulComponent } from 'valdi_core/src/Component';
+import { Style } from 'valdi_core/src/Style';
 import { NavigationController } from 'valdi_navigation/src/NavigationController';
 import {
   Colors,
@@ -73,8 +74,8 @@ export class SettingsScreen extends StatefulComponent<
   SettingsScreenProps,
   SettingsScreenState
 > {
-  private apiKeyStore: ApiKeyStore;
-  private preferencesStore: PreferencesStore;
+  private apiKeyStore!: ApiKeyStore;
+  private preferencesStore!: PreferencesStore;
 
   override state: SettingsScreenState = {
     selectedProvider: 'openai',

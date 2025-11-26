@@ -43,9 +43,7 @@ export class Switch extends Component<SwitchProps> {
     }
   };
 
-  override onRender() {
-    const { value, disabled, style: customStyle } = this.viewModel;
-
+  private getTrackStyle(value: boolean, disabled: boolean, customStyle?: Record<string, unknown>) {
     const trackColor = value
       ? disabled
         ? Colors.primaryLight
@@ -54,23 +52,32 @@ export class Switch extends Component<SwitchProps> {
         ? Colors.gray300
         : Colors.gray400;
 
+    return new Style<View>({
+      ...styles.track,
+      backgroundColor: trackColor,
+      opacity: disabled ? 0.5 : 1,
+      ...customStyle,
+    });
+  }
+
+  private getThumbStyle(value: boolean) {
     const thumbTranslateX = value ? 20 : 0;
+    return new Style<View>({
+      ...styles.thumb,
+      transform: `translateX(${thumbTranslateX}px)`,
+    });
+  }
+
+  override onRender() {
+    const { value, disabled, style: customStyle } = this.viewModel;
 
     return (
       <view
-        style={{
-          ...styles.track,
-          backgroundColor: trackColor,
-          opacity: disabled ? 0.5 : 1,
-          ...customStyle,
-        }}
+        style={this.getTrackStyle(value, disabled || false, customStyle)}
         onTap={this.handleToggle}
       >
         <view
-          style={{
-            ...styles.thumb,
-            transform: `translateX(${thumbTranslateX}px)`,
-          }}
+          style={this.getThumbStyle(value)}
         />
       </view>
     );

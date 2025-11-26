@@ -377,18 +377,56 @@ const styles = {
     paddingBottom: Spacing.lg,
   }),
 
+  stepIconLabel: new Style<Label>({
+    ...Fonts.h3,
+    color: Colors.textInverse,
+  }),
+
   stepTitleRow: new Style<View>({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
   }),
 
+  stepExecutionTime: new Style<Label>({
+    ...Fonts.caption,
+    color: Colors.textSecondary,
+  }),
+
+  stepDescription: new Style<Label>({
+    ...Fonts.body,
+    color: Colors.textSecondary,
+    marginTop: Spacing.xs,
+  }),
+
   stepOutputContainer: new Style<View>({
     marginTop: Spacing.md,
   }),
 
+  stepOutputLabel: new Style<Label>({
+    ...Fonts.captionBold,
+    color: Colors.textSecondary,
+    marginBottom: Spacing.xs,
+  }),
+
+  stepOutputText: new Style<Label>({
+    ...Fonts.body,
+    color: Colors.textPrimary,
+  }),
+
   stepErrorContainer: new Style<View>({
     marginTop: Spacing.md,
+  }),
+
+  stepErrorLabel: new Style<Label>({
+    ...Fonts.captionBold,
+    color: Colors.error,
+    marginBottom: Spacing.xs,
+  }),
+
+  stepErrorText: new Style<Label>({
+    ...Fonts.body,
+    color: Colors.errorDark,
   }),
 
   outputBox: new Style<View>({
@@ -420,10 +458,20 @@ const styles = {
     marginBottom: Spacing.md,
   }),
 
+  resultHeaderLabel: new Style<Label>({
+    ...Fonts.h3,
+    color: Colors.success,
+  }),
+
   resultBox: new Style<View>({
     padding: Spacing.md,
     backgroundColor: Colors.surface,
     borderRadius: BorderRadius.sm,
+  }),
+
+  resultText: new Style<Label>({
+    ...Fonts.body,
+    color: Colors.textPrimary,
   }),
 
   errorContainer: new Style<View>({
@@ -437,5 +485,15 @@ const styles = {
 
   errorHeader: new Style<View>({
     marginBottom: Spacing.md,
+  }),
+
+  errorHeaderLabel: new Style<Label>({
+    ...Fonts.h3,
+    color: Colors.error,
+  }),
+
+  workflowErrorText: new Style<Label>({
+    ...Fonts.body,
+    color: Colors.errorDark,
   }),
 };

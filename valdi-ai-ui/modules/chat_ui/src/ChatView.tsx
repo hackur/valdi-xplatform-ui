@@ -7,7 +7,7 @@
 
 import { StatefulComponent } from 'valdi_core/src/Component';
 import { Style } from 'valdi_core/src/Style';
-import { View } from 'valdi_tsx/src/NativeTemplateElements';
+import { View, Label } from 'valdi_tsx/src/NativeTemplateElements';
 import { NavigationController } from 'valdi_navigation/src/NavigationController';
 import {
   Colors,
@@ -17,6 +17,7 @@ import {
   ErrorBoundary,
   ErrorScreen,
 } from 'common/src';
+import { systemFont, systemBoldFont } from 'valdi_core/src/SystemFont';
 import { MessageBubble } from './MessageBubble';
 import { InputBar } from './InputBar';
 import { ChatService } from 'chat_core/src/ChatService';
@@ -72,9 +73,9 @@ export class ChatView extends StatefulComponent<
   ChatViewState
 > {
   // Stores and Services
-  private messageStore: MessageStore;
-  private conversationStore: ConversationStore;
-  private chatService: ChatService;
+  private messageStore!: MessageStore;
+  private conversationStore!: ConversationStore;
+  private chatService!: ChatService;
   private unsubscribeMessageStore?: () => void;
 
   override state: ChatViewState = {
@@ -279,20 +280,12 @@ export class ChatView extends StatefulComponent<
         <view style={styles.header}>
           <label
             value="AI Chat"
-            style={{
-              fontSize: 18,
-              fontWeight: '600',
-              color: Colors.textPrimary,
-            }}
+            style={styles.headerTitle}
           />
           {isStreaming && (
             <label
               value="AI is typing..."
-              style={{
-                fontSize: 12,
-                color: Colors.textSecondary,
-                marginLeft: Spacing.sm,
-              }}
+              style={styles.headerSubtitle}
             />
           )}
         </view>
@@ -302,10 +295,7 @@ export class ChatView extends StatefulComponent<
           <view style={styles.errorContainer}>
             <label
               value={`Error: ${error}`}
-              style={{
-                fontSize: 14,
-                color: Colors.error,
-              }}
+              style={styles.errorText}
             />
           </view>
         )}
@@ -317,10 +307,7 @@ export class ChatView extends StatefulComponent<
               <view style={styles.emptyState}>
                 <label
                   value="Start a conversation"
-                  style={{
-                    fontSize: 16,
-                    color: Colors.textSecondary,
-                  }}
+                  style={styles.emptyText}
                 />
               </view>
             ) : (
@@ -381,5 +368,26 @@ const styles = {
     justifyContent: 'center',
     paddingTop: Spacing.massive,
     paddingBottom: Spacing.massive,
+  }),
+
+  headerTitle: new Style<Label>({
+    font: systemBoldFont(18),
+    color: Colors.textPrimary,
+  }),
+
+  headerSubtitle: new Style<Label>({
+    font: systemFont(12),
+    color: Colors.textSecondary,
+    marginLeft: Spacing.sm,
+  }),
+
+  errorText: new Style<Label>({
+    font: systemFont(14),
+    color: Colors.error,
+  }),
+
+  emptyText: new Style<Label>({
+    font: systemFont(16),
+    color: Colors.textSecondary,
   }),
 };

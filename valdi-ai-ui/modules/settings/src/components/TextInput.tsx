@@ -104,6 +104,29 @@ export class TextInput extends Component<TextInputProps, TextInputState> {
     return value;
   };
 
+  private getContainerStyle(isFocused: boolean, disabled: boolean, customStyle?: Record<string, unknown>) {
+    const borderColor = isFocused
+      ? Colors.primary
+      : disabled
+        ? Colors.gray300
+        : Colors.border;
+
+    return new Style<View>({
+      ...styles.container,
+      borderColor,
+      backgroundColor: disabled ? Colors.gray100 : Colors.surface,
+      ...customStyle,
+    });
+  }
+
+  private getInputStyle(disabled: boolean) {
+    return {
+      ...styles.input,
+      ...Fonts.body,
+      color: disabled ? Colors.textTertiary : Colors.textPrimary,
+    } as Record<string, unknown>;
+  }
+
   override onRender() {
     const {
       value,
@@ -116,20 +139,9 @@ export class TextInput extends Component<TextInputProps, TextInputState> {
 
     const { isFocused } = this.state;
 
-    const borderColor = isFocused
-      ? Colors.primary
-      : disabled
-        ? Colors.gray300
-        : Colors.border;
-
     return (
       <view
-        style={{
-          ...styles.container,
-          borderColor,
-          backgroundColor: disabled ? Colors.gray100 : Colors.surface,
-          ...customStyle,
-        }}
+        style={this.getContainerStyle(isFocused, disabled || false, customStyle)}
       >
         <input
           type="text"
@@ -138,11 +150,7 @@ export class TextInput extends Component<TextInputProps, TextInputState> {
           onChange={this.handleChange}
           onFocus={this.handleFocus}
           onBlur={this.handleBlur}
-          style={{
-            ...styles.input,
-            ...Fonts.body,
-            color: disabled ? Colors.textTertiary : Colors.textPrimary,
-          }}
+          style={this.getInputStyle(disabled || false)}
         />
       </view>
     );

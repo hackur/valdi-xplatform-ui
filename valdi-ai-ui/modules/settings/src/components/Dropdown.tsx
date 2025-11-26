@@ -86,6 +86,49 @@ export class Dropdown extends Component<DropdownProps, DropdownState> {
     return selected ? selected.label : placeholder || '';
   };
 
+  private getContainerStyle(customStyle?: Record<string, unknown>) {
+    return customStyle
+      ? { position: 'relative', ...customStyle }
+      : { position: 'relative' };
+  }
+
+  private getSelectorStyle(disabled: boolean, isOpen: boolean) {
+    return new Style<View>({
+      ...styles.selector,
+      backgroundColor: disabled ? Colors.gray100 : Colors.surface,
+      borderColor: isOpen ? Colors.primary : Colors.border,
+      opacity: disabled ? 0.5 : 1,
+    });
+  }
+
+  private getSelectorLabelStyle(disabled: boolean) {
+    return new Style<Label>({
+      ...Fonts.body,
+      color: disabled ? Colors.textTertiary : Colors.textPrimary,
+    });
+  }
+
+  private getArrowLabelStyle(disabled: boolean) {
+    return new Style<Label>({
+      ...Fonts.caption,
+      color: disabled ? Colors.textTertiary : Colors.textSecondary,
+    });
+  }
+
+  private getOptionStyle(isSelected: boolean) {
+    return new Style<View>({
+      ...styles.option,
+      backgroundColor: isSelected ? Colors.primaryLighter : Colors.surface,
+    });
+  }
+
+  private getOptionLabelStyle(isSelected: boolean) {
+    return new Style<Label>({
+      ...Fonts.body,
+      color: isSelected ? Colors.primary : Colors.textPrimary,
+    });
+  }
+
   override onRender() {
     const {
       options,
@@ -96,32 +139,21 @@ export class Dropdown extends Component<DropdownProps, DropdownState> {
     const { isOpen } = this.state;
 
     return (
-      <view style={{ position: 'relative', ...customStyle }}>
+      <view style={this.getContainerStyle(customStyle)}>
         {/* Selected Value Display */}
         <view
-          style={{
-            ...styles.selector,
-            backgroundColor: disabled ? Colors.gray100 : Colors.surface,
-            borderColor: isOpen ? Colors.primary : Colors.border,
-            opacity: disabled ? 0.5 : 1,
-          }}
+          style={this.getSelectorStyle(disabled || false, isOpen)}
           onTap={this.toggleDropdown}
         >
           <label
             value={this.getSelectedLabel()}
-            style={{
-              ...Fonts.body,
-              color: disabled ? Colors.textTertiary : Colors.textPrimary,
-            }}
+            style={this.getSelectorLabelStyle(disabled || false)}
           />
 
           {/* Dropdown Arrow */}
           <label
             value={isOpen ? '▲' : '▼'}
-            style={{
-              ...Fonts.caption,
-              color: disabled ? Colors.textTertiary : Colors.textSecondary,
-            }}
+            style={this.getArrowLabelStyle(disabled || false)}
           />
         </view>
 
@@ -131,24 +163,12 @@ export class Dropdown extends Component<DropdownProps, DropdownState> {
             {options.map((option) => (
               <view
                 key={option.value}
-                style={{
-                  ...styles.option,
-                  backgroundColor:
-                    option.value === selectedValue
-                      ? Colors.primaryLighter
-                      : Colors.surface,
-                }}
+                style={this.getOptionStyle(option.value === selectedValue)}
                 onTap={() => this.handleSelect(option.value)}
               >
                 <label
                   value={option.label}
-                  style={{
-                    ...Fonts.body,
-                    color:
-                      option.value === selectedValue
-                        ? Colors.primary
-                        : Colors.textPrimary,
-                  }}
+                  style={this.getOptionLabelStyle(option.value === selectedValue)}
                 />
               </view>
             ))}
