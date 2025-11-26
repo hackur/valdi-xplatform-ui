@@ -8,6 +8,7 @@
 import { Component } from 'valdi_core/src/Component';
 import { Style } from 'valdi_core/src/Style';
 import { systemFont, systemBoldFont } from 'valdi_core/src/SystemFont';
+import { View, Label } from 'valdi_tsx/src/NativeTemplateElements';
 import { Colors, Spacing, SemanticShadows, BorderRadius } from '../theme';
 
 /**
@@ -51,29 +52,23 @@ export class ConfirmDialog extends Component<ConfirmDialogProps> {
     confirmColor: 'danger',
   };
 
-  private handleOverlayTap = (): void => {
+  private readonly handleOverlayTap = (): void => {
     const { onCancel } = this.viewModel;
-    if (onCancel) {
-      onCancel();
-    }
+    onCancel();
   };
 
-  private handleDialogTap = (): void => {
+  private readonly handleDialogTap = (): void => {
     // Prevent tap from bubbling to overlay
   };
 
-  private handleConfirm = (): void => {
+  private readonly handleConfirm = (): void => {
     const { onConfirm } = this.viewModel;
-    if (onConfirm) {
-      onConfirm();
-    }
+    onConfirm();
   };
 
-  private handleCancel = (): void => {
+  private readonly handleCancel = (): void => {
     const { onCancel } = this.viewModel;
-    if (onCancel) {
-      onCancel();
-    }
+    onCancel();
   };
 
   override onRender() {
@@ -109,7 +104,7 @@ export class ConfirmDialog extends Component<ConfirmDialogProps> {
             {/* Confirm Button */}
             <view
               style={
-                new Style({
+                new Style<View>({
                   ...styles.confirmButton,
                   backgroundColor: confirmBackgroundColor,
                 })
@@ -129,7 +124,7 @@ export class ConfirmDialog extends Component<ConfirmDialogProps> {
 }
 
 const styles = {
-  overlay: new Style({
+  overlay: new Style<View>({
     position: 'absolute',
     top: 0,
     left: 0,
@@ -141,7 +136,7 @@ const styles = {
     zIndex: 1000,
   }),
 
-  dialog: new Style({
+  dialog: new Style<View>({
     backgroundColor: Colors.surface,
     borderRadius: BorderRadius.lg,
     padding: Spacing.xl,
@@ -150,25 +145,25 @@ const styles = {
     ...SemanticShadows.modal,
   }),
 
-  title: new Style({
+  title: new Style<Label>({
     font: systemBoldFont(20),
     color: Colors.textPrimary,
     marginBottom: Spacing.base,
   }),
 
-  message: new Style({
+  message: new Style<Label>({
     font: systemFont(16),
     color: Colors.textSecondary,
     marginBottom: Spacing.xl,
     lineHeight: 24,
   }),
 
-  buttonsContainer: new Style({
+  buttonsContainer: new Style<View>({
     flexDirection: 'row',
     justifyContent: 'flex-end',
   }),
 
-  cancelButton: new Style({
+  cancelButton: new Style<View>({
     backgroundColor: Colors.surface,
     borderWidth: 2,
     borderColor: Colors.border,
@@ -183,12 +178,12 @@ const styles = {
     marginRight: Spacing.base,
   }),
 
-  cancelButtonText: new Style({
+  cancelButtonText: new Style<Label>({
     font: systemBoldFont(16),
     color: Colors.textPrimary,
   }),
 
-  confirmButton: new Style({
+  confirmButton: new Style<View>({
     borderRadius: BorderRadius.base,
     paddingTop: Spacing.sm,
     paddingBottom: Spacing.sm,
@@ -200,7 +195,7 @@ const styles = {
     ...SemanticShadows.button,
   }),
 
-  confirmButtonText: new Style({
+  confirmButtonText: new Style<Label>({
     font: systemBoldFont(16),
     color: Colors.textInverse,
   }),

@@ -7,6 +7,7 @@
 
 import { Component } from 'valdi_core/src/Component';
 import { Style } from 'valdi_core/src/Style';
+import { View, Label } from 'valdi_tsx/src/NativeTemplateElements';
 import { systemBoldFont } from 'valdi_core/src/SystemFont';
 import { Colors, Spacing, SemanticShadows, BorderRadius } from '../theme';
 
@@ -121,6 +122,7 @@ export class Button extends Component<ButtonProps> {
         return Colors.transparent;
       case 'danger':
         return Colors.error;
+      case undefined:
       default:
         return Colors.primary;
     }
@@ -129,7 +131,7 @@ export class Button extends Component<ButtonProps> {
   private getTextColor(): string {
     const { variant, disabled } = this.viewModel;
 
-    if (disabled) {
+    if (disabled === true) {
       return Colors.textTertiary;
     }
 
@@ -139,9 +141,9 @@ export class Button extends Component<ButtonProps> {
       case 'danger':
         return Colors.textInverse;
       case 'outline':
-        return Colors.primary;
       case 'ghost':
         return Colors.primary;
+      case undefined:
       default:
         return Colors.textInverse;
     }
@@ -150,13 +152,18 @@ export class Button extends Component<ButtonProps> {
   private getBorderColor(): string {
     const { variant, disabled } = this.viewModel;
 
-    if (disabled) {
+    if (disabled === true) {
       return Colors.gray300;
     }
 
     switch (variant) {
       case 'outline':
         return Colors.primary;
+      case 'primary':
+      case 'secondary':
+      case 'ghost':
+      case 'danger':
+      case undefined:
       default:
         return Colors.transparent;
     }
@@ -171,6 +178,7 @@ export class Button extends Component<ButtonProps> {
         return { paddingHorizontal: Spacing.base, paddingVertical: Spacing.sm };
       case 'large':
         return { paddingHorizontal: Spacing.lg, paddingVertical: Spacing.base };
+      case undefined:
       default:
         return { paddingHorizontal: Spacing.base, paddingVertical: Spacing.sm };
     }
@@ -185,12 +193,13 @@ export class Button extends Component<ButtonProps> {
         return 16;
       case 'large':
         return 18;
+      case undefined:
       default:
         return 16;
     }
   }
 
-  private handleTap = (): void => {
+  private readonly handleTap = (): void => {
     const { disabled, loading, onTap } = this.viewModel;
 
     if (!disabled && !loading && onTap) {
@@ -204,14 +213,14 @@ export class Button extends Component<ButtonProps> {
     padding: { paddingHorizontal: number; paddingVertical: number },
     fullWidth: boolean | undefined,
     customStyle?: Record<string, unknown>,
-  ): Style {
-    return new Style({
+  ): Style<View> {
+    return new Style<View>({
       ...styles.container,
       backgroundColor,
       ...(borderColor !== Colors.transparent
         ? {
             borderWidth: 2,
-            borderColor: borderColor,
+            borderColor,
           }
         : {}),
       ...padding,
@@ -221,8 +230,8 @@ export class Button extends Component<ButtonProps> {
     });
   }
 
-  private getLabelStyle(fontSize: number, textColor: string): Style {
-    return new Style({
+  private getLabelStyle(fontSize: number, textColor: string): Style<Label> {
+    return new Style<Label>({
       font: systemBoldFont(fontSize),
       color: textColor,
     });
@@ -261,7 +270,7 @@ export class Button extends Component<ButtonProps> {
 }
 
 const styles = {
-  container: new Style({
+  container: new Style<View>({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
@@ -269,7 +278,7 @@ const styles = {
     minHeight: 44, // Minimum touch target size
   }),
 
-  loadingContainer: new Style({
+  loadingContainer: new Style<View>({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',

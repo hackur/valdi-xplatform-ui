@@ -192,7 +192,7 @@ private handleTap = (): void => { };
 ```typescript
 import { Component } from 'valdi_core/src/Component';
 import { Style } from 'valdi_core/src/Style';
-import { View } from 'valdi_tsx/src/NativeTemplateElements';
+import { View, Label } from 'valdi_tsx/src/NativeTemplateElements';
 import { Colors, Spacing } from 'common/src/theme';
 
 export interface MyComponentProps {
@@ -214,7 +214,7 @@ export class MyComponent extends Component<MyComponentProps> {
     if (onTap) onTap();
   };
 
-  override onRender(): JSX.Element {
+  override onRender() {
     const { title } = this.viewModel;
     return (
       <view style={styles.container} onTap={this.handleTap}>
@@ -229,7 +229,7 @@ export class MyComponent extends Component<MyComponentProps> {
 }
 
 const styles = {
-  container: new Style({
+  container: new Style<View>({
     flex: 1,
     backgroundColor: Colors.surface,
     paddingTop: Spacing.base,
@@ -237,7 +237,7 @@ const styles = {
     paddingLeft: Spacing.base,
     paddingRight: Spacing.base,
   }),
-  title: new Style({
+  title: new Style<Label>({
     fontSize: 16,
     color: Colors.textPrimary,
   }),
@@ -253,4 +253,4 @@ const styles = {
 6. **Styles outside component class** for reusability
 7. **Singleton stores** for global state management
 8. **Type-safe props and state** with explicit interfaces
-9. **Never use Style<T> type parameters** - use new Style({...}) not new Style<View>({...})
+9. **ALWAYS use Style<T> type parameters** - use `new Style<View>({...})` for views, `new Style<Label>({...})` for labels

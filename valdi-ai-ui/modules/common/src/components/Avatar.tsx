@@ -7,6 +7,7 @@
 
 import { Component } from 'valdi_core/src/Component';
 import { Style } from 'valdi_core/src/Style';
+import { View, Label } from 'valdi_tsx/src/NativeTemplateElements';
 import { systemBoldFont } from 'valdi_core/src/SystemFont';
 import { Colors, Shadows } from '../theme';
 
@@ -73,6 +74,7 @@ export class Avatar extends Component<AvatarProps> {
         return 48;
       case 'xlarge':
         return 64;
+      case undefined:
       default:
         return 40;
     }
@@ -92,6 +94,7 @@ export class Avatar extends Component<AvatarProps> {
         return Colors.secondary;
       case 'system':
         return Colors.gray500;
+      case undefined:
       default:
         return Colors.primary;
     }
@@ -99,7 +102,7 @@ export class Avatar extends Component<AvatarProps> {
 
   private getTextColor(): string {
     const { textColor } = this.viewModel;
-    return textColor || Colors.textInverse;
+    return textColor ?? Colors.textInverse;
   }
 
   private getInitials(): string {
@@ -116,6 +119,7 @@ export class Avatar extends Component<AvatarProps> {
         return 'AI';
       case 'system':
         return 'S';
+      case undefined:
       default:
         return 'U';
     }
@@ -132,12 +136,13 @@ export class Avatar extends Component<AvatarProps> {
         return 18;
       case 'xlarge':
         return 24;
+      case undefined:
       default:
         return 16;
     }
   }
 
-  private handleTap = (): void => {
+  private readonly handleTap = (): void => {
     const { onTap } = this.viewModel;
     if (onTap) {
       onTap();
@@ -149,30 +154,30 @@ export class Avatar extends Component<AvatarProps> {
     backgroundColor: string,
     elevated: boolean | undefined,
     customStyle?: Record<string, unknown>,
-  ): Style {
-    return new Style({
+  ): Style<View> {
+    return new Style<View>({
       ...styles.container,
       width: size,
       height: size,
-      backgroundColor: backgroundColor,
+      backgroundColor,
       borderRadius: size / 2,
       alignItems: 'center',
       justifyContent: 'center',
-      ...(elevated ? Shadows.sm : {}),
+      ...(elevated === true ? Shadows.sm : {}),
       ...customStyle,
     });
   }
 
-  private getImageStyle(size: number): Style {
-    return new Style({
+  private getImageStyle(size: number): Style<View> {
+    return new Style<View>({
       width: size,
       height: size,
       borderRadius: size / 2,
     });
   }
 
-  private getLabelStyle(fontSize: number, textColor: string): Style {
-    return new Style({
+  private getLabelStyle(fontSize: number, textColor: string): Style<Label> {
+    return new Style<Label>({
       font: systemBoldFont(fontSize),
       color: textColor,
     });
@@ -209,7 +214,7 @@ export class Avatar extends Component<AvatarProps> {
 }
 
 const styles = {
-  container: new Style({
+  container: new Style<View>({
     // Note: overflow property not supported in Valdi Style
   }),
 };

@@ -8,6 +8,7 @@
 
 import { StatefulComponent } from 'valdi_core/src/Component';
 import { Style } from 'valdi_core/src/Style';
+import { View, Label } from 'valdi_tsx/src/NativeTemplateElements';
 import { systemFont } from 'valdi_core/src/SystemFont';
 import { Colors, Spacing } from '../theme';
 
@@ -81,7 +82,7 @@ export class LoadingSpinner extends StatefulComponent<
   private dotsInterval?: number;
   private rotationInterval?: number;
 
-  override onCreate() {
+  override onCreate(): void {
     // Animate dots (1, 2, 3, repeat)
     this.dotsInterval = setInterval(() => {
       this.setState({
@@ -97,7 +98,7 @@ export class LoadingSpinner extends StatefulComponent<
     }, 150) as unknown as number;
   }
 
-  override onDestroy() {
+  override onDestroy(): void {
     if (this.dotsInterval) {
       clearInterval(this.dotsInterval);
     }
@@ -115,6 +116,7 @@ export class LoadingSpinner extends StatefulComponent<
         return 40;
       case 'large':
         return 56;
+      case undefined:
       default:
         return 40;
     }
@@ -129,13 +131,14 @@ export class LoadingSpinner extends StatefulComponent<
         return 14;
       case 'large':
         return 16;
+      case undefined:
       default:
         return 14;
     }
   }
 
-  private getTextLabelStyle(fontSize: number): Style {
-    return new Style({
+  private getTextLabelStyle(fontSize: number): Style<Label> {
+    return new Style<Label>({
       font: systemFont(fontSize),
       color: Colors.textPrimary,
     });
@@ -146,8 +149,8 @@ export class LoadingSpinner extends StatefulComponent<
     return '.'.repeat(dots);
   }
 
-  private getSpinnerContainerStyle(size: number): Style {
-    return new Style({
+  private getSpinnerContainerStyle(size: number): Style<View> {
+    return new Style<View>({
       width: size,
       height: size,
       alignItems: 'center',
@@ -159,8 +162,8 @@ export class LoadingSpinner extends StatefulComponent<
   private getOuterCircleStyle(
     size: number,
     color: string | undefined,
-  ): Style {
-    return new Style({
+  ): Style<View> {
+    return new Style<View>({
       width: size,
       height: size,
       borderRadius: size / 2,
@@ -175,8 +178,8 @@ export class LoadingSpinner extends StatefulComponent<
     size: number,
     color: string | undefined,
     dots: number,
-  ): Style {
-    return new Style({
+  ): Style<View> {
+    return new Style<View>({
       position: 'absolute',
       width: size / 3,
       height: size / 3,
@@ -186,7 +189,7 @@ export class LoadingSpinner extends StatefulComponent<
     });
   }
 
-  private renderSpinner(): unknown {
+  private renderSpinner() {
     const { color } = this.viewModel;
     const { dots } = this.state;
     const size = this.getSize();
@@ -208,7 +211,7 @@ export class LoadingSpinner extends StatefulComponent<
     );
   }
 
-  private renderContent(): unknown {
+  private renderContent() {
     const { showText, text } = this.viewModel;
     const fontSize = this.getFontSize();
     const dotsText = this.getDotsText();
@@ -232,8 +235,8 @@ export class LoadingSpinner extends StatefulComponent<
   private getFullscreenOverlayStyle(
     overlayColor: string | undefined,
     overlayOpacity: number | undefined,
-  ): Style {
-    return new Style({
+  ): Style<View> {
+    return new Style<View>({
       position: 'absolute',
       top: 0,
       left: 0,
@@ -251,8 +254,8 @@ export class LoadingSpinner extends StatefulComponent<
 
   private getContainerStyle(
     customStyle?: Record<string, unknown>,
-  ): Style {
-    return new Style({
+  ): Style<View> {
+    return new Style<View>({
       flexDirection: 'column',
       alignItems: 'center',
       justifyContent: 'center',
@@ -290,24 +293,24 @@ export class LoadingSpinner extends StatefulComponent<
 }
 
 const styles = {
-  container: new Style({
+  container: new Style<View>({
     flexDirection: 'column',
     alignItems: 'center',
     justifyContent: 'center',
   }),
 
-  contentContainer: new Style({
+  contentContainer: new Style<View>({
     flexDirection: 'column',
     alignItems: 'center',
     justifyContent: 'center',
   }),
 
-  textContainer: new Style({
+  textContainer: new Style<View>({
     minWidth: 80,
     alignItems: 'center',
   }),
 
-  fullscreenOverlay: new Style({
+  fullscreenOverlay: new Style<View>({
     position: 'absolute',
     top: 0,
     left: 0,
@@ -320,7 +323,7 @@ const styles = {
     zIndex: 9999,
   }),
 
-  fullscreenContent: new Style({
+  fullscreenContent: new Style<View>({
     backgroundColor: Colors.surface,
     padding: Spacing.xl,
     borderRadius: 12,

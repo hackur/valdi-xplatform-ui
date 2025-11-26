@@ -8,6 +8,7 @@
 import { Component } from 'valdi_core/src/Component';
 import { Style } from 'valdi_core/src/Style';
 import { systemBoldFont, systemFont } from 'valdi_core/src/SystemFont';
+import { View, Label } from 'valdi_tsx/src/NativeTemplateElements';
 
 import { Colors } from '../theme/Colors';
 import { Spacing, BorderRadius } from '../theme';
@@ -73,8 +74,8 @@ export interface ErrorScreenProps {
  * - Action buttons (retry, go back)
  */
 export class ErrorScreen extends Component<ErrorScreenProps> {
-  private handleRetry = (): void => {
-    if (this.viewModel.onRetry) {
+  private readonly handleRetry = (): void => {
+    if (this.viewModel.onRetry !== undefined) {
       this.viewModel.onRetry();
     } else {
       // Default behavior: reload the page/app
@@ -84,8 +85,8 @@ export class ErrorScreen extends Component<ErrorScreenProps> {
     }
   };
 
-  private handleGoBack = (): void => {
-    if (this.viewModel.onGoBack) {
+  private readonly handleGoBack = (): void => {
+    if (this.viewModel.onGoBack !== undefined) {
       this.viewModel.onGoBack();
     } else {
       // Default behavior: go back in history
@@ -105,7 +106,7 @@ export class ErrorScreen extends Component<ErrorScreenProps> {
       showGoBackButton = true,
     } = this.viewModel;
 
-    const errorMessage = message || error.message || 'An unexpected error occurred';
+    const errorMessage = message ?? error.message ?? 'An unexpected error occurred';
     const errorStack = error.stack;
 
     return (
@@ -167,7 +168,7 @@ export class ErrorScreen extends Component<ErrorScreenProps> {
 }
 
 const styles = {
-  container: new Style({
+  container: new Style<View>({
     width: '100%',
     height: '100%',
     backgroundColor: Colors.background,
@@ -176,34 +177,34 @@ const styles = {
     padding: Spacing.xl,
   }),
 
-  content: new Style({
+  content: new Style<View>({
     width: '100%',
     maxWidth: 600,
     alignItems: 'center',
   }),
 
-  iconContainer: new Style({
+  iconContainer: new Style<View>({
     width: 80,
     height: 80,
-    backgroundColor: Colors.errorLight + '20', // 20% opacity
+    backgroundColor: `${Colors.errorLight}20`, // 20% opacity
     borderRadius: BorderRadius.full, // Circular
     alignItems: 'center',
     justifyContent: 'center',
     marginBottom: Spacing.xl,
   }),
 
-  errorIcon: new Style({
+  errorIcon: new Style<Label>({
     font: systemBoldFont(48),
   }),
 
-  errorTitle: new Style({
+  errorTitle: new Style<Label>({
     font: systemBoldFont(24),
     color: Colors.error,
     textAlign: 'center',
     marginBottom: Spacing.base,
   }),
 
-  errorMessage: new Style({
+  errorMessage: new Style<Label>({
     font: systemFont(16),
     color: Colors.textPrimary,
     textAlign: 'center',
@@ -211,7 +212,7 @@ const styles = {
     lineHeight: 1.5,
   }),
 
-  detailsContainer: new Style({
+  detailsContainer: new Style<View>({
     width: '100%',
     backgroundColor: Colors.gray100,
     borderRadius: BorderRadius.md,
@@ -219,13 +220,13 @@ const styles = {
     marginBottom: Spacing.xl,
   }),
 
-  detailsTitle: new Style({
+  detailsTitle: new Style<Label>({
     font: systemBoldFont(14),
     color: Colors.textPrimary,
     marginBottom: Spacing.sm,
   }),
 
-  stackContainer: new Style({
+  stackContainer: new Style<View>({
     width: '100%',
     backgroundColor: Colors.gray200,
     borderRadius: BorderRadius.sm,
@@ -234,18 +235,18 @@ const styles = {
     overflow: 'scroll',
   }),
 
-  stackTrace: new Style({
+  stackTrace: new Style<Label>({
     font: systemFont(11),
     color: Colors.textSecondary,
   }),
 
-  buttonContainer: new Style({
+  buttonContainer: new Style<View>({
     width: '100%',
     flexDirection: 'row',
     marginBottom: Spacing.base,
   }),
 
-  helpText: new Style({
+  helpText: new Style<Label>({
     font: systemFont(12),
     color: Colors.textTertiary,
     textAlign: 'center',

@@ -9,20 +9,30 @@ Valdi's `Style` object maps directly to **native UI properties** (UIView on iOS,
 
 ## CRITICAL: Style Type Pattern
 
-NEVER use generic type parameters with Style. TypeScript infers the type automatically.
+ALWAYS use Style<View> or Style<Label> type parameters! The Valdi compiler REQUIRES these to determine which element type the style applies to.
 
 ```typescript
-// [FAIL] WRONG - Do not use type parameters
+// [FAIL] WRONG - Missing type parameter
 new Style({...})
-new Style<Label>({...})
-: Style<View>
 
-// [PASS] CORRECT - Let TypeScript infer
-new Style({...})
-: Style
+// [PASS] CORRECT - View styles for <view> elements
+new Style<View>({
+  flexDirection: 'row',
+  backgroundColor: Colors.surface,
+})
+
+// [PASS] CORRECT - Label styles for <label> elements (have font property)
+new Style<Label>({
+  font: systemBoldFont(16),
+  color: Colors.textPrimary,
+})
 ```
 
-Run `./scripts/fix-style-types.sh` to auto-fix violations.
+**When to use which:**
+- `Style<View>` - For containers, layouts, wrappers (`<view>` elements)
+- `Style<Label>` - For text styles with `font` property (`<label>` elements)
+
+Run `./scripts/fix-style-types.sh` to auto-fix missing type parameters.
 
 ## Style Object Pattern
 ```typescript
@@ -30,9 +40,9 @@ import { Style } from 'valdi_core/src/Style';
 import { View, Label } from 'valdi_tsx/src/NativeTemplateElements';
 import { Colors, Spacing, Fonts, BorderRadius } from 'common/src/theme';
 
-// Define styles OUTSIDE component class
+// Define styles OUTSIDE component class - ALWAYS with type parameters!
 const styles = {
-  container: new Style({
+  container: new Style<View>({
     flex: 1,
     backgroundColor: Colors.surface,
     paddingTop: Spacing.base,
@@ -40,7 +50,7 @@ const styles = {
     paddingLeft: Spacing.base,
     paddingRight: Spacing.base,
   }),
-  title: new Style({
+  title: new Style<Label>({
     fontSize: Fonts.h1.fontSize,
     fontWeight: Fonts.h1.fontWeight,
     color: Colors.textPrimary,
@@ -48,9 +58,9 @@ const styles = {
   }),
 };
 
-// Use in component
+// Use in component (no JSX.Element return type in Valdi)
 export class MyComponent extends Component<Props> {
-  override onRender(): JSX.Element {
+  override onRender() {
     return (
       <view style={styles.container}>
         <label value="Title" style={styles.title} />
@@ -64,7 +74,7 @@ export class MyComponent extends Component<Props> {
 
 ### Layout Properties
 ```typescript
-new Style({
+new Style<View>({
   // Flexbox
   flex: 1,                    // Flex grow factor
   flexDirection: 'row',       // 'row' | 'column' | 'row-reverse' | 'column-reverse'
@@ -94,7 +104,7 @@ new Style({
 ### Spacing Properties (NO SHORTHANDS!)
 ```typescript
 // WRONG - React Native shorthands (NOT SUPPORTED)
-new Style({
+new Style<View>({
   gap: 16,                    // ERROR - gap doesn't exist
   paddingVertical: 8,         // ERROR - no shorthand
   paddingHorizontal: 16,      // ERROR - no shorthand
@@ -105,7 +115,7 @@ new Style({
 })
 
 // CORRECT - Individual properties (SUPPORTED)
-new Style({
+new Style<View>({
   // Padding (individual sides only!)
   paddingTop: 8,
   paddingBottom: 8,
@@ -122,7 +132,7 @@ new Style({
 
 ### Visual Properties
 ```typescript
-new Style({
+new Style<View>({
   // Background
   backgroundColor: Colors.surface,  // Hex or named color
   opacity: 0.8,                     // 0.0 to 1.0
@@ -148,7 +158,7 @@ new Style({
 
 ### Shadow Properties (iOS Style)
 ```typescript
-new Style({
+new Style<View>({
   // Shadow (iOS-style API)
   shadowColor: '#000000',
   shadowOffset: { width: 0, height: 2 },
@@ -160,9 +170,9 @@ new Style({
 })
 ```
 
-### Text Properties
+### Text Properties (use Style<Label> for text!)
 ```typescript
-new Style({
+new Style<Label>({
   // Font
   fontSize: 16,
   fontWeight: '400',        // '100' to '900' or 'normal' | 'bold'
@@ -190,9 +200,9 @@ new Style({
 ```typescript
 import { Colors, Spacing, Fonts, BorderRadius } from 'common/src/theme';
 
-// CORRECT - Use design tokens
+// CORRECT - Use design tokens with proper type parameters
 const styles = {
-  container: new Style({
+  container: new Style<View>({
     backgroundColor: Colors.surface,
     paddingTop: Spacing.base,
     paddingBottom: Spacing.base,
@@ -200,7 +210,7 @@ const styles = {
     paddingRight: Spacing.lg,
     borderRadius: BorderRadius.md,
   }),
-  title: new Style({
+  title: new Style<Label>({
     fontSize: Fonts.h2.fontSize,
     fontWeight: Fonts.h2.fontWeight,
     lineHeight: Fonts.h2.lineHeight,
@@ -208,20 +218,20 @@ const styles = {
   }),
 };
 
-// WRONG - Hardcoded values
+// WRONG - Hardcoded values and missing type parameters
 const styles = {
-  container: new Style({
-    backgroundColor: '#FFFFFF',     // Use Colors.surface
-    paddingTop: 16,                 // Use Spacing.base
+  container: new Style({             // Missing Style<View>!
+    backgroundColor: '#FFFFFF',      // Use Colors.surface
+    paddingTop: 16,                  // Use Spacing.base
     paddingBottom: 16,
-    paddingLeft: 24,                // Use Spacing.lg
+    paddingLeft: 24,                 // Use Spacing.lg
     paddingRight: 24,
-    borderRadius: 12,               // Use BorderRadius.md
+    borderRadius: 12,                // Use BorderRadius.md
   }),
-  title: new Style({
-    fontSize: 28,                   // Use Fonts.h2.fontSize
-    fontWeight: '700',              // Use Fonts.h2.fontWeight
-    color: '#000000',               // Use Colors.textPrimary
+  title: new Style({                 // Missing Style<Label>!
+    fontSize: 28,                    // Use Fonts.h2.fontSize
+    fontWeight: '700',               // Use Fonts.h2.fontWeight
+    color: '#000000',                // Use Colors.textPrimary
   }),
 };
 ```
@@ -272,7 +282,7 @@ BorderRadius.full          // 9999
 ### Container Pattern
 ```typescript
 const styles = {
-  container: new Style({
+  container: new Style<View>({
     flex: 1,
     backgroundColor: Colors.background,
     paddingTop: Spacing.base,
@@ -286,7 +296,7 @@ const styles = {
 ### Card Pattern
 ```typescript
 const styles = {
-  card: new Style({
+  card: new Style<View>({
     backgroundColor: Colors.surface,
     borderRadius: BorderRadius.md,
     paddingTop: Spacing.md,
@@ -309,14 +319,14 @@ const styles = {
 ### Row Layout Pattern
 ```typescript
 const styles = {
-  row: new Style({
+  row: new Style<View>({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
   }),
 
   // Children spacing (use marginRight on children)
-  rowItem: new Style({
+  rowItem: new Style<View>({
     marginRight: Spacing.sm, // Space between items
   }),
 };
@@ -325,13 +335,13 @@ const styles = {
 ### Column Layout Pattern
 ```typescript
 const styles = {
-  column: new Style({
+  column: new Style<View>({
     flexDirection: 'column',
     alignItems: 'stretch',
   }),
 
   // Children spacing (use marginBottom on children)
-  columnItem: new Style({
+  columnItem: new Style<View>({
     marginBottom: Spacing.base, // Space between items
   }),
 };
@@ -340,7 +350,7 @@ const styles = {
 ### Button Pattern
 ```typescript
 const styles = {
-  button: new Style({
+  button: new Style<View>({
     backgroundColor: Colors.primary,
     borderRadius: BorderRadius.base,
     paddingTop: Spacing.sm,
@@ -350,7 +360,7 @@ const styles = {
     alignItems: 'center',
     justifyContent: 'center',
   }),
-  buttonText: new Style({
+  buttonText: new Style<Label>({
     fontSize: Fonts.body.fontSize,
     fontWeight: '600',
     color: Colors.textInverse,
@@ -361,7 +371,7 @@ const styles = {
 ### Absolute Positioning Pattern
 ```typescript
 const styles = {
-  overlay: new Style({
+  overlay: new Style<View>({
     position: 'absolute',
     top: 0,
     left: 0,
@@ -379,14 +389,14 @@ const styles = {
 ### DON'T Use Shorthands
 ```typescript
 // WRONG
-new Style({
+new Style<View>({
   gap: Spacing.base,
   paddingVertical: Spacing.sm,
   paddingHorizontal: Spacing.lg,
 })
 
 // CORRECT
-new Style({
+new Style<View>({
   paddingTop: Spacing.sm,
   paddingBottom: Spacing.sm,
   paddingLeft: Spacing.lg,
@@ -398,13 +408,13 @@ new Style({
 ### DON'T Hardcode Values
 ```typescript
 // WRONG
-new Style({
+new Style<View>({
   paddingTop: 16,
   backgroundColor: '#FFFFFF',
 })
 
 // CORRECT
-new Style({
+new Style<View>({
   paddingTop: Spacing.base,
   backgroundColor: Colors.surface,
 })
@@ -413,18 +423,18 @@ new Style({
 ### DON'T Define Styles Inside Render
 ```typescript
 // WRONG - Creates new objects every render
-override onRender(): JSX.Element {
-  const containerStyle = new Style({ /* ... */ });
+override onRender() {
+  const containerStyle = new Style<View>({ /* ... */ });
   return <view style={containerStyle} />;
 }
 
 // CORRECT - Define outside component
 const styles = {
-  container: new Style({ /* ... */ }),
+  container: new Style<View>({ /* ... */ }),
 };
 
 export class MyComponent extends Component<Props> {
-  override onRender(): JSX.Element {
+  override onRender() {
     return <view style={styles.container} />;
   }
 }
@@ -433,24 +443,34 @@ export class MyComponent extends Component<Props> {
 ### DON'T Use CSS-Style Units
 ```typescript
 // WRONG
-new Style({
+new Style<View>({
   width: '100px',      // NO px units
   padding: '1rem',     // NO rem units
   margin: '2em',       // NO em units
 })
 
 // CORRECT
-new Style({
+new Style<View>({
   width: 100,          // Numbers are points/dp
   width: '100%',       // Percentages OK
 })
 ```
 
+### DON'T Forget Type Parameters
+```typescript
+// WRONG - Missing type parameter
+new Style({ ... })
+
+// CORRECT - Always specify View or Label
+new Style<View>({ ... })     // For <view> elements
+new Style<Label>({ ... })    // For <label> elements with font
+```
+
 ## Dynamic Styles
 ```typescript
-// Conditional styles
-private getContainerStyle(): Style {
-  return new Style({
+// Conditional styles - still need type parameter!
+private getContainerStyle(): Style<View> {
+  return new Style<View>({
     backgroundColor: this.viewModel.isActive
       ? Colors.primary
       : Colors.surface,
@@ -458,7 +478,7 @@ private getContainerStyle(): Style {
   });
 }
 
-override onRender(): JSX.Element {
+override onRender() {
   return <view style={this.getContainerStyle()} />;
 }
 
@@ -467,10 +487,12 @@ override onRender(): JSX.Element {
 ```
 
 ## Remember
-1. **Native properties only** - No CSS or React Native shorthands
-2. **Individual spacing** - paddingTop/Bottom/Left/Right, no shorthands
-3. **Design tokens** - Always use Colors, Spacing, Fonts, BorderRadius
-4. **Styles outside class** - Define before component for reusability
-5. **No gap property** - Use marginRight/marginBottom on children
-6. **Number units** - No 'px', 'rem', 'em' - just numbers
-7. **Think UIView/View** - Native UI component properties only
+1. **ALWAYS use type parameters** - `Style<View>` or `Style<Label>`, never just `Style`
+2. **Native properties only** - No CSS or React Native shorthands
+3. **Individual spacing** - paddingTop/Bottom/Left/Right, no shorthands
+4. **Design tokens** - Always use Colors, Spacing, Fonts, BorderRadius
+5. **Styles outside class** - Define before component for reusability
+6. **No gap property** - Use marginRight/marginBottom on children
+7. **Number units** - No 'px', 'rem', 'em' - just numbers
+8. **Think UIView/View** - Native UI component properties only
+9. **View vs Label** - Use `Style<View>` for containers, `Style<Label>` for text with font property

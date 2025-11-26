@@ -7,6 +7,7 @@
 
 import { Component } from 'valdi_core/src/Component';
 import { Style } from 'valdi_core/src/Style';
+import { View } from 'valdi_tsx/src/NativeTemplateElements';
 import {
   Colors,
   Spacing,
@@ -73,12 +74,13 @@ export class Card extends Component<CardProps> {
         return Shadows.md;
       case 'lg':
         return Shadows.lg;
+      case undefined:
       default:
         return SemanticShadows.card;
     }
   }
 
-  private handleTap = (): void => {
+  private readonly handleTap = (): void => {
     const { onTap } = this.viewModel;
     if (onTap) {
       onTap();
@@ -92,8 +94,8 @@ export class Card extends Component<CardProps> {
     bordered: boolean | undefined,
     shadowStyle: Record<string, unknown>,
     customStyle?: Record<string, unknown>,
-  ): Style {
-    return new Style({
+  ): Style<View> {
+    return new Style<View>({
       ...styles.container,
       backgroundColor: backgroundColor ?? Colors.surface,
       borderRadius: borderRadius ?? BorderRadius.md,
@@ -139,7 +141,7 @@ export class Card extends Component<CardProps> {
 }
 
 const styles = {
-  container: new Style({
+  container: new Style<View>({
     width: '100%',
   }),
 };

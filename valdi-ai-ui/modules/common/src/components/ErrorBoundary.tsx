@@ -17,8 +17,8 @@
 
 import { StatefulComponent } from 'valdi_core/src/Component';
 import { Style } from 'valdi_core/src/Style';
+import { View, Label } from 'valdi_tsx/src/NativeTemplateElements';
 import { systemBoldFont, systemFont } from 'valdi_core/src/SystemFont';
-import type { View } from 'valdi_tsx/src/NativeTemplateElements';
 
 import { Colors } from '../theme/Colors';
 import { Spacing, BorderRadius } from '../theme';
@@ -103,7 +103,7 @@ export class ErrorBoundary extends StatefulComponent<
   ErrorBoundaryViewModel,
   ErrorBoundaryState
 > {
-  override onCreate() {
+  override onCreate(): void {
     this.setState({
       hasError: false,
       error: undefined,
@@ -176,7 +176,7 @@ export class ErrorBoundary extends StatefulComponent<
   /**
    * Called when an error is thrown in a child component
    */
-  onError(error: Error, errorInfo?: ErrorInfo) {
+  onError(error: Error, errorInfo?: ErrorInfo): void {
     const { onError, logErrors = true } = this.viewModel;
 
     // Log error to console if enabled
@@ -222,7 +222,7 @@ export class ErrorBoundary extends StatefulComponent<
 }
 
 const styles = {
-  errorContainer: new Style({
+  errorContainer: new Style<View>({
     width: '100%',
     height: '100%',
     backgroundColor: Colors.background,
@@ -231,10 +231,10 @@ const styles = {
     padding: Spacing.lg,
   }),
 
-  errorCard: new Style({
+  errorCard: new Style<View>({
     width: '100%',
     maxWidth: 600,
-    backgroundColor: Colors.errorLight + '10', // 10% opacity
+    backgroundColor: `${Colors.errorLight}10`, // 10% opacity
     borderColor: Colors.error,
     borderWidth: 2,
     borderRadius: BorderRadius.md,
@@ -242,19 +242,19 @@ const styles = {
     alignItems: 'center',
   }),
 
-  errorIcon: new Style({
+  errorIcon: new Style<Label>({
     font: systemBoldFont(28),
     marginBottom: Spacing.base,
   }),
 
-  errorTitle: new Style({
+  errorTitle: new Style<Label>({
     font: systemBoldFont(24),
     color: Colors.error,
     marginBottom: Spacing.sm,
     textAlign: 'center',
   }),
 
-  errorMessage: new Style({
+  errorMessage: new Style<Label>({
     font: systemFont(16),
     color: Colors.textPrimary,
     textAlign: 'center',
@@ -262,7 +262,7 @@ const styles = {
     lineHeight: 1.5,
   }),
 
-  detailsContainer: new Style({
+  detailsContainer: new Style<View>({
     width: '100%',
     backgroundColor: Colors.gray100,
     borderRadius: BorderRadius.sm,
@@ -273,18 +273,18 @@ const styles = {
     overflow: 'scroll',
   }),
 
-  detailsTitle: new Style({
+  detailsTitle: new Style<Label>({
     font: systemBoldFont(14),
     color: Colors.textPrimary,
     marginBottom: Spacing.xs,
   }),
 
-  detailsText: new Style({
+  detailsText: new Style<Label>({
     font: systemFont(11),
     color: Colors.textSecondary,
   }),
 
-  helpText: new Style({
+  helpText: new Style<Label>({
     font: systemFont(12),
     color: Colors.textTertiary,
     textAlign: 'center',
