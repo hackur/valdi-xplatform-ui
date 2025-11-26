@@ -762,7 +762,7 @@ const styles = {
   } as Record<string, unknown>,
 
   providerIcon: {
-    fontSize: 24,
+    font: systemFont(24),
   } as Record<string, unknown>,
 
   providerName: {

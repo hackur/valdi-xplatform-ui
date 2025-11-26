@@ -367,8 +367,8 @@ const styles = {
     borderRadius: BorderRadius.md,
   }),
 
-  featureIconLabel: new Style({
-    fontSize: 32,
+  featureIconLabel: new Style<Label>({
+    font: systemFont(32),
   }),
 
   featureText: new Style<View>({

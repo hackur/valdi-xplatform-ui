@@ -179,7 +179,7 @@ const styles = {
   }),
 
   searchIcon: new Style<Label>({
-    fontSize: 18,
+    font: systemFont(18),
     marginRight: Spacing.sm,
     color: Colors.textTertiary,
   }),
@@ -202,7 +202,7 @@ const styles = {
   }),
 
   clearIcon: new Style<Label>({
-    fontSize: 14,
+    font: systemFont(14),
     color: Colors.textSecondary,
   }),
 };

@@ -298,17 +298,7 @@ export class ConversationList extends StatefulComponent<
             <LoadingSpinner size="large" showText={true} text="Loading" />
           </view>
         ) : (
-          <scroll
-            style={styles.scrollView}
-            refreshControl={
-              isRefreshing !== undefined
-                ? {
-                    refreshing: isRefreshing,
-                    onRefresh: this.handleRefresh,
-                  }
-                : undefined
-            }
-          >
+          <scroll style={styles.scrollView}>
             {/* Refresh Indicator */}
             {isRefreshing && (
               <view style={styles.refreshingIndicator}>
@@ -365,8 +355,6 @@ const styles = {
     paddingRight: Spacing.base,
     borderWidth: 1,
     borderColor: Colors.border,
-    ...Fonts.body,
-    color: Colors.textPrimary,
   }),
 
   filterContainer: new Style<View>({
@@ -426,7 +414,6 @@ const styles = {
 
   emptyStateMessage: new Style<Label>({
     ...Fonts.body,
-    fontSize: 16,
     color: Colors.textSecondary,
     textAlign: 'center',
   }),
