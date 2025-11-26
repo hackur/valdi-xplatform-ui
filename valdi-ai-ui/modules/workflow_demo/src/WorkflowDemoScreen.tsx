@@ -8,7 +8,7 @@
  * - EvaluatorOptimizer: Iterative refinement with feedback
  */
 
-import { Component } from 'valdi_core/src/Component';
+import { StatefulComponent } from 'valdi_core/src/Component';
 import { Style } from 'valdi_core/src/Style';
 import { View, ScrollView, Label } from 'valdi_tsx/src/NativeTemplateElements';
 import {
@@ -56,7 +56,7 @@ interface WorkflowDemoScreenState {
 /**
  * WorkflowDemo Screen Component
  */
-export class WorkflowDemoScreen extends Component<{}, WorkflowDemoScreenState> {
+export class WorkflowDemoScreen extends StatefulComponent<{}, WorkflowDemoScreenState> {
   override state: WorkflowDemoScreenState = {
     selectedTab: 'sequential',
     executionStates: {
@@ -204,14 +204,14 @@ export class WorkflowDemoScreen extends Component<{}, WorkflowDemoScreenState> {
    */
   private updateWorkflowState = (
     workflowType: WorkflowType,
-    override state: Partial<WorkflowExecutionState>,
+    newState: Partial<WorkflowExecutionState>,
   ): void => {
     this.setState({
       executionStates: {
         ...this.state.executionStates,
         [workflowType]: {
           ...this.state.executionStates[workflowType],
-          ...state,
+          ...newState,
         },
       },
     });

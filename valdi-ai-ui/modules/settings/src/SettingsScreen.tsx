@@ -11,6 +11,7 @@
 
 import { StatefulComponent } from 'valdi_core/src/Component';
 import { Style } from 'valdi_core/src/Style';
+import { systemFont } from 'valdi_core/src/SystemFont';
 import { NavigationController } from 'valdi_navigation/src/NavigationController';
 import {
   Colors,

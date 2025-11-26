@@ -155,7 +155,7 @@ export class WorkflowCard extends Component<WorkflowCardProps> {
         : null;
 
     return (
-      <view key={index} style={styles.stepContainer}>
+      <view key={`step-${index}`} style={styles.stepContainer}>
         {/* Step Header */}
         <view style={styles.stepHeader}>
           <view style={styles.stepIndicator}>
@@ -176,7 +176,7 @@ export class WorkflowCard extends Component<WorkflowCardProps> {
 
           <view style={styles.stepContent}>
             <view style={styles.stepTitleRow}>
-              <label value={step.name} style={Fonts.h4} />
+              <label value={step.name} style={styles.stepTitle} />
               {executionTime && (
                 <label
                   value={executionTime}
@@ -239,7 +239,7 @@ export class WorkflowCard extends Component<WorkflowCardProps> {
       <Card elevation="md" style={styles.container}>
         {/* Header */}
         <view style={styles.header}>
-          <label value="Execution Progress" style={Fonts.h2} />
+          <label value="Execution Progress" style={styles.progressTitle} />
           {executionState.totalTime && (
             <label
               value={`Total: ${this.formatTime(executionState.totalTime)}`}
@@ -495,5 +495,13 @@ const styles = {
   workflowErrorText: new Style<Label>({
     ...Fonts.body,
     color: Colors.errorDark,
+  }),
+
+  stepTitle: new Style<Label>({
+    ...Fonts.h4,
+  }),
+
+  progressTitle: new Style<Label>({
+    ...Fonts.h2,
   }),
 };
