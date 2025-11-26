@@ -312,9 +312,9 @@ export class WorkflowCard extends Component<WorkflowCardProps> {
 }
 
 const styles = {
-  container: new Style<View>({
+  container: {
     padding: Spacing.xl,
-  }),
+  } as Record<string, unknown>,
 
   header: new Style<View>({
     flexDirection: 'row',

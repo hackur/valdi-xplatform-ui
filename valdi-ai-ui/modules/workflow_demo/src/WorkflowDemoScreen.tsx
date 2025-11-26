@@ -236,7 +236,7 @@ export class WorkflowDemoScreen extends StatefulComponent<{}, WorkflowDemoScreen
             error={error}
             title="Workflow Demo Error"
             message="An error occurred while running the workflow demo."
-            showDetails={process.env.NODE_ENV === 'development'}
+            showDetails={false}
           />
         )}
         onError={this.handleWorkflowError}
@@ -244,7 +244,7 @@ export class WorkflowDemoScreen extends StatefulComponent<{}, WorkflowDemoScreen
         <scroll style={styles.container}>
         {/* Header */}
         <view style={styles.header}>
-          <label value="Workflow Patterns Demo" style={Fonts.h1} />
+          <label value="Workflow Patterns Demo" style={styles.pageTitle} />
           <label
             value="Explore different AI workflow patterns and see how they execute step-by-step"
             style={{
@@ -296,7 +296,7 @@ export class WorkflowDemoScreen extends StatefulComponent<{}, WorkflowDemoScreen
           <Card elevation="md" style={styles.infoCard as unknown as Record<string, unknown>}>
             <label
               value={`${selectedWorkflow.icon} ${selectedWorkflow.name}`}
-              style={Fonts.h2}
+              style={styles.sectionTitle}
             />
             <label
               value={selectedWorkflow.description}
@@ -410,5 +410,13 @@ const styles = {
     flexDirection: 'row',
     alignItems: 'flex-start',
     marginBottom: Spacing.xs,
+  }),
+
+  pageTitle: new Style<Label>({
+    ...Fonts.h1,
+  }),
+
+  sectionTitle: new Style<Label>({
+    ...Fonts.h2,
   }),
 };
