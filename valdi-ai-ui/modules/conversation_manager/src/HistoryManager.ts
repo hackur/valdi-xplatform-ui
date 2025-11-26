@@ -110,7 +110,7 @@ export class HistoryManager {
     // Apply model filter
     if (options.model && options.model.length > 0) {
       results = results.filter((conv) =>
-        conv.model ? options.model!.includes(conv.model.modelId) : false,
+        conv.modelConfig ? options.model!.includes(conv.modelConfig.modelId) : false,
       );
     }
 
@@ -311,7 +311,7 @@ export class HistoryManager {
     // Models
     if (filter.models && filter.models.length > 0) {
       filtered = filtered.filter((conv) =>
-        conv.model ? filter.models!.includes(conv.model.modelId) : false,
+        conv.modelConfig ? filter.models!.includes(conv.modelConfig.modelId) : false,
       );
     }
 
@@ -339,17 +339,13 @@ export class HistoryManager {
     return {
       id: conversation.id,
       title: conversation.title || 'Untitled Conversation',
-      lastMessagePreview: conversation.lastMessage?.content
-        ? typeof conversation.lastMessage.content === 'string'
-          ? conversation.lastMessage.content.substring(0, 100)
-          : ''
-        : undefined,
-      lastMessageTime: conversation.lastMessage?.createdAt,
+      lastMessagePreview: undefined, // Would need message store access
+      lastMessageTime: conversation.lastMessageAt,
       unreadCount: 0, // Would need to track this separately
-      isPinned: conversation.metadata?.pinned === true,
+      isPinned: conversation.isPinned,
       status: conversation.status,
-      model: conversation.model?.modelId,
-      participantCount: conversation.participants?.length || 0,
+      model: conversation.modelConfig?.modelId,
+      participantCount: 0, // Single user conversations
     };
   }
 
@@ -369,7 +365,7 @@ export class HistoryManager {
         md += `**Created:** ${conv.createdAt.toISOString()}\n`;
         md += `**Updated:** ${conv.updatedAt.toISOString()}\n`;
         md += `**Messages:** ${conv.messageCount}\n`;
-        md += `**Model:** ${conv.model?.modelId || 'N/A'}\n\n`;
+        md += `**Model:** ${conv.modelConfig?.modelId || 'N/A'}\n\n`;
       }
 
       md += '---\n\n';

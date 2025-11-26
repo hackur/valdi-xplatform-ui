@@ -6,7 +6,7 @@
 
 import { StatefulComponent } from 'valdi_core/src/Component';
 import { Style } from 'valdi_core/src/Style';
-import { View, Label } from 'valdi_tsx/src/NativeTemplateElements';
+import { View, Label, EditTextEvent } from 'valdi_tsx/src/NativeTemplateElements';
 import { NavigationController } from 'valdi_navigation/src/NavigationController';
 import { Colors, Fonts, Spacing } from 'common/src';
 import { Button } from 'common/src';
@@ -156,11 +156,11 @@ export class AddCustomProviderView extends StatefulComponent<
             {/* Provider Name */}
             <view style={styles.field}>
               <label value="Provider Name *" style={styles.label} />
-              <textinput
+              <textfield
                 value={name}
                 placeholder="e.g., My Local LLM, Azure GPT-4"
                 style={errors.has('name') ? styles.inputError : styles.input}
-                onChangeText={(text: string) => this.handleFieldChange('name', text)}
+                onChange={this.createFieldChangeHandler('name')}
               />
               {errors.has('name') && (
                 <label value={errors.get('name')} style={styles.errorText} />
@@ -170,12 +170,11 @@ export class AddCustomProviderView extends StatefulComponent<
             {/* Base URL */}
             <view style={styles.field}>
               <label value="Base URL *" style={styles.label} />
-              <textinput
+              <textfield
                 value={baseUrl}
                 placeholder="https://api.example.com/v1"
                 style={errors.has('baseUrl') ? styles.inputError : styles.input}
-                onChangeText={(text: string) => this.handleFieldChange('baseUrl', text)}
-                autoCapitalize="none"
+                onChange={this.createFieldChangeHandler('baseUrl')}
               />
               {errors.has('baseUrl') && (
                 <label value={errors.get('baseUrl')} style={styles.errorText} />
@@ -189,13 +188,11 @@ export class AddCustomProviderView extends StatefulComponent<
             {/* API Key */}
             <view style={styles.field}>
               <label value="API Key (optional)" style={styles.label} />
-              <textinput
+              <textfield
                 value={apiKey}
                 placeholder="sk-..."
                 style={styles.input}
-                onChangeText={(text: string) => this.handleFieldChange('apiKey', text)}
-                autoCapitalize="none"
-                secureTextEntry={true}
+                onChange={this.createFieldChangeHandler('apiKey')}
               />
               <label
                 value="Leave empty if your endpoint doesn't require authentication"
@@ -206,12 +203,11 @@ export class AddCustomProviderView extends StatefulComponent<
             {/* Model ID */}
             <view style={styles.field}>
               <label value="Model ID *" style={styles.label} />
-              <textinput
+              <textfield
                 value={modelId}
                 placeholder="e.g., llama2, gpt-4, mistral"
                 style={errors.has('modelId') ? styles.inputError : styles.input}
-                onChangeText={(text: string) => this.handleFieldChange('modelId', text)}
-                autoCapitalize="none"
+                onChange={this.createFieldChangeHandler('modelId')}
               />
               {errors.has('modelId') && (
                 <label value={errors.get('modelId')} style={styles.errorText} />
@@ -221,13 +217,11 @@ export class AddCustomProviderView extends StatefulComponent<
             {/* Model Display Name */}
             <view style={styles.field}>
               <label value="Display Name (optional)" style={styles.label} />
-              <textinput
+              <textfield
                 value={modelName}
                 placeholder="Friendly name for the model"
                 style={styles.input}
-                onChangeText={(text: string) =>
-                  this.handleFieldChange('modelName', text)
-                }
+                onChange={this.createFieldChangeHandler('modelName')}
               />
             </view>
 
@@ -237,7 +231,7 @@ export class AddCustomProviderView extends StatefulComponent<
             {/* Temperature */}
             <view style={styles.field}>
               <label value="Default Temperature" style={styles.label} />
-              <textinput
+              <textfield
                 value={defaultTemperature}
                 placeholder="0.7"
                 style={
@@ -245,10 +239,7 @@ export class AddCustomProviderView extends StatefulComponent<
                     ? styles.inputError
                     : styles.input
                 }
-                onChangeText={(text: string) =>
-                  this.handleFieldChange('defaultTemperature', text)
-                }
-                keyboardType="decimal-pad"
+                onChange={this.createFieldChangeHandler('defaultTemperature')}
               />
               {errors.has('defaultTemperature') && (
                 <label
@@ -262,28 +253,22 @@ export class AddCustomProviderView extends StatefulComponent<
             {/* Max Output Tokens */}
             <view style={styles.field}>
               <label value="Max Output Tokens" style={styles.label} />
-              <textinput
+              <textfield
                 value={maxOutputTokens}
                 placeholder="4096"
                 style={styles.input}
-                onChangeText={(text: string) =>
-                  this.handleFieldChange('maxOutputTokens', text)
-                }
-                keyboardType="number-pad"
+                onChange={this.createFieldChangeHandler('maxOutputTokens')}
               />
             </view>
 
             {/* Max Context Tokens */}
             <view style={styles.field}>
               <label value="Max Context Window" style={styles.label} />
-              <textinput
+              <textfield
                 value={maxContextTokens}
                 placeholder="8192"
                 style={styles.input}
-                onChangeText={(text: string) =>
-                  this.handleFieldChange('maxContextTokens', text)
-                }
-                keyboardType="number-pad"
+                onChange={this.createFieldChangeHandler('maxContextTokens')}
               />
             </view>
 
@@ -422,6 +407,15 @@ export class AddCustomProviderView extends StatefulComponent<
     const errors = new Map(this.state.errors);
     errors.delete(field);
     this.setState({ errors });
+  }
+
+  /**
+   * Create an onChange handler for a field
+   */
+  private createFieldChangeHandler(
+    field: keyof AddCustomProviderViewState,
+  ): (event: EditTextEvent) => void {
+    return (event: EditTextEvent) => this.handleFieldChange(field, event.text);
   }
 
   /**
@@ -592,7 +586,7 @@ const styles = {
   }),
 
   headerSubtitle: new Style<Label>({
-    ...Fonts.bodyRegular,
+    ...Fonts.body,
     color: Colors.textSecondary,
   }),
 
@@ -615,7 +609,7 @@ const styles = {
   }),
 
   input: new Style<View>({
-    ...Fonts.bodyRegular,
+    ...Fonts.body,
     color: Colors.textPrimary,
     backgroundColor: Colors.surface,
     borderWidth: 1,
@@ -625,7 +619,7 @@ const styles = {
   }),
 
   inputError: new Style<View>({
-    ...Fonts.bodyRegular,
+    ...Fonts.body,
     color: Colors.textPrimary,
     backgroundColor: Colors.surface,
     borderWidth: 2,

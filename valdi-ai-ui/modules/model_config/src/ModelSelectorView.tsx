@@ -353,7 +353,7 @@ const styles = {
   }),
 
   headerSubtitle: new Style<Label>({
-    ...Fonts.bodyRegular,
+    ...Fonts.body,
     color: Colors.textSecondary,
   }),
 
@@ -384,7 +384,7 @@ const styles = {
   }),
 
   emptySubtext: new Style<Label>({
-    ...Fonts.bodyRegular,
+    ...Fonts.body,
     color: Colors.textTertiary,
     textAlign: 'center',
   }),
@@ -399,19 +399,19 @@ const styles = {
     marginBottom: Spacing.sm,
   }),
 
-  modelCard: new Style<View>({
+  modelCard: {
     marginBottom: Spacing.sm,
     backgroundColor: Colors.surface,
     borderWidth: 1,
     borderColor: Colors.border,
-  }),
+  } as Record<string, unknown>,
 
-  modelCardSelected: new Style<View>({
+  modelCardSelected: {
     marginBottom: Spacing.sm,
-    backgroundColor: Colors.primary100,
+    backgroundColor: Colors.primaryLighter,
     borderWidth: 2,
     borderColor: Colors.primary,
-  }),
+  } as Record<string, unknown>,
 
   modelContent: new Style<View>({
     padding: Spacing.sm,

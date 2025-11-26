@@ -7,7 +7,7 @@
 import { Component } from 'valdi_core/src/Component';
 import { Style } from 'valdi_core/src/Style';
 import { View, Label } from 'valdi_tsx/src/NativeTemplateElements';
-import { Colors, Fonts, Spacing } from 'common/src';
+import { Colors, Fonts, Spacing, BorderRadius } from 'common/src';
 import { systemFont } from 'valdi_core/src/SystemFont';
 import { ConversationListItemData } from './types';
 
@@ -101,7 +101,7 @@ export class ConversationCard extends Component<ConversationCardProps> {
 
         {/* Right: Status & Unread */}
         <view style={styles.rightSection}>
-          <view style={{ ...styles.statusDot, backgroundColor: statusColor }} />
+          <view style={this.getStatusDotStyle(statusColor)} />
           {conversation.unreadCount > 0 && (
             <view style={styles.unreadBadge}>
               <label
@@ -165,6 +165,19 @@ export class ConversationCard extends Component<ConversationCardProps> {
         return Colors.gray400;
     }
   }
+
+  /**
+   * Get status dot style with dynamic background color
+   */
+  private getStatusDotStyle(statusColor: string): Style<View> {
+    return new Style<View>({
+      width: 8,
+      height: 8,
+      borderRadius: 4,
+      backgroundColor: statusColor,
+      marginBottom: Spacing.xs,
+    });
+  }
 }
 
 const styles = {
@@ -173,7 +186,7 @@ const styles = {
     alignItems: 'flex-start',
     padding: Spacing.base,
     backgroundColor: Colors.surface,
-    borderRadius: Spacing.radiusMd,
+    borderRadius: BorderRadius.md,
     marginBottom: Spacing.sm,
     borderWidth: 1,
     borderColor: Colors.border,
@@ -184,8 +197,8 @@ const styles = {
     flexDirection: 'row',
     alignItems: 'flex-start',
     padding: Spacing.base,
-    backgroundColor: Colors.primary50,
-    borderRadius: Spacing.radiusMd,
+    backgroundColor: Colors.primaryLighter,
+    borderRadius: BorderRadius.md,
     marginBottom: Spacing.sm,
     borderWidth: 2,
     borderColor: Colors.primary,
@@ -201,7 +214,7 @@ const styles = {
     width: 48,
     height: 48,
     borderRadius: 24,
-    backgroundColor: Colors.primary100,
+    backgroundColor: Colors.primaryLight,
     justifyContent: 'center',
     alignItems: 'center',
   }),
@@ -234,7 +247,7 @@ const styles = {
   }),
 
   title: new Style<Label>({
-    ...Fonts.bodyLargeMedium,
+    ...Fonts.bodyMedium,
     color: Colors.textPrimary,
     flexGrow: 1,
   }),
@@ -246,7 +259,7 @@ const styles = {
   }),
 
   preview: new Style<Label>({
-    ...Fonts.bodyRegular,
+    ...Fonts.body,
     color: Colors.textSecondary,
     marginBottom: Spacing.xs,
   }),
@@ -283,6 +296,6 @@ const styles = {
 
   unreadText: new Style<Label>({
     ...Fonts.caption,
-    color: Colors.white,
+    color: Colors.textInverse,
   }),
 };

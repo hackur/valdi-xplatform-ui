@@ -224,6 +224,33 @@ export class WorkflowDemoScreen extends StatefulComponent<{}, WorkflowDemoScreen
     console.error('Workflow demo error:', error);
   };
 
+  /**
+   * Get tab style based on selection state
+   */
+  private getTabStyle(isSelected: boolean): Style<View> {
+    return new Style<View>({
+      paddingLeft: Spacing.xl,
+      paddingRight: Spacing.xl,
+      paddingTop: Spacing.md,
+      paddingBottom: Spacing.md,
+      borderRadius: BorderRadius.base,
+      marginRight: Spacing.sm,
+      backgroundColor: isSelected ? Colors.primary : Colors.surface,
+      borderWidth: 1,
+      borderColor: isSelected ? Colors.primary : Colors.border,
+    });
+  }
+
+  /**
+   * Get tab label style based on selection state
+   */
+  private getTabLabelStyle(isSelected: boolean): Style<Label> {
+    return new Style<Label>({
+      ...Fonts.buttonSmall,
+      color: isSelected ? Colors.textInverse : Colors.textPrimary,
+    });
+  }
+
   override onRender() {
     const { selectedTab, executionStates } = this.state;
     const selectedWorkflow = this.workflows.find((w) => w.id === selectedTab)!;
@@ -247,11 +274,7 @@ export class WorkflowDemoScreen extends StatefulComponent<{}, WorkflowDemoScreen
           <label value="Workflow Patterns Demo" style={styles.pageTitle} />
           <label
             value="Explore different AI workflow patterns and see how they execute step-by-step"
-            style={{
-              ...Fonts.body,
-              color: Colors.textSecondary,
-              marginTop: Spacing.sm,
-            }}
+            style={styles.headerSubtitle}
           />
         </view>
 
@@ -261,29 +284,12 @@ export class WorkflowDemoScreen extends StatefulComponent<{}, WorkflowDemoScreen
             {this.workflows.map((workflow) => (
               <view
                 key={workflow.id}
-                style={{
-                  ...styles.tab,
-                  backgroundColor:
-                    selectedTab === workflow.id
-                      ? Colors.primary
-                      : Colors.surface,
-                  borderWidth: 1,
-                  borderColor:
-                    selectedTab === workflow.id
-                      ? Colors.primary
-                      : Colors.border,
-                }}
+                style={this.getTabStyle(selectedTab === workflow.id)}
                 onTap={() => this.handleTabSelect(workflow.id)}
               >
                 <label
                   value={`${workflow.icon} ${workflow.name}`}
-                  style={{
-                    ...Fonts.buttonSmall,
-                    color:
-                      selectedTab === workflow.id
-                        ? Colors.textInverse
-                        : Colors.textPrimary,
-                  }}
+                  style={this.getTabLabelStyle(selectedTab === workflow.id)}
                 />
               </view>
             ))}
@@ -300,36 +306,24 @@ export class WorkflowDemoScreen extends StatefulComponent<{}, WorkflowDemoScreen
             />
             <label
               value={selectedWorkflow.description}
-              style={{
-                ...Fonts.body,
-                color: Colors.textSecondary,
-                marginTop: Spacing.md,
-              }}
+              style={styles.workflowDescription}
             />
 
             {/* Use Cases */}
             <view style={styles.useCasesContainer}>
               <label
                 value="Common Use Cases:"
-                style={{
-                  ...Fonts.captionBold,
-                  color: Colors.textSecondary,
-                  marginBottom: Spacing.sm,
-                }}
+                style={styles.useCasesTitle}
               />
               {selectedWorkflow.useCases.map((useCase, index) => (
-                <view key={index} style={styles.useCaseItem}>
+                <view key={`useCase-${index}`} style={styles.useCaseItem}>
                   <label
                     value="•"
-                    style={{ ...Fonts.body, color: Colors.primary }}
+                    style={styles.useCaseBullet}
                   />
                   <label
                     value={useCase}
-                    style={{
-                      ...Fonts.body,
-                      color: Colors.textSecondary,
-                      marginLeft: Spacing.sm,
-                    }}
+                    style={styles.useCaseText}
                   />
                 </view>
               ))}
@@ -346,7 +340,7 @@ export class WorkflowDemoScreen extends StatefulComponent<{}, WorkflowDemoScreen
               loading={executionState.status === 'running'}
               disabled={executionState.status === 'running'}
               onTap={() => this.handleRunWorkflow(selectedTab)}
-              style={{ marginTop: Spacing.xl }}
+              style={styles.buttonContainer as unknown as Record<string, unknown>}
             />
           </Card>
 
@@ -418,5 +412,38 @@ const styles = {
 
   sectionTitle: new Style<Label>({
     ...Fonts.h2,
+  }),
+
+  headerSubtitle: new Style<Label>({
+    ...Fonts.body,
+    color: Colors.textSecondary,
+    marginTop: Spacing.sm,
+  }),
+
+  workflowDescription: new Style<Label>({
+    ...Fonts.body,
+    color: Colors.textSecondary,
+    marginTop: Spacing.md,
+  }),
+
+  useCasesTitle: new Style<Label>({
+    ...Fonts.captionBold,
+    color: Colors.textSecondary,
+    marginBottom: Spacing.sm,
+  }),
+
+  useCaseBullet: new Style<Label>({
+    ...Fonts.body,
+    color: Colors.primary,
+  }),
+
+  useCaseText: new Style<Label>({
+    ...Fonts.body,
+    color: Colors.textSecondary,
+    marginLeft: Spacing.sm,
+  }),
+
+  buttonContainer: new Style<View>({
+    marginTop: Spacing.xl,
   }),
 };

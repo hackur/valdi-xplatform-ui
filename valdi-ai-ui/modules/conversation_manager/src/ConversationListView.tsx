@@ -8,7 +8,7 @@ import { StatefulComponent } from 'valdi_core/src/Component';
 import { Style } from 'valdi_core/src/Style';
 import { View, Label } from 'valdi_tsx/src/NativeTemplateElements';
 import { NavigationController } from 'valdi_navigation/src/NavigationController';
-import { Colors, Fonts, Spacing, LoadingSpinner, ConfirmDialog } from 'common/src';
+import { Colors, Fonts, Spacing, BorderRadius, LoadingSpinner, ConfirmDialog } from 'common/src';
 import { systemFont } from 'valdi_core/src/SystemFont';
 import { ConversationListItemData } from './types';
 import { HistoryManager } from './HistoryManager';
@@ -418,7 +418,7 @@ const styles = {
     paddingRight: Spacing.base,
     paddingTop: Spacing.sm,
     paddingBottom: Spacing.sm,
-    borderRadius: Spacing.radiusMd,
+    borderRadius: BorderRadius.md,
     backgroundColor: 'transparent',
   }),
 
@@ -427,8 +427,8 @@ const styles = {
     paddingRight: Spacing.base,
     paddingTop: Spacing.sm,
     paddingBottom: Spacing.sm,
-    borderRadius: Spacing.radiusMd,
-    backgroundColor: Colors.primary100,
+    borderRadius: BorderRadius.md,
+    backgroundColor: Colors.primaryLighter,
   }),
 
   tabText: new Style<Label>({
@@ -495,7 +495,7 @@ const styles = {
   }),
 
   emptySubtext: new Style<Label>({
-    ...Fonts.bodyRegular,
+    ...Fonts.body,
     color: Colors.textTertiary,
     textAlign: 'center',
   }),
@@ -514,7 +514,7 @@ const styles = {
 
   selectionText: new Style<Label>({
     ...Fonts.bodyMedium,
-    color: Colors.white,
+    color: Colors.textInverse,
   }),
 
   selectionActions: new Style<View>({
@@ -527,11 +527,11 @@ const styles = {
     paddingTop: Spacing.sm,
     paddingBottom: Spacing.sm,
     backgroundColor: 'rgba(255, 255, 255, 0.2)',
-    borderRadius: Spacing.radiusSm,
+    borderRadius: BorderRadius.sm,
   }),
 
   actionButtonText: new Style<Label>({
     ...Fonts.bodyMedium,
-    color: Colors.white,
+    color: Colors.textInverse,
   }),
 };

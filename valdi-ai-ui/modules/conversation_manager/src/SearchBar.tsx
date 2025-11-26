@@ -6,9 +6,9 @@
 
 import { StatefulComponent } from 'valdi_core/src/Component';
 import { Style } from 'valdi_core/src/Style';
-import { View, Label } from 'valdi_tsx/src/NativeTemplateElements';
+import { View, Label, EditTextEvent } from 'valdi_tsx/src/NativeTemplateElements';
 import { systemFont } from 'valdi_core/src/SystemFont';
-import { Colors, Fonts, Spacing } from 'common/src';
+import { Colors, Fonts, Spacing, BorderRadius, SemanticShadows } from 'common/src';
 
 /**
  * SearchBar Props
@@ -47,7 +47,7 @@ export class SearchBar extends StatefulComponent<
   SearchBarProps,
   SearchBarState
 > {
-  private debounceTimer?: NodeJS.Timeout;
+  private debounceTimer?: ReturnType<typeof setTimeout>;
 
   override state: SearchBarState = {
     query: '',
@@ -64,16 +64,11 @@ export class SearchBar extends StatefulComponent<
         <label value="🔍" style={styles.searchIcon} />
 
         {/* Text Input */}
-        <textInput
+        <textfield
           value={query}
           placeholder={placeholder}
-          onChangeText={this.handleChange}
-          onFocus={this.handleFocus}
-          onBlur={this.handleBlur}
+          onChange={this.handleChange}
           style={styles.input}
-          placeholderTextColor={Colors.textTertiary}
-          autoCapitalize="none"
-          autoCorrect={false}
         />
 
         {/* Clear Button */}
@@ -89,7 +84,8 @@ export class SearchBar extends StatefulComponent<
   /**
    * Handle text change
    */
-  private handleChange = (text: string): void => {
+  private handleChange = (event: EditTextEvent): void => {
+    const text = event.text;
     this.setState({ query: text });
 
     // Debounce search
@@ -154,7 +150,7 @@ const styles = {
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: Colors.surface,
-    borderRadius: Spacing.radiusMd,
+    borderRadius: BorderRadius.md,
     borderWidth: 1,
     borderColor: Colors.border,
     paddingLeft: Spacing.base,
@@ -168,7 +164,7 @@ const styles = {
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: Colors.surface,
-    borderRadius: Spacing.radiusMd,
+    borderRadius: BorderRadius.md,
     borderWidth: 2,
     borderColor: Colors.primary,
     paddingLeft: Spacing.base,
@@ -176,7 +172,7 @@ const styles = {
     paddingTop: Spacing.sm,
     paddingBottom: Spacing.sm,
     marginBottom: Spacing.base,
-    ...Shadows.sm,
+    ...SemanticShadows.card,
   }),
 
   searchIcon: new Style<Label>({
@@ -185,10 +181,8 @@ const styles = {
     color: Colors.textTertiary,
   }),
 
-  input: new Style<Label>({
+  input: new Style<View>({
     flexGrow: 1,
-    ...Fonts.bodyRegular,
-    color: Colors.textPrimary,
     padding: 0,
   }),
 

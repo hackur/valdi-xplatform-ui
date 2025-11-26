@@ -429,7 +429,7 @@ const styles = {
   }),
 
   headerSubtitle: new Style<Label>({
-    ...Fonts.bodyRegular,
+    ...Fonts.body,
     color: Colors.textSecondary,
   }),
 
@@ -486,14 +486,14 @@ const styles = {
   }),
 
   emptySubtext: new Style<Label>({
-    ...Fonts.bodyRegular,
+    ...Fonts.body,
     color: Colors.textTertiary,
     textAlign: 'center',
   }),
 
-  providerCard: new Style<View>({
+  providerCard: {
     marginBottom: Spacing.base,
-  }),
+  } as Record<string, unknown>,
 
   providerContent: new Style<View>({
     padding: Spacing.sm,
