@@ -5,8 +5,9 @@
  * Displays messages and handles user input.
  */
 
-import { NavigationPageStatefulComponent } from 'valdi_core/src/Component';
+import { StatefulComponent } from 'valdi_core/src/Component';
 import { Style } from 'valdi_core/src/Style';
+import { View } from 'valdi_tsx/src/NativeTemplateElements';
 import { NavigationController } from 'valdi_navigation/src/NavigationController';
 import {
   Colors,
@@ -66,7 +67,7 @@ interface ChatViewState {
  * />
  * ```
  */
-export class ChatView extends NavigationPageStatefulComponent<
+export class ChatView extends StatefulComponent<
   ChatViewProps,
   ChatViewState
 > {
@@ -319,7 +320,7 @@ export class ChatView extends NavigationPageStatefulComponent<
         )}
 
         {/* Messages List */}
-        <scrollView style={styles.messagesList}>
+        <scroll style={styles.messagesList}>
           <view style={styles.messagesContent}>
             {messages.length === 0 ? (
               <view style={styles.emptyState}>
@@ -335,7 +336,7 @@ export class ChatView extends NavigationPageStatefulComponent<
               messages.map((message) => this.renderMessage(message))
             )}
           </view>
-        </scrollView>
+        </scroll>
 
         {/* Input Bar */}
         <InputBar
@@ -349,39 +350,45 @@ export class ChatView extends NavigationPageStatefulComponent<
 }
 
 const styles = {
-  container: new Style({
-    flex: 1,
+  container: new Style<View>({
+    flexGrow: 1,
     backgroundColor: Colors.background,
   }),
 
-  header: new Style({
-    paddingHorizontal: SemanticSpacing.screenPaddingHorizontal,
-    paddingVertical: Spacing.base,
-    borderBottomWidth: 1,
-    borderBottomColor: Colors.border,
+  header: new Style<View>({
+    paddingLeft: SemanticSpacing.screenPaddingHorizontal,
+    paddingRight: SemanticSpacing.screenPaddingHorizontal,
+    paddingTop: Spacing.base,
+    paddingBottom: Spacing.base,
+    borderWidth: 1,
+    borderColor: Colors.border,
     backgroundColor: Colors.surface,
   }),
 
-  errorContainer: new Style({
-    paddingHorizontal: SemanticSpacing.screenPaddingHorizontal,
-    paddingVertical: Spacing.sm,
+  errorContainer: new Style<View>({
+    paddingLeft: SemanticSpacing.screenPaddingHorizontal,
+    paddingRight: SemanticSpacing.screenPaddingHorizontal,
+    paddingTop: Spacing.sm,
+    paddingBottom: Spacing.sm,
     backgroundColor: Colors.errorBackground || '#ffebee',
   }),
 
-  messagesList: new Style({
-    flex: 1,
+  messagesList: new Style<View>({
+    flexGrow: 1,
   }),
 
-  messagesContent: new Style({
-    paddingHorizontal: SemanticSpacing.screenPaddingHorizontal,
-    paddingVertical: Spacing.base,
-    gap: Spacing.sm,
+  messagesContent: new Style<View>({
+    paddingLeft: SemanticSpacing.screenPaddingHorizontal,
+    paddingRight: SemanticSpacing.screenPaddingHorizontal,
+    paddingTop: Spacing.base,
+    paddingBottom: Spacing.base,
   }),
 
-  emptyState: new Style({
-    flex: 1,
+  emptyState: new Style<View>({
+    flexGrow: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    paddingVertical: Spacing.massive,
+    paddingTop: Spacing.massive,
+    paddingBottom: Spacing.massive,
   }),
 };

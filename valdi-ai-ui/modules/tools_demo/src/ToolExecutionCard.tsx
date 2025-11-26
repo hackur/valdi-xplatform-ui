@@ -11,6 +11,7 @@
 
 import { Component } from 'valdi_core/src/Component';
 import { Style } from 'valdi_core/src/Style';
+import { View, Label } from 'valdi_tsx/src/NativeTemplateElements';
 import { Card, Colors, Fonts, Spacing, BorderRadius } from 'common/src';
 
 /**
@@ -214,50 +215,47 @@ export class ToolExecutionCard extends Component<ToolExecutionCardProps> {
 }
 
 const styles = {
-  container: new Style({
+  container: new Style<View>({
     padding: Spacing.xl,
   }),
 
-  header: new Style({
+  header: new Style<View>({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'flex-start',
     marginBottom: Spacing.md,
   }),
 
-  headerLeft: new Style({
-    flex: 1,
-    gap: Spacing.xs,
+  headerLeft: new Style<View>({
+    flexGrow: 1,
   }),
 
-  headerRight: new Style({
+  headerRight: new Style<View>({
     alignItems: 'flex-end',
   }),
 
-  statusBadge: new Style({
+  statusBadge: new Style<View>({
     flexDirection: 'row',
     alignItems: 'center',
-    gap: Spacing.xs,
   }),
 
-  statusIndicator: new Style({
+  statusIndicator: new Style<View>({
     width: 8,
     height: 8,
     borderRadius: 4,
   }),
 
-  metadataRow: new Style({
+  metadataRow: new Style<View>({
     flexDirection: 'row',
     alignItems: 'center',
-    gap: Spacing.sm,
     marginBottom: Spacing.md,
   }),
 
-  section: new Style({
+  section: new Style<View>({
     marginTop: Spacing.md,
   }),
 
-  codeBlock: new Style({
+  codeBlock: new Style<View>({
     backgroundColor: Colors.codeBackground,
     padding: Spacing.md,
     borderRadius: BorderRadius.sm,

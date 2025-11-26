@@ -5,9 +5,10 @@
  * Displays navigation options to different features.
  */
 
-import { NavigationPageComponent } from 'valdi_core/src/Component';
+import { Component } from 'valdi_core/src/Component';
 import { Style } from 'valdi_core/src/Style';
 import { NavigationController } from 'valdi_navigation/src/NavigationController';
+import { View } from 'valdi_tsx/src/NativeTemplateElements';
 import {
   Colors,
   Fonts,
@@ -48,7 +49,7 @@ interface FeatureCard {
 /**
  * HomePage Component
  */
-export class HomePage extends NavigationPageComponent<HomePageProps> {
+export class HomePage extends Component<HomePageProps> {
   private features: FeatureCard[] = [
     {
       id: 'chat',
@@ -325,42 +326,42 @@ export class HomePage extends NavigationPageComponent<HomePageProps> {
 }
 
 const styles = {
-  container: new Style({
-    flex: 1,
+  container: new Style<View>({
+    flexGrow: 1,
     backgroundColor: Colors.background,
-    paddingHorizontal: SemanticSpacing.screenPaddingHorizontal,
-    paddingVertical: SemanticSpacing.screenPaddingVertical,
+    paddingLeft: SemanticSpacing.screenPaddingHorizontal,
+    paddingRight: SemanticSpacing.screenPaddingHorizontal,
+    paddingTop: SemanticSpacing.screenPaddingVertical,
+    paddingBottom: SemanticSpacing.screenPaddingVertical,
   }),
 
-  header: new Style({
+  header: new Style<View>({
     marginBottom: Spacing.xl,
     paddingTop: Spacing.xl,
   }),
 
-  welcomeCard: new Style({
+  welcomeCard: new Style<View>({
     marginBottom: Spacing.xxl,
   }),
 
-  featuresSection: new Style({
-    flex: 1,
+  featuresSection: new Style<View>({
+    flexGrow: 1,
   }),
 
-  featuresGrid: new Style({
+  featuresGrid: new Style<View>({
     flexDirection: 'column',
-    gap: Spacing.base,
   }),
 
-  featureCard: new Style({
+  featureCard: new Style<View>({
     width: '100%',
   }),
 
-  featureContent: new Style({
+  featureContent: new Style<View>({
     flexDirection: 'row',
     alignItems: 'center',
-    gap: Spacing.base,
   }),
 
-  featureIcon: new Style({
+  featureIcon: new Style<View>({
     width: 64,
     height: 64,
     alignItems: 'center',
@@ -369,12 +370,13 @@ const styles = {
     borderRadius: BorderRadius.md,
   }),
 
-  featureText: new Style({
-    flex: 1,
+  featureText: new Style<View>({
+    flexGrow: 1,
   }),
 
-  footer: new Style({
-    paddingVertical: Spacing.xl,
+  footer: new Style<View>({
+    paddingTop: Spacing.xl,
+    paddingBottom: Spacing.xl,
     alignItems: 'center',
   }),
 };

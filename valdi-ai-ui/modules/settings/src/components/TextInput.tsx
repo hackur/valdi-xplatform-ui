@@ -6,6 +6,7 @@
 
 import { Component } from 'valdi_core/src/Component';
 import { Style } from 'valdi_core/src/Style';
+import { View, Label } from 'valdi_tsx/src/NativeTemplateElements';
 import { Colors, Fonts, Spacing, BorderRadius } from 'common/src';
 
 /**
@@ -134,7 +135,7 @@ export class TextInput extends Component<TextInputProps, TextInputState> {
           type="text"
           value={value}
           placeholder={placeholder}
-          disabled={disabled}
+          editable={!disabled}
           onChange={this.handleChange}
           onFocus={this.handleFocus}
           onBlur={this.handleBlur}
@@ -151,12 +152,14 @@ export class TextInput extends Component<TextInputProps, TextInputState> {
 }
 
 const styles = {
-  container: new Style({
+  container: new Style<View>({
     width: '100%',
     borderWidth: 1,
     borderRadius: BorderRadius.base,
-    paddingHorizontal: Spacing.base,
-    paddingVertical: Spacing.sm,
+    paddingLeft: Spacing.base,
+    paddingRight: Spacing.base,
+    paddingTop: Spacing.sm,
+    paddingBottom: Spacing.sm,
   }),
 
   input: {

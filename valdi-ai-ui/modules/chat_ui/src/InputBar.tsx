@@ -7,6 +7,7 @@
 
 import { StatefulComponent } from 'valdi_core/src/Component';
 import { Style } from 'valdi_core/src/Style';
+import { View, EditTextEvent } from 'valdi_tsx/src/NativeTemplateElements';
 import {
   Colors,
   Fonts,
@@ -46,8 +47,8 @@ export class InputBar extends StatefulComponent<InputBarProps, InputBarState> {
     text: '',
   };
 
-  private handleTextChange = (text: string): void => {
-    this.setState({ text });
+  private handleTextChange = (event: EditTextEvent): void => {
+    this.setState({ text: event.text });
   };
 
   private handleSend = (): void => {
@@ -75,14 +76,10 @@ export class InputBar extends StatefulComponent<InputBarProps, InputBarState> {
           <textfield
             value={text}
             placeholder={placeholder}
-            onValueChange={this.handleTextChange}
-            multiline={true}
-            style={{
-              ...styles.input,
-              ...Fonts.body,
-              color: Colors.textPrimary,
-            }}
-            disabled={disabled}
+            onChange={this.handleTextChange}
+            
+            style={styles.input}
+            editable={!disabled}
           />
 
           {/* Send Button */}
@@ -91,7 +88,7 @@ export class InputBar extends StatefulComponent<InputBarProps, InputBarState> {
               title="Send"
               variant="primary"
               size="small"
-              disabled={!canSend}
+              editable={canSend}
               onTap={this.handleSend}
             />
           </view>
@@ -102,34 +99,37 @@ export class InputBar extends StatefulComponent<InputBarProps, InputBarState> {
 }
 
 const styles = {
-  container: new Style({
+  container: new Style<View>({
     backgroundColor: Colors.surface,
-    borderTopWidth: 1,
-    borderTopColor: Colors.border,
-    paddingHorizontal: SemanticSpacing.inputBarPadding,
-    paddingVertical: Spacing.md,
+    borderWidth: 1,
+    borderColor: Colors.border,
+    paddingLeft: SemanticSpacing.inputBarPadding,
+    paddingRight: SemanticSpacing.inputBarPadding,
+    paddingTop: Spacing.md,
+    paddingBottom: Spacing.md,
     ...SemanticShadows.inputBar,
   }),
 
-  inputContainer: new Style({
+  inputContainer: new Style<View>({
     flexDirection: 'row',
     alignItems: 'flex-end',
-    gap: Spacing.sm,
   }),
 
-  input: new Style({
-    flex: 1,
+  input: new Style<View>({
+    flexGrow: 1,
     minHeight: 40,
     maxHeight: 120,
     backgroundColor: Colors.background,
     borderRadius: ChatBorderRadius.inputBar,
-    paddingHorizontal: Spacing.base,
-    paddingVertical: Spacing.sm,
+    paddingLeft: Spacing.base,
+    paddingRight: Spacing.base,
+    paddingTop: Spacing.sm,
+    paddingBottom: Spacing.sm,
     borderWidth: 1,
     borderColor: Colors.border,
   }),
 
-  sendButtonContainer: new Style({
+  sendButtonContainer: new Style<View>({
     marginBottom: Spacing.xs,
   }),
 };

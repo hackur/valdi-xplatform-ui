@@ -7,18 +7,29 @@
 
 # CRITICAL: Style Type Pattern
 
-NEVER use generic type parameters with Style. TypeScript infers the type automatically.
+ALWAYS use `Style<View>` or `Style<Label>` type parameters! The Valdi compiler REQUIRES these.
 
 ```typescript
-// [FAIL] WRONG - Do not use type parameters
-new Style<View>({...})
-new Style<Label>({...})
-new Style<{padding: number}>({...})
-: Style<View>
-
-// [PASS] CORRECT - Let TypeScript infer
+// [FAIL] WRONG - Missing type parameter (Bazel build will FAIL)
 new Style({...})
-: Style
+
+// [PASS] CORRECT - View styles for <view> elements
+new Style<View>({
+  flexDirection: 'row',
+  backgroundColor: Colors.surface,
+})
+
+// [PASS] CORRECT - Label styles for <label> elements (with font property)
+new Style<Label>({
+  font: systemBoldFont(16),
+  color: Colors.textPrimary,
+})
 ```
 
-Run `./scripts/fix-style-types.sh` to fix existing violations.
+**When to use which:**
+- `Style<View>` - Containers, layouts, wrappers (most common)
+- `Style<Label>` - Text styles with `font` property
+
+**Why required:** The type parameter `<T>` tells the Valdi compiler which native element type the style applies to. Without it, the Bazel/Valdi build fails.
+
+Run `./scripts/fix-style-types.sh` to add missing type parameters.

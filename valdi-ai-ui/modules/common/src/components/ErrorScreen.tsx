@@ -141,7 +141,7 @@ export class ErrorScreen extends Component<ErrorScreenProps> {
                 variant="primary"
                 size="large"
                 onTap={this.handleRetry}
-                style={{ flex: 1 }}
+                style={{ flexGrow: 1 }}
               />
             )}
             {showGoBackButton && (
@@ -150,7 +150,7 @@ export class ErrorScreen extends Component<ErrorScreenProps> {
                 variant="outline"
                 size="large"
                 onTap={this.handleGoBack}
-                style={{ flex: 1 }}
+                style={{ flexGrow: 1 }}
               />
             )}
           </view>

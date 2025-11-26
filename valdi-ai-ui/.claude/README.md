@@ -291,8 +291,8 @@ Use text-based status instead of emojis:
 - Reference /style-patterns for native properties
 - Use individual properties (no paddingVertical)
 - Always use design tokens from common/src/theme
-- NEVER use Style<T> type parameters - use plain Style (TypeScript infers type)
-- Run `./scripts/fix-style-types.sh` to auto-fix Style<T> violations
+- ALWAYS use Style<T> type parameters - `Style<View>` or `Style<Label>` (Valdi compiler requires them)
+- Run `./scripts/fix-style-types.sh` to auto-add missing type parameters
 
 ## Maintenance
 

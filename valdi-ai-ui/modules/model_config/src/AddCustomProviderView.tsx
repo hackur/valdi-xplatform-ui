@@ -5,6 +5,8 @@
  */
 
 import { StatefulComponent } from 'valdi_core/src/Component';
+import { Style } from 'valdi_core/src/Style';
+import { View, Label } from 'valdi_tsx/src/NativeTemplateElements';
 import { NavigationController } from 'valdi_navigation/src/NavigationController';
 import { Colors, Fonts, Spacing } from 'common/src';
 import { Button } from 'common/src';
@@ -148,7 +150,7 @@ export class AddCustomProviderView extends StatefulComponent<
         </view>
 
         {/* Form */}
-        <scrollView style={styles.scrollView}>
+        <scroll style={styles.scrollView}>
           <view style={styles.form}>
             {/* Provider Name */}
             <view style={styles.field}>
@@ -371,7 +373,7 @@ export class AddCustomProviderView extends StatefulComponent<
               </view>
             )}
           </view>
-        </scrollView>
+        </scroll>
 
         {/* Footer Actions */}
         <view style={styles.footer}>
@@ -570,49 +572,49 @@ export class AddCustomProviderView extends StatefulComponent<
 }
 
 const styles = {
-  container: new Style({
-    flex: 1,
+  container: new Style<View>({
+    flexGrow: 1,
     backgroundColor: Colors.background,
   }),
 
-  header: new Style({
+  header: new Style<View>({
     padding: Spacing.base,
     backgroundColor: Colors.surface,
-    borderBottomWidth: 1,
-    borderBottomColor: Colors.border,
+    borderWidth: 1,
+    borderColor: Colors.border,
   }),
 
-  headerTitle: new Style({
+  headerTitle: new Style<Label>({
     ...Fonts.h2,
     color: Colors.textPrimary,
     marginBottom: Spacing.xs,
   }),
 
-  headerSubtitle: new Style({
+  headerSubtitle: new Style<Label>({
     ...Fonts.bodyRegular,
     color: Colors.textSecondary,
   }),
 
-  scrollView: new Style({
-    flex: 1,
+  scrollView: new Style<View>({
+    flexGrow: 1,
   }),
 
-  form: new Style({
+  form: new Style<View>({
     padding: Spacing.base,
   }),
 
-  field: new Style({
+  field: new Style<View>({
     marginBottom: Spacing.base,
   }),
 
-  label: new Style({
+  label: new Style<Label>({
     ...Fonts.bodyMedium,
     color: Colors.textPrimary,
     marginBottom: Spacing.xs,
     fontWeight: '600',
   }),
 
-  input: new Style({
+  input: new Style<View>({
     ...Fonts.bodyRegular,
     color: Colors.textPrimary,
     backgroundColor: Colors.surface,
@@ -622,7 +624,7 @@ const styles = {
     padding: Spacing.sm,
   }),
 
-  inputError: new Style({
+  inputError: new Style<View>({
     ...Fonts.bodyRegular,
     color: Colors.textPrimary,
     backgroundColor: Colors.surface,
@@ -632,38 +634,38 @@ const styles = {
     padding: Spacing.sm,
   }),
 
-  helpText: new Style({
+  helpText: new Style<Label>({
     ...Fonts.bodySmall,
     color: Colors.textTertiary,
     marginTop: Spacing.xs,
   }),
 
-  errorText: new Style({
+  errorText: new Style<Label>({
     ...Fonts.bodySmall,
     color: Colors.error,
     marginTop: Spacing.xs,
   }),
 
-  successText: new Style({
+  successText: new Style<Label>({
     ...Fonts.bodyMedium,
     color: Colors.success,
   }),
 
-  sectionTitle: new Style({
+  sectionTitle: new Style<Label>({
     ...Fonts.h3,
     color: Colors.textPrimary,
     marginTop: Spacing.lg,
     marginBottom: Spacing.base,
   }),
 
-  checkbox: new Style({
+  checkbox: new Style<View>({
     flexDirection: 'row',
     alignItems: 'center',
     marginBottom: Spacing.sm,
     padding: Spacing.sm,
   }),
 
-  checkboxUnchecked: new Style({
+  checkboxUnchecked: new Style<View>({
     width: 24,
     height: 24,
     borderWidth: 2,
@@ -674,7 +676,7 @@ const styles = {
     alignItems: 'center',
   }),
 
-  checkboxChecked: new Style({
+  checkboxChecked: new Style<View>({
     width: 24,
     height: 24,
     borderWidth: 2,
@@ -686,47 +688,46 @@ const styles = {
     alignItems: 'center',
   }),
 
-  checkmark: new Style({
+  checkmark: new Style<Label>({
     color: Colors.white,
     fontSize: 16,
     fontWeight: 'bold',
   }),
 
-  checkboxLabel: new Style({
+  checkboxLabel: new Style<Label>({
     ...Fonts.bodyMedium,
     color: Colors.textPrimary,
   }),
 
-  testSection: new Style({
+  testSection: new Style<View>({
     marginTop: Spacing.lg,
     marginBottom: Spacing.base,
   }),
 
-  testResult: new Style({
+  testResult: new Style<View>({
     marginTop: Spacing.sm,
     padding: Spacing.sm,
     backgroundColor: Colors.surface,
     borderRadius: Spacing.radiusMd,
   }),
 
-  errorContainer: new Style({
+  errorContainer: new Style<View>({
     padding: Spacing.sm,
     backgroundColor: Colors.error + '20',
     borderRadius: Spacing.radiusMd,
     marginBottom: Spacing.base,
   }),
 
-  footer: new Style({
+  footer: new Style<View>({
     flexDirection: 'row',
     justifyContent: 'space-between',
     padding: Spacing.base,
     backgroundColor: Colors.surface,
-    borderTopWidth: 1,
-    borderTopColor: Colors.border,
-    gap: Spacing.sm,
+    borderWidth: 1,
+    borderColor: Colors.border,
   }),
 
-  loadingOverlay: new Style({
+  loadingOverlay: new Style<View>({
     position: 'absolute',
     top: 0,
     left: 0,

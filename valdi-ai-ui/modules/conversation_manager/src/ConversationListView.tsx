@@ -6,6 +6,7 @@
 
 import { StatefulComponent } from 'valdi_core/src/Component';
 import { Style } from 'valdi_core/src/Style';
+import { View, Label } from 'valdi_tsx/src/NativeTemplateElements';
 import { NavigationController } from 'valdi_navigation/src/NavigationController';
 import { Colors, Fonts, Spacing, LoadingSpinner, ConfirmDialog } from 'common/src';
 import { ConversationListItemData } from './types';
@@ -173,7 +174,7 @@ export class ConversationListView extends StatefulComponent<
               />
             </view>
           ) : (
-            <scrollView style={styles.scrollView}>
+            <scroll style={styles.scrollView}>
               <view style={styles.list}>
                 {conversations.map((conversation) => (
                   <ConversationCard
@@ -187,7 +188,7 @@ export class ConversationListView extends StatefulComponent<
                   />
                 ))}
               </view>
-            </scrollView>
+            </scroll>
           )}
         </view>
 
@@ -389,114 +390,117 @@ export class ConversationListView extends StatefulComponent<
 }
 
 const styles = {
-  container: new Style({
-    flex: 1,
+  container: new Style<View>({
+    flexGrow: 1,
     backgroundColor: Colors.background,
   }),
 
-  header: new Style({
+  header: new Style<View>({
     padding: Spacing.base,
     backgroundColor: Colors.surface,
-    borderBottomWidth: 1,
-    borderBottomColor: Colors.border,
+    borderWidth: 1,
+    borderColor: Colors.border,
   }),
 
-  headerTitle: new Style({
+  headerTitle: new Style<Label>({
     ...Fonts.h2,
     color: Colors.textPrimary,
     marginBottom: Spacing.sm,
   }),
 
-  tabs: new Style({
+  tabs: new Style<View>({
     flexDirection: 'row',
-    gap: Spacing.sm,
   }),
 
-  tab: new Style({
-    paddingHorizontal: Spacing.base,
-    paddingVertical: Spacing.sm,
+  tab: new Style<View>({
+    paddingLeft: Spacing.base,
+    paddingRight: Spacing.base,
+    paddingTop: Spacing.sm,
+    paddingBottom: Spacing.sm,
     borderRadius: Spacing.radiusMd,
     backgroundColor: 'transparent',
   }),
 
-  tabActive: new Style({
-    paddingHorizontal: Spacing.base,
-    paddingVertical: Spacing.sm,
+  tabActive: new Style<View>({
+    paddingLeft: Spacing.base,
+    paddingRight: Spacing.base,
+    paddingTop: Spacing.sm,
+    paddingBottom: Spacing.sm,
     borderRadius: Spacing.radiusMd,
     backgroundColor: Colors.primary100,
   }),
 
-  tabText: new Style({
+  tabText: new Style<Label>({
     ...Fonts.bodyMedium,
     color: Colors.textSecondary,
   }),
 
-  tabTextActive: new Style({
+  tabTextActive: new Style<Label>({
     ...Fonts.bodyMedium,
     color: Colors.primary,
     fontWeight: '600',
   }),
 
-  searchContainer: new Style({
+  searchContainer: new Style<View>({
     padding: Spacing.base,
     backgroundColor: Colors.background,
   }),
 
-  content: new Style({
-    flex: 1,
+  content: new Style<View>({
+    flexGrow: 1,
   }),
 
-  scrollView: new Style({
-    flex: 1,
+  scrollView: new Style<View>({
+    flexGrow: 1,
   }),
 
-  list: new Style({
+  list: new Style<View>({
     padding: Spacing.base,
   }),
 
-  errorContainer: new Style({
-    flex: 1,
+  errorContainer: new Style<View>({
+    flexGrow: 1,
     justifyContent: 'center',
     alignItems: 'center',
     padding: Spacing.xl,
   }),
 
-  errorIcon: new Style({
+  errorIcon: new Style<Label>({
     fontSize: 48,
     marginBottom: Spacing.base,
   }),
 
-  errorText: new Style({
+  errorText: new Style<Label>({
     ...Fonts.bodyLarge,
     color: Colors.error,
     textAlign: 'center',
   }),
 
-  emptyContainer: new Style({
-    flex: 1,
+  emptyContainer: new Style<View>({
+    flexGrow: 1,
     justifyContent: 'center',
     alignItems: 'center',
     padding: Spacing.xl,
   }),
 
-  emptyIcon: new Style({
+  emptyIcon: new Style<Label>({
     fontSize: 64,
     marginBottom: Spacing.base,
   }),
 
-  emptyText: new Style({
+  emptyText: new Style<Label>({
     ...Fonts.h3,
     color: Colors.textSecondary,
     marginBottom: Spacing.sm,
   }),
 
-  emptySubtext: new Style({
+  emptySubtext: new Style<Label>({
     ...Fonts.bodyRegular,
     color: Colors.textTertiary,
     textAlign: 'center',
   }),
 
-  selectionBar: new Style({
+  selectionBar: new Style<View>({
     position: 'absolute',
     bottom: 0,
     left: 0,
@@ -508,24 +512,25 @@ const styles = {
     alignItems: 'center',
   }),
 
-  selectionText: new Style({
+  selectionText: new Style<Label>({
     ...Fonts.bodyMedium,
     color: Colors.white,
   }),
 
-  selectionActions: new Style({
+  selectionActions: new Style<View>({
     flexDirection: 'row',
-    gap: Spacing.sm,
   }),
 
-  actionButton: new Style({
-    paddingHorizontal: Spacing.base,
-    paddingVertical: Spacing.sm,
+  actionButton: new Style<View>({
+    paddingLeft: Spacing.base,
+    paddingRight: Spacing.base,
+    paddingTop: Spacing.sm,
+    paddingBottom: Spacing.sm,
     backgroundColor: 'rgba(255, 255, 255, 0.2)',
     borderRadius: Spacing.radiusSm,
   }),
 
-  actionButtonText: new Style({
+  actionButtonText: new Style<Label>({
     ...Fonts.bodyMedium,
     color: Colors.white,
   }),

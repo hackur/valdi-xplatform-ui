@@ -10,7 +10,7 @@
 
 import { Component } from 'valdi_core/src/Component';
 import { Style } from 'valdi_core/src/Style';
-import { View, ScrollView } from 'valdi_tsx/src/NativeTemplateElements';
+import { View, ScrollView, Label } from 'valdi_tsx/src/NativeTemplateElements';
 import {
   Card,
   Button,
@@ -241,7 +241,7 @@ export class WorkflowDemoScreen extends Component<{}, WorkflowDemoScreenState> {
         )}
         onError={this.handleWorkflowError}
       >
-        <scrollView style={styles.container}>
+        <scroll style={styles.container}>
         {/* Header */}
         <view style={styles.header}>
           <label value="Workflow Patterns Demo" style={Fonts.h1} />
@@ -257,7 +257,7 @@ export class WorkflowDemoScreen extends Component<{}, WorkflowDemoScreenState> {
 
         {/* Tabs */}
         <view style={styles.tabsContainer}>
-          <scrollView horizontal={true} style={styles.tabsScroll}>
+          <scroll horizontal={true} style={styles.tabsScroll}>
             {this.workflows.map((workflow) => (
               <view
                 key={workflow.id}
@@ -287,7 +287,7 @@ export class WorkflowDemoScreen extends Component<{}, WorkflowDemoScreenState> {
                 />
               </view>
             ))}
-          </scrollView>
+          </scroll>
         </view>
 
         {/* Selected Workflow Content */}
@@ -356,56 +356,57 @@ export class WorkflowDemoScreen extends Component<{}, WorkflowDemoScreenState> {
             executionState={executionState}
           />
         </view>
-      </scrollView>
+      </scroll>
       </ErrorBoundary>
     );
   }
 }
 
 const styles = {
-  container: new Style({
-    flex: 1,
+  container: new Style<ScrollView>({
+    flexGrow: 1,
     backgroundColor: Colors.background,
   }),
 
-  header: new Style({
+  header: new Style<View>({
     padding: Spacing.xl,
     backgroundColor: Colors.surface,
-    borderBottomWidth: 1,
-    borderBottomColor: Colors.border,
+    borderWidth: 1,
+    borderColor: Colors.border,
   }),
 
-  tabsContainer: new Style({
+  tabsContainer: new Style<View>({
     backgroundColor: Colors.surface,
-    borderBottomWidth: 1,
-    borderBottomColor: Colors.border,
+    borderWidth: 1,
+    borderColor: Colors.border,
   }),
 
-  tabsScroll: new Style({
+  tabsScroll: new Style<ScrollView>({
     padding: Spacing.base,
   }),
 
-  tab: new Style({
-    paddingHorizontal: Spacing.xl,
-    paddingVertical: Spacing.md,
+  tab: new Style<View>({
+    paddingLeft: Spacing.xl,
+    paddingRight: Spacing.xl,
+    paddingTop: Spacing.md,
+    paddingBottom: Spacing.md,
     borderRadius: BorderRadius.base,
     marginRight: Spacing.sm,
   }),
 
-  content: new Style({
-    padding: Spacing.xl,
-    gap: Spacing.xl,
-  }),
-
-  infoCard: new Style({
+  content: new Style<View>({
     padding: Spacing.xl,
   }),
 
-  useCasesContainer: new Style({
+  infoCard: new Style<View>({
+    padding: Spacing.xl,
+  }),
+
+  useCasesContainer: new Style<View>({
     marginTop: Spacing.xl,
   }),
 
-  useCaseItem: new Style({
+  useCaseItem: new Style<View>({
     flexDirection: 'row',
     alignItems: 'flex-start',
     marginBottom: Spacing.xs,

@@ -7,6 +7,7 @@
 
 import { StatefulComponent } from 'valdi_core/src/Component';
 import { Style } from 'valdi_core/src/Style';
+import { View, EditTextEvent } from 'valdi_tsx/src/NativeTemplateElements';
 import {
   Colors,
   Fonts,
@@ -163,7 +164,8 @@ export class ConversationList extends StatefulComponent<
     }
   };
 
-  private handleSearchChange = (query: string): void => {
+  private handleSearchChange = (event: EditTextEvent): void => {
+    const query = event.text;
     this.setState({ searchQuery: query });
     this.updateFilteredConversations();
     const { onSearchChange } = this.viewModel;
@@ -284,7 +286,7 @@ export class ConversationList extends StatefulComponent<
           <textfield
             value={searchQuery}
             placeholder="Search conversations..."
-            onValueChange={this.handleSearchChange}
+            onChange={this.handleSearchChange}
             style={{
               ...styles.searchInput,
               ...Fonts.body,
@@ -306,7 +308,7 @@ export class ConversationList extends StatefulComponent<
             <LoadingSpinner size="large" showText={true} text="Loading" />
           </view>
         ) : (
-          <scrollView
+          <scroll
             style={styles.scrollView}
             refreshControl={
               isRefreshing !== undefined
@@ -341,7 +343,7 @@ export class ConversationList extends StatefulComponent<
             ) : (
               this.renderEmptyState()
             )}
-          </scrollView>
+          </scroll>
         )}
       </view>
     );
@@ -349,74 +351,84 @@ export class ConversationList extends StatefulComponent<
 }
 
 const styles = {
-  container: new Style({
-    flex: 1,
+  container: new Style<View>({
+    flexGrow: 1,
     backgroundColor: Colors.background,
   }),
 
-  searchContainer: new Style({
-    paddingHorizontal: SemanticSpacing.screenPaddingHorizontal,
-    paddingVertical: Spacing.md,
+  searchContainer: new Style<View>({
+    paddingLeft: SemanticSpacing.screenPaddingHorizontal,
+    paddingRight: SemanticSpacing.screenPaddingHorizontal,
+    paddingTop: Spacing.md,
+    paddingBottom: Spacing.md,
     backgroundColor: Colors.surface,
-    borderBottomWidth: 1,
-    borderBottomColor: Colors.border,
-  }),
-
-  searchInput: new Style({
-    width: '100%',
-    height: 40,
-    backgroundColor: Colors.background,
-    borderRadius: BorderRadius.base,
-    paddingHorizontal: Spacing.base,
     borderWidth: 1,
     borderColor: Colors.border,
   }),
 
-  filterContainer: new Style({
-    flexDirection: 'row',
-    paddingHorizontal: SemanticSpacing.screenPaddingHorizontal,
-    paddingVertical: Spacing.md,
-    gap: Spacing.sm,
-    backgroundColor: Colors.surface,
-    borderBottomWidth: 1,
-    borderBottomColor: Colors.border,
+  searchInput: new Style<View>({
+    width: '100%',
+    height: 40,
+    backgroundColor: Colors.background,
+    borderRadius: BorderRadius.base,
+    paddingLeft: Spacing.base,
+    paddingRight: Spacing.base,
+    borderWidth: 1,
+    borderColor: Colors.border,
   }),
 
-  filterButton: new Style({
-    paddingHorizontal: Spacing.base,
-    paddingVertical: Spacing.sm,
+  filterContainer: new Style<View>({
+    flexDirection: 'row',
+    paddingLeft: SemanticSpacing.screenPaddingHorizontal,
+    paddingRight: SemanticSpacing.screenPaddingHorizontal,
+    paddingTop: Spacing.md,
+    paddingBottom: Spacing.md,
+    backgroundColor: Colors.surface,
+    borderWidth: 1,
+    borderColor: Colors.border,
+  }),
+
+  filterButton: new Style<View>({
+    paddingLeft: Spacing.base,
+    paddingRight: Spacing.base,
+    paddingTop: Spacing.sm,
+    paddingBottom: Spacing.sm,
     borderRadius: BorderRadius.base,
     borderWidth: 1,
     alignItems: 'center',
     justifyContent: 'center',
   }),
 
-  scrollView: new Style({
-    flex: 1,
+  scrollView: new Style<View>({
+    flexGrow: 1,
   }),
 
-  listContent: new Style({
+  listContent: new Style<View>({
     flexDirection: 'column',
   }),
 
-  loadingContainer: new Style({
-    flex: 1,
+  loadingContainer: new Style<View>({
+    flexGrow: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    paddingVertical: Spacing.massive,
+    paddingTop: Spacing.massive,
+    paddingBottom: Spacing.massive,
   }),
 
-  refreshingIndicator: new Style({
-    paddingVertical: Spacing.md,
+  refreshingIndicator: new Style<View>({
+    paddingTop: Spacing.md,
+    paddingBottom: Spacing.md,
     alignItems: 'center',
     justifyContent: 'center',
   }),
 
-  emptyState: new Style({
-    flex: 1,
+  emptyState: new Style<View>({
+    flexGrow: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    paddingHorizontal: SemanticSpacing.screenPaddingHorizontal,
-    paddingVertical: Spacing.massive,
+    paddingLeft: SemanticSpacing.screenPaddingHorizontal,
+    paddingRight: SemanticSpacing.screenPaddingHorizontal,
+    paddingTop: Spacing.massive,
+    paddingBottom: Spacing.massive,
   }),
 };

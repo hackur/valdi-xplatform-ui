@@ -5,9 +5,9 @@
  * Fully integrated with ChatIntegrationService.
  */
 
-import { NavigationPageStatefulComponent } from 'valdi_core/src/Component';
+import { StatefulComponent } from 'valdi_core/src/Component';
 import { Style } from 'valdi_core/src/Style';
-import { ScrollView } from 'valdi_tsx/src/NativeTemplateElements';
+import { View, Label, ScrollView } from 'valdi_tsx/src/NativeTemplateElements';
 import { NavigationController } from 'valdi_navigation/src/NavigationController';
 import { Colors, Spacing } from 'common/src';
 import { Message } from 'common/src';
@@ -41,7 +41,7 @@ export interface ChatViewStreamingState {
  * Real-time chat with streaming AI responses.
  * Follows KISS principle - simple, focused on chat functionality.
  */
-export class ChatViewStreaming extends NavigationPageStatefulComponent<
+export class ChatViewStreaming extends StatefulComponent<
   ChatViewStreamingProps,
   ChatViewStreamingState
 > {
@@ -98,7 +98,7 @@ export class ChatViewStreaming extends NavigationPageStatefulComponent<
             />
           </view>
         ) : (
-          <scrollView
+          <scroll
             ref={(ref: ScrollView) => (this.scrollViewRef = ref)}
             style={styles.scrollView}
           >
@@ -107,7 +107,7 @@ export class ChatViewStreaming extends NavigationPageStatefulComponent<
                 <MessageBubble key={message.id} message={message} />
               ))}
             </view>
-          </scrollView>
+          </scroll>
         )}
 
         {/* Input Bar */}
@@ -193,57 +193,57 @@ export class ChatViewStreaming extends NavigationPageStatefulComponent<
 }
 
 const styles = {
-  container: new Style({
-    flex: 1,
+  container: new Style<View>({
+    flexGrow: 1,
     backgroundColor: Colors.background,
   }),
 
-  scrollView: new Style({
-    flex: 1,
+  scrollView: new Style<View>({
+    flexGrow: 1,
   }),
 
-  messageList: new Style({
+  messageList: new Style<View>({
     padding: Spacing.base,
   }),
 
-  errorContainer: new Style({
-    flex: 1,
+  errorContainer: new Style<View>({
+    flexGrow: 1,
     justifyContent: 'center',
     alignItems: 'center',
     padding: Spacing.xl,
   }),
 
-  errorIcon: new Style({
+  errorIcon: new Style<Label>({
     fontSize: 48,
     marginBottom: Spacing.base,
   }),
 
-  errorText: new Style({
+  errorText: new Style<Label>({
     fontSize: 16,
     color: Colors.error,
     textAlign: 'center',
   }),
 
-  emptyContainer: new Style({
-    flex: 1,
+  emptyContainer: new Style<View>({
+    flexGrow: 1,
     justifyContent: 'center',
     alignItems: 'center',
     padding: Spacing.xl,
   }),
 
-  emptyIcon: new Style({
+  emptyIcon: new Style<Label>({
     fontSize: 64,
     marginBottom: Spacing.base,
   }),
 
-  emptyText: new Style({
+  emptyText: new Style<Label>({
     fontSize: 18,
     fontWeight: '600',
     color: Colors.textSecondary,
     marginBottom: Spacing.sm,
   }),
 
-  emptySubtext: new Style({
+  emptySubtext: new Style<Label>({
     fontSize: 14,
     color: Colors.textTertiary,
     textAlign: 'center',

@@ -6,6 +6,7 @@
 
 import { Component } from 'valdi_core/src/Component';
 import { Style } from 'valdi_core/src/Style';
+import { View, Label } from 'valdi_tsx/src/NativeTemplateElements';
 import { Colors, Fonts, Spacing } from 'common/src';
 import { ConversationListItemData } from './types';
 
@@ -166,7 +167,7 @@ export class ConversationCard extends Component<ConversationCardProps> {
 }
 
 const styles = {
-  card: new Style({
+  card: new Style<View>({
     flexDirection: 'row',
     alignItems: 'flex-start',
     padding: Spacing.base,
@@ -178,7 +179,7 @@ const styles = {
     minHeight: 80,
   }),
 
-  cardSelected: new Style({
+  cardSelected: new Style<View>({
     flexDirection: 'row',
     alignItems: 'flex-start',
     padding: Spacing.base,
@@ -190,12 +191,12 @@ const styles = {
     minHeight: 80,
   }),
 
-  leftSection: new Style({
+  leftSection: new Style<View>({
     marginRight: Spacing.sm,
     alignItems: 'center',
   }),
 
-  avatar: new Style({
+  avatar: new Style<View>({
     width: 48,
     height: 48,
     borderRadius: 24,
@@ -204,83 +205,82 @@ const styles = {
     alignItems: 'center',
   }),
 
-  avatarText: new Style({
+  avatarText: new Style<Label>({
     ...Fonts.bodyMedium,
     color: Colors.primary,
   }),
 
-  pinIndicator: new Style({
+  pinIndicator: new Style<View>({
     position: 'absolute',
     top: -4,
     right: -4,
   }),
 
-  pinIcon: new Style({
+  pinIcon: new Style<Label>({
     fontSize: 12,
   }),
 
-  centerSection: new Style({
-    flex: 1,
+  centerSection: new Style<View>({
+    flexGrow: 1,
     justifyContent: 'space-between',
   }),
 
-  header: new Style({
+  header: new Style<View>({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'flex-start',
     marginBottom: Spacing.xs,
   }),
 
-  title: new Style({
+  title: new Style<Label>({
     ...Fonts.bodyLargeMedium,
     color: Colors.textPrimary,
-    flex: 1,
+    flexGrow: 1,
   }),
 
-  time: new Style({
+  time: new Style<Label>({
     ...Fonts.caption,
     color: Colors.textTertiary,
     marginLeft: Spacing.xs,
   }),
 
-  preview: new Style({
+  preview: new Style<Label>({
     ...Fonts.bodyRegular,
     color: Colors.textSecondary,
     marginBottom: Spacing.xs,
   }),
 
-  footer: new Style({
+  footer: new Style<View>({
     flexDirection: 'row',
-    gap: Spacing.sm,
   }),
 
-  metadata: new Style({
+  metadata: new Style<Label>({
     ...Fonts.caption,
     color: Colors.textTertiary,
   }),
 
-  rightSection: new Style({
+  rightSection: new Style<View>({
     alignItems: 'flex-end',
-    gap: Spacing.xs,
   }),
 
-  statusDot: new Style({
+  statusDot: new Style<View>({
     width: 8,
     height: 8,
     borderRadius: 4,
   }),
 
-  unreadBadge: new Style({
+  unreadBadge: new Style<View>({
     backgroundColor: Colors.primary,
     borderRadius: 10,
     minWidth: 20,
     height: 20,
     justifyContent: 'center',
     alignItems: 'center',
-    paddingHorizontal: Spacing.xs,
+    paddingLeft: Spacing.xs,
+    paddingRight: Spacing.xs,
   }),
 
-  unreadText: new Style({
+  unreadText: new Style<Label>({
     ...Fonts.caption,
     color: Colors.white,
     fontWeight: '600',

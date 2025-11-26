@@ -8,7 +8,7 @@
 
 import { Component } from 'valdi_core/src/Component';
 import { Style } from 'valdi_core/src/Style';
-import { View, ScrollView } from 'valdi_tsx/src/NativeTemplateElements';
+import { View, ScrollView, Label } from 'valdi_tsx/src/NativeTemplateElements';
 import {
   Card,
   Button,
@@ -169,7 +169,7 @@ export class ToolsDemoScreen extends Component<{}, ToolsDemoScreenState> {
         )}
         onError={this.handleToolError}
       >
-        <scrollView style={styles.container}>
+        <scroll style={styles.container}>
         {/* Header */}
         <view style={styles.header}>
           <label value="Tools Demo" style={Fonts.h1} />
@@ -288,49 +288,48 @@ export class ToolsDemoScreen extends Component<{}, ToolsDemoScreenState> {
             />
           </view>
         )}
-      </scrollView>
+      </scroll>
       </ErrorBoundary>
     );
   }
 }
 
 const styles = {
-  container: new Style({
-    flex: 1,
+  container: new Style<ScrollView>({
+    flexGrow: 1,
     backgroundColor: Colors.background,
   }),
 
-  header: new Style({
+  header: new Style<View>({
     padding: Spacing.xl,
     backgroundColor: Colors.surface,
-    borderBottomWidth: 1,
-    borderBottomColor: Colors.border,
+    borderWidth: 1,
+    borderColor: Colors.border,
   }),
 
-  section: new Style({
+  section: new Style<View>({
     padding: Spacing.xl,
   }),
 
-  toolGrid: new Style({
+  toolGrid: new Style<View>({
     marginTop: Spacing.base,
-    gap: Spacing.base,
   }),
 
-  toolCard: new Style({
+  toolCard: new Style<View>({
     padding: Spacing.xl,
   }),
 
-  toolCardHeader: new Style({
+  toolCardHeader: new Style<View>({
     flexDirection: 'row',
     alignItems: 'center',
     marginBottom: Spacing.sm,
   }),
 
-  exampleInputContainer: new Style({
+  exampleInputContainer: new Style<View>({
     marginTop: Spacing.md,
   }),
 
-  codeBlock: new Style({
+  codeBlock: new Style<View>({
     backgroundColor: Colors.codeBackground,
     padding: Spacing.md,
     borderRadius: BorderRadius.sm,
@@ -338,18 +337,17 @@ const styles = {
     borderColor: Colors.codeBorder,
   }),
 
-  resultsHeader: new Style({
+  resultsHeader: new Style<View>({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
     marginBottom: Spacing.base,
   }),
 
-  resultsContainer: new Style({
-    gap: Spacing.base,
+  resultsContainer: new Style<View>({
   }),
 
-  emptyState: new Style({
+  emptyState: new Style<View>({
     alignItems: 'center',
     padding: Spacing.xxxl,
   }),

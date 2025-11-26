@@ -6,6 +6,7 @@
 
 import { Component } from 'valdi_core/src/Component';
 import { Style } from 'valdi_core/src/Style';
+import { View, Label } from 'valdi_tsx/src/NativeTemplateElements';
 import { Colors, BorderRadius } from 'common/src';
 
 /**
@@ -77,7 +78,7 @@ export class Switch extends Component<SwitchProps> {
 }
 
 const styles = {
-  track: new Style({
+  track: new Style<View>({
     width: 48,
     height: 28,
     borderRadius: BorderRadius.round,
@@ -85,7 +86,7 @@ const styles = {
     justifyContent: 'center',
   }),
 
-  thumb: new Style({
+  thumb: new Style<View>({
     width: 24,
     height: 24,
     borderRadius: BorderRadius.round,

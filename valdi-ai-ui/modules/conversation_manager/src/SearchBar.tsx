@@ -6,6 +6,7 @@
 
 import { StatefulComponent } from 'valdi_core/src/Component';
 import { Style } from 'valdi_core/src/Style';
+import { View, Label } from 'valdi_tsx/src/NativeTemplateElements';
 import { Colors, Fonts, Spacing } from 'common/src';
 
 /**
@@ -148,45 +149,49 @@ export class SearchBar extends StatefulComponent<
 }
 
 const styles = {
-  container: new Style({
+  container: new Style<View>({
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: Colors.surface,
     borderRadius: Spacing.radiusMd,
     borderWidth: 1,
     borderColor: Colors.border,
-    paddingHorizontal: Spacing.base,
-    paddingVertical: Spacing.sm,
+    paddingLeft: Spacing.base,
+    paddingRight: Spacing.base,
+    paddingTop: Spacing.sm,
+    paddingBottom: Spacing.sm,
     marginBottom: Spacing.base,
   }),
 
-  containerActive: new Style({
+  containerActive: new Style<View>({
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: Colors.surface,
     borderRadius: Spacing.radiusMd,
     borderWidth: 2,
     borderColor: Colors.primary,
-    paddingHorizontal: Spacing.base,
-    paddingVertical: Spacing.sm,
+    paddingLeft: Spacing.base,
+    paddingRight: Spacing.base,
+    paddingTop: Spacing.sm,
+    paddingBottom: Spacing.sm,
     marginBottom: Spacing.base,
     ...Shadows.sm,
   }),
 
-  searchIcon: new Style({
+  searchIcon: new Style<Label>({
     fontSize: 18,
     marginRight: Spacing.sm,
     color: Colors.textTertiary,
   }),
 
-  input: new Style({
-    flex: 1,
+  input: new Style<Label>({
+    flexGrow: 1,
     ...Fonts.bodyRegular,
     color: Colors.textPrimary,
     padding: 0,
   }),
 
-  clearButton: new Style({
+  clearButton: new Style<View>({
     width: 24,
     height: 24,
     borderRadius: 12,
@@ -196,7 +201,7 @@ const styles = {
     marginLeft: Spacing.sm,
   }),
 
-  clearIcon: new Style({
+  clearIcon: new Style<Label>({
     fontSize: 14,
     color: Colors.textSecondary,
   }),

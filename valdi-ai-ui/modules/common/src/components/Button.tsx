@@ -169,18 +169,18 @@ export class Button extends Component<ButtonProps> {
     }
   }
 
-  private getPadding(): { paddingHorizontal: number; paddingVertical: number } {
+  private getPadding(): { paddingLeft: number; paddingRight: number; paddingTop: number; paddingBottom: number } {
     const { size } = this.viewModel;
     switch (size) {
       case 'small':
-        return { paddingHorizontal: Spacing.sm, paddingVertical: Spacing.xs };
+        return { paddingLeft: Spacing.sm, paddingRight: Spacing.sm, paddingTop: Spacing.xs, paddingBottom: Spacing.xs };
       case 'medium':
-        return { paddingHorizontal: Spacing.base, paddingVertical: Spacing.sm };
+        return { paddingLeft: Spacing.base, paddingRight: Spacing.base, paddingTop: Spacing.sm, paddingBottom: Spacing.sm };
       case 'large':
-        return { paddingHorizontal: Spacing.lg, paddingVertical: Spacing.base };
+        return { paddingLeft: Spacing.lg, paddingRight: Spacing.lg, paddingTop: Spacing.base, paddingBottom: Spacing.base };
       case undefined:
       default:
-        return { paddingHorizontal: Spacing.base, paddingVertical: Spacing.sm };
+        return { paddingLeft: Spacing.base, paddingRight: Spacing.base, paddingTop: Spacing.sm, paddingBottom: Spacing.sm };
     }
   }
 
@@ -210,7 +210,7 @@ export class Button extends Component<ButtonProps> {
   private getContainerStyle(
     backgroundColor: string,
     borderColor: string,
-    padding: { paddingHorizontal: number; paddingVertical: number },
+    padding: { paddingLeft: number; paddingRight: number; paddingTop: number; paddingBottom: number },
     fullWidth: boolean | undefined,
     customStyle?: Record<string, unknown>,
   ): Style<View> {

@@ -9,7 +9,7 @@
  * - About section
  */
 
-import { NavigationPageStatefulComponent } from 'valdi_core/src/Component';
+import { StatefulComponent } from 'valdi_core/src/Component';
 import { NavigationController } from 'valdi_navigation/src/NavigationController';
 import {
   Colors,
@@ -69,7 +69,7 @@ interface SettingsScreenState {
 /**
  * SettingsScreen Component
  */
-export class SettingsScreen extends NavigationPageStatefulComponent<
+export class SettingsScreen extends StatefulComponent<
   SettingsScreenProps,
   SettingsScreenState
 > {
@@ -789,22 +789,25 @@ export class SettingsScreen extends NavigationPageStatefulComponent<
 
 const styles = {
   container: {
-    flex: 1,
+    flexGrow: 1,
     backgroundColor: Colors.background,
   } as Record<string, unknown>,
 
   header: {
-    paddingHorizontal: SemanticSpacing.screenPaddingHorizontal,
+    paddingLeft: SemanticSpacing.screenPaddingHorizontal,
+    paddingRight: SemanticSpacing.screenPaddingHorizontal,
     paddingTop: Spacing.xl,
     paddingBottom: Spacing.base,
-    borderBottomWidth: 1,
-    borderBottomColor: Colors.border,
+    borderWidth: 1,
+    borderColor: Colors.border,
   } as Record<string, unknown>,
 
   content: {
-    flex: 1,
-    paddingHorizontal: SemanticSpacing.screenPaddingHorizontal,
-    paddingVertical: Spacing.base,
+    flexGrow: 1,
+    paddingLeft: SemanticSpacing.screenPaddingHorizontal,
+    paddingRight: SemanticSpacing.screenPaddingHorizontal,
+    paddingTop: Spacing.base,
+    paddingBottom: Spacing.base,
   } as Record<string, unknown>,
 
   section: {
@@ -813,16 +816,15 @@ const styles = {
 
   providerGrid: {
     flexDirection: 'row',
-    gap: Spacing.base,
   } as Record<string, unknown>,
 
   providerCard: {
-    flex: 1,
+    flexGrow: 1,
     aspectRatio: 1,
   } as Record<string, unknown>,
 
   providerContent: {
-    flex: 1,
+    flexGrow: 1,
     alignItems: 'center',
     justifyContent: 'center',
   } as Record<string, unknown>,
@@ -852,13 +854,12 @@ const styles = {
   } as Record<string, unknown>,
 
   preferenceText: {
-    flex: 1,
+    flexGrow: 1,
     marginRight: Spacing.base,
   } as Record<string, unknown>,
 
   aboutLinks: {
     flexDirection: 'row',
-    gap: Spacing.sm,
     marginTop: Spacing.base,
   } as Record<string, unknown>,
 

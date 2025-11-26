@@ -6,7 +6,7 @@
 
 import { StatefulComponent } from 'valdi_core/src/Component';
 import { Style } from 'valdi_core/src/Style';
-import { View, Label, ScrollView } from 'valdi_tsx/src/NativeTemplateElements';
+import { View, Label } from 'valdi_tsx/src/NativeTemplateElements';
 import { NavigationController } from 'valdi_navigation/src/NavigationController';
 import { Colors, Fonts, Spacing } from 'common/src';
 import { Card } from 'common/src';
@@ -114,7 +114,7 @@ export class ModelSelectorView extends StatefulComponent<
             />
           </view>
         ) : (
-          <scrollView style={styles.scrollView}>
+          <scroll style={styles.scrollView}>
             <view style={styles.content}>
               {Array.from(modelsByProvider.entries()).map(
                 ([providerName, providerModels]) => (
@@ -238,7 +238,7 @@ export class ModelSelectorView extends StatefulComponent<
                 ),
               )}
             </view>
-          </scrollView>
+          </scroll>
         )}
       </view>
     );
@@ -333,155 +333,155 @@ export class ModelSelectorView extends StatefulComponent<
 }
 
 const styles = {
-  container: new Style({
-    flex: 1,
+  container: new Style<View>({
+    flexGrow: 1,
     backgroundColor: Colors.background,
   }),
 
-  header: new Style({
+  header: new Style<View>({
     padding: Spacing.base,
     backgroundColor: Colors.surface,
-    borderBottomWidth: 1,
-    borderBottomColor: Colors.border,
+    borderWidth: 1,
+    borderColor: Colors.border,
   }),
 
-  headerTitle: new Style({
+  headerTitle: new Style<Label>({
     ...Fonts.h2,
     color: Colors.textPrimary,
     marginBottom: Spacing.xs,
   }),
 
-  headerSubtitle: new Style({
+  headerSubtitle: new Style<Label>({
     ...Fonts.bodyRegular,
     color: Colors.textSecondary,
   }),
 
-  scrollView: new Style({
-    flex: 1,
+  scrollView: new Style<View>({
+    flexGrow: 1,
   }),
 
-  content: new Style({
+  content: new Style<View>({
     padding: Spacing.base,
   }),
 
-  emptyContainer: new Style({
-    flex: 1,
+  emptyContainer: new Style<View>({
+    flexGrow: 1,
     justifyContent: 'center',
     alignItems: 'center',
     padding: Spacing.xl,
   }),
 
-  emptyIcon: new Style({
+  emptyIcon: new Style<Label>({
     fontSize: 64,
     marginBottom: Spacing.base,
   }),
 
-  emptyText: new Style({
+  emptyText: new Style<Label>({
     ...Fonts.h3,
     color: Colors.textSecondary,
     marginBottom: Spacing.sm,
   }),
 
-  emptySubtext: new Style({
+  emptySubtext: new Style<Label>({
     ...Fonts.bodyRegular,
     color: Colors.textTertiary,
     textAlign: 'center',
   }),
 
-  providerSection: new Style({
+  providerSection: new Style<View>({
     marginBottom: Spacing.lg,
   }),
 
-  providerTitle: new Style({
+  providerTitle: new Style<Label>({
     ...Fonts.h3,
     color: Colors.textPrimary,
     marginBottom: Spacing.sm,
   }),
 
-  modelCard: new Style({
+  modelCard: new Style<View>({
     marginBottom: Spacing.sm,
     backgroundColor: Colors.surface,
     borderWidth: 1,
     borderColor: Colors.border,
   }),
 
-  modelCardSelected: new Style({
+  modelCardSelected: new Style<View>({
     marginBottom: Spacing.sm,
     backgroundColor: Colors.primary100,
     borderWidth: 2,
     borderColor: Colors.primary,
   }),
 
-  modelContent: new Style({
+  modelContent: new Style<View>({
     padding: Spacing.sm,
   }),
 
-  modelHeader: new Style({
+  modelHeader: new Style<View>({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
     marginBottom: Spacing.xs,
   }),
 
-  modelName: new Style({
+  modelName: new Style<Label>({
     ...Fonts.bodyLarge,
     color: Colors.textPrimary,
     fontWeight: '600',
   }),
 
-  selectedIcon: new Style({
+  selectedIcon: new Style<Label>({
     fontSize: 20,
     color: Colors.primary,
   }),
 
-  modelId: new Style({
+  modelId: new Style<Label>({
     ...Fonts.bodySmall,
     color: Colors.textSecondary,
     marginBottom: Spacing.xs,
   }),
 
-  capabilities: new Style({
+  capabilities: new Style<View>({
     flexDirection: 'row',
     flexWrap: 'wrap',
-    gap: Spacing.xs,
     marginBottom: Spacing.xs,
   }),
 
-  badge: new Style({
-    paddingHorizontal: Spacing.xs,
-    paddingVertical: 2,
+  badge: new Style<View>({
+    paddingLeft: Spacing.xs,
+    paddingRight: Spacing.xs,
+    paddingTop: 2,
+    paddingBottom: 2,
     backgroundColor: Colors.primary200,
     borderRadius: Spacing.radiusSm,
   }),
 
-  badgeText: new Style({
+  badgeText: new Style<Label>({
     ...Fonts.bodySmall,
     color: Colors.primary,
     fontSize: 10,
   }),
 
-  stats: new Style({
+  stats: new Style<View>({
     flexDirection: 'row',
     alignItems: 'center',
-    gap: Spacing.xs,
     marginBottom: Spacing.xs,
   }),
 
-  statText: new Style({
+  statText: new Style<Label>({
     ...Fonts.bodySmall,
     color: Colors.textSecondary,
   }),
 
-  statSeparator: new Style({
+  statSeparator: new Style<Label>({
     ...Fonts.bodySmall,
     color: Colors.textTertiary,
   }),
 
-  pricing: new Style({
+  pricing: new Style<View>({
     marginTop: Spacing.xs,
   }),
 
-  pricingText: new Style({
+  pricingText: new Style<Label>({
     ...Fonts.bodySmall,
     color: Colors.textTertiary,
   }),

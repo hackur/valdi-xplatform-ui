@@ -6,7 +6,7 @@
 
 import { StatefulComponent } from 'valdi_core/src/Component';
 import { Style } from 'valdi_core/src/Style';
-import { View, Label, ScrollView } from 'valdi_tsx/src/NativeTemplateElements';
+import { View, Label } from 'valdi_tsx/src/NativeTemplateElements';
 import { NavigationController } from 'valdi_navigation/src/NavigationController';
 import { Colors, Fonts, Spacing } from 'common/src';
 import { Card } from 'common/src';
@@ -114,7 +114,7 @@ export class ProviderSettingsView extends StatefulComponent<
                 />
               </view>
             ) : (
-              <scrollView style={styles.scrollView}>
+              <scroll style={styles.scrollView}>
                 <view style={styles.list}>
                   {providers.map((provider) => (
                     <Card key={provider.id} style={styles.providerCard}>
@@ -241,7 +241,7 @@ export class ProviderSettingsView extends StatefulComponent<
                     </Card>
                   ))}
                 </view>
-              </scrollView>
+              </scroll>
             )}
           </view>
         )}
@@ -409,209 +409,216 @@ export class ProviderSettingsView extends StatefulComponent<
 }
 
 const styles = {
-  container: new Style({
-    flex: 1,
+  container: new Style<View>({
+    flexGrow: 1,
     backgroundColor: Colors.background,
   }),
 
-  header: new Style({
+  header: new Style<View>({
     padding: Spacing.base,
     backgroundColor: Colors.surface,
-    borderBottomWidth: 1,
-    borderBottomColor: Colors.border,
+    borderWidth: 1,
+    borderColor: Colors.border,
   }),
 
-  headerTitle: new Style({
+  headerTitle: new Style<Label>({
     ...Fonts.h2,
     color: Colors.textPrimary,
     marginBottom: Spacing.xs,
   }),
 
-  headerSubtitle: new Style({
+  headerSubtitle: new Style<Label>({
     ...Fonts.bodyRegular,
     color: Colors.textSecondary,
   }),
 
-  content: new Style({
-    flex: 1,
+  content: new Style<View>({
+    flexGrow: 1,
   }),
 
-  addButtonContainer: new Style({
+  addButtonContainer: new Style<View>({
     padding: Spacing.base,
   }),
 
-  scrollView: new Style({
-    flex: 1,
+  scrollView: new Style<View>({
+    flexGrow: 1,
   }),
 
-  list: new Style({
+  list: new Style<View>({
     padding: Spacing.base,
   }),
 
-  errorContainer: new Style({
-    flex: 1,
+  errorContainer: new Style<View>({
+    flexGrow: 1,
     justifyContent: 'center',
     alignItems: 'center',
     padding: Spacing.xl,
   }),
 
-  errorIcon: new Style({
+  errorIcon: new Style<Label>({
     fontSize: 48,
     marginBottom: Spacing.base,
   }),
 
-  errorText: new Style({
+  errorText: new Style<Label>({
     ...Fonts.bodyLarge,
     color: Colors.error,
     textAlign: 'center',
   }),
 
-  emptyContainer: new Style({
-    flex: 1,
+  emptyContainer: new Style<View>({
+    flexGrow: 1,
     justifyContent: 'center',
     alignItems: 'center',
     padding: Spacing.xl,
   }),
 
-  emptyIcon: new Style({
+  emptyIcon: new Style<Label>({
     fontSize: 64,
     marginBottom: Spacing.base,
   }),
 
-  emptyText: new Style({
+  emptyText: new Style<Label>({
     ...Fonts.h3,
     color: Colors.textSecondary,
     marginBottom: Spacing.sm,
   }),
 
-  emptySubtext: new Style({
+  emptySubtext: new Style<Label>({
     ...Fonts.bodyRegular,
     color: Colors.textTertiary,
     textAlign: 'center',
   }),
 
-  providerCard: new Style({
+  providerCard: new Style<View>({
     marginBottom: Spacing.base,
   }),
 
-  providerContent: new Style({
+  providerContent: new Style<View>({
     padding: Spacing.sm,
   }),
 
-  providerHeader: new Style({
+  providerHeader: new Style<View>({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'flex-start',
     marginBottom: Spacing.sm,
   }),
 
-  providerInfo: new Style({
-    flex: 1,
+  providerInfo: new Style<View>({
+    flexGrow: 1,
   }),
 
-  providerName: new Style({
+  providerName: new Style<Label>({
     ...Fonts.bodyLarge,
     color: Colors.textPrimary,
     fontWeight: '600',
     marginBottom: Spacing.xs,
   }),
 
-  providerMeta: new Style({
+  providerMeta: new Style<View>({
     flexDirection: 'row',
     alignItems: 'center',
-    gap: Spacing.sm,
   }),
 
-  providerUrl: new Style({
+  providerUrl: new Style<Label>({
     ...Fonts.bodySmall,
     color: Colors.textSecondary,
   }),
 
-  statusBadge: new Style({
-    paddingHorizontal: Spacing.xs,
-    paddingVertical: 2,
+  statusBadge: new Style<View>({
+    paddingLeft: Spacing.xs,
+    paddingRight: Spacing.xs,
+    paddingTop: 2,
+    paddingBottom: 2,
     backgroundColor: Colors.success + '20',
     borderRadius: Spacing.radiusSm,
   }),
 
-  statusText: new Style({
+  statusText: new Style<Label>({
     ...Fonts.bodySmall,
     color: Colors.success,
     fontSize: 10,
   }),
 
-  statusBadgeDisabled: new Style({
-    paddingHorizontal: Spacing.xs,
-    paddingVertical: 2,
+  statusBadgeDisabled: new Style<View>({
+    paddingLeft: Spacing.xs,
+    paddingRight: Spacing.xs,
+    paddingTop: 2,
+    paddingBottom: 2,
     backgroundColor: Colors.textTertiary + '20',
     borderRadius: Spacing.radiusSm,
   }),
 
-  statusTextDisabled: new Style({
+  statusTextDisabled: new Style<Label>({
     ...Fonts.bodySmall,
     color: Colors.textTertiary,
     fontSize: 10,
   }),
 
-  modelInfo: new Style({
+  modelInfo: new Style<View>({
     marginBottom: Spacing.sm,
   }),
 
-  modelText: new Style({
+  modelText: new Style<Label>({
     ...Fonts.bodySmall,
     color: Colors.textSecondary,
   }),
 
-  capabilities: new Style({
+  capabilities: new Style<View>({
     flexDirection: 'row',
-    gap: Spacing.xs,
     marginBottom: Spacing.sm,
   }),
 
-  capabilityBadge: new Style({
-    paddingHorizontal: Spacing.xs,
-    paddingVertical: 2,
+  capabilityBadge: new Style<View>({
+    paddingLeft: Spacing.xs,
+    paddingRight: Spacing.xs,
+    paddingTop: 2,
+    paddingBottom: 2,
     backgroundColor: Colors.primary200,
     borderRadius: Spacing.radiusSm,
   }),
 
-  capabilityText: new Style({
+  capabilityText: new Style<Label>({
     ...Fonts.bodySmall,
     color: Colors.primary,
     fontSize: 10,
   }),
 
-  actions: new Style({
+  actions: new Style<View>({
     flexDirection: 'row',
-    gap: Spacing.sm,
     marginBottom: Spacing.sm,
   }),
 
-  actionButton: new Style({
-    paddingHorizontal: Spacing.sm,
-    paddingVertical: Spacing.xs,
+  actionButton: new Style<View>({
+    paddingLeft: Spacing.sm,
+    paddingRight: Spacing.sm,
+    paddingTop: Spacing.xs,
+    paddingBottom: Spacing.xs,
     backgroundColor: Colors.primary100,
     borderRadius: Spacing.radiusSm,
   }),
 
-  actionButtonText: new Style({
+  actionButtonText: new Style<Label>({
     ...Fonts.bodySmall,
     color: Colors.primary,
   }),
 
-  actionButtonDanger: new Style({
-    paddingHorizontal: Spacing.sm,
-    paddingVertical: Spacing.xs,
+  actionButtonDanger: new Style<View>({
+    paddingLeft: Spacing.sm,
+    paddingRight: Spacing.sm,
+    paddingTop: Spacing.xs,
+    paddingBottom: Spacing.xs,
     backgroundColor: Colors.error + '20',
     borderRadius: Spacing.radiusSm,
   }),
 
-  actionButtonTextDanger: new Style({
+  actionButtonTextDanger: new Style<Label>({
     ...Fonts.bodySmall,
     color: Colors.error,
   }),
 
-  timestamp: new Style({
+  timestamp: new Style<Label>({
     ...Fonts.bodySmall,
     color: Colors.textTertiary,
   }),

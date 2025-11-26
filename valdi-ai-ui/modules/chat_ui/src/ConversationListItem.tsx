@@ -7,6 +7,8 @@
 
 import { Component } from 'valdi_core/src/Component';
 import { Style } from 'valdi_core/src/Style';
+import { View } from 'valdi_tsx/src/NativeTemplateElements';
+import type { Label } from 'valdi_tsx/src/NativeTemplateElements';
 import {
   Colors,
   Fonts,
@@ -33,9 +35,6 @@ export interface ConversationListItemProps {
 
   /** Long press handler */
   onLongPress?: (conversationId: string) => void;
-
-  /** Custom style */
-  style?: Record<string, unknown>;
 }
 
 /**
@@ -113,8 +112,30 @@ export class ConversationListItem extends Component<ConversationListItemProps> {
     }
   }
 
+  private getContainerStyle(hasUnread: boolean): Style<View> {
+    return new Style<View>({
+      width: '100%',
+      paddingLeft: Spacing.base,
+    paddingRight: Spacing.base,
+      paddingTop: Spacing.md,
+    paddingBottom: Spacing.md,
+      borderWidth: 1,
+      borderColor: Colors.border,
+      backgroundColor: hasUnread ? Colors.surface : Colors.background,
+    });
+  }
+
+  private getPreviewStyle(hasUnread: boolean): Style<Label> {
+    return new Style<Label>({
+      ...Fonts.body,
+      fontSize: 14,
+      color: hasUnread ? Colors.textSecondary : Colors.textTertiary,
+      flexGrow: 1,
+    });
+  }
+
   override onRender() {
-    const { conversation, unreadCount, style: customStyle } = this.viewModel;
+    const { conversation, unreadCount } = this.viewModel;
 
     const previewText = this.getPreviewText();
     const timeDisplay = this.getTimeDisplay();
@@ -123,11 +144,7 @@ export class ConversationListItem extends Component<ConversationListItemProps> {
 
     return (
       <view
-        style={{
-          ...styles.container,
-          backgroundColor: hasUnread ? Colors.surface : Colors.background,
-          ...customStyle,
-        }}
+        style={this.getContainerStyle(hasUnread)}
         onTap={this.handlePress}
         onLongPress={this.handleLongPress}
       >
@@ -135,21 +152,8 @@ export class ConversationListItem extends Component<ConversationListItemProps> {
         <view style={styles.mainContent}>
           {/* Left: Provider Icon */}
           <view style={styles.providerIconContainer}>
-            <view
-              style={{
-                ...styles.providerIcon,
-                backgroundColor: Colors.secondary,
-              }}
-            >
-              <label
-                value={providerIcon}
-                style={{
-                  ...Fonts.caption,
-                  fontSize: 12,
-                  color: Colors.textInverse,
-                  fontWeight: '600',
-                }}
-              />
+            <view style={styles.providerIconWithBg}>
+              <label value={providerIcon} style={styles.providerIconText} />
             </view>
           </view>
 
@@ -160,12 +164,7 @@ export class ConversationListItem extends Component<ConversationListItemProps> {
               {/* Pinned Indicator */}
               {conversation.isPinned && (
                 <view style={styles.pinnedIndicator}>
-                  <label
-                    value="📌"
-                    style={{
-                      fontSize: 12,
-                    }}
-                  />
+                  <label value="📌" style={styles.pinnedIcon} />
                 </view>
               )}
 
@@ -173,12 +172,7 @@ export class ConversationListItem extends Component<ConversationListItemProps> {
               <label
                 value={conversation.title}
                 numberOfLines={1}
-                style={{
-                  ...Fonts.bodySemibold,
-                  fontSize: 16,
-                  color: Colors.textPrimary,
-                  flex: 1,
-                }}
+                style={styles.titleText}
               />
             </view>
 
@@ -187,12 +181,7 @@ export class ConversationListItem extends Component<ConversationListItemProps> {
               <label
                 value={previewText}
                 numberOfLines={1}
-                style={{
-                  ...Fonts.body,
-                  fontSize: 14,
-                  color: hasUnread ? Colors.textSecondary : Colors.textTertiary,
-                  flex: 1,
-                }}
+                style={this.getPreviewStyle(hasUnread)}
               />
             </view>
 
@@ -201,24 +190,13 @@ export class ConversationListItem extends Component<ConversationListItemProps> {
               <view style={styles.tagsRow}>
                 {conversation.tags.slice(0, 2).map((tag) => (
                   <view key={tag} style={styles.tag}>
-                    <label
-                      value={tag}
-                      style={{
-                        ...Fonts.caption,
-                        fontSize: 11,
-                        color: Colors.primary,
-                      }}
-                    />
+                    <label value={tag} style={styles.tagText} />
                   </view>
                 ))}
                 {conversation.tags.length > 2 && (
                   <label
                     value={`+${conversation.tags.length - 2}`}
-                    style={{
-                      ...Fonts.caption,
-                      fontSize: 11,
-                      color: Colors.textTertiary,
-                    }}
+                    style={styles.moreTagsText}
                   />
                 )}
               </view>
@@ -228,26 +206,14 @@ export class ConversationListItem extends Component<ConversationListItemProps> {
           {/* Right: Timestamp and Badge */}
           <view style={styles.rightContent}>
             {/* Timestamp */}
-            <label
-              value={timeDisplay}
-              style={{
-                ...Fonts.caption,
-                fontSize: 12,
-                color: Colors.textTertiary,
-              }}
-            />
+            <label value={timeDisplay} style={styles.timestampText} />
 
             {/* Unread Badge */}
             {hasUnread && (
               <view style={styles.unreadBadge}>
                 <label
                   value={unreadCount! > 99 ? '99+' : unreadCount!.toString()}
-                  style={{
-                    ...Fonts.caption,
-                    fontSize: 11,
-                    fontWeight: '600',
-                    color: Colors.textInverse,
-                  }}
+                  style={styles.unreadBadgeText}
                 />
               </view>
             )}
@@ -256,11 +222,7 @@ export class ConversationListItem extends Component<ConversationListItemProps> {
             {!hasUnread && conversation.messageCount > 0 && (
               <label
                 value={`${conversation.messageCount}`}
-                style={{
-                  ...Fonts.caption,
-                  fontSize: 11,
-                  color: Colors.textTertiary,
-                }}
+                style={styles.messageCountText}
               />
             )}
           </view>
@@ -269,14 +231,7 @@ export class ConversationListItem extends Component<ConversationListItemProps> {
         {/* Archived Indicator */}
         {conversation.status === 'archived' && (
           <view style={styles.archivedBanner}>
-            <label
-              value="Archived"
-              style={{
-                ...Fonts.caption,
-                fontSize: 11,
-                color: Colors.textTertiary,
-              }}
-            />
+            <label value="Archived" style={styles.archivedText} />
           </view>
         )}
       </view>
@@ -285,89 +240,144 @@ export class ConversationListItem extends Component<ConversationListItemProps> {
 }
 
 const styles = {
-  container: new Style({
-    width: '100%',
-    paddingHorizontal: Spacing.base,
-    paddingVertical: Spacing.md,
-    borderBottomWidth: 1,
-    borderBottomColor: Colors.border,
-  }),
-
-  mainContent: new Style({
+  mainContent: new Style<View>({
     flexDirection: 'row',
     alignItems: 'flex-start',
-    gap: Spacing.sm,
   }),
 
-  providerIconContainer: new Style({
+  providerIconContainer: new Style<View>({
     paddingTop: Spacing.xs / 2,
+    marginRight: Spacing.sm,
   }),
 
-  providerIcon: new Style({
+  providerIconWithBg: new Style<View>({
     width: 28,
     height: 28,
     borderRadius: BorderRadius.full,
     alignItems: 'center',
     justifyContent: 'center',
+    backgroundColor: Colors.secondary,
   }),
 
-  centerContent: new Style({
-    flex: 1,
-    gap: Spacing.xs,
+  providerIconText: new Style<Label>({
+    ...Fonts.caption,
+    fontSize: 12,
+    color: Colors.textInverse,
+    fontWeight: '600',
   }),
 
-  titleRow: new Style({
+  centerContent: new Style<View>({
+    flexGrow: 1,
+  }),
+
+  titleRow: new Style<View>({
     flexDirection: 'row',
     alignItems: 'center',
-    gap: Spacing.xs,
   }),
 
-  pinnedIndicator: new Style({
+  pinnedIndicator: new Style<View>({
     width: 16,
     height: 16,
     alignItems: 'center',
     justifyContent: 'center',
+    marginRight: Spacing.xs,
   }),
 
-  previewRow: new Style({
-    flexDirection: 'row',
-    alignItems: 'center',
+  pinnedIcon: new Style<Label>({
+    fontSize: 12,
   }),
 
-  tagsRow: new Style({
+  titleText: new Style<Label>({
+    ...Fonts.bodySemibold,
+    fontSize: 16,
+    color: Colors.textPrimary,
+    flexGrow: 1,
+  }),
+
+  previewRow: new Style<View>({
     flexDirection: 'row',
     alignItems: 'center',
-    gap: Spacing.xs,
+    marginTop: Spacing.xs,
+  }),
+
+  tagsRow: new Style<View>({
+    flexDirection: 'row',
+    alignItems: 'center',
     flexWrap: 'wrap',
+    marginTop: Spacing.xs,
   }),
 
-  tag: new Style({
+  tag: new Style<View>({
     backgroundColor: Colors.primaryLight,
-    paddingHorizontal: Spacing.xs,
-    paddingVertical: 2,
+    paddingLeft: Spacing.xs,
+    paddingRight: Spacing.xs,
+    paddingTop: 2,
+    paddingBottom: 2,
     borderRadius: BorderRadius.sm,
+    marginRight: Spacing.xs,
   }),
 
-  rightContent: new Style({
+  tagText: new Style<Label>({
+    ...Fonts.caption,
+    fontSize: 11,
+    color: Colors.primary,
+  }),
+
+  moreTagsText: new Style<Label>({
+    ...Fonts.caption,
+    fontSize: 11,
+    color: Colors.textTertiary,
+  }),
+
+  rightContent: new Style<View>({
     alignItems: 'flex-end',
-    gap: Spacing.xs,
     minWidth: 50,
+    marginLeft: Spacing.sm,
   }),
 
-  unreadBadge: new Style({
+  timestampText: new Style<Label>({
+    ...Fonts.caption,
+    fontSize: 12,
+    color: Colors.textTertiary,
+  }),
+
+  unreadBadge: new Style<View>({
     backgroundColor: Colors.primary,
-    paddingHorizontal: 6,
-    paddingVertical: 2,
+    paddingLeft: 6,
+    paddingRight: 6,
+    paddingTop: 2,
+    paddingBottom: 2,
     borderRadius: BorderRadius.full,
     minWidth: 20,
     alignItems: 'center',
     justifyContent: 'center',
+    marginTop: Spacing.xs,
   }),
 
-  archivedBanner: new Style({
+  unreadBadgeText: new Style<Label>({
+    ...Fonts.caption,
+    fontSize: 11,
+    fontWeight: '600',
+    color: Colors.textInverse,
+  }),
+
+  messageCountText: new Style<Label>({
+    ...Fonts.caption,
+    fontSize: 11,
+    color: Colors.textTertiary,
+    marginTop: Spacing.xs,
+  }),
+
+  archivedBanner: new Style<View>({
     marginTop: Spacing.xs,
     paddingTop: Spacing.xs,
-    borderTopWidth: 1,
-    borderTopColor: Colors.border,
+    borderWidth: 1,
+    borderColor: Colors.border,
+  }),
+
+  archivedText: new Style<Label>({
+    ...Fonts.caption,
+    fontSize: 11,
+    color: Colors.textTertiary,
   }),
 };

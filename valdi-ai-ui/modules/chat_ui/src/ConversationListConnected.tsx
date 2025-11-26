@@ -7,6 +7,7 @@
 
 import { StatefulComponent } from 'valdi_core/src/Component';
 import { Style } from 'valdi_core/src/Style';
+import { View, Label } from 'valdi_tsx/src/NativeTemplateElements';
 import { NavigationController } from 'valdi_navigation/src/NavigationController';
 import { Colors, Fonts, Spacing, BorderRadius } from 'common/src';
 import { Conversation } from 'common/src';
@@ -140,7 +141,7 @@ export class ConversationListConnected extends StatefulComponent<
             />
           </view>
         ) : (
-          <scrollView style={styles.scrollView}>
+          <scroll style={styles.scrollView}>
             <view style={styles.list}>
               {conversations.map((conversation) => (
                 <Card
@@ -167,7 +168,7 @@ export class ConversationListConnected extends StatefulComponent<
                 </Card>
               ))}
             </view>
-          </scrollView>
+          </scroll>
         )}
       </view>
     );
@@ -272,111 +273,114 @@ export class ConversationListConnected extends StatefulComponent<
 }
 
 const styles = {
-  container: new Style({
-    flex: 1,
+  container: new Style<View>({
+    flexGrow: 1,
     backgroundColor: Colors.background,
   }),
 
-  header: new Style({
+  header: new Style<View>({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
     padding: Spacing.base,
     backgroundColor: Colors.surface,
-    borderBottomWidth: 1,
-    borderBottomColor: Colors.border,
+    borderWidth: 1,
+    borderColor: Colors.border,
   }),
 
-  headerTitle: new Style({
+  headerTitle: new Style<Label>({
     ...Fonts.h2,
     color: Colors.textPrimary,
   }),
 
-  tabs: new Style({
+  tabs: new Style<View>({
     flexDirection: 'row',
     padding: Spacing.base,
-    gap: Spacing.sm,
     backgroundColor: Colors.surface,
   }),
 
-  tab: new Style({
-    paddingHorizontal: Spacing.base,
-    paddingVertical: Spacing.sm,
+  tab: new Style<View>({
+    paddingLeft: Spacing.base,
+    paddingRight: Spacing.base,
+    paddingTop: Spacing.sm,
+    paddingBottom: Spacing.sm,
     borderRadius: BorderRadius.md,
   }),
 
-  tabActive: new Style({
-    paddingHorizontal: Spacing.base,
-    paddingVertical: Spacing.sm,
+  tabActive: new Style<View>({
+    paddingLeft: Spacing.base,
+    paddingRight: Spacing.base,
+    paddingTop: Spacing.sm,
+    paddingBottom: Spacing.sm,
     borderRadius: BorderRadius.md,
     backgroundColor: Colors.primaryLighter,
   }),
 
-  tabText: new Style({
+  tabText: new Style<Label>({
     ...Fonts.bodyMedium,
     color: Colors.textSecondary,
   }),
 
-  tabTextActive: new Style({
+  tabTextActive: new Style<Label>({
     ...Fonts.bodyMedium,
     color: Colors.primary,
     fontWeight: '600',
   }),
 
-  scrollView: new Style({
-    flex: 1,
+  scrollView: new Style<View>({
+    flexGrow: 1,
   }),
 
-  list: new Style({
+  list: new Style<View>({
     padding: Spacing.base,
   }),
 
-  emptyContainer: new Style({
-    flex: 1,
+  emptyContainer: new Style<View>({
+    flexGrow: 1,
     justifyContent: 'center',
     alignItems: 'center',
     padding: Spacing.xl,
   }),
 
-  emptyIcon: new Style({
+  emptyIcon: new Style<Label>({
     fontSize: 64,
     marginBottom: Spacing.base,
   }),
 
-  emptyText: new Style({
+  emptyText: new Style<Label>({
     ...Fonts.h3,
     color: Colors.textSecondary,
     marginBottom: Spacing.sm,
   }),
 
-  emptySubtext: new Style({
+  emptySubtext: new Style<Label>({
     ...Fonts.body,
     color: Colors.textTertiary,
     textAlign: 'center',
   }),
 
-  conversationCard: new Style({
+  conversationCard: new Style<View>({
     marginBottom: Spacing.sm,
   }),
 
-  conversationContent: new Style({
+  conversationContent: new Style<View>({
     padding: Spacing.sm,
   }),
 
-  title: new Style({
+  title: new Style<Label>({
     ...Fonts.bodyLarge,
     color: Colors.textPrimary,
     marginBottom: Spacing.xs,
     fontWeight: '600',
   }),
 
-  date: new Style({
+  date: new Style<Label>({
     ...Fonts.bodySmall,
     color: Colors.textSecondary,
     marginBottom: Spacing.xs,
   }),
 
-  messageCount: new Style({
+  messageCount: new Style<Label>({
     ...Fonts.bodySmall,
     color: Colors.textTertiary,
   }),

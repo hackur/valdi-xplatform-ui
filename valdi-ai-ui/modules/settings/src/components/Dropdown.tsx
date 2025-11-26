@@ -6,6 +6,7 @@
 
 import { Component } from 'valdi_core/src/Component';
 import { Style } from 'valdi_core/src/Style';
+import { View, Label } from 'valdi_tsx/src/NativeTemplateElements';
 import { Colors, Fonts, Spacing, BorderRadius } from 'common/src';
 
 /**
@@ -159,18 +160,20 @@ export class Dropdown extends Component<DropdownProps, DropdownState> {
 }
 
 const styles = {
-  selector: new Style({
+  selector: new Style<View>({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingHorizontal: Spacing.base,
-    paddingVertical: Spacing.sm,
+    paddingLeft: Spacing.base,
+    paddingRight: Spacing.base,
+    paddingTop: Spacing.sm,
+    paddingBottom: Spacing.sm,
     borderWidth: 1,
     borderRadius: BorderRadius.base,
     minHeight: 44,
   }),
 
-  optionsList: new Style({
+  optionsList: new Style<View>({
     position: 'absolute',
     top: '100%',
     left: 0,
@@ -189,9 +192,11 @@ const styles = {
     overflow: 'auto',
   }),
 
-  option: new Style({
-    paddingHorizontal: Spacing.base,
-    paddingVertical: Spacing.sm,
+  option: new Style<View>({
+    paddingLeft: Spacing.base,
+    paddingRight: Spacing.base,
+    paddingTop: Spacing.sm,
+    paddingBottom: Spacing.sm,
     minHeight: 44,
     justifyContent: 'center',
   }),
