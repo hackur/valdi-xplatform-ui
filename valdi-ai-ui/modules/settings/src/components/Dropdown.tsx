@@ -200,13 +200,9 @@ const styles = {
     borderWidth: 1,
     borderColor: Colors.border,
     borderRadius: BorderRadius.base,
-    shadowColor: Colors.shadowColor,
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 8,
     zIndex: 1000,
     maxHeight: 200,
-    overflow: 'auto',
+    overflow: 'scroll',
   }),
 
   option: new Style<View>({

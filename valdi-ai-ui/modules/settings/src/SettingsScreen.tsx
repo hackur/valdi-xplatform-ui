@@ -10,6 +10,8 @@
  */
 
 import { StatefulComponent } from 'valdi_core/src/Component';
+import { Style } from 'valdi_core/src/Style';
+import { View, Label } from 'valdi_tsx/src/NativeTemplateElements';
 import { systemFont } from 'valdi_core/src/SystemFont';
 import { NavigationController } from 'valdi_navigation/src/NavigationController';
 import {
@@ -240,23 +242,22 @@ export class SettingsScreen extends StatefulComponent<
     }
   };
 
-  private getProviderCardStyle(isSelected: boolean): Record<string, unknown> {
-    return {
-      ...styles.providerCard,
+  private getProviderCardStyle(isSelected: boolean) {
+    return new Style<View>({
       borderWidth: 2,
       borderColor: isSelected ? Colors.primary : Colors.transparent,
-    };
+    });
   }
 
-  private getSaveMessageStyle(): Record<string, unknown> {
-    return {
+  private getSaveMessageStyle() {
+    return new Style<Label>({
       ...Fonts.body,
       color: this.state.saveMessage.includes('successfully')
         ? Colors.success
         : Colors.error,
       textAlign: 'center',
       marginTop: Spacing.base,
-    };
+    });
   }
 
   private renderProviderSection = () => {
@@ -275,13 +276,15 @@ export class SettingsScreen extends StatefulComponent<
 
         <view style={styles.providerGrid}>
           {providers.map((provider) => (
-            <Card
+            <view
               key={provider.id}
+              style={this.getProviderCardStyle(this.state.selectedProvider === provider.id)}
+            >
+            <Card
               elevation={
                 this.state.selectedProvider === provider.id ? 'md' : 'sm'
               }
               onTap={() => this.handleProviderChange(provider.id)}
-              style={this.getProviderCardStyle(this.state.selectedProvider === provider.id)}
             >
               <view style={styles.providerContent}>
                 <label value={provider.icon} style={styles.providerIcon} />
@@ -291,6 +294,7 @@ export class SettingsScreen extends StatefulComponent<
                 />
               </view>
             </Card>
+            </view>
           ))}
         </view>
       </view>
@@ -697,164 +701,164 @@ export class SettingsScreen extends StatefulComponent<
 }
 
 const styles = {
-  container: {
+  container: new Style<View>({
     flexGrow: 1,
     backgroundColor: Colors.background,
-  } as Record<string, unknown>,
+  }),
 
-  header: {
+  header: new Style<View>({
     paddingLeft: SemanticSpacing.screenPaddingHorizontal,
     paddingRight: SemanticSpacing.screenPaddingHorizontal,
     paddingTop: Spacing.xl,
     paddingBottom: Spacing.base,
     borderWidth: 1,
     borderColor: Colors.border,
-  } as Record<string, unknown>,
+  }),
 
-  headerTitle: {
+  headerTitle: new Style<Label>({
     ...Fonts.h1,
     color: Colors.textPrimary,
-  } as Record<string, unknown>,
+  }),
 
-  headerSubtitle: {
+  headerSubtitle: new Style<Label>({
     ...Fonts.body,
     color: Colors.textSecondary,
     marginTop: Spacing.xs,
-  } as Record<string, unknown>,
+  }),
 
-  content: {
+  content: new Style<View>({
     flexGrow: 1,
     paddingLeft: SemanticSpacing.screenPaddingHorizontal,
     paddingRight: SemanticSpacing.screenPaddingHorizontal,
     paddingTop: Spacing.base,
     paddingBottom: Spacing.base,
-  } as Record<string, unknown>,
+  }),
 
-  section: {
+  section: new Style<View>({
     marginBottom: Spacing.xxl,
-  } as Record<string, unknown>,
+  }),
 
-  sectionTitle: {
+  sectionTitle: new Style<Label>({
     ...Fonts.h3,
     color: Colors.textPrimary,
     marginBottom: Spacing.base,
-  } as Record<string, unknown>,
+  }),
 
-  sectionDescription: {
+  sectionDescription: new Style<Label>({
     ...Fonts.bodySmall,
     color: Colors.textSecondary,
     marginBottom: Spacing.base,
-  } as Record<string, unknown>,
+  }),
 
-  providerGrid: {
+  providerGrid: new Style<View>({
     flexDirection: 'row',
-  } as Record<string, unknown>,
+  }),
 
-  providerCard: {
+  providerCard: new Style<View>({
     flexGrow: 1,
     aspectRatio: 1,
-  } as Record<string, unknown>,
+  }),
 
-  providerContent: {
+  providerContent: new Style<View>({
     flexGrow: 1,
     alignItems: 'center',
     justifyContent: 'center',
-  } as Record<string, unknown>,
+  }),
 
-  providerIcon: {
+  providerIcon: new Style<Label>({
     font: systemFont(24),
-  } as Record<string, unknown>,
+  }),
 
-  providerName: {
+  providerName: new Style<Label>({
     ...Fonts.bodyBold,
     color: Colors.textPrimary,
     marginTop: Spacing.xs,
-  } as Record<string, unknown>,
+  }),
 
-  apiKeyCard: {
+  apiKeyCard: new Style<View>({
     marginBottom: Spacing.base,
-  } as Record<string, unknown>,
+  }),
 
-  apiKeyHeader: {
+  apiKeyHeader: new Style<View>({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-  } as Record<string, unknown>,
+  }),
 
-  apiKeyLabel: {
+  apiKeyLabel: new Style<Label>({
     ...Fonts.bodyBold,
     color: Colors.textPrimary,
-  } as Record<string, unknown>,
+  }),
 
-  modelCard: {
+  modelCard: new Style<View>({
     marginBottom: Spacing.base,
-  } as Record<string, unknown>,
+  }),
 
-  modelLabel: {
+  modelLabel: new Style<Label>({
     ...Fonts.bodyBold,
     color: Colors.textPrimary,
     marginBottom: Spacing.sm,
-  } as Record<string, unknown>,
+  }),
 
-  preferenceCard: {
+  preferenceCard: new Style<View>({
     marginBottom: Spacing.base,
-  } as Record<string, unknown>,
+  }),
 
-  preferenceRow: {
+  preferenceRow: new Style<View>({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-  } as Record<string, unknown>,
+  }),
 
-  preferenceText: {
+  preferenceText: new Style<View>({
     flexGrow: 1,
     marginRight: Spacing.base,
-  } as Record<string, unknown>,
+  }),
 
-  preferenceLabel: {
+  preferenceLabel: new Style<Label>({
     ...Fonts.bodyBold,
     color: Colors.textPrimary,
-  } as Record<string, unknown>,
+  }),
 
-  preferenceDescription: {
+  preferenceDescription: new Style<Label>({
     ...Fonts.caption,
     color: Colors.textSecondary,
     marginTop: Spacing.xxs,
-  } as Record<string, unknown>,
+  }),
 
-  aboutTitle: {
+  aboutTitle: new Style<Label>({
     ...Fonts.h4,
     color: Colors.textPrimary,
-  } as Record<string, unknown>,
+  }),
 
-  aboutVersion: {
+  aboutVersion: new Style<Label>({
     ...Fonts.body,
     color: Colors.textSecondary,
     marginTop: Spacing.xs,
-  } as Record<string, unknown>,
+  }),
 
-  aboutDescription: {
+  aboutDescription: new Style<Label>({
     ...Fonts.bodySmall,
     color: Colors.textSecondary,
     marginTop: Spacing.base,
     lineHeight: 1.5,
-  } as Record<string, unknown>,
+  }),
 
-  aboutLinks: {
+  aboutLinks: new Style<View>({
     flexDirection: 'row',
     marginTop: Spacing.base,
-  } as Record<string, unknown>,
+  }),
 
-  saveSection: {
+  saveSection: new Style<View>({
     marginTop: Spacing.xl,
     paddingBottom: Spacing.xxl,
-  } as Record<string, unknown>,
+  }),
 
-  inputWithMargin: {
+  inputWithMargin: new Style<View>({
     marginTop: Spacing.sm,
-  } as Record<string, unknown>,
+  }),
 
-  buttonWithMargin: {
+  buttonWithMargin: new Style<View>({
     marginTop: Spacing.sm,
-  } as Record<string, unknown>,
+  }),
 };

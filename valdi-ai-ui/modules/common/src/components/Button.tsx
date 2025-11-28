@@ -58,7 +58,7 @@ export interface ButtonProps {
   onTap?: () => void;
 
   /** Custom style */
-  style?: Record<string, unknown>;
+  style?: Style<View> | Record<string, unknown>;
 }
 
 /**
@@ -212,7 +212,7 @@ export class Button extends Component<ButtonProps> {
     borderColor: string,
     padding: { paddingLeft: number; paddingRight: number; paddingTop: number; paddingBottom: number },
     fullWidth: boolean | undefined,
-    customStyle?: Record<string, unknown>,
+    customStyle?: Style<View> | Record<string, unknown>,
   ): Style<View> {
     return new Style<View>({
       ...styles.container,
@@ -226,7 +226,7 @@ export class Button extends Component<ButtonProps> {
       ...padding,
       width: (fullWidth ?? false) ? '100%' : undefined,
       ...SemanticShadows.button,
-      ...customStyle,
+      ...(customStyle || {}),
     });
   }
 

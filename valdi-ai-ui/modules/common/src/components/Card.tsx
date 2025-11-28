@@ -47,7 +47,7 @@ export interface CardProps {
   onTap?: () => void;
 
   /** Custom style */
-  style?: Record<string, unknown>;
+  style?: Style<View> | Record<string, unknown>;
 }
 
 /**
@@ -93,7 +93,7 @@ export class Card extends Component<CardProps> {
     padding: number | undefined,
     bordered: boolean | undefined,
     shadowStyle: Record<string, unknown>,
-    customStyle?: Record<string, unknown>,
+    customStyle?: Style<View> | Record<string, unknown>,
   ): Style<View> {
     return new Style<View>({
       ...styles.container,
@@ -107,7 +107,7 @@ export class Card extends Component<CardProps> {
           }
         : {}),
       ...shadowStyle,
-      ...customStyle,
+      ...(customStyle || {}),
     });
   }
 

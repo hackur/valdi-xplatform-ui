@@ -41,7 +41,7 @@ export interface TextInputProps {
   onBlur?: () => void;
 
   /** Custom style */
-  style?: Record<string, unknown>;
+  style?: Style<View> | Record<string, unknown>;
 }
 
 /**
@@ -100,7 +100,7 @@ export class TextInput extends StatefulComponent<TextInputProps, TextInputState>
     return value;
   };
 
-  private getContainerStyle(isFocused: boolean, disabled: boolean, customStyle?: Record<string, unknown>) {
+  private getContainerStyle(isFocused: boolean, disabled: boolean, customStyle?: Style<View> | Record<string, unknown>) {
     const borderColor = isFocused
       ? Colors.primary
       : disabled
@@ -111,7 +111,7 @@ export class TextInput extends StatefulComponent<TextInputProps, TextInputState>
       ...styles.container,
       borderColor,
       backgroundColor: disabled ? Colors.gray100 : Colors.surface,
-      ...customStyle,
+      ...(customStyle || {}),
     });
   }
 
@@ -143,8 +143,6 @@ export class TextInput extends StatefulComponent<TextInputProps, TextInputState>
           value={value}
           placeholder={placeholder}
           onChange={this.handleChange}
-          onFocus={this.handleFocus}
-          onBlur={this.handleBlur}
           style={this.getInputStyle(disabled || false)}
         />
       </view>
