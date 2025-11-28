@@ -1,243 +1,350 @@
-# Project Context Template
-<!-- Template Version: 3 | ContextKit: 0.2.0 | Updated: 2025-10-02 -->
-
-## Description
-Project-level Context.md template providing project-specific investigation, development commands, project structure analysis, and ContextKit workflow configuration.
-
-════════════════════════════════════════════════════════════════════════════════
-║ 🤖 EXECUTION FLOW - PROJECT CONTEXT GENERATION
-════════════════════════════════════════════════════════════════════════════════
-║
-║ ## Execution Flow (main)
-║ 
-║ ### Phase 0: Check Customization
-║ 
-║ 0. **Read the "👩‍💻 DEVELOPER CUSTOMIZATIONS" section**
-║    - Use `Grep` tool to find the start of the section
-║    - Read everything below that line contained in this document til the end of the file
-║    - Make sure to consider what was said there with high priority
-║    - If anything conflicts with the rest of the workflow, prioritize the "developer customizations"
-║
-║ ### Phase 1: Comprehensive Project Component Analysis
-║
-║ **CRITICAL**: This template execution should use the comprehensive findings from
-║ the init.md Phase 3 investigation. Do not re-investigate - use provided findings!
-║
-║ 1. **Use Investigation Results from Init Phase**
-║    - Component hierarchy and relationships (from init.md investigation)
-║    - Validated build commands for each component (from init.md timeout testing)
-║    - Validated test commands for each component (from init.md timeout testing)
-║    - Dependencies and their purposes (from Package.swift/package.json analysis)
-║    - File structure mappings (from init.md directory analysis)
-║    - Code style patterns (from init.md source file analysis)
-║    - Framework usage detection (from init.md import scanning)
-║
-║ 2. **Generate Component Overview Section**
-║    - Create hierarchical component map similar to workspace format
-║    - Show parent-child relationships between components
-║    - Include for each: name, type, purpose, tech stack, file location
-║    - Use emoji indicators: 📱 (app), 🖥️ (server), 📦 (package), 📚 (docs), 🔧 (tool)
-║    - Format: Component Name (Type) - Purpose - Tech Stack - Location
-║
-║ 3. **Generate Detailed Component Sections**
-║    For each component discovered, create detailed section with:
-║    - **File Structure**: Actual directories and key files found
-║    - **Dependencies**: Dependencies with purposes and providers from config files
-║    - **Build Commands**: Validated commands from timeout testing (exact, not generic)
-║    - **Test Commands**: Validated commands from timeout testing (exact, not generic)
-║    - **Code Style**: Actual findings from formatter configs and source analysis
-║    - **Framework Usage**: Import patterns detected from source code scanning
-║
-║ ### Phase 2: Workspace Integration & Standards
-║
-║ 4. **Apply Workspace Context** (if discovered by init.md)
-║    - Use workspace inheritance information from init.md findings
-║    - Apply workspace coding standards and architectural preferences
-║    - Document workspace relationship and inheritance rules
-║    - Note any workspace-level constitutional principle overrides
-║
-║ 5. **Constitutional Principles Integration**
-║    - Apply core constitutional principles with workspace adjustments
-║    - Document any workspace-level principle modifications
-║    - Ensure principles are applied to all project components
-║
-║ ### Phase 3: Content Generation & Completion
-║
-║ 6. **Generate Project Context Content**
-║    - Use `Edit` tool to replace this template with new structure:
-║      A) Project Overview (basic project info and component count)
-║      B) Component Architecture (hierarchical component map)
-║      C) Detailed Component Sections (one per component with build/test commands)
-║      D) Development Workflow (ContextKit integration)
-║      E) Constitutional Principles (applied with workspace inheritance)
-║    - **CRITICAL**: All information must be based on init.md findings, not assumptions
-║    - Include validated build/test commands for each component
-║    - Document actual file structures and dependencies found
-║
-║ 7. **Final Validation**
-║    - Verify all information is based on actual init.md investigation results
-║    - Confirm all build/test commands are validated and documented correctly
-║    - Ensure component hierarchy matches actual project structure
-║    - Check that workspace inheritance is properly documented
-║    - Verify no placeholder content remains
-║
-║ 8. **COMPLETION**
-║    - Use `Edit` tool to remove this entire boxed system instructions section
-║    - Leave only the clean project context content for development use
-║    - Final document enables immediate component-aware development
-║
-║ ## Success Criteria
-║ - Complete component hierarchy with purpose and tech stack for each component
-║ - Validated build/test commands documented for each component (exact, not generic)
-║ - All information based on actual init.md investigation findings, not assumptions
-║ - Component relationships and dependencies clearly mapped
-║ - File structure documented for each component
-║ - Constitutional principles applied with workspace inheritance documented
-║ - System instructions completely removed from final Context.md
-║
-════════════════════════════════════════════════════════════════════════════════
-
-# Project Context: [Project Name from Investigation]
+# Project Context: Valdi AI UI
 
 ## Project Overview
 
-- **Version**: [ContextKit Version from Templates]
-- **Setup Date**: [Current Date]
-- **Components**: [X] components discovered and analyzed
-- **Workspace**: [Workspace Name from Investigation or "None (standalone project)"]
-- **Primary Tech Stack**: [Most Common Language/Framework from Analysis]
-- **Development Guidelines**: [List of copied guidelines based on project type detection]
+- **Version**: ContextKit 0.2.0
+- **Setup Date**: 2025-11-28
+- **Components**: 10 modules discovered and analyzed
+- **Workspace**: None (standalone project)
+- **Primary Tech Stack**: TypeScript, TSX, Valdi Framework, Vercel AI SDK v5
+- **Development Guidelines**: None (TypeScript/JavaScript guidelines not available in ContextKit templates)
 
 ## Component Architecture
 
 **Project Structure**:
 
-[Component Hierarchy from Investigation - Example Format:]
 ```
-📁 [Project Name]
-├── 📱 [App Component] ([Type]) - [Purpose from README] - [Tech Stack] - ./[path]
-├── 🖥️ [Server Component] ([Type]) - [Purpose from README] - [Tech Stack] - ./[path]
-├── 📦 [Package Component] ([Type]) - [Purpose from README] - [Tech Stack] - ./[path]
-└── 📚 [Docs Component] ([Type]) - [Purpose from README] - [Tech Stack] - ./[path]
+valdi-ai-ui/
+├── modules/
+│   ├── common/              # Design system & shared components
+│   ├── main_app/            # Root app & navigation
+│   ├── chat_core/           # AI SDK integration
+│   ├── chat_ui/             # Chat interface
+│   ├── agent_manager/       # Agent orchestration
+│   ├── conversation_manager/# Chat history & persistence
+│   ├── model_config/        # Model settings
+│   ├── tools_demo/          # Tool calling examples
+│   ├── workflow_demo/       # Workflow patterns
+│   └── settings/            # App preferences
+├── vendor/valdi/            # Valdi framework (vendored)
+├── docs/                    # Project documentation
+├── scripts/                 # Build & utility scripts
+└── __mocks__/               # Test mocks
 ```
 
 **Component Summary**:
-- **[X] Swift components** - [Versions and frameworks found]
-- **[Y] Other components** - [Languages and technologies found]
-- **Dependencies**: [X] unique dependencies across components
+- **10 TypeScript modules** - TSX components with Valdi framework
+- **Build system**: Bazel
+- **Testing**: Jest with TypeScript
+- **Linting**: ESLint + Prettier
+- **AI Integration**: Vercel AI SDK v5 with multiple providers (OpenAI, Anthropic, Google)
 
 ---
 
-## Component Details
+## Module Details
 
-### [Component Name 1] - [Type]
+### common - Design System
 
-**Location**: `./[path]`
-**Purpose**: [Purpose from README analysis]
-**Tech Stack**: [Language], [Frameworks from investigation]
+**Location**: `./modules/common/`
+**Purpose**: Shared design system components and utilities
+**Tech Stack**: TypeScript, TSX, Valdi
 
 **File Structure**:
-[Actual directory structure found:]
 ```
-[Component]/
-├── [key directories found]
-├── [configuration files found]
-└── [source directories found]
+common/
+└── src/
+    └── index.ts
 ```
-
-**Dependencies** (from [config file]):
-[Key dependencies with purposes and providers found in config files]
-
-**Development Commands**:
-```bash
-# Build (validated during setup)
-[Exact command tested during init - with full path and parameters]
-
-# Test (validated during setup)
-[Exact command tested during init - with full path and parameters]
-
-# Additional commands
-[Other commands discovered for this component]
-```
-
-**Code Style** (detected):
-[Actual code style findings from formatter configs and source analysis]
 
 ---
 
-### [Component Name 2] - [Type]
+### main_app - Root Application
 
-[Repeat detailed section for each component found]
+**Location**: `./modules/main_app/`
+**Purpose**: Root app component and navigation
+**Tech Stack**: TypeScript, TSX, Valdi
+
+**Key Files**:
+- `src/App.tsx` - Main application component
+- `src/HomePage.tsx` - Home page component
+- `src/index.ts` - Module exports
+
+---
+
+### chat_core - AI Integration
+
+**Location**: `./modules/chat_core/`
+**Purpose**: Vercel AI SDK integration, message handling, workflow patterns
+**Tech Stack**: TypeScript, Vercel AI SDK v5, Zod
+
+**Key Files**:
+- `src/ChatService.ts` - Core chat service
+- `src/MessageStore.ts` - Message state management
+- `src/StreamHandler.ts` - Real-time streaming
+- `src/ToolDefinitions.ts` - Tool schemas
+- `src/ToolExecutor.ts` - Tool execution
+- `src/ConversationStore.ts` - Conversation management
+- `src/ConversationPersistence.ts` - Persistence layer
+- Workflow patterns:
+  - `src/AgentWorkflow.ts`
+  - `src/SequentialWorkflow.ts`
+  - `src/ParallelWorkflow.ts`
+  - `src/RoutingWorkflow.ts`
+  - `src/EvaluatorOptimizerWorkflow.ts`
+
+---
+
+### chat_ui - Chat Interface
+
+**Location**: `./modules/chat_ui/`
+**Purpose**: Chat UI components
+**Tech Stack**: TypeScript, TSX, Valdi
+
+**Key Files**:
+- `src/ChatView.tsx` - Main chat view
+- `src/ChatViewStreaming.tsx` - Streaming chat view
+- `src/MessageBubble.tsx` - Message display
+- `src/InputBar.tsx` - Message input
+- `src/ConversationList.tsx` - Conversation list
+- `src/ConversationListItem.tsx` - List item component
+- `src/ChatIntegrationService.ts` - Chat-UI integration
+
+---
+
+### agent_manager - Agent Orchestration
+
+**Location**: `./modules/agent_manager/`
+**Purpose**: Agent framework and workflow engine
+**Tech Stack**: TypeScript, Vercel AI SDK
+
+**Key Files**:
+- `src/AgentExecutor.ts` - Agent execution
+- `src/AgentRegistry.ts` - Agent registration
+- `src/WorkflowEngine.ts` - Workflow orchestration
+- `src/LoopController.ts` - Agent loop control
+- `src/types.ts` - Type definitions
+
+---
+
+### conversation_manager - Chat History
+
+**Location**: `./modules/conversation_manager/`
+**Purpose**: Conversation history and search
+**Tech Stack**: TypeScript, TSX, Valdi
+
+**Key Files**:
+- `src/HistoryManager.ts` - History management
+- `src/ConversationListView.tsx` - List view
+- `src/ConversationCard.tsx` - Conversation card
+- `src/SearchBar.tsx` - Search component
+
+---
+
+### model_config - Model Settings
+
+**Location**: `./modules/model_config/`
+**Purpose**: AI model configuration and provider settings
+**Tech Stack**: TypeScript, TSX, Valdi
+
+**Key Files**:
+- `src/ModelRegistry.ts` - Model registration
+- `src/CustomProviderStore.ts` - Custom provider storage
+- `src/ModelSelectorView.tsx` - Model selection UI
+- `src/ProviderSettingsView.tsx` - Provider settings
+- `src/AddCustomProviderView.tsx` - Custom provider UI
+
+---
+
+### settings - App Preferences
+
+**Location**: `./modules/settings/`
+**Purpose**: Application settings and preferences
+**Tech Stack**: TypeScript, TSX, Valdi
+
+**Key Files**:
+- `src/SettingsScreen.tsx` - Settings UI
+- `src/PreferencesStore.ts` - Preferences storage
+- `src/ApiKeyStore.ts` - API key management
+- `src/components/` - Settings UI components (Dropdown, Switch, TextInput)
+
+---
+
+### tools_demo - Tool Examples
+
+**Location**: `./modules/tools_demo/`
+**Purpose**: Tool calling demonstration
+**Tech Stack**: TypeScript, TSX, Valdi
+
+**Key Files**:
+- `src/ToolsDemoScreen.tsx` - Demo screen
+- `src/ToolExecutionCard.tsx` - Execution display
+
+---
+
+### workflow_demo - Workflow Patterns
+
+**Location**: `./modules/workflow_demo/`
+**Purpose**: Workflow pattern demonstrations
+**Tech Stack**: TypeScript, TSX, Valdi
+
+**Key Files**:
+- `src/WorkflowDemoScreen.tsx` - Demo screen
+- `src/WorkflowCard.tsx` - Workflow display
+
+---
+
+## Development Commands
+
+**Build Commands**:
+```bash
+# Bazel build (main)
+npm run build                    # bazel build //:valdi_ai_ui
+
+# iOS build
+npm run build:ios                # Build and install on iOS
+npm run build:ios:debug          # iOS debug build
+
+# Android build
+npm run build:android            # Build and install on Android
+
+# Module build
+npm run build:modules            # Sequential module build
+```
+
+**Test Commands**:
+```bash
+# Jest tests
+npm test                         # Run all tests
+npm run test:watch               # Watch mode
+npm run test:coverage            # With coverage
+npm run test:ci                  # CI mode
+
+# Bazel tests
+npm run test:bazel               # bazel test //...
+```
+
+**Lint & Format Commands**:
+```bash
+npm run lint                     # ESLint check
+npm run lint:fix                 # ESLint fix
+npm run format                   # Prettier format
+npm run format:check             # Prettier check
+npm run type-check               # TypeScript check
+```
+
+**Validation Commands**:
+```bash
+npm run validate                 # type-check + lint + test
+npm run validate:quick           # imports + lint only
+npm run validate:full            # Full validation suite
+npm run validate:imports         # Valdi import validation
+npm run validate:deps            # Module dependency validation
+```
+
+**Utility Commands**:
+```bash
+npm run valdi                    # Valdi CLI
+npm run fix:imports              # Fix Valdi imports
+npm run clean                    # Bazel clean
+npm run clean:full               # Full clean (expunge + node_modules)
+```
 
 ---
 
 ## Development Environment
 
-**Requirements** (from analysis):
-[Development environment requirements found in each component]
+**Requirements**:
+- Node.js >= 18.0.0
+- npm >= 9.0.0
+- Bazel (for builds)
+- Xcode (for iOS builds)
+- Android Studio (for Android builds)
 
-**Build Tools** (detected):
-[Build tools and versions found across components]
+**Dependencies** (from package.json):
 
-**Formatters** (configured):
-[Formatter configurations found and their settings]
+| Package | Version | Purpose |
+|---------|---------|---------|
+| `@ai-sdk/openai` | ^1.0.0 | OpenAI provider |
+| `@ai-sdk/anthropic` | ^1.0.0 | Anthropic provider |
+| `@ai-sdk/google` | ^1.0.0 | Google provider |
+| `ai` | ^5.0.0 | Vercel AI SDK |
+| `zod` | ^3.24.1 | Schema validation |
+| `date-fns` | ^4.1.0 | Date utilities |
+| `uuid` | ^11.0.3 | UUID generation |
 
-## Development Guidelines
+**Code Style**:
+- ESLint with TypeScript rules
+- Prettier for formatting
+- Husky + lint-staged for pre-commit
+- TypeScript strict mode
 
-**Applied Guidelines**: [List guidelines copied during project setup]
-- Guidelines automatically loaded by all planning commands (`/ctxk:plan:*`)
-- Implementation commands apply guideline standards during development
-- Quality agents validate against guideline requirements
+**Formatters**:
+- `.prettierrc` - Prettier configuration
+- `.eslintrc.js` - ESLint configuration
+- Automatic formatting on save via VS Code settings
 
-**Guidelines Integration**:
-- All planning phases reference active guidelines for architecture decisions
-- Implementation phases apply guideline patterns and API preferences
-- Migration only updates guidelines that exist in project
+---
+
+## Valdi Framework Patterns
+
+**IMPORTANT**: This project uses the Valdi framework with specific patterns:
+
+### Style Requirements
+- Always use `Style<View>` or `Style<Label>` type parameters
+- Use `font: systemFont(16)` instead of `fontSize`
+- Use `flexGrow`/`flexShrink` instead of `flex`
+- Use individual padding/margin properties (paddingTop, marginLeft, etc.)
+
+### Element Names
+- Use lowercase: `<view>`, `<label>`, `<scroll>`, `<textfield>`, `<textview>`
+- NOT: `<View>`, `<Text>`, `<ScrollView>`
+
+### TextField Callbacks
+- Use `onChange` with `EditTextEvent.text` property
+- Use `editable={false}` instead of `disabled`
+- Use `<textview>` for multiline input
+
+See `docs/CLAUDE.md` for complete Valdi API patterns documentation.
+
+---
 
 ## Constitutional Principles
 
 **Core Principles**:
-- ✅ Accessibility-first design (UI supports all assistive technologies)
-- ✅ Privacy by design (minimal data collection, explicit consent)
-- ✅ Localizability from day one (externalized strings, cultural adaptation)
-- ✅ Code maintainability (readable, testable, documented code)
-- ✅ Platform-appropriate UX (native conventions, platform guidelines)
+- Accessibility-first design (UI supports all assistive technologies)
+- Privacy by design (minimal data collection, explicit consent)
+- Localizability from day one (externalized strings, cultural adaptation)
+- Code maintainability (readable, testable, documented code)
+- Platform-appropriate UX (native conventions, platform guidelines)
 
-**Workspace Inheritance**: [Workspace principle adjustments or "None - using global defaults"]
+**Workspace Inheritance**: None - using global defaults
+
+---
 
 ## ContextKit Workflow
 
 **Systematic Feature Development**:
-- `/ctxk:plan:1-spec` - Create business requirements specification (prompts interactively)
-- `/ctxk:plan:2-research-tech` - Define technical research, architecture and implementation approach
-- `/ctxk:plan:3-steps` - Break down into executable implementation tasks
+- `/ctxk:plan:1-spec` - Create business requirements specification
+- `/ctxk:plan:2-research-tech` - Define technical research and architecture
+- `/ctxk:plan:3-steps` - Break down into implementation tasks
 
 **Development Execution**:
-- `/ctxk:impl:start-working` - Continue development within feature branch (requires completed planning phases)
-- `/ctxk:impl:commit-changes` - Auto-format code and commit with intelligent messages
+- `/ctxk:impl:start-working` - Continue development within feature branch
+- `/ctxk:impl:commit-changes` - Auto-format and commit changes
+
+**Backlog Management**:
+- `/ctxk:bckl:add-idea` - Add feature ideas to backlog
+- `/ctxk:bckl:add-bug` - Log bugs with evaluation
 
 **Quality Assurance**: Automated agents validate code quality during development
-**Project Management**: All validated build/test commands documented above for immediate use
 
-## Development Automation
-
-**Quality Agents Available**:
-- `build-project` - Execute builds with constitutional compliance validation
-- `check-accessibility` - VoiceOver, contrast, keyboard navigation validation
-- `check-localization` - String Catalog and cultural adaptation validation
-- `check-error-handling` - ErrorKit patterns and typed throws validation
-- `check-modern-code` - API modernization (Date.now, Duration, async/await)
-- `check-code-debt` - Technical debt cleanup and AI artifact removal
+---
 
 ## Configuration Hierarchy
 
-**Inheritance**: [Workspace Context] → **This Project**
+**Inheritance**: None (standalone project)
 
-**This Project Inherits From**:
-- **Workspace**: [Workspace name and standards or "None (standalone project)"]
-- **Project**: Component-specific configurations documented above
-
-**Override Precedence**: Project component settings override workspace settings
+**Override Precedence**: Module-specific configurations override project defaults
 
 ---
 *Generated by ContextKit with comprehensive component analysis. Manual edits preserved during updates.*
