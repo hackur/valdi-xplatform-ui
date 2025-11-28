@@ -22,7 +22,7 @@ import {
 // Screen Imports
 import { ChatView } from 'chat_ui/src/ChatView';
 import { ConversationList } from 'chat_ui/src/ConversationList';
-import { ToolsDemoScreen } from 'tools_demo/src/ToolsDemoScreen';
+// import { ToolsDemoScreen } from 'tools_demo/src/ToolsDemoScreen'; // Excluded from build
 import { WorkflowDemoScreen } from 'workflow_demo/src/WorkflowDemoScreen';
 import { SettingsScreen } from 'settings/src/SettingsScreen';
 
@@ -189,7 +189,9 @@ export class HomePage extends Component<HomePageProps> {
    * Navigate to ToolsDemoScreen
    */
   private navigateToToolsDemo = (): void => {
-    this.viewModel.navigationController.push(ToolsDemoScreen, {}, {});
+    // ToolsDemoScreen excluded from build - requires 'ai' and 'zod' dependencies
+    console.log('Tools demo temporarily unavailable');
+    // this.viewModel.navigationController.push(ToolsDemoScreen, {}, {});
   };
 
   /**
@@ -309,27 +311,27 @@ const styles = {
     paddingTop: Spacing.xl,
   }),
 
-  headerTitle: new Style({
+  headerTitle: new Style<Label>({
     ...Fonts.h1,
     color: Colors.textPrimary,
   }),
 
-  headerSubtitle: new Style({
+  headerSubtitle: new Style<Label>({
     ...Fonts.body,
     color: Colors.textSecondary,
     marginTop: Spacing.xs,
   }),
 
-  welcomeCard: {
+  welcomeCard: new Style<View>({
     marginBottom: Spacing.xxl,
-  } as Record<string, unknown>,
+  }),
 
-  welcomeTitle: new Style({
+  welcomeTitle: new Style<Label>({
     ...Fonts.h3,
     color: Colors.textPrimary,
   }),
 
-  welcomeMessage: new Style({
+  welcomeMessage: new Style<Label>({
     ...Fonts.body,
     color: Colors.textSecondary,
     marginTop: Spacing.sm,
@@ -340,7 +342,7 @@ const styles = {
     flexGrow: 1,
   }),
 
-  featuresTitle: new Style({
+  featuresTitle: new Style<Label>({
     ...Fonts.h3,
     color: Colors.textPrimary,
     marginBottom: Spacing.base,
@@ -350,9 +352,9 @@ const styles = {
     flexDirection: 'column',
   }),
 
-  featureCard: {
+  featureCard: new Style<View>({
     width: '100%',
-  } as Record<string, unknown>,
+  }),
 
   featureContent: new Style<View>({
     flexDirection: 'row',
@@ -376,12 +378,12 @@ const styles = {
     flexGrow: 1,
   }),
 
-  featureTitle: new Style({
+  featureTitle: new Style<Label>({
     ...Fonts.h4,
     color: Colors.textPrimary,
   }),
 
-  featureDescription: new Style({
+  featureDescription: new Style<Label>({
     ...Fonts.bodySmall,
     color: Colors.textSecondary,
     marginTop: Spacing.xs,
@@ -393,7 +395,7 @@ const styles = {
     alignItems: 'center',
   }),
 
-  footerText: new Style({
+  footerText: new Style<Label>({
     ...Fonts.caption,
     color: Colors.textTertiary,
     textAlign: 'center',

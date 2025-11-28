@@ -7,7 +7,8 @@
  */
 
 import { Component } from 'valdi_core/src/Component';
-import { NavigationRoot } from 'valdi_navigation/src/NavigationController';
+import { $slot } from 'valdi_core/src/CompilerIntrinsics';
+import { NavigationRoot } from 'valdi_navigation/src/NavigationRoot';
 import { ErrorBoundary, ErrorScreen } from 'common/src';
 import { HomePage } from './HomePage';
 
@@ -27,9 +28,9 @@ export class App extends Component<Record<string, never>> {
 
     // In production, send error to monitoring service
     // e.g., Sentry, LogRocket, etc.
-    if (process.env.NODE_ENV === 'production') {
-      // ErrorReportingService.captureException(error);
-    }
+    // if (process.env.NODE_ENV === 'production') {
+    //   ErrorReportingService.captureException(error);
+    // }
   };
 
   override onRender() {
@@ -40,13 +41,13 @@ export class App extends Component<Record<string, never>> {
             error={error}
             title="Application Error"
             message="The application encountered an unexpected error. Please try restarting the app."
-            showDetails={process.env.NODE_ENV === 'development'}
+            showDetails={true}
             showRetryButton={true}
             showGoBackButton={false}
           />
         )}
         onError={this.handleAppError}
-        showDetails={process.env.NODE_ENV === 'development'}
+        showDetails={true}
       >
         <NavigationRoot>
           {$slot((navigationController) => {
