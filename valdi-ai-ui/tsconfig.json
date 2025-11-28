@@ -2,18 +2,19 @@
   "compilerOptions": {
     /* Language and Environment */
     "target": "ES2022",
-    "lib": ["ES2022", "DOM"],
+    "lib": [
+      "ES2022",
+      "DOM"
+    ],
     "jsx": "react",
     "jsxFactory": "$createElement",
     "jsxFragmentFactory": "$Fragment",
-
     /* Modules */
     "module": "ESNext",
     "moduleResolution": "Bundler",
     "resolveJsonModule": true,
     "allowSyntheticDefaultImports": true,
     "esModuleInterop": true,
-
     /* Type Checking - Maximum Strictness (2025 Best Practices) */
     "strict": true,
     "strictNullChecks": true,
@@ -24,7 +25,6 @@
     "noImplicitAny": true,
     "noImplicitReturns": true,
     "noFallthroughCasesInSwitch": true,
-
     /* Additional Strictness (2025 Recommendations) */
     "noUncheckedIndexedAccess": true,
     "noImplicitOverride": true,
@@ -32,56 +32,105 @@
     "noPropertyAccessFromIndexSignature": false,
     "allowUnreachableCode": false,
     "allowUnusedLabels": false,
-
     /* Linting */
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "forceConsistentCasingInFileNames": true,
-
     /* Emit */
     "noEmit": true,
     "declaration": true,
     "declarationMap": true,
     "sourceMap": true,
     "isolatedModules": true,
-
     /* Interop Constraints */
     "skipLibCheck": true,
-
     /* Path Mapping */
-    "baseUrl": ".",
+    // "baseUrl": ".",
     "paths": {
       /* Valdi Framework Mocks */
-      "valdi_core/src/Component": ["./__mocks__/valdi_core/src/Component.ts"],
-      "valdi_core/src/Style": ["./__mocks__/valdi_core/src/Style.ts"],
-      "valdi_core/src/SystemFont": ["./__mocks__/valdi_core/src/SystemFont.ts"],
-      "valdi_tsx/src/NativeTemplateElements": ["./__mocks__/valdi_tsx/src/NativeTemplateElements.ts"],
-      "valdi_navigation/src/NavigationController": ["./__mocks__/valdi_navigation/src/NavigationController.ts"],
-
+      "valdi_core/src/Component": [
+        "./__mocks__/valdi_core/src/Component.ts"
+      ],
+      "valdi_core/src/Style": [
+        "./__mocks__/valdi_core/src/Style.ts"
+      ],
+      "valdi_core/src/SystemFont": [
+        "./__mocks__/valdi_core/src/SystemFont.ts"
+      ],
+      "valdi_tsx/src/NativeTemplateElements": [
+        "./__mocks__/valdi_tsx/src/NativeTemplateElements.ts"
+      ],
+      "valdi_navigation/src/NavigationController": [
+        "./__mocks__/valdi_navigation/src/NavigationController.ts"
+      ],
       /* Application Modules - Valdi Format (module_name/src/path) */
-      "common/src": ["./modules/common/src/index.ts"],
-      "common/src/*": ["./modules/common/src/*"],
-      "chat_core/src": ["./modules/chat_core/src/index.ts"],
-      "chat_core/src/*": ["./modules/chat_core/src/*"],
-      "chat_ui/src": ["./modules/chat_ui/src/index.ts"],
-      "chat_ui/src/*": ["./modules/chat_ui/src/*"],
-      "agent_manager/src": ["./modules/agent_manager/src/index.ts"],
-      "agent_manager/src/*": ["./modules/agent_manager/src/*"],
-      "conversation_manager/src": ["./modules/conversation_manager/src/index.ts"],
-      "conversation_manager/src/*": ["./modules/conversation_manager/src/*"],
-      "model_config/src": ["./modules/model_config/src/index.ts"],
-      "model_config/src/*": ["./modules/model_config/src/*"],
-      "settings/src": ["./modules/settings/src/index.ts"],
-      "settings/src/*": ["./modules/settings/src/*"],
-      "tools_demo/src": ["./modules/tools_demo/src/index.ts"],
-      "tools_demo/src/*": ["./modules/tools_demo/src/*"],
-      "workflow_demo/src": ["./modules/workflow_demo/src/index.ts"],
-      "workflow_demo/src/*": ["./modules/workflow_demo/src/*"],
-      "main_app/src": ["./modules/main_app/src/index.ts"],
-      "main_app/src/*": ["./modules/main_app/src/*"]
+      "common/src": [
+        "./modules/common/src/index.ts"
+      ],
+      "common/src/*": [
+        "./modules/common/src/*"
+      ],
+      "chat_core/src": [
+        "./modules/chat_core/src/index.ts"
+      ],
+      "chat_core/src/*": [
+        "./modules/chat_core/src/*"
+      ],
+      "chat_ui/src": [
+        "./modules/chat_ui/src/index.ts"
+      ],
+      "chat_ui/src/*": [
+        "./modules/chat_ui/src/*"
+      ],
+      "agent_manager/src": [
+        "./modules/agent_manager/src/index.ts"
+      ],
+      "agent_manager/src/*": [
+        "./modules/agent_manager/src/*"
+      ],
+      "conversation_manager/src": [
+        "./modules/conversation_manager/src/index.ts"
+      ],
+      "conversation_manager/src/*": [
+        "./modules/conversation_manager/src/*"
+      ],
+      "model_config/src": [
+        "./modules/model_config/src/index.ts"
+      ],
+      "model_config/src/*": [
+        "./modules/model_config/src/*"
+      ],
+      "settings/src": [
+        "./modules/settings/src/index.ts"
+      ],
+      "settings/src/*": [
+        "./modules/settings/src/*"
+      ],
+      "tools_demo/src": [
+        "./modules/tools_demo/src/index.ts"
+      ],
+      "tools_demo/src/*": [
+        "./modules/tools_demo/src/*"
+      ],
+      "workflow_demo/src": [
+        "./modules/workflow_demo/src/index.ts"
+      ],
+      "workflow_demo/src/*": [
+        "./modules/workflow_demo/src/*"
+      ],
+      "main_app/src": [
+        "./modules/main_app/src/index.ts"
+      ],
+      "main_app/src/*": [
+        "./modules/main_app/src/*"
+      ]
     }
   },
-  "include": ["modules/**/*.ts", "modules/**/*.tsx", "modules/valdi.d.ts"],
+  "include": [
+    "modules/**/*.ts",
+    "modules/**/*.tsx",
+    "modules/valdi.d.ts"
+  ],
   "exclude": [
     "node_modules",
     "bazel-*",

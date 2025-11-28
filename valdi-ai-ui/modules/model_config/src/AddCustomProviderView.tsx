@@ -609,8 +609,6 @@ const styles = {
   }),
 
   input: new Style<View>({
-    ...Fonts.body,
-    color: Colors.textPrimary,
     backgroundColor: Colors.surface,
     borderWidth: 1,
     borderColor: Colors.border,
@@ -619,8 +617,6 @@ const styles = {
   }),
 
   inputError: new Style<View>({
-    ...Fonts.body,
-    color: Colors.textPrimary,
     backgroundColor: Colors.surface,
     borderWidth: 2,
     borderColor: Colors.error,

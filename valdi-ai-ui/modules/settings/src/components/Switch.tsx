@@ -97,9 +97,5 @@ const styles = {
     height: 24,
     borderRadius: BorderRadius.full,
     backgroundColor: Colors.textInverse,
-    shadowColor: Colors.shadowColor,
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.2,
-    shadowRadius: 2,
   }),
 };
