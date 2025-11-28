@@ -116,11 +116,11 @@ export class TextInput extends StatefulComponent<TextInputProps, TextInputState>
   }
 
   private getInputStyle(disabled: boolean) {
-    return {
-      ...styles.input,
-      ...Fonts.body,
-      color: disabled ? Colors.textTertiary : Colors.textPrimary,
-    } as Record<string, unknown>;
+    return new Style<View>({
+      width: '100%',
+      backgroundColor: 'transparent',
+      opacity: disabled ? 0.5 : 1,
+    });
   }
 
   override onRender() {

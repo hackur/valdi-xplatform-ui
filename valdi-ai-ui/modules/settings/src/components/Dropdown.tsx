@@ -84,9 +84,10 @@ export class Dropdown extends StatefulComponent<DropdownProps, DropdownState> {
   };
 
   private getContainerStyle(customStyle?: Record<string, unknown>) {
-    return customStyle
-      ? { position: 'relative', ...customStyle }
-      : { position: 'relative' };
+    return new Style<View>({
+      position: 'relative',
+      ...(customStyle || {}),
+    });
   }
 
   private getSelectorStyle(disabled: boolean, isOpen: boolean) {
