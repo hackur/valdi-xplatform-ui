@@ -6,7 +6,7 @@
 
 import { Component } from 'valdi_core/src/Component';
 import { Style } from 'valdi_core/src/Style';
-import { View, Label } from 'valdi_tsx/src/NativeTemplateElements';
+import { View } from 'valdi_tsx/src/NativeTemplateElements';
 import { Colors, BorderRadius } from 'common/src';
 
 /**
@@ -61,10 +61,9 @@ export class Switch extends Component<SwitchProps> {
   }
 
   private getThumbStyle(value: boolean) {
-    const thumbTranslateX = value ? 20 : 0;
     return new Style<View>({
       ...styles.thumb,
-      transform: `translateX(${thumbTranslateX}px)`,
+      marginLeft: value ? 20 : 0,
     });
   }
 
@@ -88,7 +87,7 @@ const styles = {
   track: new Style<View>({
     width: 48,
     height: 28,
-    borderRadius: BorderRadius.round,
+    borderRadius: BorderRadius.full,
     padding: 2,
     justifyContent: 'center',
   }),
@@ -96,9 +95,9 @@ const styles = {
   thumb: new Style<View>({
     width: 24,
     height: 24,
-    borderRadius: BorderRadius.round,
-    backgroundColor: Colors.white,
-    shadowColor: Colors.black,
+    borderRadius: BorderRadius.full,
+    backgroundColor: Colors.textInverse,
+    shadowColor: Colors.shadowColor,
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.2,
     shadowRadius: 2,

@@ -49,7 +49,6 @@ export class ConversationCard extends Component<ConversationCardProps> {
       <view
         style={isSelected ? styles.cardSelected : styles.card}
         onTap={onTap}
-        onLongPress={onLongPress}
       >
         {/* Left: Avatar/Icon */}
         <view style={styles.leftSection}>
@@ -120,7 +119,7 @@ export class ConversationCard extends Component<ConversationCardProps> {
    */
   private getInitials(title: string): string {
     const words = title.trim().split(/\s+/);
-    if (words.length >= 2) {
+    if (words.length >= 2 && words[0] && words[1] && words[0][0] && words[1][0]) {
       return (words[0][0] + words[1][0]).toUpperCase();
     }
     return title.substring(0, 2).toUpperCase();

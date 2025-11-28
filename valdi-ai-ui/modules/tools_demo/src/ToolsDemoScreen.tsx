@@ -96,8 +96,10 @@ export class ToolsDemoScreen extends Component<{}, ToolsDemoScreenState> {
         throw new Error(`Tool ${toolDemo.name} not found`);
       }
 
-      // Execute the tool
-      const result = await tool.execute(toolDemo.exampleInput as any);
+      // Execute the tool (AI SDK v5 tools may not have execute function directly)
+      const result = tool.execute
+        ? await tool.execute(toolDemo.exampleInput as any, {} as any)
+        : { success: false, error: 'Tool execute function not available' };
       const executionTime = Date.now() - startTime;
 
       // Create execution result
@@ -261,8 +263,8 @@ export class ToolsDemoScreen extends Component<{}, ToolsDemoScreenState> {
             </view>
 
             <view style={styles.resultsContainer}>
-              {executionResults.map((result, index) => (
-                <ToolExecutionCard key={index} result={result} />
+              {executionResults.map((result) => (
+                <ToolExecutionCard result={result} />
               ))}
             </view>
           </view>
@@ -315,9 +317,9 @@ const styles = {
     marginTop: Spacing.base,
   }),
 
-  toolCard: new Style<View>({
+  toolCard: {
     padding: Spacing.xl,
-  }),
+  } as Record<string, unknown>,
 
   toolCardHeader: new Style<View>({
     flexDirection: 'row',

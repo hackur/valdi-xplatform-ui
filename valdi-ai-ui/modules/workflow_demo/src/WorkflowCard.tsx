@@ -146,7 +146,7 @@ export class WorkflowCard extends Component<WorkflowCardProps> {
   /**
    * Render workflow step
    */
-  private renderStep(step: WorkflowStep, index: number, isLast: boolean) {
+  private renderStep(step: WorkflowStep, _index: number, isLast: boolean) {
     const statusColor = this.getStatusColor(step.status);
     const statusIcon = this.getStatusIcon(step.status);
     const executionTime =
@@ -155,7 +155,7 @@ export class WorkflowCard extends Component<WorkflowCardProps> {
         : null;
 
     return (
-      <view key={`step-${index}`} style={styles.stepContainer}>
+      <view style={styles.stepContainer}>
         {/* Step Header */}
         <view style={styles.stepHeader}>
           <view style={styles.stepIndicator}>

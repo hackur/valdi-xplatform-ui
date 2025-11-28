@@ -10,7 +10,6 @@
  */
 
 import { StatefulComponent } from 'valdi_core/src/Component';
-import { Style } from 'valdi_core/src/Style';
 import { systemFont } from 'valdi_core/src/SystemFont';
 import { NavigationController } from 'valdi_navigation/src/NavigationController';
 import {
@@ -241,23 +240,23 @@ export class SettingsScreen extends StatefulComponent<
     }
   };
 
-  private getProviderCardStyle(isSelected: boolean) {
-    return new Style({
+  private getProviderCardStyle(isSelected: boolean): Record<string, unknown> {
+    return {
       ...styles.providerCard,
       borderWidth: 2,
       borderColor: isSelected ? Colors.primary : Colors.transparent,
-    });
+    };
   }
 
-  private getSaveMessageStyle() {
-    return new Style({
+  private getSaveMessageStyle(): Record<string, unknown> {
+    return {
       ...Fonts.body,
       color: this.state.saveMessage.includes('successfully')
         ? Colors.success
         : Colors.error,
       textAlign: 'center',
       marginTop: Spacing.base,
-    });
+    };
   }
 
   private renderProviderSection = () => {
@@ -334,7 +333,7 @@ export class SettingsScreen extends StatefulComponent<
               placeholder="sk-..."
               secureTextEntry={!this.state.showOpenAiKey}
               onChangeText={(value: string) => this.handleApiKeyChange('openai', value)}
-              style={{ marginTop: Spacing.sm }}
+              style={styles.inputWithMargin}
             />
 
             <Button
@@ -342,7 +341,7 @@ export class SettingsScreen extends StatefulComponent<
               variant="outline"
               size="small"
               onTap={() => this.toggleKeyVisibility('openai')}
-              style={{ marginTop: Spacing.sm }}
+              style={styles.buttonWithMargin}
             />
           </view>
         </Card>
@@ -372,7 +371,7 @@ export class SettingsScreen extends StatefulComponent<
               onChangeText={(value: string) =>
                 this.handleApiKeyChange('anthropic', value)
               }
-              style={{ marginTop: Spacing.sm }}
+              style={styles.inputWithMargin}
             />
 
             <Button
@@ -380,7 +379,7 @@ export class SettingsScreen extends StatefulComponent<
               variant="outline"
               size="small"
               onTap={() => this.toggleKeyVisibility('anthropic')}
-              style={{ marginTop: Spacing.sm }}
+              style={styles.buttonWithMargin}
             />
           </view>
         </Card>
@@ -408,7 +407,7 @@ export class SettingsScreen extends StatefulComponent<
               placeholder="AIza..."
               secureTextEntry={!this.state.showGoogleKey}
               onChangeText={(value: string) => this.handleApiKeyChange('google', value)}
-              style={{ marginTop: Spacing.sm }}
+              style={styles.inputWithMargin}
             />
 
             <Button
@@ -416,7 +415,7 @@ export class SettingsScreen extends StatefulComponent<
               variant="outline"
               size="small"
               onTap={() => this.toggleKeyVisibility('google')}
-              style={{ marginTop: Spacing.sm }}
+              style={styles.buttonWithMargin}
             />
           </view>
         </Card>
@@ -637,7 +636,7 @@ export class SettingsScreen extends StatefulComponent<
             error={error}
             title="Settings Error"
             message="An error occurred while loading settings. Please try again."
-            showDetails={process.env.NODE_ENV === 'development'}
+            showDetails={false}
           />
         )}
         onError={this.handleSettingsError}
@@ -849,5 +848,13 @@ const styles = {
   saveSection: {
     marginTop: Spacing.xl,
     paddingBottom: Spacing.xxl,
+  } as Record<string, unknown>,
+
+  inputWithMargin: {
+    marginTop: Spacing.sm,
+  } as Record<string, unknown>,
+
+  buttonWithMargin: {
+    marginTop: Spacing.sm,
   } as Record<string, unknown>,
 };

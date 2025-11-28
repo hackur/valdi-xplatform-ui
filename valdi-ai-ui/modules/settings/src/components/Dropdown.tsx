@@ -4,7 +4,7 @@
  * A dropdown/select component for choosing from a list of options.
  */
 
-import { Component } from 'valdi_core/src/Component';
+import { StatefulComponent } from 'valdi_core/src/Component';
 import { Style } from 'valdi_core/src/Style';
 import { View, Label } from 'valdi_tsx/src/NativeTemplateElements';
 import { Colors, Fonts, Spacing, BorderRadius } from 'common/src';
@@ -50,18 +50,15 @@ interface DropdownState {
 /**
  * Dropdown Component
  */
-export class Dropdown extends Component<DropdownProps, DropdownState> {
+export class Dropdown extends StatefulComponent<DropdownProps, DropdownState> {
   static defaultProps: Partial<DropdownProps> = {
     disabled: false,
     placeholder: 'Select an option',
   };
 
-  constructor(props: DropdownProps) {
-    super(props);
-    this.state = {
-      isOpen: false,
-    };
-  }
+  override state: DropdownState = {
+    isOpen: false,
+  };
 
   private toggleDropdown = (): void => {
     if (!this.viewModel.disabled) {
@@ -162,7 +159,6 @@ export class Dropdown extends Component<DropdownProps, DropdownState> {
           <view style={styles.optionsList}>
             {options.map((option) => (
               <view
-                key={option.value}
                 style={this.getOptionStyle(option.value === selectedValue)}
                 onTap={() => this.handleSelect(option.value)}
               >
@@ -203,7 +199,7 @@ const styles = {
     borderWidth: 1,
     borderColor: Colors.border,
     borderRadius: BorderRadius.base,
-    shadowColor: Colors.black,
+    shadowColor: Colors.shadowColor,
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 8,

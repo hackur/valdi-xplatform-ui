@@ -8,7 +8,7 @@ import { StatefulComponent } from 'valdi_core/src/Component';
 import { Style } from 'valdi_core/src/Style';
 import { View, Label } from 'valdi_tsx/src/NativeTemplateElements';
 import { NavigationController } from 'valdi_navigation/src/NavigationController';
-import { Colors, Fonts, Spacing } from 'common/src';
+import { Colors, Fonts, Spacing, BorderRadius } from 'common/src';
 import { Card } from 'common/src';
 import { Button } from 'common/src';
 import { LoadingSpinner } from 'common/src';
@@ -286,11 +286,12 @@ export class ProviderSettingsView extends StatefulComponent<
    */
   private handleAddProvider = (): void => {
     this.viewModel.navigationController.push(AddCustomProviderView, {
+      navigationController: this.viewModel.navigationController,
       customProviderStore: this.viewModel.customProviderStore,
       onSaved: async () => {
         await this.loadProviders();
       },
-    });
+    }, {});
   };
 
   /**
@@ -298,12 +299,13 @@ export class ProviderSettingsView extends StatefulComponent<
    */
   private handleEditProvider = (provider: CustomProviderConfig): void => {
     this.viewModel.navigationController.push(AddCustomProviderView, {
+      navigationController: this.viewModel.navigationController,
       customProviderStore: this.viewModel.customProviderStore,
       existingProvider: provider,
       onSaved: async () => {
         await this.loadProviders();
       },
-    });
+    }, {});
   };
 
   /**
@@ -532,7 +534,7 @@ const styles = {
     paddingTop: 2,
     paddingBottom: 2,
     backgroundColor: Colors.success + '20',
-    borderRadius: Spacing.radiusSm,
+    borderRadius: BorderRadius.sm,
   }),
 
   statusText: new Style<Label>({
@@ -546,7 +548,7 @@ const styles = {
     paddingTop: 2,
     paddingBottom: 2,
     backgroundColor: Colors.textTertiary + '20',
-    borderRadius: Spacing.radiusSm,
+    borderRadius: BorderRadius.sm,
   }),
 
   statusTextDisabled: new Style<Label>({
@@ -573,8 +575,8 @@ const styles = {
     paddingRight: Spacing.xs,
     paddingTop: 2,
     paddingBottom: 2,
-    backgroundColor: Colors.primary200,
-    borderRadius: Spacing.radiusSm,
+    backgroundColor: Colors.primaryLighter,
+    borderRadius: BorderRadius.sm,
   }),
 
   capabilityText: new Style<Label>({
@@ -592,8 +594,8 @@ const styles = {
     paddingRight: Spacing.sm,
     paddingTop: Spacing.xs,
     paddingBottom: Spacing.xs,
-    backgroundColor: Colors.primary100,
-    borderRadius: Spacing.radiusSm,
+    backgroundColor: Colors.primaryLight,
+    borderRadius: BorderRadius.sm,
   }),
 
   actionButtonText: new Style<Label>({
@@ -607,7 +609,7 @@ const styles = {
     paddingTop: Spacing.xs,
     paddingBottom: Spacing.xs,
     backgroundColor: Colors.error + '20',
-    borderRadius: Spacing.radiusSm,
+    borderRadius: BorderRadius.sm,
   }),
 
   actionButtonTextDanger: new Style<Label>({

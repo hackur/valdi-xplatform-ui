@@ -155,7 +155,7 @@ export class HomePage extends Component<HomePageProps> {
       this.viewModel.navigationController.push(ChatView, {
         navigationController: this.viewModel.navigationController,
         conversationId: conversation.id,
-      });
+      }, {});
     } catch (error) {
       console.error('Failed to create new conversation:', error);
     }
@@ -177,9 +177,9 @@ export class HomePage extends Component<HomePageProps> {
           this.viewModel.navigationController.push(ChatView, {
             navigationController: this.viewModel.navigationController,
             conversationId,
-          });
+          }, {});
         },
-      });
+      }, {});
     } catch (error) {
       console.error('Failed to navigate to conversation list:', error);
     }
@@ -189,14 +189,14 @@ export class HomePage extends Component<HomePageProps> {
    * Navigate to ToolsDemoScreen
    */
   private navigateToToolsDemo = (): void => {
-    this.viewModel.navigationController.push(ToolsDemoScreen, {});
+    this.viewModel.navigationController.push(ToolsDemoScreen, {}, {});
   };
 
   /**
    * Navigate to WorkflowDemoScreen
    */
   private navigateToWorkflowsDemo = (): void => {
-    this.viewModel.navigationController.push(WorkflowDemoScreen, {});
+    this.viewModel.navigationController.push(WorkflowDemoScreen, {}, {});
   };
 
   /**
@@ -205,7 +205,7 @@ export class HomePage extends Component<HomePageProps> {
   private navigateToSettings = (): void => {
     this.viewModel.navigationController.push(SettingsScreen, {
       navigationController: this.viewModel.navigationController,
-    });
+    }, {});
   };
 
   private renderFeatureCard = (feature: FeatureCard) => {
@@ -320,9 +320,9 @@ const styles = {
     marginTop: Spacing.xs,
   }),
 
-  welcomeCard: new Style<View>({
+  welcomeCard: {
     marginBottom: Spacing.xxl,
-  }),
+  } as Record<string, unknown>,
 
   welcomeTitle: new Style({
     ...Fonts.h3,
@@ -350,9 +350,9 @@ const styles = {
     flexDirection: 'column',
   }),
 
-  featureCard: new Style<View>({
+  featureCard: {
     width: '100%',
-  }),
+  } as Record<string, unknown>,
 
   featureContent: new Style<View>({
     flexDirection: 'row',

@@ -147,7 +147,8 @@ export class PreferencesStore {
    */
   async getModelForProvider(provider: AIProvider): Promise<string | undefined> {
     const key = `${provider}Model` as keyof AppPreferences;
-    return this.getPreference(key);
+    const value = await this.getPreference(key);
+    return typeof value === 'string' ? value : undefined;
   }
 
   /**

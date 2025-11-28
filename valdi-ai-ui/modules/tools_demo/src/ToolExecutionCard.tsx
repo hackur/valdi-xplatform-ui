@@ -201,9 +201,9 @@ export class ToolExecutionCard extends Component<ToolExecutionCardProps> {
 }
 
 const styles = {
-  container: new Style<View>({
+  container: {
     padding: Spacing.xl,
-  }),
+  } as Record<string, unknown>,
 
   header: new Style<View>({
     flexDirection: 'row',

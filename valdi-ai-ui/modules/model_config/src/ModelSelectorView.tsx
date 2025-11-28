@@ -8,7 +8,7 @@ import { StatefulComponent } from 'valdi_core/src/Component';
 import { Style } from 'valdi_core/src/Style';
 import { View, Label } from 'valdi_tsx/src/NativeTemplateElements';
 import { NavigationController } from 'valdi_navigation/src/NavigationController';
-import { Colors, Fonts, Spacing } from 'common/src';
+import { Colors, Fonts, Spacing, BorderRadius } from 'common/src';
 import { Card } from 'common/src';
 import { LoadingSpinner } from 'common/src';
 import { systemFont } from 'valdi_core/src/SystemFont';
@@ -119,7 +119,7 @@ export class ModelSelectorView extends StatefulComponent<
             <view style={styles.content}>
               {Array.from(modelsByProvider.entries()).map(
                 ([providerName, providerModels]) => (
-                  <view key={providerName} style={styles.providerSection}>
+                  <view style={styles.providerSection}>
                     {/* Provider Header */}
                     <label value={providerName} style={styles.providerTitle} />
 
@@ -131,7 +131,6 @@ export class ModelSelectorView extends StatefulComponent<
 
                       return (
                         <view
-                          key={`${model.id}_${model.customProviderId || 'builtin'}`}
                           onTap={() => this.handleModelSelect(model)}
                         >
                           <Card
@@ -451,8 +450,8 @@ const styles = {
     paddingRight: Spacing.xs,
     paddingTop: 2,
     paddingBottom: 2,
-    backgroundColor: Colors.primary200,
-    borderRadius: Spacing.radiusSm,
+    backgroundColor: Colors.primaryLighter,
+    borderRadius: BorderRadius.sm,
   }),
 
   badgeText: new Style<Label>({

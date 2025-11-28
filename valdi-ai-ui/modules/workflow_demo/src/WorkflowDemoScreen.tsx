@@ -283,7 +283,6 @@ export class WorkflowDemoScreen extends StatefulComponent<{}, WorkflowDemoScreen
           <scroll horizontal={true} style={styles.tabsScroll}>
             {this.workflows.map((workflow) => (
               <view
-                key={workflow.id}
                 style={this.getTabStyle(selectedTab === workflow.id)}
                 onTap={() => this.handleTabSelect(workflow.id)}
               >
@@ -315,8 +314,8 @@ export class WorkflowDemoScreen extends StatefulComponent<{}, WorkflowDemoScreen
                 value="Common Use Cases:"
                 style={styles.useCasesTitle}
               />
-              {selectedWorkflow.useCases.map((useCase, index) => (
-                <view key={`useCase-${index}`} style={styles.useCaseItem}>
+              {selectedWorkflow.useCases.map((useCase) => (
+                <view style={styles.useCaseItem}>
                   <label
                     value="•"
                     style={styles.useCaseBullet}

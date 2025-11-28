@@ -8,10 +8,10 @@ import { StatefulComponent } from 'valdi_core/src/Component';
 import { Style } from 'valdi_core/src/Style';
 import { View, Label, EditTextEvent } from 'valdi_tsx/src/NativeTemplateElements';
 import { NavigationController } from 'valdi_navigation/src/NavigationController';
-import { Colors, Fonts, Spacing } from 'common/src';
+import { Colors, Fonts, Spacing, BorderRadius } from 'common/src';
 import { Button } from 'common/src';
 import { LoadingSpinner } from 'common/src';
-import { systemFont, systemBoldFont } from 'valdi_core/src/SystemFont';
+import { systemBoldFont } from 'valdi_core/src/SystemFont';
 import { CustomProviderStore } from './CustomProviderStore';
 import {
   CustomProviderConfig,
@@ -614,7 +614,7 @@ const styles = {
     backgroundColor: Colors.surface,
     borderWidth: 1,
     borderColor: Colors.border,
-    borderRadius: Spacing.radiusMd,
+    borderRadius: BorderRadius.md,
     padding: Spacing.sm,
   }),
 
@@ -624,7 +624,7 @@ const styles = {
     backgroundColor: Colors.surface,
     borderWidth: 2,
     borderColor: Colors.error,
-    borderRadius: Spacing.radiusMd,
+    borderRadius: BorderRadius.md,
     padding: Spacing.sm,
   }),
 
@@ -664,7 +664,7 @@ const styles = {
     height: 24,
     borderWidth: 2,
     borderColor: Colors.border,
-    borderRadius: Spacing.radiusSm,
+    borderRadius: BorderRadius.sm,
     marginRight: Spacing.sm,
     justifyContent: 'center',
     alignItems: 'center',
@@ -676,14 +676,14 @@ const styles = {
     borderWidth: 2,
     borderColor: Colors.primary,
     backgroundColor: Colors.primary,
-    borderRadius: Spacing.radiusSm,
+    borderRadius: BorderRadius.sm,
     marginRight: Spacing.sm,
     justifyContent: 'center',
     alignItems: 'center',
   }),
 
   checkmark: new Style<Label>({
-    color: Colors.white,
+    color: Colors.textInverse,
     font: systemBoldFont(16),
   }),
 
@@ -701,13 +701,13 @@ const styles = {
     marginTop: Spacing.sm,
     padding: Spacing.sm,
     backgroundColor: Colors.surface,
-    borderRadius: Spacing.radiusMd,
+    borderRadius: BorderRadius.md,
   }),
 
   errorContainer: new Style<View>({
     padding: Spacing.sm,
     backgroundColor: Colors.error + '20',
-    borderRadius: Spacing.radiusMd,
+    borderRadius: BorderRadius.md,
     marginBottom: Spacing.base,
   }),
 

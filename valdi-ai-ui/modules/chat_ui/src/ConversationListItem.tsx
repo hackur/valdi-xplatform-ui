@@ -146,7 +146,6 @@ export class ConversationListItem extends Component<ConversationListItemProps> {
       <view
         style={this.getContainerStyle(hasUnread)}
         onTap={this.handlePress}
-        onLongPress={this.handleLongPress}
       >
         {/* Main Content */}
         <view style={styles.mainContent}>
@@ -189,7 +188,7 @@ export class ConversationListItem extends Component<ConversationListItemProps> {
             {conversation.tags.length > 0 && (
               <view style={styles.tagsRow}>
                 {conversation.tags.slice(0, 2).map((tag) => (
-                  <view key={tag} style={styles.tag}>
+                  <view style={styles.tag}>
                     <label value={tag} style={styles.tagText} />
                   </view>
                 ))}

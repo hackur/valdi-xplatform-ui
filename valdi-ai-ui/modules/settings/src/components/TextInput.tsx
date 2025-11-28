@@ -4,9 +4,9 @@
  * A styled text input component with support for secure text entry.
  */
 
-import { Component } from 'valdi_core/src/Component';
+import { StatefulComponent } from 'valdi_core/src/Component';
 import { Style } from 'valdi_core/src/Style';
-import { View, Label } from 'valdi_tsx/src/NativeTemplateElements';
+import { View, EditTextEvent } from 'valdi_tsx/src/NativeTemplateElements';
 import { Colors, Fonts, Spacing, BorderRadius } from 'common/src';
 
 /**
@@ -54,7 +54,7 @@ interface TextInputState {
 /**
  * TextInput Component
  */
-export class TextInput extends Component<TextInputProps, TextInputState> {
+export class TextInput extends StatefulComponent<TextInputProps, TextInputState> {
   static defaultProps: Partial<TextInputProps> = {
     placeholder: '',
     secureTextEntry: false,
@@ -63,18 +63,14 @@ export class TextInput extends Component<TextInputProps, TextInputState> {
     numberOfLines: 1,
   };
 
-  constructor(props: TextInputProps) {
-    super(props);
-    this.state = {
-      isFocused: false,
-    };
-  }
+  override state: TextInputState = {
+    isFocused: false,
+  };
 
-  private handleChange = (event: any): void => {
+  private handleChange = (event: EditTextEvent): void => {
     const { onChangeText } = this.viewModel;
     if (onChangeText) {
-      const value = event.target?.value || '';
-      onChangeText(value);
+      onChangeText(event.text);
     }
   };
 
@@ -92,9 +88,9 @@ export class TextInput extends Component<TextInputProps, TextInputState> {
     }
   };
 
-  // Reserved for future secure text display functionality
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  private _getDisplayValue = (): string => {
+  // Reserved for future secure text display functionality (suppress unused warning)
+  // @ts-ignore Intentionally kept for future use
+  private getDisplayValue = (): string => {
     const { value, secureTextEntry } = this.viewModel;
 
     if (secureTextEntry && value) {
@@ -132,8 +128,8 @@ export class TextInput extends Component<TextInputProps, TextInputState> {
       value,
       placeholder,
       disabled,
-      multiline,
-      numberOfLines,
+      multiline: _multiline,
+      numberOfLines: _numberOfLines,
       style: customStyle,
     } = this.viewModel;
 
@@ -143,8 +139,7 @@ export class TextInput extends Component<TextInputProps, TextInputState> {
       <view
         style={this.getContainerStyle(isFocused, disabled || false, customStyle)}
       >
-        <input
-          type="text"
+        <textfield
           value={value}
           placeholder={placeholder}
           onChange={this.handleChange}
