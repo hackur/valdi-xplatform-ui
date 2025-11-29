@@ -7,9 +7,9 @@
 
 import { Component } from 'valdi_core/src/Component';
 import { Style } from 'valdi_core/src/Style';
-import { NavigationController } from 'valdi_navigation/src/NavigationController';
 import { View, Label } from 'valdi_tsx/src/NativeTemplateElements';
 import { systemFont } from 'valdi_core/src/SystemFont';
+import { SimpleNavigationController } from './SimpleNavigationController';
 import {
   Colors,
   Fonts,
@@ -33,7 +33,7 @@ import { conversationStore } from 'chat_core/src/ConversationStore';
  * HomePage Props
  */
 export interface HomePageProps {
-  navigationController: NavigationController;
+  navigationController: SimpleNavigationController;
 }
 
 /**
@@ -244,53 +244,33 @@ export class HomePage extends Component<HomePageProps> {
   };
 
   override onRender() {
+    console.log('HomePage onRender - starting render');
+    console.log('HomePage features count:', this.features.length);
+
+    // Simplified test version - just render some text
     return (
-      <view style={styles.container}>
-        {/* Header */}
-        <view style={styles.header}>
-          <label
-            value="Valdi AI"
-            style={styles.headerTitle}
-          />
-          <label
-            value="Open Source AI Chat Client"
-            style={styles.headerSubtitle}
-          />
-        </view>
-
-        {/* Welcome Card */}
-        <Card elevation="md" style={styles.welcomeCard}>
-          <view>
-            <label
-              value="Welcome! 👋"
-              style={styles.welcomeTitle}
-            />
-            <label
-              value="Explore the power of AI with multiple providers, agent workflows, and tool calling capabilities."
-              style={styles.welcomeMessage}
-            />
-          </view>
-        </Card>
-
-        {/* Features Grid */}
-        <view style={styles.featuresSection}>
-          <label
-            value="Features"
-            style={styles.featuresTitle}
-          />
-
-          <view style={styles.featuresGrid}>
-            {this.features.map((feature) => this.renderFeatureCard(feature))}
-          </view>
-        </view>
-
-        {/* Footer */}
-        <view style={styles.footer}>
-          <label
-            value="Built with Valdi & AI SDK v5"
-            style={styles.footerText}
-          />
-        </view>
+      <view style={new Style<View>({
+        flexGrow: 1,
+        backgroundColor: '#FFFFFF',
+        paddingLeft: 20,
+        paddingRight: 20,
+        paddingTop: 40,
+      })}>
+        <label
+          value="Valdi AI"
+          style={new Style<Label>({
+            font: systemFont(32),
+            color: '#000000',
+          })}
+        />
+        <label
+          value="Home Page Test"
+          style={new Style<Label>({
+            font: systemFont(18),
+            color: '#666666',
+            marginTop: 10,
+          })}
+        />
       </view>
     );
   }
