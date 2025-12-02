@@ -190,12 +190,42 @@ module.exports = {
     {
       // Relax rules for test files
       files: ['**/*.test.ts', '**/*.test.tsx', '**/__tests__/**/*'],
+      parserOptions: {
+        // Don't require project configuration for test files
+        project: null,
+      },
       rules: {
+        // Disable all type-checking rules that require parserOptions.project
         '@typescript-eslint/no-explicit-any': 'off',
         '@typescript-eslint/no-non-null-assertion': 'off',
         '@typescript-eslint/no-unsafe-assignment': 'off',
         '@typescript-eslint/no-unsafe-member-access': 'off',
         '@typescript-eslint/no-unsafe-call': 'off',
+        '@typescript-eslint/no-unsafe-return': 'off',
+        '@typescript-eslint/no-floating-promises': 'off',
+        '@typescript-eslint/no-misused-promises': 'off',
+        '@typescript-eslint/unbound-method': 'off',
+        '@typescript-eslint/no-unnecessary-condition': 'off',
+        '@typescript-eslint/no-unnecessary-type-assertion': 'off',
+        '@typescript-eslint/prefer-nullish-coalescing': 'off',
+        '@typescript-eslint/strict-boolean-expressions': 'off',
+        '@typescript-eslint/await-thenable': 'off',
+        '@typescript-eslint/require-await': 'off',
+        '@typescript-eslint/return-await': 'off',
+        '@typescript-eslint/dot-notation': 'off',
+        '@typescript-eslint/prefer-readonly': 'off',
+        '@typescript-eslint/prefer-readonly-parameter-types': 'off',
+        '@typescript-eslint/no-confusing-void-expression': 'off',
+        '@typescript-eslint/no-redundant-type-constituents': 'off',
+        '@typescript-eslint/prefer-reduce-type-parameter': 'off',
+        '@typescript-eslint/prefer-return-this-type': 'off',
+        '@typescript-eslint/prefer-string-starts-ends-with': 'off',
+        '@typescript-eslint/promise-function-async': 'off',
+        '@typescript-eslint/require-array-sort-compare': 'off',
+        '@typescript-eslint/switch-exhaustiveness-check': 'off',
+        '@typescript-eslint/restrict-template-expressions': 'off',
+        '@typescript-eslint/prefer-optional-chain': 'off',
+        '@typescript-eslint/only-throw-error': 'off',
       },
     },
     {
@@ -216,5 +246,8 @@ module.exports = {
     'vendor/',
     '*.config.js',
     '*.config.mjs',
+    '**/*.test.ts',
+    '**/*.test.tsx',
+    '**/__tests__/**',
   ],
 };

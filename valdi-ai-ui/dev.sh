@@ -92,6 +92,26 @@ check_eslint() {
     fi
 }
 
+fix_eslint() {
+    print_step "Auto-fixing ESLint Issues"
+    STEP_START=$(date +%s)
+
+    print_info "Running ESLint with --fix flag..."
+    if npm run lint -- --fix; then
+        STEP_END=$(date +%s)
+        STEP_TIME=$((STEP_END - STEP_START))
+        print_success "ESLint auto-fix complete (${STEP_TIME}s)"
+        print_info "Review changes and run './dev.sh check' to verify"
+        return 0
+    else
+        STEP_END=$(date +%s)
+        STEP_TIME=$((STEP_END - STEP_START))
+        print_warning "ESLint auto-fix complete with remaining issues (${STEP_TIME}s)"
+        print_info "Some issues require manual fixes"
+        return 0
+    fi
+}
+
 check_imports() {
     print_step "Valdi Import Validation"
     STEP_START=$(date +%s)
@@ -297,6 +317,31 @@ run_tests() {
     fi
 }
 
+run_validation_suite() {
+    print_header "Complete Validation Suite"
+    print_info "Running TypeScript + ESLint + Tests"
+
+    FAILED=0
+
+    # Type check
+    check_typescript || FAILED=$((FAILED + 1))
+
+    # Lint check
+    check_eslint || FAILED=$((FAILED + 1))
+
+    # Test suite
+    run_tests || FAILED=$((FAILED + 1))
+
+    echo ""
+    if [ $FAILED -eq 0 ]; then
+        print_success "Complete validation passed! ✨"
+        return 0
+    else
+        print_error "Validation failed: ${FAILED} checks"
+        return 1
+    fi
+}
+
 test_lm_studio() {
     print_step "Testing LM Studio Integration"
     STEP_START=$(date +%s)
@@ -433,8 +478,14 @@ ${BOLD}COMMANDS:${NC}
   ${BOLD}Validation:${NC}
     ${GREEN}check${NC}      Run all fast checks (default)
     ${GREEN}quick${NC}      Run only TypeScript and ESLint
+    ${GREEN}validate${NC}   Run complete validation (TypeScript + ESLint + Tests)
     ${GREEN}test${NC}       Run test suite (npm test)
     ${GREEN}test:lm${NC}    Test LM Studio integration
+
+  ${BOLD}Code Quality:${NC}
+    ${GREEN}lint:fix${NC}   Auto-fix ESLint issues
+    ${GREEN}format${NC}     Format code with Prettier
+    ${GREEN}type-check${NC} Run TypeScript type checking only
 
   ${BOLD}Build & Launch:${NC}
     ${GREEN}build${NC}      Run checks then build iOS app
@@ -443,6 +494,7 @@ ${BOLD}COMMANDS:${NC}
   ${BOLD}Cleanup:${NC}
     ${GREEN}clean${NC}      Clean Bazel cache (bazel clean --expunge)
     ${GREEN}clean:deep${NC} Deep clean (cache + node_modules)
+    ${GREEN}clean:lint${NC} Clean ESLint cache
     ${GREEN}reset${NC}      Reset workspace (deep clean + npm install)
 
   ${BOLD}Performance:${NC}
@@ -500,6 +552,20 @@ case "$COMMAND" in
     quick)
         run_quick_checks
         ;;
+    validate)
+        run_validation_suite
+        ;;
+    lint:fix)
+        fix_eslint
+        ;;
+    format)
+        print_step "Formatting Code with Prettier"
+        npm run format
+        print_success "Code formatted"
+        ;;
+    type-check)
+        check_typescript
+        ;;
     build)
         if run_full_checks; then
             echo ""
@@ -522,6 +588,11 @@ case "$COMMAND" in
         ;;
     clean:deep)
         clean_deep
+        ;;
+    clean:lint)
+        print_step "Cleaning ESLint Cache"
+        rm -f .eslintcache
+        print_success "ESLint cache cleaned"
         ;;
     reset)
         reset_workspace

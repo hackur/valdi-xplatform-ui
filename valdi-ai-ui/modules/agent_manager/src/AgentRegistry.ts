@@ -676,10 +676,11 @@ export const DEFAULT_AGENTS: AgentDefinition[] = [
 export async function registerDefaultAgents(
   registry: AgentRegistry = defaultAgentRegistry,
 ): Promise<number> {
+  const logger = new Logger({ module: 'AgentRegistry' });
   const result = await registry.registerBulk(DEFAULT_AGENTS);
 
-  console.log(
-    `[AgentRegistry] Registered ${result.success.length} default agents, ${result.failed.length} failed`,
+  logger.info(
+    `Registered ${result.success.length} default agents, ${result.failed.length} failed`,
   );
 
   return result.success.length;

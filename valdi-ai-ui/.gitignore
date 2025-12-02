@@ -44,6 +44,9 @@ Desktop.ini
 # TypeScript
 *.tsbuildinfo
 
+# ESLint
+.eslintcache
+
 # Testing
 coverage/
 .nyc_output/

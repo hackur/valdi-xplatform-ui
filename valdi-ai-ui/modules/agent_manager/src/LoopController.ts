@@ -14,6 +14,7 @@ import type {
 } from './types';
 import type { AgentRegistry } from './AgentRegistry';
 import type { AgentExecutor } from './AgentExecutor';
+import { Logger } from '../../common/src/index';
 
 /**
  * Loop Controller Configuration
@@ -39,6 +40,7 @@ export class LoopController {
   private readonly registry: AgentRegistry;
   private readonly executor: AgentExecutor;
   private readonly debug: boolean;
+  private readonly logger: Logger;
   private readonly activeLoops: Map<string, LoopExecutionState> = new Map();
   private readonly abortControllers: Map<string, AbortController> = new Map();
 
@@ -46,6 +48,7 @@ export class LoopController {
     this.registry = config.registry;
     this.executor = config.executor;
     this.debug = config.debug ?? false;
+    this.logger = new Logger({ module: 'LoopController' });
   }
 
   /**
@@ -382,7 +385,7 @@ export class LoopController {
    */
   private log(message: string): void {
     if (this.debug) {
-      console.log(`[LoopController] ${message}`);
+      this.logger.debug(message);
     }
   }
 }

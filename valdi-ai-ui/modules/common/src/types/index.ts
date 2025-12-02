@@ -42,3 +42,9 @@ export {
   ConversationUtils,
   DefaultModels,
 } from './Conversation';
+
+// Branded types for type-safe IDs
+export * from './branded';
+
+// Utility types for type transformations
+export * from './utility';
