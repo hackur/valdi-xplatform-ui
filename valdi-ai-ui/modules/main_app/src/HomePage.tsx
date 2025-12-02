@@ -7,9 +7,9 @@
 
 import { Component } from 'valdi_core/src/Component';
 import { Style } from 'valdi_core/src/Style';
-import { View, Label } from 'valdi_tsx/src/NativeTemplateElements';
+import type { View, Label } from 'valdi_tsx/src/NativeTemplateElements';
 import { systemFont } from 'valdi_core/src/SystemFont';
-import { SimpleNavigationController } from './SimpleNavigationController';
+import type { SimpleNavigationController } from './SimpleNavigationController';
 import {
   Colors,
   Fonts,
@@ -17,17 +17,17 @@ import {
   SemanticSpacing,
   BorderRadius,
   Card,
-} from 'common/src';
+} from '../../common/src/index';
 
 // Screen Imports
-import { ChatView } from 'chat_ui/src/ChatView';
-import { ConversationList } from 'chat_ui/src/ConversationList';
-// import { ToolsDemoScreen } from 'tools_demo/src/ToolsDemoScreen'; // Excluded from build
-import { WorkflowDemoScreen } from 'workflow_demo/src/WorkflowDemoScreen';
-import { SettingsScreen } from 'settings/src/SettingsScreen';
+import { ChatView } from '../../chat_ui/src/ChatView';
+import { ConversationList } from '../../chat_ui/src/ConversationList';
+// import { ToolsDemoScreen } from '../../tools_demo/src/ToolsDemoScreen'; // Excluded from build
+import { WorkflowDemoScreen } from '../../workflow_demo/src/WorkflowDemoScreen';
+import { SettingsScreen } from '../../settings/src/SettingsScreen';
 
 // Store Imports
-import { conversationStore } from 'chat_core/src/ConversationStore';
+import { conversationStore } from '../../chat_core/src/ConversationStore';
 
 /**
  * HomePage Props
@@ -51,7 +51,10 @@ interface FeatureCard {
  * HomePage Component
  */
 export class HomePage extends Component<HomePageProps> {
-  private features: FeatureCard[] = [
+  // Cache handlers for feature card taps (per Valdi best practices)
+  private readonly featureTapHandlers = new Map<string, () => Promise<void>>();
+
+  private readonly features: FeatureCard[] = [
     {
       id: 'chat',
       title: 'New Chat',
@@ -96,7 +99,17 @@ export class HomePage extends Component<HomePageProps> {
     },
   ];
 
-  private handleFeatureTap = async (feature: FeatureCard): Promise<void> => {
+  // Cached handler getter (per Valdi best practices)
+  private getFeatureTapHandler(feature: FeatureCard): () => Promise<void> {
+    let handler = this.featureTapHandlers.get(feature.id);
+    if (!handler) {
+      handler = async () => { await this.handleFeatureTap(feature); };
+      this.featureTapHandlers.set(feature.id, handler);
+    }
+    return handler;
+  }
+
+  private readonly handleFeatureTap = async (feature: FeatureCard): Promise<void> => {
     console.log(`Navigate to: ${feature.route}`);
 
     switch (feature.id) {
@@ -138,7 +151,7 @@ export class HomePage extends Component<HomePageProps> {
   /**
    * Navigate to a new chat conversation
    */
-  private navigateToNewChat = async (): Promise<void> => {
+  private readonly navigateToNewChat = async (): Promise<void> => {
     try {
       // Create a new conversation
       const conversation = await conversationStore.createConversation({
@@ -164,7 +177,7 @@ export class HomePage extends Component<HomePageProps> {
   /**
    * Navigate to ConversationList
    */
-  private navigateToConversationList = async (): Promise<void> => {
+  private readonly navigateToConversationList = async (): Promise<void> => {
     try {
       // Get all conversations from the store
       const conversations = conversationStore.getAllConversations();
@@ -188,7 +201,7 @@ export class HomePage extends Component<HomePageProps> {
   /**
    * Navigate to ToolsDemoScreen
    */
-  private navigateToToolsDemo = (): void => {
+  private readonly navigateToToolsDemo = (): void => {
     // ToolsDemoScreen excluded from build - requires 'ai' and 'zod' dependencies
     console.log('Tools demo temporarily unavailable');
     // this.viewModel.navigationController.push(ToolsDemoScreen, {}, {});
@@ -197,25 +210,25 @@ export class HomePage extends Component<HomePageProps> {
   /**
    * Navigate to WorkflowDemoScreen
    */
-  private navigateToWorkflowsDemo = (): void => {
+  private readonly navigateToWorkflowsDemo = (): void => {
     this.viewModel.navigationController.push(WorkflowDemoScreen, {}, {});
   };
 
   /**
    * Navigate to SettingsScreen
    */
-  private navigateToSettings = (): void => {
+  private readonly navigateToSettings = (): void => {
     this.viewModel.navigationController.push(SettingsScreen, {
       navigationController: this.viewModel.navigationController,
     }, {});
   };
 
-  private renderFeatureCard = (feature: FeatureCard) => {
+  private readonly renderFeatureCard = (feature: FeatureCard) => {
     return (
       <Card
         key={feature.id}
         elevation="sm"
-        onTap={() => this.handleFeatureTap(feature)}
+        onTap={this.getFeatureTapHandler(feature)}
         style={styles.featureCard}
       >
         <view style={styles.featureContent}>
@@ -244,33 +257,41 @@ export class HomePage extends Component<HomePageProps> {
   };
 
   override onRender() {
-    console.log('HomePage onRender - starting render');
-    console.log('HomePage features count:', this.features.length);
-
-    // Simplified test version - just render some text
     return (
-      <view style={new Style<View>({
-        flexGrow: 1,
-        backgroundColor: '#FFFFFF',
-        paddingLeft: 20,
-        paddingRight: 20,
-        paddingTop: 40,
-      })}>
-        <label
-          value="Valdi AI"
-          style={new Style<Label>({
-            font: systemFont(32),
-            color: '#000000',
-          })}
-        />
-        <label
-          value="Home Page Test"
-          style={new Style<Label>({
-            font: systemFont(18),
-            color: '#666666',
-            marginTop: 10,
-          })}
-        />
+      <view style={styles.container}>
+        {/* Header Section */}
+        <view style={styles.header}>
+          <label value="Valdi AI" style={styles.headerTitle} />
+          <label
+            value="Open Source AI Chat Client"
+            style={styles.headerSubtitle}
+          />
+        </view>
+
+        {/* Welcome Card */}
+        <Card elevation="sm" style={styles.welcomeCard}>
+          <label value="Welcome! 👋" style={styles.welcomeTitle} />
+          <label
+            value="Explore AI capabilities with multiple providers, advanced workflows, and intelligent agents."
+            style={styles.welcomeMessage}
+          />
+        </Card>
+
+        {/* Features Section */}
+        <view style={styles.featuresSection}>
+          <label value="Features" style={styles.featuresTitle} />
+          <view style={styles.featuresGrid}>
+            {this.features.map((feature) => this.renderFeatureCard(feature))}
+          </view>
+        </view>
+
+        {/* Footer */}
+        <view style={styles.footer}>
+          <label
+            value="Built with Valdi Framework"
+            style={styles.footerText}
+          />
+        </view>
       </view>
     );
   }

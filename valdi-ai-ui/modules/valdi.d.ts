@@ -160,10 +160,10 @@ declare module 'valdi_core/src/Style' {
  */
 declare module 'valdi_tsx/src/NativeTemplateElements' {
   // Additional type aliases for compatibility - actual Props interfaces and classes are in mocks
-  export type TemplateElement = {
+  export interface TemplateElement {
     key?: string;
     ref?: any;
-  };
+  }
 
   export type ContainerTemplateElement = TemplateElement & {
     children?: unknown;

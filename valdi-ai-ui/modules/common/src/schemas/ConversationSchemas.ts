@@ -9,9 +9,9 @@ import { z } from 'zod';
 /**
  * AI Provider Schema
  */
-export const AIProviderSchema = z.enum(['openai', 'anthropic', 'google', 'xai', 'custom'], {
+export const AIProviderSchema = z.enum(['openai', 'anthropic', 'google', 'custom-openai-compatible'], {
   errorMap: () => ({
-    message: 'Invalid AI provider. Must be openai, anthropic, google, xai, or custom',
+    message: 'Invalid AI provider. Must be openai, anthropic, google, or custom-openai-compatible',
   }),
 });
 
@@ -45,6 +45,7 @@ export const ModelConfigSchema = z.object({
     .optional(),
   toolsEnabled: z.boolean().optional(),
   apiEndpoint: z.string().url('Invalid API endpoint URL').optional(),
+  customProviderId: z.string().optional(),
 });
 
 /**

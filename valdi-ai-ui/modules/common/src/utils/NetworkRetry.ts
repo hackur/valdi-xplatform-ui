@@ -71,7 +71,7 @@ const DEFAULT_RETRY_CONFIG: Required<RetryConfig> = {
  * Handles network request retries with exponential backoff.
  */
 export class NetworkRetry {
-  private config: Required<RetryConfig>;
+  private readonly config: Required<RetryConfig>;
   private networkStatus: NetworkStatus = {
     isOnline: true,
     lastCheck: new Date(),
@@ -181,18 +181,18 @@ export class NetworkRetry {
   /**
    * Delay helper
    */
-  private delay(ms: number): Promise<void> {
+  private async delay(ms: number): Promise<void> {
     return new Promise((resolve) => setTimeout(resolve, ms));
   }
 
   /**
    * Execute with timeout
    */
-  private withTimeout<T>(promise: Promise<T>, timeoutMs: number): Promise<T> {
+  private async withTimeout<T>(promise: Promise<T>, timeoutMs: number): Promise<T> {
     return Promise.race([
       promise,
       new Promise<T>((_, reject) =>
-        setTimeout(() => reject(new Error('Request timeout')), timeoutMs),
+        setTimeout(() => { reject(new Error('Request timeout')); }, timeoutMs),
       ),
     ]);
   }

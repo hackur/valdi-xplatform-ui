@@ -7,7 +7,7 @@
 import { AgentExecutor } from '../AgentExecutor';
 import { ChatService } from '../../../chat_core/src/ChatService';
 import { AgentDefinition, AgentContext } from '../types';
-import { MessageUtils } from 'common/src';
+import { MessageUtils } from '../../../common/src/index';
 
 // Mock ChatService
 jest.mock('../../../chat_core/src/ChatService');

@@ -10,7 +10,7 @@
 
 import { StatefulComponent } from 'valdi_core/src/Component';
 import { Style } from 'valdi_core/src/Style';
-import { View, ScrollView, Label } from 'valdi_tsx/src/NativeTemplateElements';
+import type { View, ScrollView, Label } from 'valdi_tsx/src/NativeTemplateElements';
 import {
   Card,
   Button,
@@ -20,8 +20,10 @@ import {
   BorderRadius,
   ErrorBoundary,
   ErrorScreen,
-} from 'common/src';
-import { WorkflowCard, WorkflowExecutionState } from './WorkflowCard';
+} from '../../common/src/index';
+import type { SimpleNavigationController } from '../../common/src/index';
+import type { WorkflowExecutionState } from './WorkflowCard';
+import { WorkflowCard } from './WorkflowCard';
 import {
   runSequentialDemo,
   runParallelDemo,
@@ -54,9 +56,20 @@ interface WorkflowDemoScreenState {
 }
 
 /**
+ * WorkflowDemoScreen Props
+ */
+export interface WorkflowDemoScreenProps {
+  navigationController: SimpleNavigationController;
+}
+
+/**
  * WorkflowDemo Screen Component
  */
-export class WorkflowDemoScreen extends StatefulComponent<{}, WorkflowDemoScreenState> {
+export class WorkflowDemoScreen extends StatefulComponent<WorkflowDemoScreenProps, WorkflowDemoScreenState> {
+  // Cache handlers for tab selection and workflow execution (per Valdi best practices)
+  private readonly tabSelectHandlers = new Map<WorkflowType, () => void>();
+  private readonly runWorkflowHandlers = new Map<WorkflowType, () => Promise<void>>();
+
   override state: WorkflowDemoScreenState = {
     selectedTab: 'sequential',
     executionStates: {
@@ -70,7 +83,7 @@ export class WorkflowDemoScreen extends StatefulComponent<{}, WorkflowDemoScreen
   /**
    * Workflow configurations
    */
-  private workflows: WorkflowInfo[] = [
+  private readonly workflows: WorkflowInfo[] = [
     {
       id: 'sequential',
       name: 'Sequential Workflow',
@@ -124,14 +137,33 @@ export class WorkflowDemoScreen extends StatefulComponent<{}, WorkflowDemoScreen
   /**
    * Handle tab selection
    */
-  private handleTabSelect = (tabId: WorkflowType): void => {
+  private readonly handleTabSelect = (tabId: WorkflowType): void => {
     this.setState({ selectedTab: tabId });
   };
+
+  // Cached handler getters (per Valdi best practices)
+  private getTabSelectHandler(tabId: WorkflowType): () => void {
+    let handler = this.tabSelectHandlers.get(tabId);
+    if (!handler) {
+      handler = () => { this.handleTabSelect(tabId); };
+      this.tabSelectHandlers.set(tabId, handler);
+    }
+    return handler;
+  }
+
+  private getRunWorkflowHandler(workflowType: WorkflowType): () => Promise<void> {
+    let handler = this.runWorkflowHandlers.get(workflowType);
+    if (!handler) {
+      handler = async () => { await this.handleRunWorkflow(workflowType); };
+      this.runWorkflowHandlers.set(workflowType, handler);
+    }
+    return handler;
+  }
 
   /**
    * Handle workflow execution
    */
-  private handleRunWorkflow = async (
+  private readonly handleRunWorkflow = async (
     workflowType: WorkflowType,
   ): Promise<void> => {
     // Update state to show loading
@@ -153,22 +185,22 @@ export class WorkflowDemoScreen extends StatefulComponent<{}, WorkflowDemoScreen
       switch (workflowType) {
         case 'sequential':
           result = await runSequentialDemo((state) =>
-            this.updateWorkflowState(workflowType, state),
+            { this.updateWorkflowState(workflowType, state); },
           );
           break;
         case 'parallel':
           result = await runParallelDemo((state) =>
-            this.updateWorkflowState(workflowType, state),
+            { this.updateWorkflowState(workflowType, state); },
           );
           break;
         case 'routing':
           result = await runRoutingDemo((state) =>
-            this.updateWorkflowState(workflowType, state),
+            { this.updateWorkflowState(workflowType, state); },
           );
           break;
         case 'evaluator':
           result = await runEvaluatorOptimizerDemo((state) =>
-            this.updateWorkflowState(workflowType, state),
+            { this.updateWorkflowState(workflowType, state); },
           );
           break;
       }
@@ -202,7 +234,7 @@ export class WorkflowDemoScreen extends StatefulComponent<{}, WorkflowDemoScreen
   /**
    * Update workflow execution state
    */
-  private updateWorkflowState = (
+  private readonly updateWorkflowState = (
     workflowType: WorkflowType,
     newState: Partial<WorkflowExecutionState>,
   ): void => {
@@ -220,7 +252,7 @@ export class WorkflowDemoScreen extends StatefulComponent<{}, WorkflowDemoScreen
   /**
    * Handle workflow execution errors
    */
-  private handleWorkflowError = (error: Error): void => {
+  private readonly handleWorkflowError = (error: Error): void => {
     console.error('Workflow demo error:', error);
   };
 
@@ -284,7 +316,7 @@ export class WorkflowDemoScreen extends StatefulComponent<{}, WorkflowDemoScreen
             {this.workflows.map((workflow) => (
               <view
                 style={this.getTabStyle(selectedTab === workflow.id)}
-                onTap={() => this.handleTabSelect(workflow.id)}
+                onTap={this.getTabSelectHandler(workflow.id)}
               >
                 <label
                   value={`${workflow.icon} ${workflow.name}`}
@@ -338,7 +370,7 @@ export class WorkflowDemoScreen extends StatefulComponent<{}, WorkflowDemoScreen
               fullWidth={true}
               loading={executionState.status === 'running'}
               disabled={executionState.status === 'running'}
-              onTap={() => this.handleRunWorkflow(selectedTab)}
+              onTap={this.getRunWorkflowHandler(selectedTab)}
               style={styles.buttonContainer as unknown as Record<string, unknown>}
             />
           </Card>

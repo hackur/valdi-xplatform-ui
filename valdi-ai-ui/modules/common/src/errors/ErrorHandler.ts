@@ -5,13 +5,14 @@
  * Provides consistent error handling, logging, and user-friendly message formatting.
  */
 
-import {
-  AppError,
+import type {
   APIError,
   ValidationError,
   StorageError,
   StreamError,
-  WorkflowError,
+  WorkflowError} from './ErrorTypes';
+import {
+  AppError,
   ErrorCode,
   ErrorSeverity,
   isAppError,
@@ -77,7 +78,7 @@ export interface ErrorHandlerOptions {
  * Central error handler for the application.
  */
 export class ErrorHandler {
-  private options: Required<ErrorHandlerOptions>;
+  private readonly options: Required<ErrorHandlerOptions>;
   private errorLog: ErrorLogEntry[] = [];
   private errorCount = 0;
 

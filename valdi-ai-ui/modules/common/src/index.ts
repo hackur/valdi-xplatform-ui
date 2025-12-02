@@ -9,20 +9,26 @@
  * - Utils (Error handling, network retry, validation)
  */
 
-// Theme exports
-export * from './theme';
+// Theme exports - use explicit /index for Valdi module resolution
+export * from './theme/index';
 
 // Type exports
-export * from './types';
+export * from './types/index';
 
 // Component exports
-export * from './components';
+export * from './components/index';
 
 // Error exports
-export * from './errors';
+export * from './errors/index';
 
-// Schema exports
-// export * from './schemas'; // TODO: Re-enable when schema dependencies are available
+// TODO: Schema exports
+// export * from './schemas/index'; // TODO: Re-enable when schema dependencies are available
 
 // Utility exports
-export * from './utils';
+export * from './utils/index';
+
+// Service exports
+export * from './services/Logger';
+
+// Navigation types
+export type * from './navigation/index';

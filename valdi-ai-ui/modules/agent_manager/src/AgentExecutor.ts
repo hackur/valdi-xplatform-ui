@@ -5,9 +5,9 @@
  * Handles message formatting, error handling, and result tracking.
  */
 
-import { AgentDefinition, AgentContext, AgentExecutionResult } from './types';
-import { ChatService } from '../../chat_core/src/ChatService';
-import { MessageUtils, Message } from 'common/src';
+import type { AgentDefinition, AgentContext, AgentExecutionResult } from './types';
+import type { ChatService } from '../../chat_core/src/ChatService';
+import { MessageUtils, type Message, Logger } from '../../common/src/index';
 
 /**
  * Agent Executor Configuration
@@ -56,10 +56,11 @@ export interface AgentExecutorConfig {
  * ```
  */
 export class AgentExecutor {
-  private chatService: ChatService;
-  private defaultTimeout: number;
-  private debug: boolean;
-  private activeExecutions = new Set<string>();
+  private readonly chatService: ChatService;
+  private readonly defaultTimeout: number;
+  private readonly debug: boolean;
+  private readonly activeExecutions = new Set<string>();
+  private readonly logger: Logger;
 
   /**
    * Creates a new AgentExecutor instance
@@ -70,6 +71,7 @@ export class AgentExecutor {
     this.chatService = config.chatService;
     this.defaultTimeout = config.defaultTimeout ?? 60000; // 60 seconds default
     this.debug = config.debug ?? false;
+    this.logger = new Logger({ module: 'AgentExecutor' });
   }
 
   /**
@@ -137,7 +139,7 @@ export class AgentExecutor {
       // Rejects after timeout to prevent hanging operations
       const timeoutPromise = new Promise<never>((_, reject) => {
         setTimeout(
-          () => reject(new Error(`Execution timeout after ${timeout}ms`)),
+          () => { reject(new Error(`Execution timeout after ${timeout}ms`)); },
           timeout,
         );
       });
@@ -380,7 +382,7 @@ export class AgentExecutor {
     // Try to parse JSON from code blocks first
     // Pattern: ```json\n{...}\n```
     const jsonMatch = content.match(/```json\s*\n([\s\S]*?)\n```/);
-    if (jsonMatch && jsonMatch[1]) {
+    if (jsonMatch?.[1]) {
       try {
         return JSON.parse(jsonMatch[1]);
       } catch {
@@ -437,7 +439,7 @@ export class AgentExecutor {
     for (let i = 0; i < agents.length; i += maxConcurrency) {
       const batch = agents.slice(i, i + maxConcurrency);
       const batchResults = await Promise.all(
-        batch.map((agent) => this.execute(agent, context, options)),
+        batch.map(async (agent) => this.execute(agent, context, options)),
       );
       results.push(...batchResults);
     }
@@ -464,7 +466,7 @@ export class AgentExecutor {
    */
   private log(message: string): void {
     if (this.debug) {
-      console.log(`[AgentExecutor] ${message}`);
+      this.logger.debug(message);
     }
   }
 }

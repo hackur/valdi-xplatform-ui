@@ -15,16 +15,17 @@
  * - Automated refinement loops
  */
 
-import {
-  WorkflowExecutor,
+import type {
   WorkflowConfig,
   WorkflowExecutionOptions,
   WorkflowExecutionResult,
   AgentDefinition,
-  WorkflowProgressCallback,
+  WorkflowProgressCallback} from './AgentWorkflow';
+import {
+  WorkflowExecutor
 } from './AgentWorkflow';
-import { ChatService } from './ChatService';
-import { MessageStore } from './MessageStore';
+import type { ChatService } from './ChatService';
+import type { MessageStore } from './MessageStore';
 
 /**
  * Evaluation Result
@@ -447,12 +448,12 @@ export class EvaluatorOptimizerWorkflow extends WorkflowExecutor {
 
     // Try to extract score
     const scoreMatch = output.match(/(?:SCORE|Score|score):\s*(\d+)/i);
-    if (scoreMatch && scoreMatch[1]) {
+    if (scoreMatch?.[1]) {
       result.score = parseInt(scoreMatch[1], 10);
     } else {
       // Look for score/rating pattern
       const ratingMatch = output.match(/(\d+)\s*\/\s*100/);
-      if (ratingMatch && ratingMatch[1]) {
+      if (ratingMatch?.[1]) {
         result.score = parseInt(ratingMatch[1], 10);
       }
     }
@@ -461,7 +462,7 @@ export class EvaluatorOptimizerWorkflow extends WorkflowExecutor {
     const feedbackMatch = output.match(
       /(?:FEEDBACK|Feedback|feedback):\s*([\s\S]+)/i,
     );
-    if (feedbackMatch && feedbackMatch[1]) {
+    if (feedbackMatch?.[1]) {
       result.feedback = feedbackMatch[1].trim();
     }
 
@@ -473,7 +474,7 @@ export class EvaluatorOptimizerWorkflow extends WorkflowExecutor {
     const issuesMatch = output.match(
       /(?:ISSUES|Issues|issues):\s*([\s\S]+?)(?=\n\n|$)/i,
     );
-    if (issuesMatch && issuesMatch[1]) {
+    if (issuesMatch?.[1]) {
       result.issues = issuesMatch[1]
         .split('\n')
         .map((i) => i.trim())
@@ -484,7 +485,7 @@ export class EvaluatorOptimizerWorkflow extends WorkflowExecutor {
     const suggestionsMatch = output.match(
       /(?:SUGGESTIONS|Suggestions|suggestions):\s*([\s\S]+?)(?=\n\n|$)/i,
     );
-    if (suggestionsMatch && suggestionsMatch[1]) {
+    if (suggestionsMatch?.[1]) {
       result.suggestions = suggestionsMatch[1]
         .split('\n')
         .map((s) => s.trim())
@@ -548,9 +549,9 @@ export class EvaluatorOptimizerWorkflow extends WorkflowExecutor {
     }
 
     return (
-      sections.join('\n\n---\n\n') +
-      `\n\n## Final Result (Score: ${finalIter.evaluation.score}/100)\n\n` +
-      finalIter.output
+      `${sections.join('\n\n---\n\n') 
+      }\n\n## Final Result (Score: ${finalIter.evaluation.score}/100)\n\n${ 
+      finalIter.output}`
     );
   }
 
@@ -588,7 +589,7 @@ export class EvaluatorOptimizerWorkflow extends WorkflowExecutor {
  * Evaluator-Optimizer Workflow Builder
  */
 export class EvaluatorOptimizerWorkflowBuilder {
-  private config: Partial<EvaluatorOptimizerWorkflowConfig> = {
+  private readonly config: Partial<EvaluatorOptimizerWorkflowConfig> = {
     type: 'evaluator-optimizer',
   };
 

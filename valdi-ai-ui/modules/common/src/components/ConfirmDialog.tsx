@@ -8,8 +8,8 @@
 import { Component } from 'valdi_core/src/Component';
 import { Style } from 'valdi_core/src/Style';
 import { systemFont, systemBoldFont } from 'valdi_core/src/SystemFont';
-import { View, Label } from 'valdi_tsx/src/NativeTemplateElements';
-import { Colors, Spacing, SemanticShadows, BorderRadius } from '../theme';
+import type { View, Label } from 'valdi_tsx/src/NativeTemplateElements';
+import { Colors, Spacing, SemanticShadows, BorderRadius } from '../theme/index';
 
 /**
  * Confirm Dialog Props

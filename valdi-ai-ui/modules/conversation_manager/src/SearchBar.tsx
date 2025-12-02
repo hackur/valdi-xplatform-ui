@@ -6,9 +6,9 @@
 
 import { StatefulComponent } from 'valdi_core/src/Component';
 import { Style } from 'valdi_core/src/Style';
-import { View, Label, EditTextEvent } from 'valdi_tsx/src/NativeTemplateElements';
+import type { View, Label, EditTextEvent } from 'valdi_tsx/src/NativeTemplateElements';
 import { systemFont } from 'valdi_core/src/SystemFont';
-import { Colors, Fonts, Spacing, BorderRadius, SemanticShadows } from 'common/src';
+import { Colors, Fonts, Spacing, BorderRadius, SemanticShadows } from '../../common/src/index';
 
 /**
  * SearchBar Props
@@ -84,8 +84,8 @@ export class SearchBar extends StatefulComponent<
   /**
    * Handle text change
    */
-  private handleChange = (event: EditTextEvent): void => {
-    const text = event.text;
+  private readonly handleChange = (event: EditTextEvent): void => {
+    const {text} = event;
     this.setState({ query: text });
 
     // Debounce search
@@ -105,21 +105,21 @@ export class SearchBar extends StatefulComponent<
   /**
    * Handle focus
    */
-  private handleFocus = (): void => {
+  private readonly handleFocus = (): void => {
     this.setState({ isActive: true });
   };
 
   /**
    * Handle blur
    */
-  private handleBlur = (): void => {
+  private readonly handleBlur = (): void => {
     this.setState({ isActive: false });
   };
 
   /**
    * Handle clear
    */
-  private handleClear = (): void => {
+  private readonly handleClear = (): void => {
     this.setState({ query: '' });
 
     if (this.debounceTimer) {

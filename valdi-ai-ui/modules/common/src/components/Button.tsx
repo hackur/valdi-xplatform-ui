@@ -7,9 +7,9 @@
 
 import { Component } from 'valdi_core/src/Component';
 import { Style } from 'valdi_core/src/Style';
-import { View, Label } from 'valdi_tsx/src/NativeTemplateElements';
+import type { View, Label } from 'valdi_tsx/src/NativeTemplateElements';
 import { systemBoldFont } from 'valdi_core/src/SystemFont';
-import { Colors, Spacing, SemanticShadows, BorderRadius } from '../theme';
+import { Colors, Spacing, SemanticShadows, BorderRadius } from '../theme/index';
 
 /**
  * Button Variants

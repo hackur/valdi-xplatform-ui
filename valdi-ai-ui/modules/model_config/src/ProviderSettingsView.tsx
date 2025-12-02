@@ -6,16 +6,16 @@
 
 import { StatefulComponent } from 'valdi_core/src/Component';
 import { Style } from 'valdi_core/src/Style';
-import { View, Label } from 'valdi_tsx/src/NativeTemplateElements';
-import { NavigationController } from 'valdi_navigation/src/NavigationController';
-import { Colors, Fonts, Spacing, BorderRadius } from 'common/src';
-import { Card } from 'common/src';
-import { Button } from 'common/src';
-import { LoadingSpinner } from 'common/src';
-import { ConfirmDialog } from 'common/src';
+import type { View, Label } from 'valdi_tsx/src/NativeTemplateElements';
+import type { NavigationController } from 'valdi_navigation/src/NavigationController';
+import { Colors, Fonts, Spacing, BorderRadius } from '../../common/src/index';
+import { Card } from '../../common/src/index';
+import { Button } from '../../common/src/index';
+import { LoadingSpinner } from '../../common/src/index';
+import { ConfirmDialog } from '../../common/src/index';
 import { systemFont } from 'valdi_core/src/SystemFont';
-import { CustomProviderStore } from './CustomProviderStore';
-import { CustomProviderConfig } from './types';
+import type { CustomProviderStore } from './CustomProviderStore';
+import type { CustomProviderConfig } from './types';
 import { AddCustomProviderView } from './AddCustomProviderView';
 
 /**
@@ -58,6 +58,12 @@ export class ProviderSettingsView extends StatefulComponent<
   ProviderSettingsViewProps,
   ProviderSettingsViewState
 > {
+  // Cache handlers for provider actions (per Valdi best practices - avoid creating new functions on render)
+  private readonly providerTestHandlers = new Map<string, () => Promise<void>>();
+  private readonly providerEditHandlers = new Map<string, () => void>();
+  private readonly providerToggleHandlers = new Map<string, () => Promise<void>>();
+  private readonly providerDeleteHandlers = new Map<string, () => void>();
+
   override state: ProviderSettingsViewState = {
     providers: [],
     isLoading: true,
@@ -189,7 +195,7 @@ export class ProviderSettingsView extends StatefulComponent<
                         <view style={styles.actions}>
                           <view
                             style={styles.actionButton}
-                            onTap={() => this.handleTestProvider(provider.id)}
+                            onTap={this.getTestHandler(provider.id)}
                           >
                             <label
                               value="Test"
@@ -199,7 +205,7 @@ export class ProviderSettingsView extends StatefulComponent<
 
                           <view
                             style={styles.actionButton}
-                            onTap={() => this.handleEditProvider(provider)}
+                            onTap={this.getEditHandler(provider)}
                           >
                             <label
                               value="Edit"
@@ -209,12 +215,7 @@ export class ProviderSettingsView extends StatefulComponent<
 
                           <view
                             style={styles.actionButton}
-                            onTap={() =>
-                              this.handleToggleEnabled(
-                                provider.id,
-                                !provider.isEnabled,
-                              )
-                            }
+                            onTap={this.getToggleHandler(provider)}
                           >
                             <label
                               value={provider.isEnabled ? 'Disable' : 'Enable'}
@@ -224,7 +225,7 @@ export class ProviderSettingsView extends StatefulComponent<
 
                           <view
                             style={styles.actionButtonDanger}
-                            onTap={() => this.handleDeleteProvider(provider.id)}
+                            onTap={this.getDeleteHandler(provider.id)}
                           >
                             <label
                               value="Delete"
@@ -284,7 +285,7 @@ export class ProviderSettingsView extends StatefulComponent<
   /**
    * Handle add provider
    */
-  private handleAddProvider = (): void => {
+  private readonly handleAddProvider = (): void => {
     this.viewModel.navigationController.push(AddCustomProviderView, {
       navigationController: this.viewModel.navigationController,
       customProviderStore: this.viewModel.customProviderStore,
@@ -297,7 +298,7 @@ export class ProviderSettingsView extends StatefulComponent<
   /**
    * Handle edit provider
    */
-  private handleEditProvider = (provider: CustomProviderConfig): void => {
+  private readonly handleEditProvider = (provider: CustomProviderConfig): void => {
     this.viewModel.navigationController.push(AddCustomProviderView, {
       navigationController: this.viewModel.navigationController,
       customProviderStore: this.viewModel.customProviderStore,
@@ -311,7 +312,7 @@ export class ProviderSettingsView extends StatefulComponent<
   /**
    * Handle test provider
    */
-  private handleTestProvider = async (providerId: string): Promise<void> => {
+  private readonly handleTestProvider = async (providerId: string): Promise<void> => {
     try {
       const result =
         await this.viewModel.customProviderStore.testProvider(providerId);
@@ -333,7 +334,7 @@ export class ProviderSettingsView extends StatefulComponent<
   /**
    * Handle toggle enabled
    */
-  private handleToggleEnabled = async (
+  private readonly handleToggleEnabled = async (
     providerId: string,
     enabled: boolean,
   ): Promise<void> => {
@@ -352,17 +353,55 @@ export class ProviderSettingsView extends StatefulComponent<
   /**
    * Handle delete provider
    */
-  private handleDeleteProvider = (providerId: string): void => {
+  private readonly handleDeleteProvider = (providerId: string): void => {
     this.setState({
       showDeleteConfirm: true,
       providerToDelete: providerId,
     });
   };
 
+  // Cached handler getters (per Valdi best practices)
+  private getTestHandler(providerId: string): () => Promise<void> {
+    let handler = this.providerTestHandlers.get(providerId);
+    if (!handler) {
+      handler = async () => { await this.handleTestProvider(providerId); };
+      this.providerTestHandlers.set(providerId, handler);
+    }
+    return handler;
+  }
+
+  private getEditHandler(provider: CustomProviderConfig): () => void {
+    let handler = this.providerEditHandlers.get(provider.id);
+    if (!handler) {
+      handler = () => { this.handleEditProvider(provider); };
+      this.providerEditHandlers.set(provider.id, handler);
+    }
+    return handler;
+  }
+
+  private getToggleHandler(provider: CustomProviderConfig): () => Promise<void> {
+    const key = `${provider.id}-${provider.isEnabled}`;
+    let handler = this.providerToggleHandlers.get(key);
+    if (!handler) {
+      handler = async () => { await this.handleToggleEnabled(provider.id, !provider.isEnabled); };
+      this.providerToggleHandlers.set(key, handler);
+    }
+    return handler;
+  }
+
+  private getDeleteHandler(providerId: string): () => void {
+    let handler = this.providerDeleteHandlers.get(providerId);
+    if (!handler) {
+      handler = () => { this.handleDeleteProvider(providerId); };
+      this.providerDeleteHandlers.set(providerId, handler);
+    }
+    return handler;
+  }
+
   /**
    * Confirm delete provider
    */
-  private confirmDeleteProvider = async (): Promise<void> => {
+  private readonly confirmDeleteProvider = async (): Promise<void> => {
     const { providerToDelete } = this.state;
 
     if (!providerToDelete) {
@@ -384,7 +423,7 @@ export class ProviderSettingsView extends StatefulComponent<
   /**
    * Cancel delete confirmation
    */
-  private cancelDeleteConfirmation = (): void => {
+  private readonly cancelDeleteConfirmation = (): void => {
     this.setState({
       showDeleteConfirm: false,
       providerToDelete: undefined,
@@ -533,7 +572,7 @@ const styles = {
     paddingRight: Spacing.xs,
     paddingTop: 2,
     paddingBottom: 2,
-    backgroundColor: Colors.success + '20',
+    backgroundColor: `${Colors.success  }20`,
     borderRadius: BorderRadius.sm,
   }),
 
@@ -547,7 +586,7 @@ const styles = {
     paddingRight: Spacing.xs,
     paddingTop: 2,
     paddingBottom: 2,
-    backgroundColor: Colors.textTertiary + '20',
+    backgroundColor: `${Colors.textTertiary  }20`,
     borderRadius: BorderRadius.sm,
   }),
 
@@ -608,7 +647,7 @@ const styles = {
     paddingRight: Spacing.sm,
     paddingTop: Spacing.xs,
     paddingBottom: Spacing.xs,
-    backgroundColor: Colors.error + '20',
+    backgroundColor: `${Colors.error  }20`,
     borderRadius: BorderRadius.sm,
   }),
 

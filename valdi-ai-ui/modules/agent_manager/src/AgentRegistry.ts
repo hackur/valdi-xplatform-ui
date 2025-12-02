@@ -5,8 +5,9 @@
  * Provides registration, lookup, and validation of agents with storage persistence.
  */
 
-import { AgentDefinition } from './types';
-import { StorageProvider } from '../../chat_core/src/StorageProvider';
+import type { AgentDefinition } from './types';
+import type { StorageProvider } from '../../chat_core/src/StorageProvider';
+import { Logger } from '../../common/src/index';
 
 const STORAGE_KEY = 'agent_registry_agents';
 
@@ -60,17 +61,19 @@ export interface AgentRegistryConfig {
  * ```
  */
 export class AgentRegistry {
-  private agents: Map<string, AgentDefinition> = new Map();
-  private agentsByCapability: Map<string, Set<string>> = new Map();
-  private storage?: StorageProvider;
+  private readonly agents: Map<string, AgentDefinition> = new Map();
+  private readonly agentsByCapability: Map<string, Set<string>> = new Map();
+  private readonly storage?: StorageProvider;
   private autoSave: boolean;
-  private debug: boolean;
+  private readonly debug: boolean;
   private initialized = false;
+  private readonly logger: Logger;
 
   constructor(config?: AgentRegistryConfig) {
     this.storage = config?.storage;
     this.autoSave = config?.autoSave ?? true;
     this.debug = config?.debug ?? false;
+    this.logger = new Logger({ module: 'AgentRegistry' });
   }
 
   /**
@@ -93,18 +96,21 @@ export class AgentRegistry {
           const originalAutoSave = this.autoSave;
           this.autoSave = false;
 
-          for (const agent of agents) {
-            try {
-              this.register(agent);
-            } catch (error) {
-              console.error(`Failed to load agent ${agent.id}:`, error);
-            }
-          }
+          // Register all agents in parallel
+          await Promise.all(
+            agents.map(async (agent) => {
+              try {
+                await this.register(agent);
+              } catch (error) {
+                this.logger.error(`Failed to load agent ${agent.id}`, error);
+              }
+            }),
+          );
 
           this.autoSave = originalAutoSave;
         }
       } catch (error) {
-        console.error('[AgentRegistry] Failed to load from storage:', error);
+        this.logger.error('Failed to load from storage', error);
       }
     }
 
@@ -126,7 +132,7 @@ export class AgentRegistry {
       await this.storage.setItem(STORAGE_KEY, JSON.stringify(agents));
       this.log(`Saved ${agents.length} agents to storage`);
     } catch (error) {
-      console.error('[AgentRegistry] Failed to save to storage:', error);
+      this.logger.error('Failed to save to storage', error);
       throw new Error('Failed to save agents to storage');
     }
   }
@@ -156,10 +162,12 @@ export class AgentRegistry {
     // Index by capabilities
     if (agent.capabilities) {
       agent.capabilities.forEach((capability) => {
-        if (!this.agentsByCapability.has(capability)) {
-          this.agentsByCapability.set(capability, new Set());
+        let capabilitySet = this.agentsByCapability.get(capability);
+        if (!capabilitySet) {
+          capabilitySet = new Set();
+          this.agentsByCapability.set(capability, capabilitySet);
         }
-        this.agentsByCapability.get(capability)!.add(agent.id);
+        capabilitySet.add(agent.id);
       });
     }
 
@@ -202,10 +210,12 @@ export class AgentRegistry {
 
       // Add new capabilities
       updates.capabilities.forEach((capability) => {
-        if (!this.agentsByCapability.has(capability)) {
-          this.agentsByCapability.set(capability, new Set());
+        let capabilitySet = this.agentsByCapability.get(capability);
+        if (!capabilitySet) {
+          capabilitySet = new Set();
+          this.agentsByCapability.set(capability, capabilitySet);
         }
-        this.agentsByCapability.get(capability)!.add(agentId);
+        capabilitySet.add(agentId);
       });
     }
 
@@ -512,8 +522,8 @@ export class AgentRegistry {
       agents = JSON.parse(json);
     } catch (error) {
       throw new Error(
-        'Invalid JSON: ' +
-          (error instanceof Error ? error.message : String(error)),
+        `Invalid JSON: ${ 
+          error instanceof Error ? error.message : String(error)}`,
       );
     }
 
@@ -583,7 +593,7 @@ export class AgentRegistry {
    */
   private log(message: string): void {
     if (this.debug) {
-      console.log(`[AgentRegistry] ${message}`);
+      this.logger.debug(message);
     }
   }
 }

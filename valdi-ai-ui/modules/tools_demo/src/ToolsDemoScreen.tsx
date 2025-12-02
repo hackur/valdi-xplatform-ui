@@ -8,7 +8,8 @@
 
 import { Component } from 'valdi_core/src/Component';
 import { Style } from 'valdi_core/src/Style';
-import { View, ScrollView, Label } from 'valdi_tsx/src/NativeTemplateElements';
+import type { View, ScrollView} from 'valdi_tsx/src/NativeTemplateElements';
+import { Label } from 'valdi_tsx/src/NativeTemplateElements';
 import {
   Card,
   Button,
@@ -18,9 +19,10 @@ import {
   BorderRadius,
   ErrorBoundary,
   ErrorScreen,
-} from 'common/src';
-import { ToolExecutionCard, ToolExecutionResult } from './ToolExecutionCard';
-import { getAllTools } from 'chat_core/src/ToolDefinitions';
+} from '../../common/src/index';
+import type { ToolExecutionResult } from './ToolExecutionCard';
+import { ToolExecutionCard } from './ToolExecutionCard';
+import { getAllTools } from '../../chat_core/src/ToolDefinitions';
 
 /**
  * Tool Demo Item
@@ -45,6 +47,9 @@ interface ToolsDemoScreenState {
  * ToolsDemo Screen Component
  */
 export class ToolsDemoScreen extends Component<{}, ToolsDemoScreenState> {
+  // Cache handlers for tool execution (per Valdi best practices)
+  private readonly toolExecuteHandlers = new Map<string, () => Promise<void>>();
+
   override state: ToolsDemoScreenState = {
     executionResults: [],
     currentlyExecuting: null,
@@ -53,7 +58,7 @@ export class ToolsDemoScreen extends Component<{}, ToolsDemoScreenState> {
   /**
    * Available tool demos with example inputs
    */
-  private toolDemos: ToolDemo[] = [
+  private readonly toolDemos: ToolDemo[] = [
     {
       name: 'getWeather',
       displayName: 'Get Weather',
@@ -77,10 +82,20 @@ export class ToolsDemoScreen extends Component<{}, ToolsDemoScreenState> {
     },
   ];
 
+  // Cached handler getter (per Valdi best practices)
+  private getToolExecuteHandler(toolDemo: ToolDemo): () => Promise<void> {
+    let handler = this.toolExecuteHandlers.get(toolDemo.name);
+    if (!handler) {
+      handler = async () => { await this.handleExecuteTool(toolDemo); };
+      this.toolExecuteHandlers.set(toolDemo.name, handler);
+    }
+    return handler;
+  }
+
   /**
    * Execute a tool with example input
    */
-  private handleExecuteTool = async (toolDemo: ToolDemo): Promise<void> => {
+  private readonly handleExecuteTool = async (toolDemo: ToolDemo): Promise<void> => {
     const startTime = Date.now();
 
     this.setState({
@@ -143,7 +158,7 @@ export class ToolsDemoScreen extends Component<{}, ToolsDemoScreenState> {
   /**
    * Clear all execution results
    */
-  private handleClearResults = (): void => {
+  private readonly handleClearResults = (): void => {
     this.setState({
       executionResults: [],
     });
@@ -152,7 +167,7 @@ export class ToolsDemoScreen extends Component<{}, ToolsDemoScreenState> {
   /**
    * Handle tool execution errors
    */
-  private handleToolError = (error: Error): void => {
+  private readonly handleToolError = (error: Error): void => {
     console.error('Tool demo error:', error);
   };
 
@@ -241,7 +256,7 @@ export class ToolsDemoScreen extends Component<{}, ToolsDemoScreenState> {
                   fullWidth={true}
                   loading={currentlyExecuting === toolDemo.name}
                   disabled={currentlyExecuting !== null}
-                  onTap={() => this.handleExecuteTool(toolDemo)}
+                  onTap={this.getToolExecuteHandler(toolDemo)}
                   style={{ marginTop: Spacing.md }}
                 />
               </Card>

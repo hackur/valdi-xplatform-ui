@@ -5,12 +5,12 @@
  * including metadata, settings, and management utilities.
  */
 
-import { Message } from './Message';
+import type { Message } from './Message';
 
 /**
  * AI Model Provider
  */
-export type AIProvider = 'openai' | 'anthropic' | 'google' | 'xai' | 'custom';
+export type AIProvider = 'openai' | 'anthropic' | 'google' | 'custom-openai-compatible';
 
 /**
  * AI Model Configuration
@@ -37,6 +37,9 @@ export interface ModelConfig {
 
   /** Custom API endpoint (for 'custom' provider) */
   apiEndpoint?: string;
+
+  /** Custom provider ID (for 'custom-openai-compatible' provider) */
+  customProviderId?: string;
 }
 
 /**
@@ -279,7 +282,7 @@ export const ConversationUtils = {
     if (cleaned.length <= maxLength) {
       return cleaned;
     }
-    return cleaned.substring(0, maxLength - 3) + '...';
+    return `${cleaned.substring(0, maxLength - 3)  }...`;
   },
 
   /**
@@ -478,16 +481,8 @@ export const DefaultModels: Record<AIProvider, ModelConfig> = {
     maxTokens: 8192,
     toolsEnabled: true,
   },
-  xai: {
-    provider: 'xai',
-    modelId: 'grok-beta',
-    displayName: 'Grok',
-    temperature: 0.7,
-    maxTokens: 4096,
-    toolsEnabled: true,
-  },
-  custom: {
-    provider: 'custom',
+  'custom-openai-compatible': {
+    provider: 'custom-openai-compatible',
     modelId: 'custom-model',
     displayName: 'Custom Model',
     temperature: 0.7,

@@ -6,8 +6,8 @@
 
 import { StatefulComponent } from 'valdi_core/src/Component';
 import { Style } from 'valdi_core/src/Style';
-import { View, Label } from 'valdi_tsx/src/NativeTemplateElements';
-import { Colors, Fonts, Spacing, BorderRadius } from 'common/src';
+import type { View, Label } from 'valdi_tsx/src/NativeTemplateElements';
+import { Colors, Fonts, Spacing, BorderRadius } from '../../../common/src/index';
 
 /**
  * Dropdown Option
@@ -56,17 +56,20 @@ export class Dropdown extends StatefulComponent<DropdownProps, DropdownState> {
     placeholder: 'Select an option',
   };
 
+  // Cache handlers for option selection (per Valdi best practices)
+  private readonly optionSelectHandlers = new Map<string, () => void>();
+
   override state: DropdownState = {
     isOpen: false,
   };
 
-  private toggleDropdown = (): void => {
+  private readonly toggleDropdown = (): void => {
     if (!this.viewModel.disabled) {
       this.setState({ isOpen: !this.state.isOpen });
     }
   };
 
-  private handleSelect = (value: string): void => {
+  private readonly handleSelect = (value: string): void => {
     const { onValueChange } = this.viewModel;
 
     this.setState({ isOpen: false });
@@ -76,7 +79,17 @@ export class Dropdown extends StatefulComponent<DropdownProps, DropdownState> {
     }
   };
 
-  private getSelectedLabel = (): string => {
+  // Cached handler getter (per Valdi best practices)
+  private getOptionSelectHandler(value: string): () => void {
+    let handler = this.optionSelectHandlers.get(value);
+    if (!handler) {
+      handler = () => { this.handleSelect(value); };
+      this.optionSelectHandlers.set(value, handler);
+    }
+    return handler;
+  }
+
+  private readonly getSelectedLabel = (): string => {
     const { options, selectedValue, placeholder } = this.viewModel;
 
     const selected = options.find((opt) => opt.value === selectedValue);
@@ -161,7 +174,7 @@ export class Dropdown extends StatefulComponent<DropdownProps, DropdownState> {
             {options.map((option) => (
               <view
                 style={this.getOptionStyle(option.value === selectedValue)}
-                onTap={() => this.handleSelect(option.value)}
+                onTap={this.getOptionSelectHandler(option.value)}
               >
                 <label
                   value={option.label}

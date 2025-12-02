@@ -4,7 +4,7 @@
  * Provides conversation history management, search, and UI components.
  */
 
-export * from './types';
+export type * from './types';
 export * from './HistoryManager';
 export * from './ConversationListView';
 export * from './ConversationCard';

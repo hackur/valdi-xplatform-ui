@@ -287,7 +287,7 @@ export async function gracefulDegradation<T>(
     );
 
     // Fall back to degraded function
-    return await degradedFn();
+    return degradedFn();
   }
 }
 
@@ -301,7 +301,7 @@ export class CircuitBreaker {
   private state: CircuitState = CircuitState.CLOSED;
   private failures: number[] = []; // Timestamps of failures
   private consecutiveSuccesses = 0;
-  private options: Required<CircuitBreakerOptions>;
+  private readonly options: Required<CircuitBreakerOptions>;
   private resetTimer?: ReturnType<typeof setTimeout>;
 
   constructor(options: CircuitBreakerOptions = {}) {
@@ -546,7 +546,7 @@ export async function withTimeout<T>(
     new Promise<T>((_, reject) =>
       setTimeout(
         () =>
-          reject(
+          { reject(
             new AppError(
               `Operation timed out after ${timeoutMs}ms`,
               ErrorCode.API_TIMEOUT,
@@ -556,7 +556,7 @@ export async function withTimeout<T>(
                 userMessage: 'Request timed out. Please try again.',
               },
             ),
-          ),
+          ); },
         timeoutMs,
       ),
     ),
@@ -620,7 +620,7 @@ export async function batchRetry<T>(
 /**
  * Sleep utility
  */
-function sleep(ms: number): Promise<void> {
+async function sleep(ms: number): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 

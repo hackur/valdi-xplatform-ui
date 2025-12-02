@@ -6,24 +6,25 @@
 
 import { StatefulComponent } from 'valdi_core/src/Component';
 import { Style } from 'valdi_core/src/Style';
-import { View, Label } from 'valdi_tsx/src/NativeTemplateElements';
-import { NavigationController } from 'valdi_navigation/src/NavigationController';
-import { Colors, Fonts, Spacing, BorderRadius, LoadingSpinner, ConfirmDialog } from 'common/src';
+import type { View, Label } from 'valdi_tsx/src/NativeTemplateElements';
+import { Colors, Fonts, Spacing, BorderRadius, LoadingSpinner, ConfirmDialog } from '../../common/src/index';
+import type { SimpleNavigationController } from '../../common/src/index';
 import { systemFont } from 'valdi_core/src/SystemFont';
-import { ConversationListItemData } from './types';
-import { HistoryManager } from './HistoryManager';
+import type { ConversationListItemData } from './types';
+import type { HistoryManager } from './HistoryManager';
 import { ConversationCard } from './ConversationCard';
 import { SearchBar } from './SearchBar';
+import { conversationStore } from '../../chat_core/src/ConversationStore';
 
 /**
  * ConversationListView Props
  */
 export interface ConversationListViewProps {
   /** Navigation controller */
-  navigationController: NavigationController;
+  navigationController: SimpleNavigationController;
 
-  /** History manager instance */
-  historyManager: HistoryManager;
+  /** History manager instance (optional - will use conversationStore directly if not provided) */
+  historyManager?: HistoryManager;
 
   /** On conversation selected */
   onConversationSelected?: (conversationId: string) => void;
@@ -65,6 +66,10 @@ export class ConversationListView extends StatefulComponent<
   ConversationListViewProps,
   ConversationListViewState
 > {
+  // Cache handlers for conversation actions (per Valdi best practices - avoid creating new functions on render)
+  private readonly conversationTapHandlers = new Map<string, () => void>();
+  private readonly conversationLongPressHandlers = new Map<string, () => void>();
+
   override state: ConversationListViewState = {
     conversations: [],
     isLoading: true,
@@ -99,7 +104,7 @@ export class ConversationListView extends StatefulComponent<
           <view style={styles.tabs}>
             <view
               style={viewMode === 'all' ? styles.tabActive : styles.tab}
-              onTap={() => this.handleViewModeChange('all')}
+              onTap={this.handleViewModeAll}
             >
               <label
                 value="All"
@@ -111,7 +116,7 @@ export class ConversationListView extends StatefulComponent<
 
             <view
               style={viewMode === 'active' ? styles.tabActive : styles.tab}
-              onTap={() => this.handleViewModeChange('active')}
+              onTap={this.handleViewModeActive}
             >
               <label
                 value="Active"
@@ -123,7 +128,7 @@ export class ConversationListView extends StatefulComponent<
 
             <view
               style={viewMode === 'archived' ? styles.tabActive : styles.tab}
-              onTap={() => this.handleViewModeChange('archived')}
+              onTap={this.handleViewModeArchived}
             >
               <label
                 value="Archived"
@@ -181,10 +186,8 @@ export class ConversationListView extends StatefulComponent<
                   <ConversationCard
                     key={conversation.id}
                     conversation={conversation}
-                    onTap={() => this.handleConversationTap(conversation.id)}
-                    onLongPress={() =>
-                      this.handleConversationLongPress(conversation.id)
-                    }
+                    onTap={this.getConversationTapHandler(conversation.id)}
+                    onLongPress={this.getConversationLongPressHandler(conversation.id)}
                     isSelected={selectedIds.has(conversation.id)}
                   />
                 ))}
@@ -253,17 +256,46 @@ export class ConversationListView extends StatefulComponent<
 
       let conversations: ConversationListItemData[];
 
-      if (searchQuery) {
-        // Search mode
-        conversations = await historyManager.search({
-          query: searchQuery,
-          status: viewMode === 'all' ? undefined : [viewMode],
-        });
+      if (historyManager) {
+        // Use historyManager if provided
+        if (searchQuery) {
+          conversations = await historyManager.search({
+            query: searchQuery,
+            status: viewMode === 'all' ? undefined : [viewMode],
+          });
+        } else {
+          conversations = await historyManager.getConversations({
+            statuses: viewMode === 'all' ? ['active', 'archived'] : [viewMode],
+          });
+        }
       } else {
-        // Filter mode
-        conversations = await historyManager.getConversations({
-          statuses: viewMode === 'all' ? ['active', 'archived'] : [viewMode],
-        });
+        // Fall back to using conversationStore directly
+        const allConversations = conversationStore.getAllConversations();
+        conversations = allConversations
+          .filter((conv) => {
+            // Filter by view mode
+            if (viewMode !== 'all') {
+              if (conv.status !== viewMode) return false;
+            }
+            // Filter by search query (title only in fallback mode)
+            if (searchQuery) {
+              const query = searchQuery.toLowerCase();
+              return conv.title.toLowerCase().includes(query);
+            }
+            return true;
+          })
+          .sort((a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime())
+          .map((conv): ConversationListItemData => ({
+            id: conv.id,
+            title: conv.title || 'Untitled',
+            lastMessagePreview: undefined, // Message preview not available in fallback mode
+            lastMessageTime: conv.lastMessageAt ? new Date(conv.lastMessageAt) : new Date(conv.updatedAt),
+            isPinned: conv.isPinned,
+            status: conv.status,
+            unreadCount: 0,
+            participantCount: 1,
+            model: conv.modelConfig?.modelId,
+          }));
       }
 
       this.setState({ conversations, isLoading: false });
@@ -282,7 +314,7 @@ export class ConversationListView extends StatefulComponent<
   /**
    * Handle conversation tap
    */
-  private handleConversationTap = (conversationId: string): void => {
+  private readonly handleConversationTap = (conversationId: string): void => {
     if (this.state.selectedIds.size > 0) {
       // Selection mode - toggle selection
       this.toggleSelection(conversationId);
@@ -297,7 +329,7 @@ export class ConversationListView extends StatefulComponent<
   /**
    * Handle conversation long press
    */
-  private handleConversationLongPress = (conversationId: string): void => {
+  private readonly handleConversationLongPress = (conversationId: string): void => {
     this.toggleSelection(conversationId);
   };
 
@@ -319,7 +351,7 @@ export class ConversationListView extends StatefulComponent<
   /**
    * Handle search
    */
-  private handleSearch = async (query: string): Promise<void> => {
+  private readonly handleSearch = async (query: string): Promise<void> => {
     this.setState({ searchQuery: query });
     await this.loadConversations();
   };
@@ -327,7 +359,7 @@ export class ConversationListView extends StatefulComponent<
   /**
    * Handle clear search
    */
-  private handleClearSearch = async (): Promise<void> => {
+  private readonly handleClearSearch = async (): Promise<void> => {
     this.setState({ searchQuery: '' });
     await this.loadConversations();
   };
@@ -335,21 +367,52 @@ export class ConversationListView extends StatefulComponent<
   /**
    * Handle view mode change
    */
-  private handleViewModeChange = async (
+  private readonly handleViewModeChange = async (
     viewMode: 'all' | 'active' | 'archived',
   ): Promise<void> => {
     this.setState({ viewMode });
     await this.loadConversations();
   };
 
+  // Pre-bound handlers for view modes (per Valdi best practices - no inline functions)
+  private readonly handleViewModeAll = async () => { await this.handleViewModeChange('all'); };
+  private readonly handleViewModeActive = async () => { await this.handleViewModeChange('active'); };
+  private readonly handleViewModeArchived = async () => { await this.handleViewModeChange('archived'); };
+
+  // Cached handler getters (per Valdi best practices)
+  private getConversationTapHandler(conversationId: string): () => void {
+    let handler = this.conversationTapHandlers.get(conversationId);
+    if (!handler) {
+      handler = () => { this.handleConversationTap(conversationId); };
+      this.conversationTapHandlers.set(conversationId, handler);
+    }
+    return handler;
+  }
+
+  private getConversationLongPressHandler(conversationId: string): () => void {
+    let handler = this.conversationLongPressHandlers.get(conversationId);
+    if (!handler) {
+      handler = () => { this.handleConversationLongPress(conversationId); };
+      this.conversationLongPressHandlers.set(conversationId, handler);
+    }
+    return handler;
+  }
+
   /**
    * Handle archive selected
    */
-  private handleArchiveSelected = async (): Promise<void> => {
+  private readonly handleArchiveSelected = async (): Promise<void> => {
     const { historyManager } = this.viewModel;
     const ids = Array.from(this.state.selectedIds);
 
-    await historyManager.archiveConversations(ids);
+    if (historyManager) {
+      await historyManager.archiveConversations(ids);
+    } else {
+      // Fallback: archive each conversation individually via conversationStore
+      for (const id of ids) {
+        conversationStore.archiveConversation(id);
+      }
+    }
     this.setState({ selectedIds: new Set() });
     await this.loadConversations();
   };
@@ -357,7 +420,7 @@ export class ConversationListView extends StatefulComponent<
   /**
    * Handle delete selected
    */
-  private handleDeleteSelected = (): void => {
+  private readonly handleDeleteSelected = (): void => {
     // Show confirmation dialog before deleting
     this.setState({ showDeleteConfirm: true });
   };
@@ -365,12 +428,17 @@ export class ConversationListView extends StatefulComponent<
   /**
    * Confirm delete selected conversations
    */
-  private confirmDeleteSelected = async (): Promise<void> => {
+  private readonly confirmDeleteSelected = async (): Promise<void> => {
     const { historyManager } = this.viewModel;
     const ids = Array.from(this.state.selectedIds);
 
     this.setState({ showDeleteConfirm: false });
-    await historyManager.deleteConversations(ids);
+    if (historyManager) {
+      await historyManager.deleteConversations(ids);
+    } else {
+      // Fallback: bulk delete via conversationStore
+      await conversationStore.bulkDeleteConversations(ids);
+    }
     this.setState({ selectedIds: new Set() });
     await this.loadConversations();
   };
@@ -378,14 +446,14 @@ export class ConversationListView extends StatefulComponent<
   /**
    * Cancel delete confirmation
    */
-  private cancelDeleteConfirmation = (): void => {
+  private readonly cancelDeleteConfirmation = (): void => {
     this.setState({ showDeleteConfirm: false });
   };
 
   /**
    * Handle clear selection
    */
-  private handleClearSelection = (): void => {
+  private readonly handleClearSelection = (): void => {
     this.setState({ selectedIds: new Set() });
   };
 }

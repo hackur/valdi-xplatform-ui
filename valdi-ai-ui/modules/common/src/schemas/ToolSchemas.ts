@@ -20,7 +20,16 @@ export const ToolParameterTypeSchema = z.enum([
 /**
  * Tool Parameter Schema
  */
-export const ToolParameterSchema = z.object({
+export const ToolParameterSchema: z.ZodType<{
+  name: string;
+  type: z.infer<typeof ToolParameterTypeSchema>;
+  description: string;
+  required: boolean;
+  default?: unknown;
+  enum?: unknown[];
+  items?: any;
+  properties?: Record<string, any>;
+}> = z.object({
   name: z.string().min(1, 'Parameter name is required'),
   type: ToolParameterTypeSchema,
   description: z.string().min(1, 'Parameter description is required'),

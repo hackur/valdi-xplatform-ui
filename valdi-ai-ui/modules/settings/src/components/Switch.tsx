@@ -6,8 +6,8 @@
 
 import { Component } from 'valdi_core/src/Component';
 import { Style } from 'valdi_core/src/Style';
-import { View } from 'valdi_tsx/src/NativeTemplateElements';
-import { Colors, BorderRadius } from 'common/src';
+import type { View } from 'valdi_tsx/src/NativeTemplateElements';
+import { Colors, BorderRadius } from '../../../common/src/index';
 
 /**
  * Switch Props
@@ -35,7 +35,7 @@ export class Switch extends Component<SwitchProps> {
     disabled: false,
   };
 
-  private handleToggle = (): void => {
+  private readonly handleToggle = (): void => {
     const { disabled, value, onValueChange } = this.viewModel;
 
     if (!disabled && onValueChange) {

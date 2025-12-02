@@ -6,7 +6,7 @@
 
 import { ChatService } from '../ChatService';
 import { MessageStore } from '../MessageStore';
-import { Message, MessageUtils, APIError, ErrorCode } from 'common/src';
+import { Message, MessageUtils, APIError, ErrorCode } from '../../../common/src/index';
 import { HTTPClient } from 'valdi_http/src/HTTPClient';
 
 // Mock HTTPClient

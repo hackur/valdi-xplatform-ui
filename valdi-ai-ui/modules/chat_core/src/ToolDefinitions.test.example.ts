@@ -5,7 +5,8 @@
  * Rename to .test.ts and adjust for your testing framework.
  */
 
-import { ToolExecutor, ToolCallInput } from './ToolExecutor';
+import type { ToolCallInput } from './ToolExecutor';
+import { ToolExecutor } from './ToolExecutor';
 import {
   getWeather,
   calculateExpression,

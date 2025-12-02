@@ -5,13 +5,14 @@
  * Manages serialization, deserialization, and storage operations for conversations.
  */
 
-import {
+import type {
   Conversation,
   ConversationStatus,
   ModelConfig,
   AIProvider,
 } from '../../common/src';
-import { StorageProvider, defaultStorage } from './StorageProvider';
+import type { StorageProvider} from './StorageProvider';
+import { defaultStorage } from './StorageProvider';
 
 /**
  * Serialized Conversation
@@ -58,9 +59,9 @@ export interface ConversationPersistenceConfig {
  * Handles serialization/deserialization and batch operations.
  */
 export class ConversationPersistence {
-  private storage: StorageProvider;
-  private debounceMs: number;
-  private debug: boolean;
+  private readonly storage: StorageProvider;
+  private readonly debounceMs: number;
+  private readonly debug: boolean;
   private debounceTimer?: ReturnType<typeof setTimeout>;
 
   private readonly STORAGE_KEY = 'conversations';

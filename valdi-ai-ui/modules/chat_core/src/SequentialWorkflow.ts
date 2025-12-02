@@ -11,15 +11,16 @@
  * - Translation → Refinement → Quality check
  */
 
-import {
-  WorkflowExecutor,
+import type {
   WorkflowConfig,
   WorkflowExecutionOptions,
   WorkflowExecutionResult,
-  AgentDefinition,
+  AgentDefinition} from './AgentWorkflow';
+import {
+  WorkflowExecutor
 } from './AgentWorkflow';
-import { ChatService } from './ChatService';
-import { MessageStore } from './MessageStore';
+import type { ChatService } from './ChatService';
+import type { MessageStore } from './MessageStore';
 
 /**
  * Sequential Workflow Configuration
@@ -174,7 +175,7 @@ export class SequentialWorkflow extends WorkflowExecutor {
 
         // Transform output if transformer is provided
         // Transformer allows custom post-processing (e.g., formatting, filtering)
-        let output = step.output;
+        let {output} = step;
         if (this.config.transformOutput) {
           output = this.config.transformOutput(output, i);
         }
@@ -182,7 +183,7 @@ export class SequentialWorkflow extends WorkflowExecutor {
         // Check early stopping condition
         // Allows workflow to terminate when goal is achieved early
         // Saves API costs and execution time
-        if (this.config.shouldStop && this.config.shouldStop(output, i)) {
+        if (this.config.shouldStop?.(output, i)) {
           if (this.config.debug) {
             console.log(
               `[SequentialWorkflow] Early stopping condition met at step ${i + 1}`,
@@ -300,8 +301,8 @@ export class SequentialWorkflow extends WorkflowExecutor {
  * Convenience builder for creating sequential workflows
  */
 export class SequentialWorkflowBuilder {
-  private agents: AgentDefinition[] = [];
-  private config: Partial<SequentialWorkflowConfig> = {
+  private readonly agents: AgentDefinition[] = [];
+  private readonly config: Partial<SequentialWorkflowConfig> = {
     type: 'sequential',
   };
 

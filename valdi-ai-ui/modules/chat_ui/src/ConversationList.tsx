@@ -7,16 +7,17 @@
 
 import { StatefulComponent } from 'valdi_core/src/Component';
 import { Style } from 'valdi_core/src/Style';
-import { View, Label, EditTextEvent } from 'valdi_tsx/src/NativeTemplateElements';
+import type { View, Label, EditTextEvent } from 'valdi_tsx/src/NativeTemplateElements';
+import type {
+  Conversation} from '../../common/src/index';
 import {
   Colors,
   Fonts,
   Spacing,
   SemanticSpacing,
   BorderRadius,
-  Conversation,
   LoadingSpinner,
-} from 'common/src';
+} from '../../common/src/index';
 import { ConversationListItem } from './ConversationListItem';
 
 /**
@@ -155,7 +156,7 @@ export class ConversationList extends StatefulComponent<
     this.setState({ filteredConversations: filtered });
   }
 
-  private handleFilterChange = (filter: ConversationFilter): void => {
+  private readonly handleFilterChange = (filter: ConversationFilter): void => {
     this.setState({ filter });
     this.updateFilteredConversations();
     const { onFilterChange } = this.viewModel;
@@ -164,7 +165,12 @@ export class ConversationList extends StatefulComponent<
     }
   };
 
-  private handleSearchChange = (event: EditTextEvent): void => {
+  // Pre-bound handlers for each filter type (per Valdi best practices - no inline functions)
+  private readonly handleFilterAll = () => { this.handleFilterChange('all'); };
+  private readonly handleFilterPinned = () => { this.handleFilterChange('pinned'); };
+  private readonly handleFilterArchived = () => { this.handleFilterChange('archived'); };
+
+  private readonly handleSearchChange = (event: EditTextEvent): void => {
     const query = event.text;
     this.setState({ searchQuery: query });
     this.updateFilteredConversations();
@@ -174,7 +180,7 @@ export class ConversationList extends StatefulComponent<
     }
   };
 
-  private handleRefresh = (): void => {
+  private readonly handleRefresh = (): void => {
     const { onRefresh } = this.viewModel;
     if (onRefresh) {
       onRefresh();
@@ -197,6 +203,14 @@ export class ConversationList extends StatefulComponent<
     });
   }
 
+  private getFilterHandler(filterType: ConversationFilter) {
+    switch (filterType) {
+      case 'all': return this.handleFilterAll;
+      case 'pinned': return this.handleFilterPinned;
+      case 'archived': return this.handleFilterArchived;
+    }
+  }
+
   private renderFilterButton(
     filterType: ConversationFilter,
     label: string,
@@ -208,7 +222,7 @@ export class ConversationList extends StatefulComponent<
     return (
       <view
         style={this.getFilterButtonStyle(isActive)}
-        onTap={() => this.handleFilterChange(filterType)}
+        onTap={this.getFilterHandler(filterType)}
       >
         <label
           value={count !== undefined ? `${label} (${count})` : label}

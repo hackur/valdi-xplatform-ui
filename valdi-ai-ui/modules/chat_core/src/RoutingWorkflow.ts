@@ -12,15 +12,16 @@
  * - Intent-based task delegation
  */
 
-import {
-  WorkflowExecutor,
+import type {
   WorkflowConfig,
   WorkflowExecutionOptions,
   WorkflowExecutionResult,
-  AgentDefinition,
+  AgentDefinition} from './AgentWorkflow';
+import {
+  WorkflowExecutor
 } from './AgentWorkflow';
-import { ChatService } from './ChatService';
-import { MessageStore } from './MessageStore';
+import type { ChatService } from './ChatService';
+import type { MessageStore } from './MessageStore';
 
 /**
  * Route Definition
@@ -287,7 +288,7 @@ export class RoutingWorkflow extends WorkflowExecutor {
       if (this.config.allowMultipleRoutes && routesToExecute.length > 1) {
         // Execute multiple routes in parallel for maximum throughput
         // Promise.all ensures all routes complete before proceeding
-        const routePromises = routesToExecute.map((route) =>
+        const routePromises = routesToExecute.map(async (route) =>
           this.executeAgentWithRetry(
             route.agent,
             input,
@@ -297,7 +298,7 @@ export class RoutingWorkflow extends WorkflowExecutor {
         );
 
         const routeSteps = await Promise.all(routePromises);
-        routeSteps.forEach((step) => this.addStep(step));
+        routeSteps.forEach((step) => { this.addStep(step); });
         results = routeSteps.map((step) => step.output);
       } else {
         // Execute single route (most common path)
@@ -338,7 +339,7 @@ export class RoutingWorkflow extends WorkflowExecutor {
         completedAt: new Date(),
         metadata: {
           ...this.state.metadata,
-          classification: classification,
+          classification,
           selectedRoutes: routesToExecute.map((r) => r.id),
         },
       });
@@ -535,7 +536,7 @@ export class RoutingWorkflow extends WorkflowExecutor {
  * Routing Workflow Builder
  */
 export class RoutingWorkflowBuilder {
-  private config: Partial<RoutingWorkflowConfig> = {
+  private readonly config: Partial<RoutingWorkflowConfig> = {
     type: 'routing',
     routes: [],
   };

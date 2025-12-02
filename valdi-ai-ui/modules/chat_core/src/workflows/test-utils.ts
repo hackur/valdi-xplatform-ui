@@ -4,10 +4,11 @@
  * Helper functions and mocks for testing agent workflows
  */
 
-import { ChatService } from '../ChatService';
+import type { ChatService } from '../ChatService';
 import { MessageStore } from '../MessageStore';
-import { Message, MessageUtils } from '../../../common/src';
-import {
+import type { Message} from '../../../common/src';
+import { MessageUtils } from '../../../common/src';
+import type {
   WorkflowExecutionOptions,
   WorkflowProgressEvent,
   AgentDefinition,
@@ -17,7 +18,7 @@ import {
  * Mock Chat Service for Testing
  */
 export class MockChatService {
-  private responses: Map<string, string> = new Map();
+  private readonly responses: Map<string, string> = new Map();
 
   /**
    * Set a mock response for a specific agent
@@ -47,14 +48,14 @@ export class MockChatService {
 
     // Stream chunks
     for (const chunk of chunks) {
-      fullContent += chunk + ' ';
+      fullContent += `${chunk  } `;
       await this.delay(10); // Simulate network delay
 
       callback({
         type: 'chunk',
         messageId,
         content: fullContent,
-        delta: chunk + ' ',
+        delta: `${chunk  } `,
       });
     }
 
@@ -97,10 +98,10 @@ export class MockChatService {
   private extractAgentIdFromPrompt(prompt: string): string {
     // Try to extract agent identifier from system prompt
     const match = prompt.match(/You are (?:a |an )?([a-zA-Z\s]+)/i);
-    return match && match[1] ? match[1].toLowerCase().replace(/\s+/g, '-') : 'default';
+    return match?.[1] ? match[1].toLowerCase().replace(/\s+/g, '-') : 'default';
   }
 
-  private delay(ms: number): Promise<void> {
+  private async delay(ms: number): Promise<void> {
     return new Promise((resolve) => setTimeout(resolve, ms));
   }
 }
@@ -150,7 +151,7 @@ export class ProgressEventCollector {
    */
   getEventsByType<T extends WorkflowProgressEvent['type']>(
     type: T,
-  ): Extract<WorkflowProgressEvent, { type: T }>[] {
+  ): Array<Extract<WorkflowProgressEvent, { type: T }>> {
     return this.events.filter((e) => e.type === type) as any[];
   }
 
@@ -250,7 +251,7 @@ export const WorkflowAssertions = {
   assertStepOrder(events: WorkflowProgressEvent[], agentIds: string[]): void {
     const stepEvents = events.filter(
       (e) => e.type === 'step-complete',
-    ) as Extract<WorkflowProgressEvent, { type: 'step-complete' }>[];
+    );
 
     const actualOrder = stepEvents.map((e) => e.step.agentId);
 
@@ -268,7 +269,7 @@ export const WorkflowAssertions = {
 export class WorkflowMetrics {
   private startTime?: number;
   private endTime?: number;
-  private stepTimes: Map<string, { start: number; end?: number }> = new Map();
+  private readonly stepTimes: Map<string, { start: number; end?: number }> = new Map();
 
   /**
    * Start tracking metrics
@@ -316,7 +317,7 @@ export class WorkflowMetrics {
    */
   getStepTime(stepId: string): number {
     const step = this.stepTimes.get(stepId);
-    if (!step || !step.end) {
+    if (!step?.end) {
       throw new Error(`Step ${stepId} not completed`);
     }
     return step.end - step.start;
@@ -435,8 +436,8 @@ export const TestDataGenerators = {
  * Example Test Suite Structure
  */
 export class WorkflowTestSuite {
-  private chatService: MockChatService;
-  private messageStore: MessageStore;
+  private readonly chatService: MockChatService;
+  private readonly messageStore: MessageStore;
 
   constructor() {
     this.chatService = new MockChatService();

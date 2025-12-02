@@ -104,7 +104,7 @@ export async function exportConversationAsMarkdown(conversationId: string) {
   console.log('- Size:', result.size, 'bytes');
   console.log('- MIME type:', result.mimeType);
   console.log('\nContent preview:');
-  console.log(result.data.substring(0, 500) + '...');
+  console.log(`${result.data.substring(0, 500)  }...`);
 
   // Download in browser
   if (typeof window !== 'undefined') {
@@ -402,7 +402,7 @@ export const ReactComponentExample = `
 // In your React component:
 
 import { useEffect, useState } from 'react';
-import { conversationStore, messageStore } from 'chat_core/src';
+import { conversationStore, messageStore } from '../../chat_core/src';
 
 function ChatApp() {
   const [conversations, setConversations] = useState([]);

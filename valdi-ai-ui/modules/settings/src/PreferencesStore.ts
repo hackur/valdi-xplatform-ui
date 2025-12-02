@@ -33,7 +33,7 @@ export interface AppPreferences {
  * Manages application preferences with localStorage persistence.
  */
 export class PreferencesStore {
-  private storage: StorageProvider;
+  private readonly storage: StorageProvider;
   private readonly PREFERENCES_KEY = 'app_preferences';
 
   constructor() {

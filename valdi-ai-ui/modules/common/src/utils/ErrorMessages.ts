@@ -302,7 +302,7 @@ export function formatErrorForUser(
   details?: string,
 ): string {
   const error = getErrorMessage(key);
-  let message = error.message;
+  let {message} = error;
 
   if (error.action) {
     message += `\n\n${error.action}`;

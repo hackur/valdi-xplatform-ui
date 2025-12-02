@@ -4,8 +4,8 @@
  * Manages custom OpenAI-compatible provider configurations with persistence.
  */
 
-import { StorageProvider } from 'common/src/services/StorageProvider';
-import {
+import type { StorageProvider } from 'common/src/services/StorageProvider';
+import type {
   CustomProviderConfig,
   ProviderTestResult,
   ValidationResult,
@@ -28,8 +28,8 @@ const EXPORT_VERSION = '1.0.0';
  * Manages the lifecycle of custom OpenAI-compatible provider configurations.
  */
 export class CustomProviderStore {
-  private providers: Map<string, CustomProviderConfig> = new Map();
-  private storageProvider: StorageProvider;
+  private readonly providers: Map<string, CustomProviderConfig> = new Map();
+  private readonly storageProvider: StorageProvider;
   private isInitialized = false;
 
   constructor(storageProvider: StorageProvider) {
@@ -211,7 +211,7 @@ export class CustomProviderStore {
       };
 
       if (config.apiKey) {
-        headers['Authorization'] = `Bearer ${config.apiKey}`;
+        headers.Authorization = `Bearer ${config.apiKey}`;
       }
 
       // Try to list models or make a simple completion request

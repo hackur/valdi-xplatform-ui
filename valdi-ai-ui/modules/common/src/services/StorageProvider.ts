@@ -39,7 +39,7 @@ export interface StorageProvider {
    * }
    * ```
    */
-  getItem(key: string): Promise<string | null>;
+  getItem: (key: string) => Promise<string | null>;
 
   /**
    * Set an item in storage
@@ -55,7 +55,7 @@ export interface StorageProvider {
    * await storage.setItem('config', JSON.stringify({ theme: 'dark' }));
    * ```
    */
-  setItem(key: string, value: string): Promise<void>;
+  setItem: (key: string, value: string) => Promise<void>;
 
   /**
    * Remove an item from storage
@@ -68,7 +68,7 @@ export interface StorageProvider {
    * await storage.removeItem('cache');
    * ```
    */
-  removeItem(key: string): Promise<void>;
+  removeItem: (key: string) => Promise<void>;
 
   /**
    * Clear all items from storage
@@ -80,7 +80,7 @@ export interface StorageProvider {
    * await storage.clear(); // Removes all items with the configured prefix
    * ```
    */
-  clear(): Promise<void>;
+  clear: () => Promise<void>;
 
   /**
    * Get all keys in storage
@@ -93,7 +93,7 @@ export interface StorageProvider {
    * console.log('Stored keys:', keys); // ['settings', 'user', 'cache']
    * ```
    */
-  getAllKeys(): Promise<string[]>;
+  getAllKeys: () => Promise<string[]>;
 }
 
 /**
@@ -256,7 +256,7 @@ export class LocalStorageProvider implements StorageProvider {
  * ```
  */
 export class MemoryStorageProvider implements StorageProvider {
-  private storage: Map<string, string> = new Map();
+  private readonly storage: Map<string, string> = new Map();
   private readonly prefix: string;
 
   /**

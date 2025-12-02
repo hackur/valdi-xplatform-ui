@@ -6,6 +6,12 @@ local_repository(
     path = "vendor/valdi",
 )
 
+# Reference Valdi Widgets library (provides CoreButton, Navigation, etc.)
+local_repository(
+    name = "valdi_widgets",
+    path = "../Valdi_Widgets",
+)
+
 # Initialize vendor/valdi framework using its WORKSPACE initialization sequence
 # This follows the pattern from vendor/valdi/WORKSPACE
 

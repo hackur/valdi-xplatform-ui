@@ -7,8 +7,10 @@
 
 import { Component } from 'valdi_core/src/Component';
 import { Style } from 'valdi_core/src/Style';
-import { View } from 'valdi_tsx/src/NativeTemplateElements';
+import type { View } from 'valdi_tsx/src/NativeTemplateElements';
 import type { Label } from 'valdi_tsx/src/NativeTemplateElements';
+import type {
+  Message} from '../../common/src/index';
 import {
   Colors,
   Fonts,
@@ -16,10 +18,9 @@ import {
   SemanticSpacing,
   ChatBorderRadius,
   SemanticShadows,
-  Message,
   MessageTypeGuards,
   Avatar,
-} from 'common/src';
+} from '../../common/src/index';
 
 /**
  * MessageBubble Props

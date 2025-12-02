@@ -17,31 +17,31 @@ export interface StorageProvider {
    * @param key Storage key
    * @returns The stored value or null if not found
    */
-  getItem(key: string): Promise<string | null>;
+  getItem: (key: string) => Promise<string | null>;
 
   /**
    * Set an item in storage
    * @param key Storage key
    * @param value Value to store (as string)
    */
-  setItem(key: string, value: string): Promise<void>;
+  setItem: (key: string, value: string) => Promise<void>;
 
   /**
    * Remove an item from storage
    * @param key Storage key
    */
-  removeItem(key: string): Promise<void>;
+  removeItem: (key: string) => Promise<void>;
 
   /**
    * Clear all items from storage
    */
-  clear(): Promise<void>;
+  clear: () => Promise<void>;
 
   /**
    * Get all keys in storage
    * @returns Array of storage keys
    */
-  getAllKeys(): Promise<string[]>;
+  getAllKeys: () => Promise<string[]>;
 }
 
 /**
@@ -160,7 +160,7 @@ export class LocalStorageProvider implements StorageProvider {
  * Data is lost when the application is closed/refreshed.
  */
 export class MemoryStorageProvider implements StorageProvider {
-  private storage: Map<string, string> = new Map();
+  private readonly storage: Map<string, string> = new Map();
   private readonly prefix: string;
 
   constructor(prefix: string = 'valdi_') {

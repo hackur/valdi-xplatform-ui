@@ -13,5 +13,6 @@ valdi_module(
         "@valdi//src/valdi_modules/src/valdi/valdi_navigation",
         "//modules/common",
         "//modules/chat_core",
+        "//modules/model_config",
     ],
 )

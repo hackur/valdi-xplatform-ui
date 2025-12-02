@@ -11,9 +11,8 @@
 
 import { StatefulComponent } from 'valdi_core/src/Component';
 import { Style } from 'valdi_core/src/Style';
-import { View, Label } from 'valdi_tsx/src/NativeTemplateElements';
+import type { View, Label } from 'valdi_tsx/src/NativeTemplateElements';
 import { systemFont } from 'valdi_core/src/SystemFont';
-import { NavigationController } from 'valdi_navigation/src/NavigationController';
 import {
   Colors,
   Fonts,
@@ -23,18 +22,23 @@ import {
   Card,
   ErrorBoundary,
   ErrorScreen,
-} from 'common/src';
-import { ApiKeyStore, AIProvider } from './ApiKeyStore';
+} from '../../common/src/index';
+import type { SimpleNavigationController } from '../../common/src/index';
+import type { AIProvider } from './ApiKeyStore';
+import { ApiKeyStore } from './ApiKeyStore';
 import { PreferencesStore } from './PreferencesStore';
 import { TextInput } from './components/TextInput';
 import { Switch } from './components/Switch';
 import { Dropdown } from './components/Dropdown';
+import { getCustomProviderStore } from '../../model_config/src';
+import { AddCustomProviderView } from '../../model_config/src/AddCustomProviderView';
+import type { CustomProviderConfig } from '../../model_config/src/types';
 
 /**
  * SettingsScreen Props
  */
 export interface SettingsScreenProps {
-  navigationController: NavigationController;
+  navigationController: SimpleNavigationController;
 }
 
 /**
@@ -59,6 +63,9 @@ interface SettingsScreenState {
   anthropicModel: string;
   googleModel: string;
 
+  // Custom Providers
+  customProviders: CustomProviderConfig[];
+
   // App Preferences
   darkMode: boolean;
   enableNotifications: boolean;
@@ -67,6 +74,10 @@ interface SettingsScreenState {
   // UI State
   isSaving: boolean;
   saveMessage: string;
+
+  // Custom Provider Edit Mode
+  editingProvider: CustomProviderConfig | null;
+  showAddProvider: boolean;
 }
 
 /**
@@ -79,6 +90,13 @@ export class SettingsScreen extends StatefulComponent<
   private apiKeyStore!: ApiKeyStore;
   private preferencesStore!: PreferencesStore;
 
+  // Cache handlers (per Valdi best practices - avoid creating new functions on render)
+  private readonly providerChangeHandlers = new Map<string, () => void>();
+  private readonly customProviderEditHandlers = new Map<string, () => void>();
+  private readonly customProviderDeleteHandlers = new Map<string, () => Promise<void>>();
+  private readonly clearApiKeyHandlers = new Map<string, () => Promise<void>>();
+  private readonly toggleKeyVisibilityHandlers = new Map<string, () => void>();
+
   override state: SettingsScreenState = {
     selectedProvider: 'openai',
     openAiKey: '',
@@ -90,11 +108,14 @@ export class SettingsScreen extends StatefulComponent<
     openAiModel: 'gpt-4-turbo-preview',
     anthropicModel: 'claude-3-opus-20240229',
     googleModel: 'gemini-pro',
+    customProviders: [],
     darkMode: false,
     enableNotifications: true,
     enableSoundEffects: true,
     isSaving: false,
     saveMessage: '',
+    editingProvider: null,
+    showAddProvider: false,
   };
 
   override onCreate() {
@@ -105,12 +126,17 @@ export class SettingsScreen extends StatefulComponent<
     void this.loadSettings();
   }
 
-  private loadSettings = async (): Promise<void> => {
+  private readonly loadSettings = async (): Promise<void> => {
     try {
       // Load API keys
       const openAiKey = await this.apiKeyStore.getApiKey('openai');
       const anthropicKey = await this.apiKeyStore.getApiKey('anthropic');
       const googleKey = await this.apiKeyStore.getApiKey('google');
+
+      // Load custom providers
+      const customProviderStore = getCustomProviderStore();
+      await customProviderStore.initialize();
+      const customProviders = customProviderStore.getAllProviders();
 
       // Load preferences
       const preferences = await this.preferencesStore.getPreferences();
@@ -119,6 +145,7 @@ export class SettingsScreen extends StatefulComponent<
         openAiKey: openAiKey || '',
         anthropicKey: anthropicKey || '',
         googleKey: googleKey || '',
+        customProviders,
         selectedProvider: preferences.selectedProvider || 'openai',
         openAiModel: preferences.openAiModel || 'gpt-4-turbo-preview',
         anthropicModel: preferences.anthropicModel || 'claude-3-opus-20240229',
@@ -132,11 +159,11 @@ export class SettingsScreen extends StatefulComponent<
     }
   };
 
-  private handleProviderChange = (provider: AIProvider): void => {
+  private readonly handleProviderChange = (provider: AIProvider): void => {
     this.setState({ selectedProvider: provider });
   };
 
-  private handleApiKeyChange = (provider: AIProvider, value: string): void => {
+  private readonly handleApiKeyChange = (provider: AIProvider, value: string): void => {
     switch (provider) {
       case 'openai':
         this.setState({ openAiKey: value });
@@ -150,7 +177,7 @@ export class SettingsScreen extends StatefulComponent<
     }
   };
 
-  private toggleKeyVisibility = (provider: AIProvider): void => {
+  private readonly toggleKeyVisibility = (provider: AIProvider): void => {
     switch (provider) {
       case 'openai':
         this.setState({ showOpenAiKey: !this.state.showOpenAiKey });
@@ -164,7 +191,7 @@ export class SettingsScreen extends StatefulComponent<
     }
   };
 
-  private handleModelChange = (provider: AIProvider, model: string): void => {
+  private readonly handleModelChange = (provider: AIProvider, model: string): void => {
     switch (provider) {
       case 'openai':
         this.setState({ openAiModel: model });
@@ -178,7 +205,7 @@ export class SettingsScreen extends StatefulComponent<
     }
   };
 
-  private handleSaveSettings = async (): Promise<void> => {
+  private readonly handleSaveSettings = async (): Promise<void> => {
     this.setState({ isSaving: true, saveMessage: '' });
 
     try {
@@ -222,7 +249,7 @@ export class SettingsScreen extends StatefulComponent<
     }
   };
 
-  private handleClearApiKey = async (provider: AIProvider): Promise<void> => {
+  private readonly handleClearApiKey = async (provider: AIProvider): Promise<void> => {
     try {
       await this.apiKeyStore.clearApiKey(provider);
 
@@ -242,6 +269,86 @@ export class SettingsScreen extends StatefulComponent<
     }
   };
 
+  private readonly handleAddCustomProvider = (): void => {
+    // Show inline add provider form
+    this.setState({ showAddProvider: true, editingProvider: null });
+  };
+
+  private readonly handleEditCustomProvider = (provider: CustomProviderConfig): void => {
+    // Show inline edit provider form
+    this.setState({ showAddProvider: true, editingProvider: provider });
+  };
+
+  private readonly handleCustomProviderSaved = async (): Promise<void> => {
+    // Hide form and reload providers
+    this.setState({ showAddProvider: false, editingProvider: null });
+    await this.loadSettings();
+  };
+
+  private readonly handleCustomProviderCancel = (): void => {
+    this.setState({ showAddProvider: false, editingProvider: null });
+  };
+
+  private readonly handleDeleteCustomProvider = async (
+    provider: CustomProviderConfig
+  ): Promise<void> => {
+    try {
+      const customProviderStore = getCustomProviderStore();
+      await customProviderStore.deleteProvider(provider.id);
+      console.log('Custom provider deleted:', provider.name);
+      // Reload custom providers
+      await this.loadSettings();
+    } catch (error) {
+      console.error('Failed to delete custom provider:', error);
+    }
+  };
+
+  // Cached handler getters (per Valdi best practices)
+  private getProviderChangeHandler(providerId: AIProvider): () => void {
+    let handler = this.providerChangeHandlers.get(providerId);
+    if (!handler) {
+      handler = () => { this.handleProviderChange(providerId); };
+      this.providerChangeHandlers.set(providerId, handler);
+    }
+    return handler;
+  }
+
+  private getCustomProviderEditHandler(provider: CustomProviderConfig): () => void {
+    let handler = this.customProviderEditHandlers.get(provider.id);
+    if (!handler) {
+      handler = () => { this.handleEditCustomProvider(provider); };
+      this.customProviderEditHandlers.set(provider.id, handler);
+    }
+    return handler;
+  }
+
+  private getCustomProviderDeleteHandler(provider: CustomProviderConfig): () => Promise<void> {
+    let handler = this.customProviderDeleteHandlers.get(provider.id);
+    if (!handler) {
+      handler = async () => { await this.handleDeleteCustomProvider(provider); };
+      this.customProviderDeleteHandlers.set(provider.id, handler);
+    }
+    return handler;
+  }
+
+  private getClearApiKeyHandler(provider: AIProvider): () => Promise<void> {
+    let handler = this.clearApiKeyHandlers.get(provider);
+    if (!handler) {
+      handler = async () => { await this.handleClearApiKey(provider); };
+      this.clearApiKeyHandlers.set(provider, handler);
+    }
+    return handler;
+  }
+
+  private getToggleKeyVisibilityHandler(provider: AIProvider): () => void {
+    let handler = this.toggleKeyVisibilityHandlers.get(provider);
+    if (!handler) {
+      handler = () => { this.toggleKeyVisibility(provider); };
+      this.toggleKeyVisibilityHandlers.set(provider, handler);
+    }
+    return handler;
+  }
+
   private getProviderCardStyle(isSelected: boolean) {
     return new Style<View>({
       borderWidth: 2,
@@ -260,7 +367,7 @@ export class SettingsScreen extends StatefulComponent<
     });
   }
 
-  private renderProviderSection = () => {
+  private readonly renderProviderSection = () => {
     const providers: Array<{ id: AIProvider; name: string; icon: string }> = [
       { id: 'openai', name: 'OpenAI', icon: '🤖' },
       { id: 'anthropic', name: 'Anthropic', icon: '🧠' },
@@ -284,7 +391,7 @@ export class SettingsScreen extends StatefulComponent<
               elevation={
                 this.state.selectedProvider === provider.id ? 'md' : 'sm'
               }
-              onTap={() => this.handleProviderChange(provider.id)}
+              onTap={this.getProviderChangeHandler(provider.id)}
             >
               <view style={styles.providerContent}>
                 <label value={provider.icon} style={styles.providerIcon} />
@@ -301,7 +408,79 @@ export class SettingsScreen extends StatefulComponent<
     );
   };
 
-  private renderApiKeySection = () => {
+  private readonly renderCustomProvidersSection = () => {
+    return (
+      <view style={styles.section}>
+        <label value="Custom Providers" style={styles.sectionTitle} />
+        <label
+          value="Add OpenAI-compatible API endpoints like LM Studio, Ollama, or LocalAI"
+          style={styles.sectionDescription}
+        />
+
+        <Button
+          title="+ Add Custom Provider"
+          variant="primary"
+          onTap={this.handleAddCustomProvider}
+          style={styles.addProviderButton}
+        />
+
+        {this.state.customProviders.map((provider) => (
+          <Card key={provider.id} elevation="sm" style={styles.customProviderCard}>
+            <view>
+              <view style={styles.customProviderHeader}>
+                <label value={provider.name} style={styles.customProviderName} />
+                <label
+                  value={provider.isEnabled ? '✓ Enabled' : '✗ Disabled'}
+                  style={
+                    provider.isEnabled
+                      ? styles.customProviderEnabled
+                      : styles.customProviderDisabled
+                  }
+                />
+              </view>
+              <label
+                value={provider.baseUrl}
+                style={styles.customProviderUrl}
+              />
+              <label
+                value={`Model: ${provider.modelName || provider.modelId}`}
+                style={styles.customProviderModel}
+              />
+              <view style={styles.customProviderActions}>
+                <Button
+                  title="Edit"
+                  variant="outline"
+                  size="small"
+                  onTap={this.getCustomProviderEditHandler(provider)}
+                />
+                <Button
+                  title="Delete"
+                  variant="ghost"
+                  size="small"
+                  onTap={this.getCustomProviderDeleteHandler(provider)}
+                />
+              </view>
+            </view>
+          </Card>
+        ))}
+
+        {this.state.customProviders.length === 0 && (
+          <Card elevation="sm" style={styles.emptyStateCard}>
+            <label
+              value="No custom providers configured yet"
+              style={styles.emptyStateText}
+            />
+            <label
+              value="Add a custom provider to connect to LM Studio, Ollama, or other OpenAI-compatible APIs"
+              style={styles.emptyStateDescription}
+            />
+          </Card>
+        )}
+      </view>
+    );
+  };
+
+  private readonly renderApiKeySection = () => {
     return (
       <view style={styles.section}>
         <label
@@ -327,7 +506,7 @@ export class SettingsScreen extends StatefulComponent<
                   title="Clear"
                   variant="ghost"
                   size="small"
-                  onTap={() => this.handleClearApiKey('openai')}
+                  onTap={this.getClearApiKeyHandler('openai')}
                 />
               )}
             </view>
@@ -336,7 +515,7 @@ export class SettingsScreen extends StatefulComponent<
               value={this.state.openAiKey}
               placeholder="sk-..."
               secureTextEntry={!this.state.showOpenAiKey}
-              onChangeText={(value: string) => this.handleApiKeyChange('openai', value)}
+              onChangeText={(value: string) => { this.handleApiKeyChange('openai', value); }}
               style={styles.inputWithMargin}
             />
 
@@ -344,7 +523,7 @@ export class SettingsScreen extends StatefulComponent<
               title={this.state.showOpenAiKey ? 'Hide' : 'Show'}
               variant="outline"
               size="small"
-              onTap={() => this.toggleKeyVisibility('openai')}
+              onTap={this.getToggleKeyVisibilityHandler('openai')}
               style={styles.buttonWithMargin}
             />
           </view>
@@ -363,7 +542,7 @@ export class SettingsScreen extends StatefulComponent<
                   title="Clear"
                   variant="ghost"
                   size="small"
-                  onTap={() => this.handleClearApiKey('anthropic')}
+                  onTap={this.getClearApiKeyHandler('anthropic')}
                 />
               )}
             </view>
@@ -373,7 +552,7 @@ export class SettingsScreen extends StatefulComponent<
               placeholder="sk-ant-..."
               secureTextEntry={!this.state.showAnthropicKey}
               onChangeText={(value: string) =>
-                this.handleApiKeyChange('anthropic', value)
+                { this.handleApiKeyChange('anthropic', value); }
               }
               style={styles.inputWithMargin}
             />
@@ -382,7 +561,7 @@ export class SettingsScreen extends StatefulComponent<
               title={this.state.showAnthropicKey ? 'Hide' : 'Show'}
               variant="outline"
               size="small"
-              onTap={() => this.toggleKeyVisibility('anthropic')}
+              onTap={this.getToggleKeyVisibilityHandler('anthropic')}
               style={styles.buttonWithMargin}
             />
           </view>
@@ -401,7 +580,7 @@ export class SettingsScreen extends StatefulComponent<
                   title="Clear"
                   variant="ghost"
                   size="small"
-                  onTap={() => this.handleClearApiKey('google')}
+                  onTap={this.getClearApiKeyHandler('google')}
                 />
               )}
             </view>
@@ -410,7 +589,7 @@ export class SettingsScreen extends StatefulComponent<
               value={this.state.googleKey}
               placeholder="AIza..."
               secureTextEntry={!this.state.showGoogleKey}
-              onChangeText={(value: string) => this.handleApiKeyChange('google', value)}
+              onChangeText={(value: string) => { this.handleApiKeyChange('google', value); }}
               style={styles.inputWithMargin}
             />
 
@@ -418,7 +597,7 @@ export class SettingsScreen extends StatefulComponent<
               title={this.state.showGoogleKey ? 'Hide' : 'Show'}
               variant="outline"
               size="small"
-              onTap={() => this.toggleKeyVisibility('google')}
+              onTap={this.getToggleKeyVisibilityHandler('google')}
               style={styles.buttonWithMargin}
             />
           </view>
@@ -427,7 +606,7 @@ export class SettingsScreen extends StatefulComponent<
     );
   };
 
-  private renderModelSection = () => {
+  private readonly renderModelSection = () => {
     const openAiModels = [
       { label: 'GPT-4 Turbo', value: 'gpt-4-turbo-preview' },
       { label: 'GPT-4', value: 'gpt-4' },
@@ -466,7 +645,7 @@ export class SettingsScreen extends StatefulComponent<
             <Dropdown
               options={openAiModels}
               selectedValue={this.state.openAiModel}
-              onValueChange={(value) => this.handleModelChange('openai', value)}
+              onValueChange={(value) => { this.handleModelChange('openai', value); }}
             />
           </view>
         </Card>
@@ -481,7 +660,7 @@ export class SettingsScreen extends StatefulComponent<
               options={anthropicModels}
               selectedValue={this.state.anthropicModel}
               onValueChange={(value) =>
-                this.handleModelChange('anthropic', value)
+                { this.handleModelChange('anthropic', value); }
               }
             />
           </view>
@@ -496,7 +675,7 @@ export class SettingsScreen extends StatefulComponent<
             <Dropdown
               options={googleModels}
               selectedValue={this.state.googleModel}
-              onValueChange={(value) => this.handleModelChange('google', value)}
+              onValueChange={(value) => { this.handleModelChange('google', value); }}
             />
           </view>
         </Card>
@@ -504,7 +683,7 @@ export class SettingsScreen extends StatefulComponent<
     );
   };
 
-  private renderPreferencesSection = () => {
+  private readonly renderPreferencesSection = () => {
     return (
       <view style={styles.section}>
         <label
@@ -526,7 +705,7 @@ export class SettingsScreen extends StatefulComponent<
             </view>
             <Switch
               value={this.state.darkMode}
-              onValueChange={(value) => this.setState({ darkMode: value })}
+              onValueChange={(value) => { this.setState({ darkMode: value }); }}
             />
           </view>
         </Card>
@@ -546,7 +725,7 @@ export class SettingsScreen extends StatefulComponent<
             <Switch
               value={this.state.enableNotifications}
               onValueChange={(value) =>
-                this.setState({ enableNotifications: value })
+                { this.setState({ enableNotifications: value }); }
               }
             />
           </view>
@@ -567,7 +746,7 @@ export class SettingsScreen extends StatefulComponent<
             <Switch
               value={this.state.enableSoundEffects}
               onValueChange={(value) =>
-                this.setState({ enableSoundEffects: value })
+                { this.setState({ enableSoundEffects: value }); }
               }
             />
           </view>
@@ -576,7 +755,7 @@ export class SettingsScreen extends StatefulComponent<
     );
   };
 
-  private renderAboutSection = () => {
+  private readonly renderAboutSection = () => {
     return (
       <view style={styles.section}>
         <label
@@ -604,19 +783,19 @@ export class SettingsScreen extends StatefulComponent<
                 title="GitHub"
                 variant="outline"
                 size="small"
-                onTap={() => console.log('Open GitHub')}
+                onTap={() => { console.log('Open GitHub'); }}
               />
               <Button
                 title="Documentation"
                 variant="outline"
                 size="small"
-                onTap={() => console.log('Open docs')}
+                onTap={() => { console.log('Open docs'); }}
               />
               <Button
                 title="License"
                 variant="outline"
                 size="small"
-                onTap={() => console.log('Open license')}
+                onTap={() => { console.log('Open license'); }}
               />
             </view>
           </view>
@@ -628,7 +807,7 @@ export class SettingsScreen extends StatefulComponent<
   /**
    * Handle settings configuration errors
    */
-  private handleSettingsError = (error: Error): void => {
+  private readonly handleSettingsError = (error: Error): void => {
     console.error('Settings error:', error);
   };
 
@@ -665,6 +844,9 @@ export class SettingsScreen extends StatefulComponent<
 
           {/* API Keys */}
           {this.renderApiKeySection()}
+
+          {/* Custom Providers */}
+          {this.renderCustomProvidersSection()}
 
           {/* Model Selection */}
           {this.renderModelSection()}
@@ -860,5 +1042,70 @@ const styles = {
 
   buttonWithMargin: new Style<View>({
     marginTop: Spacing.sm,
+  }),
+
+  // Custom Provider Styles
+  addProviderButton: new Style<View>({
+    marginBottom: Spacing.base,
+  }),
+
+  customProviderCard: new Style<View>({
+    marginBottom: Spacing.base,
+  }),
+
+  customProviderHeader: new Style<View>({
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: Spacing.xs,
+  }),
+
+  customProviderName: new Style<Label>({
+    ...Fonts.bodyBold,
+    color: Colors.textPrimary,
+  }),
+
+  customProviderEnabled: new Style<Label>({
+    ...Fonts.caption,
+    color: Colors.success,
+  }),
+
+  customProviderDisabled: new Style<Label>({
+    ...Fonts.caption,
+    color: Colors.textTertiary,
+  }),
+
+  customProviderUrl: new Style<Label>({
+    ...Fonts.bodySmall,
+    color: Colors.textSecondary,
+    marginBottom: Spacing.xxs,
+  }),
+
+  customProviderModel: new Style<Label>({
+    ...Fonts.bodySmall,
+    color: Colors.textTertiary,
+    marginBottom: Spacing.sm,
+  }),
+
+  customProviderActions: new Style<View>({
+    flexDirection: 'row',
+  }),
+
+  emptyStateCard: new Style<View>({
+    padding: Spacing.lg,
+    alignItems: 'center',
+  }),
+
+  emptyStateText: new Style<Label>({
+    ...Fonts.bodyBold,
+    color: Colors.textSecondary,
+    textAlign: 'center',
+  }),
+
+  emptyStateDescription: new Style<Label>({
+    ...Fonts.bodySmall,
+    color: Colors.textTertiary,
+    textAlign: 'center',
+    marginTop: Spacing.xs,
   }),
 };

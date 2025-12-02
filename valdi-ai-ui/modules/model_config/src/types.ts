@@ -215,16 +215,16 @@ export interface ValidationResult {
   isValid: boolean;
 
   /** Validation errors */
-  errors: {
+  errors: Array<{
     field: keyof CustomProviderConfig;
     message: string;
-  }[];
+  }>;
 
   /** Validation warnings */
-  warnings: {
+  warnings: Array<{
     field: keyof CustomProviderConfig;
     message: string;
-  }[];
+  }>;
 }
 
 /**

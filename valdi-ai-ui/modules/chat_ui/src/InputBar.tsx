@@ -7,7 +7,7 @@
 
 import { StatefulComponent } from 'valdi_core/src/Component';
 import { Style } from 'valdi_core/src/Style';
-import { View, EditTextEvent } from 'valdi_tsx/src/NativeTemplateElements';
+import type { View, EditTextEvent } from 'valdi_tsx/src/NativeTemplateElements';
 import {
   Colors,
   Fonts,
@@ -16,7 +16,7 @@ import {
   ChatBorderRadius,
   SemanticShadows,
   Button,
-} from 'common/src';
+} from '../../common/src/index';
 
 /**
  * InputBar Props
@@ -47,11 +47,11 @@ export class InputBar extends StatefulComponent<InputBarProps, InputBarState> {
     text: '',
   };
 
-  private handleTextChange = (event: EditTextEvent): void => {
+  private readonly handleTextChange = (event: EditTextEvent): void => {
     this.setState({ text: event.text });
   };
 
-  private handleSend = (): void => {
+  private readonly handleSend = (): void => {
     const { text } = this.state;
     const { onSend, disabled } = this.viewModel;
 

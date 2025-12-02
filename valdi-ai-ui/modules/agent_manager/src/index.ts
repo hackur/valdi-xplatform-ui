@@ -7,7 +7,7 @@
  */
 
 // Core types
-export * from './types';
+export type * from './types';
 
 // Agent Registry
 export {

@@ -24,5 +24,6 @@ valdi_module(
         "@valdi//src/valdi_modules/src/valdi/valdi_core",
         "@valdi//src/valdi_modules/src/valdi/valdi_http",
         "//modules/common",
+        "//modules/model_config",
     ],
 )

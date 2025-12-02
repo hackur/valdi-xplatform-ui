@@ -7,37 +7,40 @@
 
 import { StatefulComponent } from 'valdi_core/src/Component';
 import { Style } from 'valdi_core/src/Style';
-import { View, Label } from 'valdi_tsx/src/NativeTemplateElements';
-import { NavigationController } from 'valdi_navigation/src/NavigationController';
+import type { View, Label } from 'valdi_tsx/src/NativeTemplateElements';
+import type {
+  Message} from '../../common/src/index';
 import {
   Colors,
   Spacing,
   SemanticSpacing,
-  Message,
   ErrorBoundary,
   ErrorScreen,
-} from 'common/src';
+} from '../../common/src/index';
+import type { SimpleNavigationController } from '../../common/src/index';
 import { systemFont, systemBoldFont } from 'valdi_core/src/SystemFont';
 import { MessageBubble } from './MessageBubble';
 import { InputBar } from './InputBar';
-import { ChatService } from 'chat_core/src/ChatService';
-import { MessageStore, messageStore } from 'chat_core/src/MessageStore';
+import { ChatService } from '../../chat_core/src/ChatService';
+import type { MessageStore} from '../../chat_core/src/MessageStore';
+import { messageStore } from '../../chat_core/src/MessageStore';
+import type {
+  ConversationStore} from '../../chat_core/src/ConversationStore';
 import {
-  ConversationStore,
   conversationStore,
-} from 'chat_core/src/ConversationStore';
-import {
+} from '../../chat_core/src/ConversationStore';
+import type {
   MessageStoreState,
   StreamEvent,
   ChatServiceConfig,
-} from 'chat_core/src/types';
+} from '../../chat_core/src/types';
 
 /**
  * ChatView Props
  */
 export interface ChatViewProps {
-  navigationController: NavigationController;
-  conversationId: string;
+  navigationController: SimpleNavigationController;
+  conversationId?: string; // Optional - creates new conversation if not provided
   chatService?: ChatService; // Optional override for testing
 }
 
@@ -45,6 +48,7 @@ export interface ChatViewProps {
  * ChatView State
  */
 interface ChatViewState {
+  conversationId: string;
   messages: Message[];
   isLoading: boolean;
   isStreaming: boolean;
@@ -79,6 +83,7 @@ export class ChatView extends StatefulComponent<
   private unsubscribeMessageStore?: () => void;
 
   override state: ChatViewState = {
+    conversationId: '',
     messages: [],
     isLoading: false,
     isStreaming: false,
@@ -112,16 +117,42 @@ export class ChatView extends StatefulComponent<
       this.chatService = new ChatService(config, this.messageStore);
     }
 
-    // Load initial messages from store
-    this.loadMessages();
-
     // Subscribe to message store updates
     this.unsubscribeMessageStore = this.messageStore.subscribe(
       (state: MessageStoreState) => {
         this.handleMessageStoreUpdate(state);
       },
     );
+
+    // Initialize conversation (async)
+    void this.initializeConversation();
   }
+
+  /**
+   * Initialize or create conversation
+   */
+  private readonly initializeConversation = async (): Promise<void> => {
+    let convId = this.viewModel.conversationId;
+
+    if (!convId) {
+      // Create a new conversation with default model config
+      const newConv = await this.conversationStore.createConversation({
+        title: 'New Chat',
+        modelConfig: {
+          provider: 'openai',
+          modelId: 'gpt-4-turbo',
+          temperature: 0.7,
+          maxTokens: 4096,
+        },
+      });
+      convId = newConv.id;
+    }
+
+    this.setState({ conversationId: convId });
+
+    // Load initial messages from store
+    this.loadMessages();
+  };
 
   override onDestroy() {
     // Unsubscribe from message store
@@ -132,12 +163,20 @@ export class ChatView extends StatefulComponent<
   }
 
   /**
+   * Get the current conversation ID
+   */
+  private getConversationId(): string {
+    return this.state.conversationId || this.viewModel.conversationId || '';
+  }
+
+  /**
    * Load messages from store
    */
   private loadMessages(): void {
-    const messages = this.messageStore.getMessages(
-      this.viewModel.conversationId,
-    );
+    const convId = this.getConversationId();
+    if (!convId) return;
+
+    const messages = this.messageStore.getMessages(convId);
     this.setState({
       messages,
       isStreaming: this.messageStore.isStreaming(),
@@ -148,8 +187,8 @@ export class ChatView extends StatefulComponent<
    * Handle message store updates
    */
   private handleMessageStoreUpdate(state: MessageStoreState): void {
-    const messages =
-      state.messagesByConversation[this.viewModel.conversationId] || [];
+    const convId = this.getConversationId();
+    const messages = state.messagesByConversation[convId] || [];
     const isStreaming = state.streamingStatus === 'streaming';
 
     this.setState({
@@ -162,15 +201,14 @@ export class ChatView extends StatefulComponent<
   /**
    * Handle sending a message
    */
-  private handleSendMessage = async (text: string): Promise<void> => {
+  private readonly handleSendMessage = async (text: string): Promise<void> => {
     if (!text.trim()) {
       return;
     }
 
     // Get conversation to get system prompt and model config
-    const conversation = this.conversationStore.getConversation(
-      this.viewModel.conversationId,
-    );
+    const convId = this.getConversationId();
+    const conversation = this.conversationStore.getConversation(convId);
 
     // Set loading state
     this.setState({
@@ -182,7 +220,7 @@ export class ChatView extends StatefulComponent<
       // Send message with streaming
       await this.chatService.sendMessageStreaming(
         {
-          conversationId: this.viewModel.conversationId,
+          conversationId: convId,
           message: text,
           modelConfig: conversation?.modelConfig,
           systemPrompt: conversation?.systemPrompt,
@@ -193,9 +231,7 @@ export class ChatView extends StatefulComponent<
       );
 
       // Update conversation message count
-      this.conversationStore.incrementMessageCount(
-        this.viewModel.conversationId,
-      );
+      this.conversationStore.incrementMessageCount(convId);
 
       // Clear loading state (streaming state is managed by store)
       this.setState({
@@ -216,7 +252,7 @@ export class ChatView extends StatefulComponent<
   /**
    * Handle streaming events
    */
-  private handleStreamEvent = (event: StreamEvent): void => {
+  private readonly handleStreamEvent = (event: StreamEvent): void => {
     switch (event.type) {
       case 'start':
         console.log('Stream started:', event.messageId);
@@ -247,14 +283,14 @@ export class ChatView extends StatefulComponent<
     }
   };
 
-  private renderMessage = (message: Message) => {
+  private readonly renderMessage = (message: Message) => {
     return <MessageBubble key={message.id} message={message} />;
   };
 
   /**
    * Handle chat-specific errors
    */
-  private handleChatError = (error: Error): void => {
+  private readonly handleChatError = (error: Error): void => {
     console.error('Chat error:', error);
     // Could send to monitoring service
   };

@@ -7,14 +7,15 @@
 
 import { Component } from 'valdi_core/src/Component';
 import { Style } from 'valdi_core/src/Style';
-import { View } from 'valdi_tsx/src/NativeTemplateElements';
+import type { View } from 'valdi_tsx/src/NativeTemplateElements';
+// Use explicit /index path for Valdi module resolution
 import {
   Colors,
   Spacing,
   SemanticShadows,
   Shadows,
   BorderRadius,
-} from '../theme';
+} from '../theme/index';
 
 /**
  * Card Elevation Level
@@ -50,33 +51,56 @@ export interface CardProps {
   style?: Style<View> | Record<string, unknown>;
 }
 
+// Helper functions for lazy defaults (avoid module initialization timing issues)
+function getDefaultPadding(): number {
+  return Spacing?.base ?? 12;
+}
+
+function getDefaultBackgroundColor(): string {
+  return Colors?.surface ?? '#FFFFFF';
+}
+
+function getDefaultBorderRadius(): number {
+  return BorderRadius?.md ?? 8;
+}
+
 /**
  * Card Component
  */
 export class Card extends Component<CardProps> {
-  static defaultProps: Partial<CardProps> = {
-    elevation: 'sm',
-    padding: Spacing.base,
-    backgroundColor: Colors.surface,
-    borderRadius: BorderRadius.md,
-    bordered: false,
-  };
+  // Use getters for default props to avoid module initialization timing issues
+  static get defaultProps(): Partial<CardProps> {
+    return {
+      elevation: 'sm',
+      padding: getDefaultPadding(),
+      backgroundColor: getDefaultBackgroundColor(),
+      borderRadius: getDefaultBorderRadius(),
+      bordered: false,
+    };
+  }
 
   private getElevationStyle(): Record<string, unknown> {
     const { elevation } = this.viewModel;
+    // Default shadow style as fallback
+    const defaultShadow = {
+      shadowColor: '#000000',
+      shadowOpacity: 0.08,
+      shadowOffset: { width: 0, height: 2 },
+      shadowRadius: 4,
+    };
 
     switch (elevation) {
       case 'none':
         return {};
       case 'sm':
-        return SemanticShadows.card;
+        return SemanticShadows?.card ?? defaultShadow;
       case 'md':
-        return Shadows.md;
+        return Shadows?.md ?? { ...defaultShadow, shadowOpacity: 0.12, shadowRadius: 6 };
       case 'lg':
-        return Shadows.lg;
+        return Shadows?.lg ?? { ...defaultShadow, shadowOpacity: 0.16, shadowRadius: 10 };
       case undefined:
       default:
-        return SemanticShadows.card;
+        return SemanticShadows?.card ?? defaultShadow;
     }
   }
 
@@ -96,14 +120,14 @@ export class Card extends Component<CardProps> {
     customStyle?: Style<View> | Record<string, unknown>,
   ): Style<View> {
     return new Style<View>({
-      ...styles.container,
-      backgroundColor: backgroundColor ?? Colors.surface,
-      borderRadius: borderRadius ?? BorderRadius.md,
-      padding: padding ?? Spacing.base,
+      ...getContainerStyle(),
+      backgroundColor: backgroundColor ?? getDefaultBackgroundColor(),
+      borderRadius: borderRadius ?? getDefaultBorderRadius(),
+      padding: padding ?? getDefaultPadding(),
       ...(bordered
         ? {
             borderWidth: 1,
-            borderColor: Colors.border,
+            borderColor: Colors?.border ?? '#E5E7EB',
           }
         : {}),
       ...shadowStyle,
@@ -140,8 +164,9 @@ export class Card extends Component<CardProps> {
   }
 }
 
-const styles = {
-  container: new Style<View>({
+// Lazy style getter to avoid module initialization timing issues
+function getContainerStyle(): Record<string, unknown> {
+  return {
     width: '100%',
-  }),
-};
+  };
+}

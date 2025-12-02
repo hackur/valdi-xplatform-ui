@@ -5,8 +5,8 @@
  * Provides helpers for managing stream state and processing chunks.
  */
 
-import { Message } from '../../common/src';
-import { StreamEvent, StreamCallback, StreamingStatus } from './types';
+import type { Message } from '../../common/src';
+import type { StreamEvent, StreamCallback, StreamingStatus } from './types';
 
 /**
  * StreamHandler Class
@@ -46,7 +46,7 @@ export class StreamHandler {
   private status: StreamingStatus = 'idle';
   private currentMessageId?: string;
   private contentBuffer: string = '';
-  private callbacks: Set<StreamCallback> = new Set();
+  private readonly callbacks: Set<StreamCallback> = new Set();
 
   /**
    * Register a callback for stream events
@@ -69,7 +69,7 @@ export class StreamHandler {
    * Emit an event to all callbacks
    */
   private emit(event: StreamEvent): void {
-    this.callbacks.forEach((callback) => callback(event));
+    this.callbacks.forEach((callback) => { callback(event); });
   }
 
   /**

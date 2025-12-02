@@ -143,7 +143,7 @@ export function validateForm<T extends Record<string, unknown>>(
   for (const [key, schema] of Object.entries(schemas)) {
     const result = safeValidate(schema, data[key]);
     if (result.success) {
-      validated[key as keyof T] = result.data;
+      validated[key as keyof T] = result.data as T[keyof T];
     } else {
       errors[key] = result.error.errors.map((e) => e.message);
     }
@@ -219,7 +219,7 @@ export function validateWithCoercion<T>(
     return val;
   }, schema);
 
-  return validate(coercedSchema, data);
+  return validate(coercedSchema as z.ZodSchema<T>, data);
 }
 
 /**

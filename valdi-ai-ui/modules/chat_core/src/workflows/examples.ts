@@ -4,16 +4,17 @@
  * Comprehensive examples demonstrating all workflow patterns.
  */
 
-import { ChatService } from '../ChatService';
+import type { ChatService } from '../ChatService';
 import { MessageStore } from '../MessageStore';
+import type {
+  ParallelWorkflow,
+  RoutingWorkflow,
+  EvaluatorOptimizerWorkflow} from './index';
 import {
   SequentialWorkflow,
   SequentialWorkflowBuilder,
-  ParallelWorkflow,
   ParallelWorkflowBuilder,
-  RoutingWorkflow,
   RoutingWorkflowBuilder,
-  EvaluatorOptimizerWorkflow,
   EvaluatorOptimizerWorkflowBuilder,
 } from './index';
 
@@ -398,7 +399,7 @@ export async function createNestedWorkflowExample(
     .maxIterations(2)
     .buildExecutor(chatService, messageStore);
 
-  return await refinementWorkflow.execute({
+  return refinementWorkflow.execute({
     conversationId,
     input: analysisResult.result,
   });

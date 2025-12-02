@@ -6,7 +6,7 @@
 
 import { MessageStore } from '../MessageStore';
 import { MessagePersistence } from '../MessagePersistence';
-import { Message, MessageUtils } from 'common/src';
+import { Message, MessageUtils } from '../../../common/src/index';
 
 // Mock MessagePersistence
 jest.mock('../MessagePersistence');

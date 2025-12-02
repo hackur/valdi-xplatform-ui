@@ -5,9 +5,9 @@
  * Provides base classes and types for orchestrating multiple AI agents.
  */
 
-import { Message, ModelConfig } from '../../common/src';
-import { ChatService } from './ChatService';
-import { MessageStore } from './MessageStore';
+import type { Message, ModelConfig } from '../../common/src';
+import type { ChatService } from './ChatService';
+import type { MessageStore } from './MessageStore';
 
 /**
  * Workflow Type
@@ -367,7 +367,7 @@ export abstract class WorkflowExecutor {
     conversationId: string,
     onProgress?: WorkflowProgressCallback,
   ): Promise<WorkflowStep> {
-    const retry = this.config.retry;
+    const {retry} = this.config;
 
     if (!retry) {
       return this.executeAgent(agent, input, conversationId, onProgress);
@@ -501,7 +501,7 @@ export class WorkflowExecutorFactory {
  * Fluent API for building workflow configurations
  */
 export class WorkflowBuilder {
-  private config: Partial<WorkflowConfig> = {
+  private readonly config: Partial<WorkflowConfig> = {
     agents: [],
   };
 

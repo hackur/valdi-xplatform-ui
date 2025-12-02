@@ -4,8 +4,8 @@
  * Central registry for all AI models (built-in and custom providers).
  */
 
-import { CustomProviderStore } from './CustomProviderStore';
-import {
+import type { CustomProviderStore } from './CustomProviderStore';
+import type {
   ModelDefinition,
   BuiltInProviderConfig,
   CustomProviderConfig,
@@ -209,9 +209,9 @@ const GOOGLE_MODELS: ModelDefinition[] = [
  * Manages all available models from built-in and custom providers.
  */
 export class ModelRegistry {
-  private builtInProviders: Map<ProviderType, BuiltInProviderConfig> =
+  private readonly builtInProviders: Map<ProviderType, BuiltInProviderConfig> =
     new Map();
-  private customProviderStore: CustomProviderStore;
+  private readonly customProviderStore: CustomProviderStore;
 
   constructor(customProviderStore: CustomProviderStore) {
     this.customProviderStore = customProviderStore;
@@ -352,7 +352,7 @@ export class ModelRegistry {
     // Check custom providers first
     if (customProviderId) {
       const provider = this.customProviderStore.getProvider(customProviderId);
-      if (provider && provider.modelId === modelId) {
+      if (provider?.modelId === modelId) {
         return this.customProviderToModel(provider);
       }
     }

@@ -11,11 +11,11 @@
  * Dependency Inversion: Depends on abstractions, not concretions
  */
 
-import { ChatService } from 'chat_core/src/ChatService';
-import { MessageStore } from 'chat_core/src/MessageStore';
-import { ConversationStore } from 'chat_core/src/ConversationStore';
-import { Message, Conversation } from 'common/src';
-import { NavigationController } from 'valdi_navigation/src/NavigationController';
+import type { ChatService } from '../../chat_core/src/ChatService';
+import type { MessageStore } from '../../chat_core/src/MessageStore';
+import type { ConversationStore } from '../../chat_core/src/ConversationStore';
+import type { Message, Conversation } from '../../common/src/index';
+import type { NavigationController } from 'valdi_navigation/src/NavigationController';
 
 /**
  * Chat Integration Configuration
@@ -39,10 +39,10 @@ export type StreamProgressCallback = (delta: string, fullText: string) => void;
  * Follows KISS principle - simple, focused methods.
  */
 export class ChatIntegrationService {
-  private chatService: ChatService;
-  private messageStore: MessageStore;
-  private conversationStore: ConversationStore;
-  private navigationController: NavigationController;
+  private readonly chatService: ChatService;
+  private readonly messageStore: MessageStore;
+  private readonly conversationStore: ConversationStore;
+  private readonly navigationController: NavigationController;
 
   constructor(config: ChatIntegrationConfig) {
     this.chatService = config.chatService;

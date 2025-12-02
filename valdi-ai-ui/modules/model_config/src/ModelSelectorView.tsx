@@ -6,14 +6,14 @@
 
 import { StatefulComponent } from 'valdi_core/src/Component';
 import { Style } from 'valdi_core/src/Style';
-import { View, Label } from 'valdi_tsx/src/NativeTemplateElements';
-import { NavigationController } from 'valdi_navigation/src/NavigationController';
-import { Colors, Fonts, Spacing, BorderRadius } from 'common/src';
-import { Card } from 'common/src';
-import { LoadingSpinner } from 'common/src';
+import type { View, Label } from 'valdi_tsx/src/NativeTemplateElements';
+import type { NavigationController } from 'valdi_navigation/src/NavigationController';
+import { Colors, Fonts, Spacing, BorderRadius } from '../../common/src/index';
+import { Card } from '../../common/src/index';
+import { LoadingSpinner } from '../../common/src/index';
 import { systemFont } from 'valdi_core/src/SystemFont';
-import { ModelRegistry } from './ModelRegistry';
-import { ModelDefinition, ModelSelection, ProviderType } from './types';
+import type { ModelRegistry } from './ModelRegistry';
+import type { ModelDefinition, ModelSelection, ProviderType } from './types';
 
 /**
  * ModelSelectorView Props
@@ -61,6 +61,9 @@ export class ModelSelectorView extends StatefulComponent<
   ModelSelectorViewProps,
   ModelSelectorViewState
 > {
+  // Cache handlers for model selection (per Valdi best practices - avoid creating new functions on render)
+  private readonly modelSelectHandlers = new Map<string, () => void>();
+
   override state: ModelSelectorViewState = {
     models: [],
     modelsByProvider: new Map(),
@@ -131,7 +134,7 @@ export class ModelSelectorView extends StatefulComponent<
 
                       return (
                         <view
-                          onTap={() => this.handleModelSelect(model)}
+                          onTap={this.getModelSelectHandler(model)}
                         >
                           <Card
                             style={
@@ -296,7 +299,7 @@ export class ModelSelectorView extends StatefulComponent<
   /**
    * Handle model select
    */
-  private handleModelSelect = (model: ModelDefinition): void => {
+  private readonly handleModelSelect = (model: ModelDefinition): void => {
     this.setState({
       selectedModelId: model.id,
       selectedCustomProviderId: model.customProviderId,
@@ -318,6 +321,19 @@ export class ModelSelectorView extends StatefulComponent<
     // Navigate back
     this.viewModel.navigationController.pop();
   };
+
+  /**
+   * Get cached handler for model selection (per Valdi best practices)
+   */
+  private getModelSelectHandler(model: ModelDefinition): () => void {
+    const key = `${model.id}-${model.customProviderId || ''}`;
+    let handler = this.modelSelectHandlers.get(key);
+    if (!handler) {
+      handler = () => { this.handleModelSelect(model); };
+      this.modelSelectHandlers.set(key, handler);
+    }
+    return handler;
+  }
 
   /**
    * Format token count

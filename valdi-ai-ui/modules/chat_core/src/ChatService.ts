@@ -7,25 +7,28 @@
 
 // @ts-ignore - valdi_http is a vendor library without TypeScript definitions
 import { HTTPClient } from 'valdi_http/src/HTTPClient';
-import {
+import type {
   Message,
-  MessageUtils,
   AIProvider,
-  ModelConfig,
+  ModelConfig} from '../../common/src';
+import {
+  MessageUtils
 } from '../../common/src';
 import {
   APIError,
   ErrorCode,
   handleError,
   retryWithBackoff,
+  Logger,
 } from '../../common/src';
-import { MessageStore } from './MessageStore';
-import {
+import type { MessageStore } from './MessageStore';
+import type {
   ChatRequestOptions,
   ChatResponse,
   ChatServiceConfig,
   StreamCallback,
 } from './types';
+import type { ModelRegistry } from '../../model_config/src/ModelRegistry';
 
 /**
  * API Endpoints for each provider
@@ -70,19 +73,29 @@ const PROVIDER_ENDPOINTS = {
  * Note: Streaming is simulated as Valdi doesn't have native SSE support yet
  */
 export class ChatService {
-  private config: ChatServiceConfig;
-  private messageStore: MessageStore;
-  private httpClients: Record<string, HTTPClient>;
+  private readonly config: ChatServiceConfig;
+  private readonly messageStore: MessageStore;
+  private readonly httpClients: Record<string, HTTPClient>;
+  private readonly customClients: Map<string, HTTPClient> = new Map();
+  private readonly modelRegistry?: ModelRegistry;
+  private readonly logger: Logger;
 
   /**
    * Creates a new ChatService instance
    *
    * @param config - Service configuration including API keys and default model settings
    * @param messageStore - Message store for managing conversation messages
+   * @param modelRegistry - Optional model registry for custom provider lookup
    */
-  constructor(config: ChatServiceConfig, messageStore: MessageStore) {
+  constructor(
+    config: ChatServiceConfig,
+    messageStore: MessageStore,
+    modelRegistry?: ModelRegistry
+  ) {
     this.config = config;
     this.messageStore = messageStore;
+    this.modelRegistry = modelRegistry;
+    this.logger = new Logger({ module: 'ChatService' });
 
     // Initialize HTTP clients for each provider
     this.httpClients = {
@@ -174,6 +187,162 @@ export class ChatService {
     return systemMessage
       ? MessageUtils.getTextContent(systemMessage)
       : undefined;
+  }
+
+  /**
+   * Get or create HTTP client for custom provider
+   *
+   * Creates and caches HTTP clients for custom provider base URLs.
+   *
+   * @param baseUrl - The base URL for the custom provider
+   * @returns HTTPClient instance for the provider
+   */
+  private getClientForProvider(baseUrl: string): HTTPClient {
+    const normalizedUrl = baseUrl.endsWith('/') ? baseUrl.slice(0, -1) : baseUrl;
+    if (!this.customClients.has(normalizedUrl)) {
+      this.customClients.set(normalizedUrl, new HTTPClient(normalizedUrl));
+    }
+    return this.customClients.get(normalizedUrl)!;
+  }
+
+  /**
+   * Send message to custom OpenAI-compatible API
+   *
+   * Handles communication with custom OpenAI-compatible endpoints (LM Studio, Ollama, etc.)
+   * using the provider configuration from ModelRegistry.
+   *
+   * @param messages - Conversation messages to send
+   * @param modelConfig - Model configuration with customProviderId
+   * @param systemPrompt - Optional system prompt for the request
+   * @returns The AI's text response
+   * @throws {APIError} When provider not found, configuration invalid, or request fails
+   */
+  private async sendToCustomOpenAI(
+    messages: Message[],
+    modelConfig: ModelConfig & { customProviderId: string },
+    systemPrompt?: string,
+  ): Promise<string> {
+    if (!this.modelRegistry) {
+      throw new APIError(
+        'ModelRegistry not configured. Cannot use custom providers.',
+        ErrorCode.API_INVALID_REQUEST,
+        {
+          context: {
+            customProviderId: modelConfig.customProviderId,
+          },
+          userMessage: 'Custom providers require ModelRegistry configuration',
+        },
+      );
+    }
+
+    const provider = this.modelRegistry.getProvider(
+      'custom-openai-compatible',
+      modelConfig.customProviderId
+    );
+
+    if (provider?.type !== 'custom-openai-compatible') {
+      throw new APIError(
+        'Custom provider not found',
+        ErrorCode.API_INVALID_REQUEST,
+        {
+          context: {
+            customProviderId: modelConfig.customProviderId,
+          },
+          userMessage: 'The selected custom provider is not available. Please check Settings.',
+        },
+      );
+    }
+
+    const customProvider = provider;
+    const client = this.getClientForProvider(customProvider.baseUrl);
+
+    const requestBody = JSON.stringify({
+      model: customProvider.modelId,
+      messages: [
+        ...(systemPrompt ? [{ role: 'system', content: systemPrompt }] : []),
+        ...this.convertMessages(messages, 'openai'), // Use OpenAI format
+      ],
+      temperature: modelConfig.temperature ?? customProvider.defaultTemperature ?? 0.7,
+      max_tokens: modelConfig.maxTokens ?? customProvider.maxOutputTokens ?? 2000,
+    });
+
+    const encodedBody = new TextEncoder().encode(requestBody);
+    const headers: Record<string, string> = {
+      'Content-Type': 'application/json',
+      ...(customProvider.headers || {}),
+    };
+
+    if (customProvider.apiKey) {
+      headers.Authorization = `Bearer ${customProvider.apiKey}`;
+    }
+
+    return retryWithBackoff(
+      async () => {
+        try {
+          const response = await client.post('/chat/completions', encodedBody, headers);
+
+          if (!response.body) {
+            throw new APIError(
+              'Empty response from custom provider',
+              ErrorCode.API_INVALID_RESPONSE,
+              {
+                provider: customProvider.name,
+                context: {
+                  baseUrl: customProvider.baseUrl,
+                },
+              },
+            );
+          }
+
+          const text = new TextDecoder().decode(response.body);
+          const result = JSON.parse(text);
+
+          if (result.error) {
+            const statusCode = (response as any).status || 500;
+            const errorCode = this.getErrorCodeFromStatus(statusCode);
+            throw new APIError(
+              result.error.message || 'Custom provider API error',
+              errorCode,
+              {
+                statusCode,
+                provider: customProvider.name,
+                context: {
+                  baseUrl: customProvider.baseUrl,
+                },
+              },
+            );
+          }
+
+          return result.choices?.[0]?.message?.content || '';
+        } catch (error: any) {
+          if (error instanceof APIError) {
+            throw error;
+          }
+          throw new APIError(
+            `Custom provider request failed: ${error.toString()}`,
+            ErrorCode.API_NETWORK_ERROR,
+            {
+              provider: customProvider.name,
+              context: {
+                baseUrl: customProvider.baseUrl,
+              },
+              cause: error,
+              userMessage: `Failed to connect to ${customProvider.name}. Check that the server is running.`,
+            },
+          );
+        }
+      },
+      {
+        maxRetries: 3,
+        initialDelay: 1000,
+        onRetry: (error, attempt, delay) => {
+          this.logger.warn(
+            `Retrying custom provider request (attempt ${attempt}) after ${delay}ms`,
+            error,
+          );
+        },
+      },
+    );
   }
 
   /**
@@ -276,8 +445,8 @@ export class ChatService {
         maxRetries: 3,
         initialDelay: 1000,
         onRetry: (error, attempt, delay) => {
-          console.log(
-            `[ChatService] Retrying OpenAI request (attempt ${attempt}) after ${delay}ms`,
+          this.logger.warn(
+            `Retrying OpenAI request (attempt ${attempt}) after ${delay}ms`,
             error,
           );
         },
@@ -492,6 +661,23 @@ export class ChatService {
           responseText = await this.sendToGoogle(
             [...messages, userMsg],
             modelConfig as ModelConfig,
+            systemPrompt,
+          );
+          break;
+        case 'custom-openai-compatible':
+          if (!modelConfig.customProviderId) {
+            throw new APIError(
+              'Custom provider ID required for custom-openai-compatible provider',
+              ErrorCode.API_INVALID_REQUEST,
+              {
+                provider,
+                userMessage: 'Invalid custom provider configuration. Please reconfigure in Settings.',
+              },
+            );
+          }
+          responseText = await this.sendToCustomOpenAI(
+            [...messages, userMsg],
+            modelConfig as ModelConfig & { customProviderId: string },
             systemPrompt,
           );
           break;

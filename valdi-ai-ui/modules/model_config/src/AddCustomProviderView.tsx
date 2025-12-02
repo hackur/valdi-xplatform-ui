@@ -6,14 +6,14 @@
 
 import { StatefulComponent } from 'valdi_core/src/Component';
 import { Style } from 'valdi_core/src/Style';
-import { View, Label, EditTextEvent } from 'valdi_tsx/src/NativeTemplateElements';
-import { NavigationController } from 'valdi_navigation/src/NavigationController';
-import { Colors, Fonts, Spacing, BorderRadius } from 'common/src';
-import { Button } from 'common/src';
-import { LoadingSpinner } from 'common/src';
+import type { View, Label, EditTextEvent } from 'valdi_tsx/src/NativeTemplateElements';
+import type { NavigationController } from 'valdi_navigation/src/NavigationController';
+import { Colors, Fonts, Spacing, BorderRadius } from '../../common/src/index';
+import { Button } from '../../common/src/index';
+import { LoadingSpinner } from '../../common/src/index';
 import { systemBoldFont } from 'valdi_core/src/SystemFont';
-import { CustomProviderStore } from './CustomProviderStore';
-import {
+import type { CustomProviderStore } from './CustomProviderStore';
+import type {
   CustomProviderConfig,
   ProviderTestResult,
 } from './types';
@@ -277,7 +277,7 @@ export class AddCustomProviderView extends StatefulComponent<
 
             <view
               style={styles.checkbox}
-              onTap={() => this.handleToggle('supportsStreaming')}
+              onTap={this.handleToggleStreaming}
             >
               <view
                 style={
@@ -295,7 +295,7 @@ export class AddCustomProviderView extends StatefulComponent<
 
             <view
               style={styles.checkbox}
-              onTap={() => this.handleToggle('supportsFunctionCalling')}
+              onTap={this.handleToggleFunctionCalling}
             >
               <view
                 style={
@@ -415,7 +415,7 @@ export class AddCustomProviderView extends StatefulComponent<
   private createFieldChangeHandler(
     field: keyof AddCustomProviderViewState,
   ): (event: EditTextEvent) => void {
-    return (event: EditTextEvent) => this.handleFieldChange(field, event.text);
+    return (event: EditTextEvent) => { this.handleFieldChange(field, event.text); };
   }
 
   /**
@@ -426,6 +426,10 @@ export class AddCustomProviderView extends StatefulComponent<
   ): void {
     this.setState({ [field]: !this.state[field] } as any);
   }
+
+  // Pre-bound toggle handlers (per Valdi best practices - no inline functions)
+  private readonly handleToggleStreaming = () => { this.handleToggle('supportsStreaming'); };
+  private readonly handleToggleFunctionCalling = () => { this.handleToggle('supportsFunctionCalling'); };
 
   /**
    * Can test connection
@@ -438,7 +442,7 @@ export class AddCustomProviderView extends StatefulComponent<
   /**
    * Handle test connection
    */
-  private handleTestConnection = async (): Promise<void> => {
+  private readonly handleTestConnection = async (): Promise<void> => {
     this.setState({ isTesting: true, testResult: undefined });
 
     try {
@@ -473,7 +477,7 @@ export class AddCustomProviderView extends StatefulComponent<
   /**
    * Handle save
    */
-  private handleSave = async (): Promise<void> => {
+  private readonly handleSave = async (): Promise<void> => {
     const config = this.buildProviderConfig();
 
     // Validate
@@ -525,7 +529,7 @@ export class AddCustomProviderView extends StatefulComponent<
   /**
    * Handle cancel
    */
-  private handleCancel = (): void => {
+  private readonly handleCancel = (): void => {
     this.viewModel.navigationController.pop();
   };
 
@@ -702,7 +706,7 @@ const styles = {
 
   errorContainer: new Style<View>({
     padding: Spacing.sm,
-    backgroundColor: Colors.error + '20',
+    backgroundColor: `${Colors.error  }20`,
     borderRadius: BorderRadius.md,
     marginBottom: Spacing.base,
   }),

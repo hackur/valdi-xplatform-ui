@@ -6,8 +6,8 @@
 
 import { StatefulComponent } from 'valdi_core/src/Component';
 import { Style } from 'valdi_core/src/Style';
-import { View, EditTextEvent } from 'valdi_tsx/src/NativeTemplateElements';
-import { Colors, Fonts, Spacing, BorderRadius } from 'common/src';
+import type { View, EditTextEvent } from 'valdi_tsx/src/NativeTemplateElements';
+import { Colors, Fonts, Spacing, BorderRadius } from '../../../common/src/index';
 
 /**
  * TextInput Props
@@ -67,21 +67,21 @@ export class TextInput extends StatefulComponent<TextInputProps, TextInputState>
     isFocused: false,
   };
 
-  private handleChange = (event: EditTextEvent): void => {
+  private readonly handleChange = (event: EditTextEvent): void => {
     const { onChangeText } = this.viewModel;
     if (onChangeText) {
       onChangeText(event.text);
     }
   };
 
-  private handleFocus = (): void => {
+  private readonly handleFocus = (): void => {
     this.setState({ isFocused: true });
     if (this.viewModel.onFocus) {
       this.viewModel.onFocus();
     }
   };
 
-  private handleBlur = (): void => {
+  private readonly handleBlur = (): void => {
     this.setState({ isFocused: false });
     if (this.viewModel.onBlur) {
       this.viewModel.onBlur();
@@ -90,7 +90,7 @@ export class TextInput extends StatefulComponent<TextInputProps, TextInputState>
 
   // Reserved for future secure text display functionality (suppress unused warning)
   // @ts-ignore Intentionally kept for future use
-  private getDisplayValue = (): string => {
+  private readonly getDisplayValue = (): string => {
     const { value, secureTextEntry } = this.viewModel;
 
     if (secureTextEntry && value) {

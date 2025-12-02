@@ -11,8 +11,8 @@
 
 import { Component } from 'valdi_core/src/Component';
 import { Style } from 'valdi_core/src/Style';
-import { View, Label } from 'valdi_tsx/src/NativeTemplateElements';
-import { Card, Colors, Fonts, Spacing, BorderRadius } from 'common/src';
+import type { View, Label } from 'valdi_tsx/src/NativeTemplateElements';
+import { Card, Colors, Fonts, Spacing, BorderRadius } from '../../common/src/index';
 
 /**
  * Tool Execution Result

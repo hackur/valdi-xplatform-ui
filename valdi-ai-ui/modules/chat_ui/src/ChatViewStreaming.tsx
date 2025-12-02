@@ -7,15 +7,15 @@
 
 import { StatefulComponent } from 'valdi_core/src/Component';
 import { Style } from 'valdi_core/src/Style';
-import { View, Label } from 'valdi_tsx/src/NativeTemplateElements';
-import { NavigationController } from 'valdi_navigation/src/NavigationController';
-import { Colors, Spacing } from 'common/src';
-import { Message } from 'common/src';
-import { LoadingSpinner } from 'common/src';
+import type { View, Label } from 'valdi_tsx/src/NativeTemplateElements';
+import type { NavigationController } from 'valdi_navigation/src/NavigationController';
+import { Colors, Spacing } from '../../common/src/index';
+import type { Message } from '../../common/src/index';
+import { LoadingSpinner } from '../../common/src/index';
 import { systemFont, systemBoldFont } from 'valdi_core/src/SystemFont';
 import { MessageBubble } from './MessageBubble';
 import { InputBar } from './InputBar';
-import { ChatIntegrationService } from './ChatIntegrationService';
+import type { ChatIntegrationService } from './ChatIntegrationService';
 
 /**
  * ChatViewStreaming Props
@@ -152,7 +152,7 @@ export class ChatViewStreaming extends StatefulComponent<
   /**
    * Handle send message
    */
-  private handleSend = async (content: string): Promise<void> => {
+  private readonly handleSend = async (content: string): Promise<void> => {
     if (!content.trim() || this.state.isStreaming) {
       return;
     }

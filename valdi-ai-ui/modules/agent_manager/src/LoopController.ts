@@ -6,14 +6,14 @@
  * Production-ready with comprehensive error handling and cancellation support.
  */
 
-import {
+import type {
   AgentContext,
   AgentExecutionResult,
   LoopControlConfig,
   LoopExecutionState,
 } from './types';
-import { AgentRegistry } from './AgentRegistry';
-import { AgentExecutor } from './AgentExecutor';
+import type { AgentRegistry } from './AgentRegistry';
+import type { AgentExecutor } from './AgentExecutor';
 
 /**
  * Loop Controller Configuration
@@ -36,11 +36,11 @@ export interface LoopControllerConfig {
  * Provides fine-grained control over loop termination.
  */
 export class LoopController {
-  private registry: AgentRegistry;
-  private executor: AgentExecutor;
-  private debug: boolean;
-  private activeLoops: Map<string, LoopExecutionState> = new Map();
-  private abortControllers: Map<string, AbortController> = new Map();
+  private readonly registry: AgentRegistry;
+  private readonly executor: AgentExecutor;
+  private readonly debug: boolean;
+  private readonly activeLoops: Map<string, LoopExecutionState> = new Map();
+  private readonly abortControllers: Map<string, AbortController> = new Map();
 
   constructor(config: LoopControllerConfig) {
     this.registry = config.registry;
@@ -85,7 +85,7 @@ export class LoopController {
     this.log(`Starting loop with agent: ${agent.name}`);
     this.log(`Max iterations: ${config.maxIterations}`);
 
-    let currentContext = { ...context };
+    const currentContext = { ...context };
 
     try {
       while (
@@ -258,7 +258,7 @@ export class LoopController {
     config: LoopControlConfig,
   ): Promise<LoopExecutionState[]> {
     const states: LoopExecutionState[] = [];
-    let currentContext = { ...context };
+    const currentContext = { ...context };
 
     for (const agentId of agents) {
       const state = await this.executeLoop(agentId, currentContext, config);
@@ -274,7 +274,7 @@ export class LoopController {
             ...lastResult.messages,
           ];
         }
-        if (lastResult && lastResult.output) {
+        if (lastResult?.output) {
           currentContext.sharedData = {
             ...currentContext.sharedData,
             previousLoopOutput: lastResult.output,
@@ -310,8 +310,7 @@ export class LoopController {
 
         const lastResult = results[results.length - 1];
         return (
-          lastResult !== undefined &&
-          lastResult.output !== undefined &&
+          lastResult?.output !== undefined &&
           targetCondition(lastResult.output)
         );
       },

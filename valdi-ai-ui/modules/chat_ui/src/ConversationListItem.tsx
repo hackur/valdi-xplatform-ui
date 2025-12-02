@@ -7,16 +7,17 @@
 
 import { Component } from 'valdi_core/src/Component';
 import { Style } from 'valdi_core/src/Style';
-import { View } from 'valdi_tsx/src/NativeTemplateElements';
+import type { View } from 'valdi_tsx/src/NativeTemplateElements';
 import type { Label } from 'valdi_tsx/src/NativeTemplateElements';
 import { systemFont } from 'valdi_core/src/SystemFont';
+import type {
+  Conversation} from '../../common/src/index';
 import {
   Colors,
   Fonts,
   Spacing,
-  BorderRadius,
-  Conversation,
-} from 'common/src';
+  BorderRadius
+} from '../../common/src/index';
 
 /**
  * ConversationListItem Props
@@ -46,14 +47,14 @@ export class ConversationListItem extends Component<ConversationListItemProps> {
     unreadCount: 0,
   };
 
-  private handlePress = (): void => {
+  private readonly handlePress = (): void => {
     const { conversation, onPress } = this.viewModel;
     if (onPress) {
       onPress(conversation.id);
     }
   };
 
-  private handleLongPress = (): void => {
+  private readonly handleLongPress = (): void => {
     const { conversation, onLongPress } = this.viewModel;
     if (onLongPress) {
       onLongPress(conversation.id);
@@ -65,7 +66,7 @@ export class ConversationListItem extends Component<ConversationListItemProps> {
     if (lastMessagePreview) {
       // Truncate to 60 characters
       return lastMessagePreview.length > 60
-        ? lastMessagePreview.substring(0, 60) + '...'
+        ? `${lastMessagePreview.substring(0, 60)  }...`
         : lastMessagePreview;
     }
     return 'No messages yet';
@@ -97,7 +98,7 @@ export class ConversationListItem extends Component<ConversationListItemProps> {
 
   private getProviderIcon(): string {
     const { conversation } = this.viewModel;
-    const provider = conversation.modelConfig.provider;
+    const {provider} = conversation.modelConfig;
 
     switch (provider) {
       case 'openai':
@@ -106,8 +107,8 @@ export class ConversationListItem extends Component<ConversationListItemProps> {
         return 'C';
       case 'google':
         return 'G';
-      case 'xai':
-        return 'X';
+      case 'custom-openai-compatible':
+        return 'C';
       default:
         return 'AI';
     }

@@ -13,15 +13,16 @@
  * - Consensus building
  */
 
-import {
-  WorkflowExecutor,
+import type {
   WorkflowConfig,
   WorkflowExecutionOptions,
   WorkflowExecutionResult,
-  WorkflowStep,
+  WorkflowStep} from './AgentWorkflow';
+import {
+  WorkflowExecutor
 } from './AgentWorkflow';
-import { ChatService } from './ChatService';
-import { MessageStore } from './MessageStore';
+import type { ChatService } from './ChatService';
+import type { MessageStore } from './MessageStore';
 
 /**
  * Result Aggregation Strategy
@@ -195,7 +196,7 @@ export class ParallelWorkflow extends WorkflowExecutor {
       });
 
       // Wait for agents with timeout if specified
-      let results: Awaited<(typeof agentPromises)[0]>[];
+      let results: Array<Awaited<(typeof agentPromises)[0]>>;
 
       if (this.config.waitForAll !== false) {
         if (this.config.maxWaitTime) {
@@ -204,7 +205,7 @@ export class ParallelWorkflow extends WorkflowExecutor {
             Promise.all(agentPromises),
             new Promise<any[]>((_, reject) =>
               setTimeout(
-                () => reject(new Error('Max wait time exceeded')),
+                () => { reject(new Error('Max wait time exceeded')); },
                 this.config.maxWaitTime,
               ),
             ),
@@ -217,7 +218,7 @@ export class ParallelWorkflow extends WorkflowExecutor {
             }
             // Manual implementation of Promise.allSettled for ES2015 compatibility
             const settled = await Promise.all(
-              agentPromises.map((p) =>
+              agentPromises.map(async (p) =>
                 p
                   .then((value) => ({ status: 'fulfilled' as const, value }))
                   .catch((reason) => ({ status: 'rejected' as const, reason })),
@@ -424,7 +425,7 @@ export class ParallelWorkflow extends WorkflowExecutor {
  * Convenience builder for creating parallel workflows
  */
 export class ParallelWorkflowBuilder {
-  private config: Partial<ParallelWorkflowConfig> = {
+  private readonly config: Partial<ParallelWorkflowConfig> = {
     type: 'parallel',
     agents: [],
     waitForAll: true,

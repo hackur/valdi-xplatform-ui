@@ -7,15 +7,15 @@
 
 import { StatefulComponent } from 'valdi_core/src/Component';
 import { Style } from 'valdi_core/src/Style';
-import { View, Label } from 'valdi_tsx/src/NativeTemplateElements';
-import { NavigationController } from 'valdi_navigation/src/NavigationController';
-import { Colors, Fonts, Spacing, BorderRadius } from 'common/src';
-import { Conversation } from 'common/src';
-import { LoadingSpinner } from 'common/src';
-import { Card } from 'common/src';
-import { Button } from 'common/src';
+import type { View, Label } from 'valdi_tsx/src/NativeTemplateElements';
+import type { NavigationController } from 'valdi_navigation/src/NavigationController';
+import { Colors, Fonts, Spacing, BorderRadius } from '../../common/src/index';
+import type { Conversation } from '../../common/src/index';
+import { LoadingSpinner } from '../../common/src/index';
+import { Card } from '../../common/src/index';
+import { Button } from '../../common/src/index';
 import { systemFont } from 'valdi_core/src/SystemFont';
-import { ChatIntegrationService } from './ChatIntegrationService';
+import type { ChatIntegrationService } from './ChatIntegrationService';
 import { ChatView } from './ChatView';
 
 /**
@@ -46,6 +46,8 @@ export class ConversationListConnected extends StatefulComponent<
   ConversationListConnectedState
 > {
   private unsubscribe?: () => void;
+  // Cache handlers for conversation taps (per Valdi best practices - avoid creating new functions on render)
+  private readonly conversationTapHandlers = new Map<string, () => void>();
 
   override state: ConversationListConnectedState = {
     conversations: [],
@@ -96,7 +98,7 @@ export class ConversationListConnected extends StatefulComponent<
         <view style={styles.tabs}>
           <view
             style={filter === 'all' ? styles.tabActive : styles.tab}
-            onTap={() => this.handleFilterChange('all')}
+            onTap={this.handleFilterAll}
           >
             <label
               value="All"
@@ -106,7 +108,7 @@ export class ConversationListConnected extends StatefulComponent<
 
           <view
             style={filter === 'active' ? styles.tabActive : styles.tab}
-            onTap={() => this.handleFilterChange('active')}
+            onTap={this.handleFilterActive}
           >
             <label
               value="Active"
@@ -118,7 +120,7 @@ export class ConversationListConnected extends StatefulComponent<
 
           <view
             style={filter === 'archived' ? styles.tabActive : styles.tab}
-            onTap={() => this.handleFilterChange('archived')}
+            onTap={this.handleFilterArchived}
           >
             <label
               value="Archived"
@@ -148,7 +150,7 @@ export class ConversationListConnected extends StatefulComponent<
                 <Card
                   key={conversation.id}
                   style={styles.conversationCard as unknown as Record<string, unknown>}
-                  onTap={() => this.handleConversationTap(conversation.id)}
+                  onTap={this.getConversationTapHandler(conversation.id)}
                 >
                   <view style={styles.conversationContent}>
                     <label
@@ -225,17 +227,22 @@ export class ConversationListConnected extends StatefulComponent<
   /**
    * Handle filter change
    */
-  private handleFilterChange = async (
+  private readonly handleFilterChange = async (
     filter: 'all' | 'active' | 'archived',
   ): Promise<void> => {
     this.setState({ filter });
     await this.loadConversations();
   };
 
+  // Pre-bound handlers for each filter type (per Valdi best practices - no inline functions)
+  private readonly handleFilterAll = async () => { await this.handleFilterChange('all'); };
+  private readonly handleFilterActive = async () => { await this.handleFilterChange('active'); };
+  private readonly handleFilterArchived = async () => { await this.handleFilterChange('archived'); };
+
   /**
    * Handle conversation tap
    */
-  private handleConversationTap = (conversationId: string): void => {
+  private readonly handleConversationTap = (conversationId: string): void => {
     this.viewModel.integrationService.navigateToConversation(
       conversationId,
       ChatView,
@@ -243,9 +250,21 @@ export class ConversationListConnected extends StatefulComponent<
   };
 
   /**
+   * Get cached handler for conversation tap (per Valdi best practices)
+   */
+  private getConversationTapHandler(conversationId: string): () => void {
+    let handler = this.conversationTapHandlers.get(conversationId);
+    if (!handler) {
+      handler = () => { this.handleConversationTap(conversationId); };
+      this.conversationTapHandlers.set(conversationId, handler);
+    }
+    return handler;
+  }
+
+  /**
    * Handle new conversation
    */
-  private handleNewConversation = async (): Promise<void> => {
+  private readonly handleNewConversation = async (): Promise<void> => {
     await this.viewModel.integrationService.createAndNavigateToConversation(
       'New Conversation',
       ChatView,

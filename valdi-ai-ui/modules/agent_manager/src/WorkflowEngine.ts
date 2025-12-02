@@ -6,15 +6,16 @@
  * Supports cancellation, progress tracking, and error recovery.
  */
 
-import {
+import type {
   AgentDefinition,
   AgentContext,
   AgentExecutionResult,
   WorkflowConfig,
   WorkflowExecutionState,
 } from './types';
-import { AgentRegistry } from './AgentRegistry';
-import { AgentExecutor } from './AgentExecutor';
+import type { AgentRegistry } from './AgentRegistry';
+import type { AgentExecutor } from './AgentExecutor';
+import { Logger } from '../../common/src/index';
 
 /**
  * Workflow progress callback
@@ -58,16 +59,18 @@ export interface WorkflowEngineConfig {
  * Manages workflow execution and agent coordination.
  */
 export class WorkflowEngine {
-  private registry: AgentRegistry;
-  private executor: AgentExecutor;
-  private debug: boolean;
-  private activeWorkflows: Map<string, WorkflowExecutionState> = new Map();
-  private abortControllers: Map<string, AbortController> = new Map();
+  private readonly registry: AgentRegistry;
+  private readonly executor: AgentExecutor;
+  private readonly debug: boolean;
+  private readonly activeWorkflows: Map<string, WorkflowExecutionState> = new Map();
+  private readonly abortControllers: Map<string, AbortController> = new Map();
+  private readonly logger: Logger;
 
   constructor(config: WorkflowEngineConfig) {
     this.registry = config.registry;
     this.executor = config.executor;
     this.debug = config.debug ?? false;
+    this.logger = new Logger({ module: 'WorkflowEngine' });
   }
 
   /**
@@ -119,7 +122,7 @@ export class WorkflowEngine {
         ? new Promise<never>((_, reject) => {
             setTimeout(
               () =>
-                reject(new Error(`Workflow timeout after ${config.timeout}ms`)),
+                { reject(new Error(`Workflow timeout after ${config.timeout}ms`)); },
               config.timeout,
             );
           })
@@ -238,7 +241,7 @@ export class WorkflowEngine {
     abortSignal: AbortSignal,
   ): Promise<void> {
     const { config } = state;
-    let currentContext = { ...context };
+    const currentContext = { ...context };
     const errorRecovery = options?.errorRecovery ?? 'stop';
     const maxRetries = options?.maxRetries ?? 3;
 
@@ -250,7 +253,7 @@ export class WorkflowEngine {
       }
 
       // Check stop condition
-      if (config.stopWhen && config.stopWhen(state.results)) {
+      if (config.stopWhen?.(state.results)) {
         this.log(`Stop condition met at agent ${agentId}`);
         break;
       }
@@ -408,8 +411,11 @@ export class WorkflowEngine {
         (config.config?.maxConcurrency as number) ?? agents.length,
     });
 
-    state.results = results;
-    state.currentStep = config.agents.length;
+    // Update state atomically to avoid race conditions
+    Object.assign(state, {
+      results,
+      currentStep: config.agents.length,
+    });
 
     // Call progress callback
     if (options?.onProgress) {
@@ -530,7 +536,7 @@ export class WorkflowEngine {
 
     const maxIterations = config.maxSteps || 3;
 
-    let currentContext = { ...context };
+    const currentContext = { ...context };
 
     for (let iteration = 0; iteration < maxIterations; iteration++) {
       // Check if cancelled
@@ -598,7 +604,7 @@ export class WorkflowEngine {
       }
 
       // Check if evaluation is satisfactory
-      if (config.stopWhen && config.stopWhen(state.results)) {
+      if (config.stopWhen?.(state.results)) {
         this.log('Evaluation satisfactory, stopping');
         break;
       }
@@ -693,7 +699,7 @@ export class WorkflowEngine {
    */
   private log(message: string): void {
     if (this.debug) {
-      console.log(`[WorkflowEngine] ${message}`);
+      this.logger.debug(message);
     }
   }
 }

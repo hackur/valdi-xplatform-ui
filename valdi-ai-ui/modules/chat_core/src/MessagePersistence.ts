@@ -5,14 +5,15 @@
  * Manages serialization, deserialization, and storage operations for messages.
  */
 
-import {
+import type {
   Message,
   MessageRole,
   MessageStatus,
   MessageContentPart,
   ToolCall,
 } from '../../common/src';
-import { StorageProvider, defaultStorage } from './StorageProvider';
+import type { StorageProvider} from './StorageProvider';
+import { defaultStorage } from './StorageProvider';
 
 /**
  * Serialized Message
@@ -56,10 +57,10 @@ export interface MessagePersistenceConfig {
  * Handles serialization/deserialization and batch operations.
  */
 export class MessagePersistence {
-  private storage: StorageProvider;
-  private debounceMs: number;
-  private debug: boolean;
-  private debounceTimers: Map<string, ReturnType<typeof setTimeout>> =
+  private readonly storage: StorageProvider;
+  private readonly debounceMs: number;
+  private readonly debug: boolean;
+  private readonly debounceTimers: Map<string, ReturnType<typeof setTimeout>> =
     new Map();
 
   constructor(config: MessagePersistenceConfig = {}) {
@@ -421,7 +422,7 @@ export class MessagePersistence {
    * Flush any pending debounced saves
    */
   async flush(): Promise<void> {
-    const promises: Promise<void>[] = [];
+    const promises: Array<Promise<void>> = [];
 
     this.debounceTimers.forEach((timer, conversationId) => {
       clearTimeout(timer);

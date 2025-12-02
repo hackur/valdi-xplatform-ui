@@ -33,4 +33,4 @@ export * from './StreamHandler';
 export * from './StorageProvider';
 
 // Type exports
-export * from './types';
+export type * from './types';

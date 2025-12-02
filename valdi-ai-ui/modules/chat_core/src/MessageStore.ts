@@ -5,9 +5,9 @@
  * Provides reactive state management for messages with CRUD operations.
  */
 
-import { Message, MessageUpdateInput } from '../../common/src';
+import type { Message, MessageUpdateInput } from '../../common/src';
 import { StorageError, ErrorCode, handleError } from '../../common/src';
-import { MessageStoreState, StreamingStatus } from './types';
+import type { MessageStoreState, StreamingStatus } from './types';
 import { MessagePersistence } from './MessagePersistence';
 
 /**
@@ -43,8 +43,8 @@ export class MessageStore {
     streamingMessageId: undefined,
   };
 
-  private listeners: Set<(state: MessageStoreState) => void> = new Set();
-  private persistence: MessagePersistence;
+  private readonly listeners: Set<(state: MessageStoreState) => void> = new Set();
+  private readonly persistence: MessagePersistence;
   private enablePersistence: boolean;
 
   /**
@@ -137,7 +137,7 @@ export class MessageStore {
    * Notify all listeners of state change
    */
   private notify(): void {
-    this.listeners.forEach((listener) => listener(this.state));
+    this.listeners.forEach((listener) => { listener(this.state); });
   }
 
   /**

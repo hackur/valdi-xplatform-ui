@@ -5,7 +5,7 @@
  * Provides error handling, result formatting, and async execution support.
  */
 
-import { Tool } from 'ai';
+import type { Tool } from 'ai';
 
 /**
  * Tool Call Input
@@ -209,7 +209,7 @@ export class ToolExecutor {
     }
 
     // Execute all tool calls in parallel
-    const resultPromises = toolCalls.map((toolCall) =>
+    const resultPromises = toolCalls.map(async (toolCall) =>
       this.executeToolCall(toolCall),
     );
 

@@ -17,11 +17,11 @@
 
 import { StatefulComponent } from 'valdi_core/src/Component';
 import { Style } from 'valdi_core/src/Style';
-import { View, Label } from 'valdi_tsx/src/NativeTemplateElements';
+import type { View, Label } from 'valdi_tsx/src/NativeTemplateElements';
 import { systemBoldFont, systemFont } from 'valdi_core/src/SystemFont';
 
 import { Colors } from '../theme/Colors';
-import { Spacing, BorderRadius } from '../theme';
+import { Spacing, BorderRadius } from '../theme/index';
 
 /**
  * ErrorInfo type for additional error context

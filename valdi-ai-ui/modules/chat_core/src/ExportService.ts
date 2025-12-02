@@ -5,7 +5,8 @@
  * Supports multiple formats: JSON, Markdown, and plain text.
  */
 
-import { Conversation, Message, MessageUtils } from '../../common/src';
+import type { Conversation, Message} from '../../common/src';
+import { MessageUtils } from '../../common/src';
 import { MessagePersistence } from './MessagePersistence';
 import { ConversationPersistence } from './ConversationPersistence';
 
@@ -75,8 +76,8 @@ export interface ImportResult {
  * in various formats (JSON, Markdown, Text).
  */
 export class ExportService {
-  private messagePersistence: MessagePersistence;
-  private conversationPersistence: ConversationPersistence;
+  private readonly messagePersistence: MessagePersistence;
+  private readonly conversationPersistence: ConversationPersistence;
 
   constructor(
     messagePersistence?: MessagePersistence,
@@ -205,7 +206,7 @@ export class ExportService {
       const separator =
         config.format === 'markdown'
           ? '\n\n---\n\n'
-          : '\n\n' + '='.repeat(80) + '\n\n';
+          : `\n\n${  '='.repeat(80)  }\n\n`;
 
       data = parts.join(separator);
       filename = `valdi-conversations-${Date.now()}.${config.format === 'markdown' ? 'md' : 'txt'}`;

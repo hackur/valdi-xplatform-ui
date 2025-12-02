@@ -81,7 +81,7 @@ export interface ErrorBoundaryConfig {
  * ```
  */
 export class ErrorBoundary {
-  private config: Required<ErrorBoundaryConfig>;
+  private readonly config: Required<ErrorBoundaryConfig>;
   private errorCount: number = 0;
   private lastError?: Error;
 

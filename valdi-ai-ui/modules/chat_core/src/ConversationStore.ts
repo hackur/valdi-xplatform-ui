@@ -5,15 +5,16 @@
  * Provides reactive state management for conversations with CRUD operations.
  */
 
-import {
+import type {
   Conversation,
   ConversationCreateInput,
   ConversationUpdateInput,
   ConversationFilterOptions,
   ConversationSortOptions,
   ConversationListOptions,
-  ConversationUtils,
-  ConversationStatus,
+  ConversationStatus} from '../../common/src';
+import {
+  ConversationUtils
 } from '../../common/src';
 import { ConversationPersistence } from './ConversationPersistence';
 
@@ -73,8 +74,8 @@ export class ConversationStore {
     error: undefined,
   };
 
-  private listeners: Set<(state: ConversationStoreState) => void> = new Set();
-  private persistence: ConversationPersistence;
+  private readonly listeners: Set<(state: ConversationStoreState) => void> = new Set();
+  private readonly persistence: ConversationPersistence;
   private enablePersistence: boolean;
 
   constructor(
@@ -129,7 +130,7 @@ export class ConversationStore {
    * Notify all listeners of state change
    */
   private notify(): void {
-    this.listeners.forEach((listener) => listener(this.state));
+    this.listeners.forEach((listener) => { listener(this.state); });
   }
 
   /**
@@ -279,7 +280,7 @@ export class ConversationStore {
     // Apply pagination
     if (options.offset !== undefined || options.limit !== undefined) {
       const offset = options.offset || 0;
-      const limit = options.limit;
+      const {limit} = options;
       conversations = limit
         ? conversations.slice(offset, offset + limit)
         : conversations.slice(offset);
@@ -572,12 +573,12 @@ export class ConversationStore {
    * Bulk import conversations
    */
   importConversations(conversations: Conversation[]): void {
-    const conversationsMap = conversations.reduce(
+    const conversationsMap = conversations.reduce<Record<string, Conversation>>(
       (acc, conv) => {
         acc[conv.id] = conv;
         return acc;
       },
-      {} as Record<string, Conversation>,
+      {},
     );
 
     this.state = {
@@ -685,7 +686,7 @@ export class ConversationStore {
     pinnedConversations: number;
   }> {
     if (this.enablePersistence) {
-      return await this.persistence.getStorageStats();
+      return this.persistence.getStorageStats();
     }
 
     // Return in-memory stats if persistence is disabled

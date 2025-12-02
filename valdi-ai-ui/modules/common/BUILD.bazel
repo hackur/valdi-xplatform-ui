@@ -20,5 +20,8 @@ valdi_module(
     deps = [
         "@valdi//src/valdi_modules/src/valdi/valdi_core",
         "@valdi//src/valdi_modules/src/valdi/valdi_tsx",
+        "@valdi//src/valdi_modules/src/valdi/foundation",
+        # Valdi Widgets for UI components
+        "@valdi_widgets//valdi_modules/widgets",
     ],
 )

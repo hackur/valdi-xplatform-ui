@@ -4,10 +4,10 @@
  * Manages conversation history with filtering, search, and export capabilities.
  */
 
-import { Conversation } from 'common/src';
-import { ConversationStore } from 'chat_core/src/ConversationStore';
-import { ExportService } from 'chat_core/src/ExportService';
-import {
+import type { Conversation } from '../../common/src/index';
+import type { ConversationStore } from '../../chat_core/src/ConversationStore';
+import type { ExportService } from '../../chat_core/src/ExportService';
+import type {
   ConversationListItemData,
   SearchOptions,
   HistoryFilter,
@@ -21,10 +21,10 @@ import {
  * Integrates with ConversationStore and ExportService.
  */
 export class HistoryManager {
-  private conversationStore: ConversationStore;
+  private readonly conversationStore: ConversationStore;
   // Reserved for future export functionality
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  private _exportService: ExportService;
+  private readonly _exportService: ExportService;
 
   constructor(
     conversationStore: ConversationStore,
@@ -46,7 +46,7 @@ export class HistoryManager {
     const conversations = this.conversationStore.getAllConversations();
 
     // Apply filters
-    let filtered = this.applyFilter(conversations, filter);
+    const filtered = this.applyFilter(conversations, filter);
 
     // Sort by updated date (most recent first)
     filtered.sort((a, b) => b.updatedAt.getTime() - a.updatedAt.getTime());
@@ -87,14 +87,15 @@ export class HistoryManager {
 
     // Apply date range filter
     if (options.dateRange) {
+      const { start, end } = options.dateRange;
       results = results.filter((conv) => {
         const convDate = conv.updatedAt;
 
-        if (options.dateRange!.start && convDate < options.dateRange!.start) {
+        if (start && convDate < start) {
           return false;
         }
 
-        if (options.dateRange!.end && convDate > options.dateRange!.end) {
+        if (end && convDate > end) {
           return false;
         }
 
@@ -104,13 +105,15 @@ export class HistoryManager {
 
     // Apply status filter
     if (options.status && options.status.length > 0) {
-      results = results.filter((conv) => options.status!.includes(conv.status));
+      const statusFilter = options.status;
+      results = results.filter((conv) => statusFilter.includes(conv.status));
     }
 
     // Apply model filter
     if (options.model && options.model.length > 0) {
+      const modelFilter = options.model;
       results = results.filter((conv) =>
-        conv.modelConfig ? options.model!.includes(conv.modelConfig.modelId) : false,
+        conv.modelConfig ? modelFilter.includes(conv.modelConfig.modelId) : false,
       );
     }
 
@@ -299,33 +302,37 @@ export class HistoryManager {
 
     // Date range
     if (filter.dateRange) {
+      const { start, end } = filter.dateRange;
       filtered = filtered.filter((conv) => {
         const convDate = conv.updatedAt;
         return (
-          convDate >= filter.dateRange!.start &&
-          convDate <= filter.dateRange!.end
+          convDate >= start &&
+          convDate <= end
         );
       });
     }
 
     // Models
     if (filter.models && filter.models.length > 0) {
+      const {models} = filter;
       filtered = filtered.filter((conv) =>
-        conv.modelConfig ? filter.models!.includes(conv.modelConfig.modelId) : false,
+        conv.modelConfig ? models.includes(conv.modelConfig.modelId) : false,
       );
     }
 
     // Statuses
     if (filter.statuses && filter.statuses.length > 0) {
+      const {statuses} = filter;
       filtered = filtered.filter((conv) =>
-        filter.statuses!.includes(conv.status),
+        statuses.includes(conv.status),
       );
     }
 
     // Min message count
     if (filter.minMessageCount !== undefined) {
+      const minCount = filter.minMessageCount;
       filtered = filtered.filter(
-        (conv) => conv.messageCount >= filter.minMessageCount!,
+        (conv) => conv.messageCount >= minCount,
       );
     }
 
