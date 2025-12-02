@@ -17,6 +17,7 @@ import { systemFont } from 'valdi_core/src/SystemFont';
 import type { CustomProviderStore } from './CustomProviderStore';
 import type { CustomProviderConfig } from './types';
 import { AddCustomProviderView } from './AddCustomProviderView';
+import { Logger } from '../../common/src/services/Logger';
 
 /**
  * ProviderSettingsView Props
@@ -58,6 +59,7 @@ export class ProviderSettingsView extends StatefulComponent<
   ProviderSettingsViewProps,
   ProviderSettingsViewState
 > {
+  private readonly logger = new Logger({ module: 'ProviderSettingsView' });
   // Cache handlers for provider actions (per Valdi best practices - avoid creating new functions on render)
   private readonly providerTestHandlers = new Map<string, () => Promise<void>>();
   private readonly providerEditHandlers = new Map<string, () => void>();
@@ -273,7 +275,7 @@ export class ProviderSettingsView extends StatefulComponent<
       const providers = this.viewModel.customProviderStore.getAllProviders();
       this.setState({ providers, isLoading: false });
     } catch (error) {
-      console.error('Failed to load providers:', error);
+      this.logger.error('Failed to load providers', error);
       this.setState({
         error:
           error instanceof Error ? error.message : 'Failed to load providers',

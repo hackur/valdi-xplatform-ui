@@ -15,6 +15,7 @@ import type { HistoryManager } from './HistoryManager';
 import { ConversationCard } from './ConversationCard';
 import { SearchBar } from './SearchBar';
 import { conversationStore } from '../../chat_core/src/ConversationStore';
+import { Logger } from '../../common/src/services/Logger';
 
 /**
  * ConversationListView Props
@@ -66,6 +67,7 @@ export class ConversationListView extends StatefulComponent<
   ConversationListViewProps,
   ConversationListViewState
 > {
+  private readonly logger = new Logger({ module: 'ConversationListView' });
   // Cache handlers for conversation actions (per Valdi best practices - avoid creating new functions on render)
   private readonly conversationTapHandlers = new Map<string, () => void>();
   private readonly conversationLongPressHandlers = new Map<string, () => void>();
@@ -300,7 +302,7 @@ export class ConversationListView extends StatefulComponent<
 
       this.setState({ conversations, isLoading: false });
     } catch (error) {
-      console.error('Failed to load conversations:', error);
+      this.logger.error('Failed to load conversations', error);
       this.setState({
         error:
           error instanceof Error

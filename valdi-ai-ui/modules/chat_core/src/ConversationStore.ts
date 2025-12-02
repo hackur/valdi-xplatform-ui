@@ -14,7 +14,8 @@ import type {
   ConversationListOptions,
   ConversationStatus} from '../../common/src';
 import {
-  ConversationUtils
+  ConversationUtils,
+  Logger
 } from '../../common/src';
 import { ConversationPersistence } from './ConversationPersistence';
 
@@ -67,6 +68,8 @@ export interface ConversationStoreState {
  * ```
  */
 export class ConversationStore {
+  private readonly logger = new Logger({ module: 'ConversationStore' });
+
   private state: ConversationStoreState = {
     conversations: {},
     activeConversationId: undefined,
@@ -105,8 +108,8 @@ export class ConversationStore {
       };
       this.notify();
     } catch (error) {
-      console.error(
-        '[ConversationStore] Error loading persisted conversations:',
+      this.logger.error(
+        'Error loading persisted conversations',
         error,
       );
       this.setError('Failed to load conversations');
@@ -166,8 +169,8 @@ export class ConversationStore {
           this.state.conversations,
         );
       } catch (error) {
-        console.error(
-          '[ConversationStore] Error persisting conversation:',
+        this.logger.error(
+          'Error persisting conversation',
           error,
         );
       }
@@ -200,7 +203,7 @@ export class ConversationStore {
     const conversation = this.getConversation(conversationId);
 
     if (!conversation) {
-      console.warn(`Conversation ${conversationId} not found`);
+      this.logger.warn(`Conversation ${conversationId} not found`);
       return;
     }
 
@@ -223,8 +226,8 @@ export class ConversationStore {
           this.state.conversations,
         );
       } catch (error) {
-        console.error(
-          '[ConversationStore] Error persisting conversation update:',
+        this.logger.error(
+          'Error persisting conversation update',
           error,
         );
       }
@@ -253,8 +256,8 @@ export class ConversationStore {
       try {
         await this.persistence.deleteConversation(conversationId);
       } catch (error) {
-        console.error(
-          '[ConversationStore] Error persisting conversation deletion:',
+        this.logger.error(
+          'Error persisting conversation deletion',
           error,
         );
       }
@@ -397,7 +400,7 @@ export class ConversationStore {
    */
   setActiveConversation(conversationId: string): void {
     if (!this.getConversation(conversationId)) {
-      console.warn(
+      this.logger.warn(
         `Cannot set active conversation: ${conversationId} not found`,
       );
       return;
@@ -618,8 +621,8 @@ export class ConversationStore {
       try {
         await this.persistence.deleteConversations(conversationIds);
       } catch (error) {
-        console.error(
-          '[ConversationStore] Error persisting bulk deletion:',
+        this.logger.error(
+          'Error persisting bulk deletion',
           error,
         );
       }
@@ -644,8 +647,8 @@ export class ConversationStore {
       try {
         await this.persistence.clearAll();
       } catch (error) {
-        console.error(
-          '[ConversationStore] Error clearing persisted conversations:',
+        this.logger.error(
+          'Error clearing persisted conversations',
           error,
         );
       }

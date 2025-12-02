@@ -140,7 +140,7 @@ export type UnPromisify<T> = T extends (...args: infer A) => Promise<infer R>
  * JsonSerializable - Type for JSON-serializable values
  */
 export type JsonPrimitive = string | number | boolean | null;
-export type JsonObject = { [key: string]: JsonValue };
+export interface JsonObject { [key: string]: JsonValue }
 export type JsonArray = JsonValue[];
 export type JsonValue = JsonPrimitive | JsonObject | JsonArray;
 

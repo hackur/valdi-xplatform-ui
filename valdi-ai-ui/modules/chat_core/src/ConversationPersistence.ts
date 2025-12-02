@@ -11,6 +11,7 @@ import type {
   ModelConfig,
   AIProvider,
 } from '../../common/src';
+import { Logger } from '../../common/src';
 import type { StorageProvider} from './StorageProvider';
 import { defaultStorage } from './StorageProvider';
 
@@ -59,6 +60,8 @@ export interface ConversationPersistenceConfig {
  * Handles serialization/deserialization and batch operations.
  */
 export class ConversationPersistence {
+  private readonly logger = new Logger({ module: 'ConversationPersistence' });
+
   private readonly storage: StorageProvider;
   private readonly debounceMs: number;
   private readonly debug: boolean;
@@ -131,13 +134,13 @@ export class ConversationPersistence {
       await this.saveConversations(conversations);
 
       if (this.debug) {
-        console.log(
-          `[ConversationPersistence] Saved conversation ${conversation.id}`,
+        this.logger.debug(
+          `Saved conversation ${conversation.id}`,
         );
       }
     } catch (error) {
-      console.error(
-        '[ConversationPersistence] Error saving conversation:',
+      this.logger.error(
+        'Error saving conversation',
         error,
       );
       throw new Error(
@@ -163,13 +166,13 @@ export class ConversationPersistence {
       await this.storage.setItem(this.STORAGE_KEY, data);
 
       if (this.debug) {
-        console.log(
-          `[ConversationPersistence] Saved ${Object.keys(conversations).length} conversations`,
+        this.logger.debug(
+          `Saved ${Object.keys(conversations).length} conversations`,
         );
       }
     } catch (error) {
-      console.error(
-        '[ConversationPersistence] Error saving conversations:',
+      this.logger.error(
+        'Error saving conversations',
         error,
       );
       throw new Error(
@@ -213,8 +216,8 @@ export class ConversationPersistence {
 
       if (!data) {
         if (this.debug) {
-          console.log(
-            '[ConversationPersistence] No conversations found in storage',
+          this.logger.debug(
+            'No conversations found in storage',
           );
         }
         return {};
@@ -229,15 +232,15 @@ export class ConversationPersistence {
       });
 
       if (this.debug) {
-        console.log(
-          `[ConversationPersistence] Loaded ${Object.keys(conversations).length} conversations`,
+        this.logger.debug(
+          `Loaded ${Object.keys(conversations).length} conversations`,
         );
       }
 
       return conversations;
     } catch (error) {
-      console.error(
-        '[ConversationPersistence] Error loading conversations:',
+      this.logger.error(
+        'Error loading conversations',
         error,
       );
       // Return empty object on error to prevent crashes
@@ -253,8 +256,8 @@ export class ConversationPersistence {
       const conversations = await this.loadConversations();
       return conversations[conversationId] || null;
     } catch (error) {
-      console.error(
-        '[ConversationPersistence] Error loading conversation:',
+      this.logger.error(
+        'Error loading conversation',
         error,
       );
       return null;
@@ -270,8 +273,8 @@ export class ConversationPersistence {
 
       if (!(conversationId in conversations)) {
         if (this.debug) {
-          console.log(
-            `[ConversationPersistence] Conversation ${conversationId} not found`,
+          this.logger.debug(
+            `Conversation ${conversationId} not found`,
           );
         }
         return;
@@ -281,13 +284,13 @@ export class ConversationPersistence {
       await this.saveConversations(conversations);
 
       if (this.debug) {
-        console.log(
-          `[ConversationPersistence] Deleted conversation ${conversationId}`,
+        this.logger.debug(
+          `Deleted conversation ${conversationId}`,
         );
       }
     } catch (error) {
-      console.error(
-        '[ConversationPersistence] Error deleting conversation:',
+      this.logger.error(
+        'Error deleting conversation',
         error,
       );
       throw new Error(
@@ -310,13 +313,13 @@ export class ConversationPersistence {
       await this.saveConversations(conversations);
 
       if (this.debug) {
-        console.log(
-          `[ConversationPersistence] Deleted ${conversationIds.length} conversations`,
+        this.logger.debug(
+          `Deleted ${conversationIds.length} conversations`,
         );
       }
     } catch (error) {
-      console.error(
-        '[ConversationPersistence] Error deleting conversations:',
+      this.logger.error(
+        'Error deleting conversations',
         error,
       );
       throw new Error(
@@ -333,13 +336,13 @@ export class ConversationPersistence {
       await this.storage.removeItem(this.STORAGE_KEY);
 
       if (this.debug) {
-        console.log(
-          '[ConversationPersistence] Cleared all persisted conversations',
+        this.logger.debug(
+          'Cleared all persisted conversations',
         );
       }
     } catch (error) {
-      console.error(
-        '[ConversationPersistence] Error clearing all conversations:',
+      this.logger.error(
+        'Error clearing all conversations',
         error,
       );
       throw new Error(
@@ -356,8 +359,8 @@ export class ConversationPersistence {
       const conversations = await this.loadConversations();
       return Object.keys(conversations).length;
     } catch (error) {
-      console.error(
-        '[ConversationPersistence] Error getting conversation count:',
+      this.logger.error(
+        'Error getting conversation count',
         error,
       );
       return 0;
@@ -372,8 +375,8 @@ export class ConversationPersistence {
       const data = await this.storage.getItem(this.STORAGE_KEY);
       return data !== null;
     } catch (error) {
-      console.error(
-        '[ConversationPersistence] Error checking conversations:',
+      this.logger.error(
+        'Error checking conversations',
         error,
       );
       return false;
@@ -394,8 +397,8 @@ export class ConversationPersistence {
 
       return JSON.stringify(serialized, null, 2);
     } catch (error) {
-      console.error(
-        '[ConversationPersistence] Error exporting conversations:',
+      this.logger.error(
+        'Error exporting conversations',
         error,
       );
       throw new Error(
@@ -430,8 +433,8 @@ export class ConversationPersistence {
         return Object.keys(conversations).length;
       }
     } catch (error) {
-      console.error(
-        '[ConversationPersistence] Error importing conversations:',
+      this.logger.error(
+        'Error importing conversations',
         error,
       );
       throw new Error(
@@ -452,8 +455,8 @@ export class ConversationPersistence {
         (conv) => conv.status === status,
       );
     } catch (error) {
-      console.error(
-        '[ConversationPersistence] Error getting conversations by status:',
+      this.logger.error(
+        'Error getting conversations by status',
         error,
       );
       return [];
@@ -472,8 +475,8 @@ export class ConversationPersistence {
         (conv) => conv.modelConfig.provider === provider,
       );
     } catch (error) {
-      console.error(
-        '[ConversationPersistence] Error getting conversations by provider:',
+      this.logger.error(
+        'Error getting conversations by provider',
         error,
       );
       return [];
@@ -494,8 +497,8 @@ export class ConversationPersistence {
           return bTime - aTime;
         });
     } catch (error) {
-      console.error(
-        '[ConversationPersistence] Error getting pinned conversations:',
+      this.logger.error(
+        'Error getting pinned conversations',
         error,
       );
       return [];
@@ -517,8 +520,8 @@ export class ConversationPersistence {
         return matchesTitle || matchesPrompt;
       });
     } catch (error) {
-      console.error(
-        '[ConversationPersistence] Error searching conversations:',
+      this.logger.error(
+        'Error searching conversations',
         error,
       );
       return [];
@@ -564,8 +567,8 @@ export class ConversationPersistence {
         pinnedConversations: conversationList.filter((c) => c.isPinned).length,
       };
     } catch (error) {
-      console.error(
-        '[ConversationPersistence] Error getting storage stats:',
+      this.logger.error(
+        'Error getting storage stats',
         error,
       );
       return {

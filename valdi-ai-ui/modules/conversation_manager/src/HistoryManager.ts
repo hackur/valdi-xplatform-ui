@@ -13,6 +13,7 @@ import type {
   HistoryFilter,
   ExportOptions,
 } from './types';
+import { Logger } from '../../common/src/services/Logger';
 
 /**
  * History Manager Class
@@ -25,6 +26,7 @@ export class HistoryManager {
   // Reserved for future export functionality
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   private readonly _exportService: ExportService;
+  private readonly logger = new Logger({ module: 'HistoryManager' });
 
   constructor(
     conversationStore: ConversationStore,
@@ -240,7 +242,7 @@ export class HistoryManager {
         await this.conversationStore.deleteConversation(id);
         deleted++;
       } catch (error) {
-        console.error(`Failed to delete conversation ${id}:`, error);
+        this.logger.error(`Failed to delete conversation ${id}`, error);
       }
     }
 
@@ -260,7 +262,7 @@ export class HistoryManager {
         });
         archived++;
       } catch (error) {
-        console.error(`Failed to archive conversation ${id}:`, error);
+        this.logger.error(`Failed to archive conversation ${id}`, error);
       }
     }
 
@@ -280,7 +282,7 @@ export class HistoryManager {
         });
         restored++;
       } catch (error) {
-        console.error(`Failed to restore conversation ${id}:`, error);
+        this.logger.error(`Failed to restore conversation ${id}`, error);
       }
     }
 

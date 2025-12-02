@@ -5,11 +5,16 @@
  * Provides basic push/pop navigation without the complex Valdi navigation stack.
  */
 
+/** Component type for page navigation - accepts any component constructor or function */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type PageComponent = any;
+
+/** Navigation props passed to pages */
+export type NavigationProps = Record<string, unknown>;
 
 export interface NavigationState {
   currentPage: PageComponent | null;
-  pageProps: any;
+  pageProps: NavigationProps;
 }
 
 export class SimpleNavigationController {
@@ -23,7 +28,11 @@ export class SimpleNavigationController {
     this.updateCallback = callback;
   }
 
-  push(component: PageComponent, props: any = {}, _options: any = {}): void {
+  push(
+    component: PageComponent,
+    props: NavigationProps = {},
+    _options: Record<string, unknown> = {},
+  ): void {
     this.state = {
       currentPage: component,
       pageProps: { ...props, navigationController: this },

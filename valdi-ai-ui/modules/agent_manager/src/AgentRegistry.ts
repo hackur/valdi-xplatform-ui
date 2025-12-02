@@ -579,7 +579,7 @@ export class AgentRegistry {
       ...agent,
       ...updates,
       id: newId,
-      name: updates?.name || `${agent.name} (Copy)`,
+      name: updates?.name ?? `${agent.name} (Copy)`,
     };
 
     await this.register(clonedAgent);

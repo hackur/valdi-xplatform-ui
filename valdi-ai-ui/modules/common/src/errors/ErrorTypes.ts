@@ -100,7 +100,7 @@ export class AppError extends Error {
   public readonly retryable: boolean;
 
   /** Original error if this wraps another error */
-  public readonly cause?: Error;
+  public override readonly cause?: Error;
 
   /** User-friendly message */
   public readonly userMessage?: string;
@@ -127,8 +127,11 @@ export class AppError extends Error {
     this.userMessage = options?.userMessage;
 
     // Maintains proper stack trace for where our error was thrown (only available on V8)
-    if (typeof (Error as any).captureStackTrace === 'function') {
-      (Error as any).captureStackTrace(this, this.constructor);
+    const ErrorConstructor = Error as unknown as {
+      captureStackTrace?: (target: object, constructor: Function) => void;
+    };
+    if (typeof ErrorConstructor.captureStackTrace === 'function') {
+      ErrorConstructor.captureStackTrace(this, this.constructor);
     }
   }
 

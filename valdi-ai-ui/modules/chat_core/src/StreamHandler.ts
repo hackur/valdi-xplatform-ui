@@ -67,6 +67,7 @@ export class StreamHandler {
 
   /**
    * Emit an event to all callbacks
+   * @param event - Stream event to emit
    */
   private emit(event: StreamEvent): void {
     this.callbacks.forEach((callback) => { callback(event); });
@@ -74,6 +75,7 @@ export class StreamHandler {
 
   /**
    * Start a new stream
+   * @param messageId - Unique identifier for the message
    */
   start(messageId: string): void {
     this.status = 'connecting';
@@ -85,6 +87,8 @@ export class StreamHandler {
 
   /**
    * Process a chunk of streamed content
+   * @param messageId - Unique identifier for the message
+   * @param delta - New content to append
    */
   processChunk(messageId: string, delta: string): void {
     // Transition from connecting to streaming state on first chunk
@@ -110,6 +114,8 @@ export class StreamHandler {
 
   /**
    * Complete the stream
+   * @param messageId - Unique identifier for the message
+   * @param message - Final completed message
    */
   complete(messageId: string, message: Message): void {
     this.status = 'completed';
@@ -127,6 +133,8 @@ export class StreamHandler {
 
   /**
    * Handle stream error
+   * @param messageId - Unique identifier for the message
+   * @param error - Error message
    */
   error(messageId: string, error: string): void {
     this.status = 'error';
@@ -144,6 +152,7 @@ export class StreamHandler {
 
   /**
    * Get current streaming status
+   * @returns Current streaming status
    */
   getStatus(): StreamingStatus {
     return this.status;
@@ -151,6 +160,7 @@ export class StreamHandler {
 
   /**
    * Check if currently streaming
+   * @returns True if stream is active (connecting or streaming)
    */
   isStreaming(): boolean {
     return this.status === 'streaming' || this.status === 'connecting';
@@ -158,6 +168,7 @@ export class StreamHandler {
 
   /**
    * Get current message ID
+   * @returns Message ID if stream is active, undefined otherwise
    */
   getCurrentMessageId(): string | undefined {
     return this.currentMessageId;
@@ -165,6 +176,7 @@ export class StreamHandler {
 
   /**
    * Get buffered content
+   * @returns Accumulated content from all chunks
    */
   getContent(): string {
     return this.contentBuffer;
@@ -194,6 +206,9 @@ export const StreamUtils = {
   /**
    * Create a debounced stream processor
    * Batches rapid chunks to reduce UI updates
+   * @param callback - Function to call with debounced content
+   * @param delay - Debounce delay in milliseconds (default 16ms for ~60fps)
+   * @returns Function to process delta strings
    */
   createDebouncedProcessor(
     callback: (content: string, delta: string) => void,
@@ -229,6 +244,8 @@ export const StreamUtils = {
 
   /**
    * Split stream into words for smoother animation
+   * @param text - Text to split into words
+   * @returns Generator yielding word tokens
    */
   *wordSplitter(text: string): Generator<string> {
     // Split on whitespace while preserving spaces in results
@@ -244,6 +261,10 @@ export const StreamUtils = {
 
   /**
    * Calculate streaming stats
+   * @param startTime - Stream start time
+   * @param endTime - Stream end time
+   * @param tokenCount - Number of tokens processed
+   * @returns Streaming statistics with duration and tokens per second
    */
   calculateStats(
     startTime: Date,

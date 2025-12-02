@@ -11,6 +11,7 @@ import type {
   ValidationResult,
   ExportedProviders,
 } from './types';
+import { Logger } from '../../common/src/services/Logger';
 
 /**
  * Storage key for custom providers
@@ -30,6 +31,7 @@ const EXPORT_VERSION = '1.0.0';
 export class CustomProviderStore {
   private readonly providers: Map<string, CustomProviderConfig> = new Map();
   private readonly storageProvider: StorageProvider;
+  private readonly logger = new Logger({ module: 'CustomProviderStore' });
   private isInitialized = false;
 
   constructor(storageProvider: StorageProvider) {
@@ -59,7 +61,7 @@ export class CustomProviderStore {
 
       this.isInitialized = true;
     } catch (error) {
-      console.error('Failed to load custom providers:', error);
+      this.logger.error('Failed to load custom providers', error);
       throw new Error('Failed to initialize custom provider store');
     }
   }

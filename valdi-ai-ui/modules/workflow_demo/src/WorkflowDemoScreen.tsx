@@ -11,6 +11,7 @@
 import { StatefulComponent } from 'valdi_core/src/Component';
 import { Style } from 'valdi_core/src/Style';
 import type { View, ScrollView, Label } from 'valdi_tsx/src/NativeTemplateElements';
+import type { SimpleNavigationController } from '../../common/src/index';
 import {
   Card,
   Button,
@@ -20,8 +21,8 @@ import {
   BorderRadius,
   ErrorBoundary,
   ErrorScreen,
+  Logger,
 } from '../../common/src/index';
-import type { SimpleNavigationController } from '../../common/src/index';
 import type { WorkflowExecutionState } from './WorkflowCard';
 import { WorkflowCard } from './WorkflowCard';
 import {
@@ -66,6 +67,8 @@ export interface WorkflowDemoScreenProps {
  * WorkflowDemo Screen Component
  */
 export class WorkflowDemoScreen extends StatefulComponent<WorkflowDemoScreenProps, WorkflowDemoScreenState> {
+  private readonly logger = new Logger({ module: 'WorkflowDemoScreen' });
+
   // Cache handlers for tab selection and workflow execution (per Valdi best practices)
   private readonly tabSelectHandlers = new Map<WorkflowType, () => void>();
   private readonly runWorkflowHandlers = new Map<WorkflowType, () => Promise<void>>();
@@ -253,7 +256,7 @@ export class WorkflowDemoScreen extends StatefulComponent<WorkflowDemoScreenProp
    * Handle workflow execution errors
    */
   private readonly handleWorkflowError = (error: Error): void => {
-    console.error('Workflow demo error:', error);
+    this.logger.error('Workflow demo error', error);
   };
 
   /**

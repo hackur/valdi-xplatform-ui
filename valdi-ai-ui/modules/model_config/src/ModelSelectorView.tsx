@@ -14,6 +14,7 @@ import { LoadingSpinner } from '../../common/src/index';
 import { systemFont } from 'valdi_core/src/SystemFont';
 import type { ModelRegistry } from './ModelRegistry';
 import type { ModelDefinition, ModelSelection, ProviderType } from './types';
+import { Logger } from '../../common/src/services/Logger';
 
 /**
  * ModelSelectorView Props
@@ -61,6 +62,7 @@ export class ModelSelectorView extends StatefulComponent<
   ModelSelectorViewProps,
   ModelSelectorViewState
 > {
+  private readonly logger = new Logger({ module: 'ModelSelectorView' });
   // Cache handlers for model selection (per Valdi best practices - avoid creating new functions on render)
   private readonly modelSelectHandlers = new Map<string, () => void>();
 
@@ -291,7 +293,7 @@ export class ModelSelectorView extends StatefulComponent<
 
       this.setState({ models, modelsByProvider, isLoading: false });
     } catch (error) {
-      console.error('Failed to load models:', error);
+      this.logger.error('Failed to load models', error);
       this.setState({ isLoading: false });
     }
   }

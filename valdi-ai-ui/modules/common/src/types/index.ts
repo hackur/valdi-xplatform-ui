@@ -47,4 +47,4 @@ export {
 export * from './branded';
 
 // Utility types for type transformations
-export * from './utility';
+export type * from './utility';

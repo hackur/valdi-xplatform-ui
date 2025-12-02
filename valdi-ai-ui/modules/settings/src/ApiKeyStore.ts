@@ -5,6 +5,8 @@
  * Provides validation and secure handling of sensitive data.
  */
 
+import { Logger } from '../../common/src/services/Logger';
+
 /**
  * Supported AI Providers
  */
@@ -34,6 +36,8 @@ const STORAGE_KEYS: Record<AIProvider, string> = {
  * Handles secure storage, retrieval, and validation of API keys.
  */
 export class ApiKeyStore {
+  private readonly logger = new Logger({ module: 'ApiKeyStore' });
+
   /**
    * Validate API key format
    */
@@ -63,7 +67,7 @@ export class ApiKeyStore {
       // Fallback for non-browser environments
       return null;
     } catch (error) {
-      console.error(`Failed to get API key for ${provider}:`, error);
+      this.logger.error(`Failed to get API key for ${provider}`, error);
       return null;
     }
   }
@@ -86,9 +90,9 @@ export class ApiKeyStore {
         window.localStorage.setItem(storageKey, key);
       }
 
-      console.log(`API key stored successfully for ${provider}`);
+      this.logger.info(`API key stored successfully for ${provider}`);
     } catch (error) {
-      console.error(`Failed to set API key for ${provider}:`, error);
+      this.logger.error(`Failed to set API key for ${provider}`, error);
       throw error;
     }
   }
@@ -105,9 +109,9 @@ export class ApiKeyStore {
         window.localStorage.removeItem(storageKey);
       }
 
-      console.log(`API key cleared for ${provider}`);
+      this.logger.info(`API key cleared for ${provider}`);
     } catch (error) {
-      console.error(`Failed to clear API key for ${provider}:`, error);
+      this.logger.error(`Failed to clear API key for ${provider}`, error);
       throw error;
     }
   }
@@ -122,7 +126,7 @@ export class ApiKeyStore {
       await this.clearApiKey(provider);
     }
 
-    console.log('All API keys cleared');
+    this.logger.info('All API keys cleared');
   }
 
   /**

@@ -16,6 +16,7 @@ import type { MessageStore } from '../../chat_core/src/MessageStore';
 import type { ConversationStore } from '../../chat_core/src/ConversationStore';
 import type { Message, Conversation } from '../../common/src/index';
 import type { NavigationController } from 'valdi_navigation/src/NavigationController';
+import { Logger } from '../../common/src/services/Logger';
 
 /**
  * Chat Integration Configuration
@@ -43,6 +44,7 @@ export class ChatIntegrationService {
   private readonly messageStore: MessageStore;
   private readonly conversationStore: ConversationStore;
   private readonly navigationController: NavigationController;
+  private readonly logger = new Logger({ module: 'ChatIntegrationService' });
 
   constructor(config: ChatIntegrationConfig) {
     this.chatService = config.chatService;
@@ -158,7 +160,7 @@ export class ChatIntegrationService {
         },
       );
     } catch (error) {
-      console.error('[ChatIntegrationService] Send message error:', error);
+      this.logger.error('Send message error', error);
       throw error;
     }
   }

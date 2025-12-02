@@ -9,7 +9,8 @@ import { StatefulComponent } from 'valdi_core/src/Component';
 import { Style } from 'valdi_core/src/Style';
 import type { View, Label } from 'valdi_tsx/src/NativeTemplateElements';
 import type {
-  Message} from '../../common/src/index';
+  Message,
+  SimpleNavigationController} from '../../common/src/index';
 import {
   Colors,
   Spacing,
@@ -17,23 +18,19 @@ import {
   ErrorBoundary,
   ErrorScreen,
 } from '../../common/src/index';
-import type { SimpleNavigationController } from '../../common/src/index';
 import { systemFont, systemBoldFont } from 'valdi_core/src/SystemFont';
 import { MessageBubble } from './MessageBubble';
 import { InputBar } from './InputBar';
 import { ChatService } from '../../chat_core/src/ChatService';
-import type { MessageStore} from '../../chat_core/src/MessageStore';
-import { messageStore } from '../../chat_core/src/MessageStore';
-import type {
-  ConversationStore} from '../../chat_core/src/ConversationStore';
-import {
-  conversationStore,
-} from '../../chat_core/src/ConversationStore';
+import type { MessageStore } from '../../chat_core/src/MessageStore';
+import type { ConversationStore } from '../../chat_core/src/ConversationStore';
+import { messageStore, conversationStore } from '../../chat_core/src';
 import type {
   MessageStoreState,
   StreamEvent,
   ChatServiceConfig,
 } from '../../chat_core/src/types';
+import { Logger } from '../../common/src/services/Logger';
 
 /**
  * ChatView Props
@@ -81,6 +78,7 @@ export class ChatView extends StatefulComponent<
   private conversationStore!: ConversationStore;
   private chatService!: ChatService;
   private unsubscribeMessageStore?: () => void;
+  private readonly logger = new Logger({ module: 'ChatView' });
 
   override state: ChatViewState = {
     conversationId: '',
@@ -239,7 +237,7 @@ export class ChatView extends StatefulComponent<
         error: undefined,
       });
     } catch (error) {
-      console.error('Failed to send message:', error);
+      this.logger.error('Failed to send message', error);
       this.setState({
         isLoading: false,
         isStreaming: false,
@@ -255,7 +253,7 @@ export class ChatView extends StatefulComponent<
   private readonly handleStreamEvent = (event: StreamEvent): void => {
     switch (event.type) {
       case 'start':
-        console.log('Stream started:', event.messageId);
+        this.logger.debug('Stream started', { messageId: event.messageId });
         this.setState({ isStreaming: true });
         break;
 
@@ -265,16 +263,16 @@ export class ChatView extends StatefulComponent<
         break;
 
       case 'tool-call':
-        console.log('Tool call:', event.toolCall);
+        this.logger.debug('Tool call', { toolCall: event.toolCall });
         break;
 
       case 'complete':
-        console.log('Stream completed:', event.messageId);
+        this.logger.debug('Stream completed', { messageId: event.messageId });
         this.setState({ isStreaming: false });
         break;
 
       case 'error':
-        console.error('Stream error:', event.error);
+        this.logger.error('Stream error', event.error);
         this.setState({
           isStreaming: false,
           error: event.error,
@@ -291,7 +289,7 @@ export class ChatView extends StatefulComponent<
    * Handle chat-specific errors
    */
   private readonly handleChatError = (error: Error): void => {
-    console.error('Chat error:', error);
+    this.logger.error('Chat error', error);
     // Could send to monitoring service
   };
 

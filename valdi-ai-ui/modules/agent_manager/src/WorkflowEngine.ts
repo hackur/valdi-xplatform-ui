@@ -195,6 +195,10 @@ export class WorkflowEngine {
 
   /**
    * Execute workflow based on type
+   * @param state - Current workflow execution state
+   * @param context - Agent execution context
+   * @param options - Optional workflow execution options
+   * @param abortSignal - Signal for cancellation support
    */
   private async executeWorkflow(
     state: WorkflowExecutionState,
@@ -233,6 +237,10 @@ export class WorkflowEngine {
 
   /**
    * Execute agents sequentially
+   * @param state - Current workflow execution state
+   * @param context - Agent execution context
+   * @param options - Optional workflow execution options
+   * @param abortSignal - Signal for cancellation support
    */
   private async executeSequential(
     state: WorkflowExecutionState,
@@ -377,6 +385,10 @@ export class WorkflowEngine {
 
   /**
    * Execute agents in parallel
+   * @param state - Current workflow execution state
+   * @param context - Agent execution context
+   * @param options - Optional workflow execution options
+   * @param abortSignal - Signal for cancellation support
    */
   private async executeParallel(
     state: WorkflowExecutionState,
@@ -425,6 +437,10 @@ export class WorkflowEngine {
 
   /**
    * Execute with routing logic
+   * @param state - Current workflow execution state
+   * @param context - Agent execution context
+   * @param options - Optional workflow execution options
+   * @param abortSignal - Signal for cancellation support
    */
   private async executeRouting(
     state: WorkflowExecutionState,
@@ -509,6 +525,10 @@ export class WorkflowEngine {
 
   /**
    * Execute evaluator-optimizer loop
+   * @param state - Current workflow execution state
+   * @param context - Agent execution context
+   * @param options - Optional workflow execution options
+   * @param abortSignal - Signal for cancellation support
    */
   private async executeEvaluatorOptimizer(
     state: WorkflowExecutionState,
@@ -534,7 +554,7 @@ export class WorkflowEngine {
       throw new Error('Evaluator agent ID is undefined');
     }
 
-    const maxIterations = config.maxSteps || 3;
+    const maxIterations = config.maxSteps ?? 3;
 
     const currentContext = { ...context };
 
@@ -632,7 +652,7 @@ export class WorkflowEngine {
 
   /**
    * Get workflow state by ID
-   * @param workflowId Workflow ID
+   * @param workflowId - Workflow ID
    * @returns Workflow state or undefined
    */
   getWorkflow(workflowId: string): WorkflowExecutionState | undefined {
@@ -641,7 +661,7 @@ export class WorkflowEngine {
 
   /**
    * Cancel a workflow
-   * @param workflowId Workflow ID to cancel
+   * @param workflowId - Workflow ID to cancel
    * @returns True if workflow was cancelled, false if not found
    */
   cancelWorkflow(workflowId: string): boolean {
@@ -696,6 +716,7 @@ export class WorkflowEngine {
 
   /**
    * Log message if debug is enabled
+   * @param message - Message to log
    */
   private log(message: string): void {
     if (this.debug) {

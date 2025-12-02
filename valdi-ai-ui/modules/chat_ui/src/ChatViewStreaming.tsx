@@ -16,6 +16,7 @@ import { systemFont, systemBoldFont } from 'valdi_core/src/SystemFont';
 import { MessageBubble } from './MessageBubble';
 import { InputBar } from './InputBar';
 import type { ChatIntegrationService } from './ChatIntegrationService';
+import { Logger } from '../../common/src/services/Logger';
 
 /**
  * ChatViewStreaming Props
@@ -47,6 +48,7 @@ export class ChatViewStreaming extends StatefulComponent<
   ChatViewStreamingState
 > {
   private unsubscribeMessages?: () => void;
+  private readonly logger = new Logger({ module: 'ChatViewStreaming' });
 
   override state: ChatViewStreamingState = {
     messages: [],
@@ -140,7 +142,7 @@ export class ChatViewStreaming extends StatefulComponent<
 
       this.scrollToBottom();
     } catch (error) {
-      console.error('[ChatViewStreaming] Load messages error:', error);
+      this.logger.error('Load messages error', error);
       this.setState({
         error:
           error instanceof Error ? error.message : 'Failed to load messages',
@@ -172,7 +174,7 @@ export class ChatViewStreaming extends StatefulComponent<
       this.setState({ isStreaming: false });
       this.scrollToBottom();
     } catch (error) {
-      console.error('[ChatViewStreaming] Send message error:', error);
+      this.logger.error('Send message error', error);
       this.setState({
         error:
           error instanceof Error ? error.message : 'Failed to send message',

@@ -12,6 +12,7 @@ import type {
   MessageContentPart,
   ToolCall,
 } from '../../common/src';
+import { Logger } from '../../common/src';
 import type { StorageProvider} from './StorageProvider';
 import { defaultStorage } from './StorageProvider';
 
@@ -57,6 +58,8 @@ export interface MessagePersistenceConfig {
  * Handles serialization/deserialization and batch operations.
  */
 export class MessagePersistence {
+  private readonly logger = new Logger({ module: 'MessagePersistence' });
+
   private readonly storage: StorageProvider;
   private readonly debounceMs: number;
   private readonly debug: boolean;
@@ -131,12 +134,12 @@ export class MessagePersistence {
       await this.saveMessages(message.conversationId, messages);
 
       if (this.debug) {
-        console.log(
-          `[MessagePersistence] Saved message ${message.id} for conversation ${message.conversationId}`,
+        this.logger.debug(
+          `Saved message ${message.id} for conversation ${message.conversationId}`,
         );
       }
     } catch (error) {
-      console.error('[MessagePersistence] Error saving message:', error);
+      this.logger.error('Error saving message', error);
       throw new Error(
         `Failed to save message: ${error instanceof Error ? error.message : 'Unknown error'}`,
       );
@@ -158,12 +161,12 @@ export class MessagePersistence {
       await this.storage.setItem(key, data);
 
       if (this.debug) {
-        console.log(
-          `[MessagePersistence] Saved ${messages.length} messages for conversation ${conversationId}`,
+        this.logger.debug(
+          `Saved ${messages.length} messages for conversation ${conversationId}`,
         );
       }
     } catch (error) {
-      console.error('[MessagePersistence] Error saving messages:', error);
+      this.logger.error('Error saving messages', error);
       throw new Error(
         `Failed to save messages: ${error instanceof Error ? error.message : 'Unknown error'}`,
       );
@@ -210,8 +213,8 @@ export class MessagePersistence {
 
       if (!data) {
         if (this.debug) {
-          console.log(
-            `[MessagePersistence] No messages found for conversation ${conversationId}`,
+          this.logger.debug(
+            `No messages found for conversation ${conversationId}`,
           );
         }
         return [];
@@ -221,14 +224,14 @@ export class MessagePersistence {
       const messages = serialized.map((m) => this.deserializeMessage(m));
 
       if (this.debug) {
-        console.log(
-          `[MessagePersistence] Loaded ${messages.length} messages for conversation ${conversationId}`,
+        this.logger.debug(
+          `Loaded ${messages.length} messages for conversation ${conversationId}`,
         );
       }
 
       return messages;
     } catch (error) {
-      console.error('[MessagePersistence] Error loading messages:', error);
+      this.logger.error('Error loading messages', error);
       // Return empty array on error to prevent crashes
       return [];
     }
@@ -247,8 +250,8 @@ export class MessagePersistence {
 
       if (filtered.length === messages.length) {
         if (this.debug) {
-          console.log(
-            `[MessagePersistence] Message ${messageId} not found in conversation ${conversationId}`,
+          this.logger.debug(
+            `Message ${messageId} not found in conversation ${conversationId}`,
           );
         }
         return;
@@ -257,12 +260,12 @@ export class MessagePersistence {
       await this.saveMessages(conversationId, filtered);
 
       if (this.debug) {
-        console.log(
-          `[MessagePersistence] Deleted message ${messageId} from conversation ${conversationId}`,
+        this.logger.debug(
+          `Deleted message ${messageId} from conversation ${conversationId}`,
         );
       }
     } catch (error) {
-      console.error('[MessagePersistence] Error deleting message:', error);
+      this.logger.error('Error deleting message', error);
       throw new Error(
         `Failed to delete message: ${error instanceof Error ? error.message : 'Unknown error'}`,
       );
@@ -278,12 +281,12 @@ export class MessagePersistence {
       await this.storage.removeItem(key);
 
       if (this.debug) {
-        console.log(
-          `[MessagePersistence] Deleted all messages for conversation ${conversationId}`,
+        this.logger.debug(
+          `Deleted all messages for conversation ${conversationId}`,
         );
       }
     } catch (error) {
-      console.error('[MessagePersistence] Error deleting messages:', error);
+      this.logger.error('Error deleting messages', error);
       throw new Error(
         `Failed to delete messages: ${error instanceof Error ? error.message : 'Unknown error'}`,
       );
@@ -309,14 +312,14 @@ export class MessagePersistence {
       }
 
       if (this.debug) {
-        console.log(
-          `[MessagePersistence] Loaded messages for ${Object.keys(result).length} conversations`,
+        this.logger.debug(
+          `Loaded messages for ${Object.keys(result).length} conversations`,
         );
       }
 
       return result;
     } catch (error) {
-      console.error('[MessagePersistence] Error loading all messages:', error);
+      this.logger.error('Error loading all messages', error);
       return {};
     }
   }
@@ -334,10 +337,10 @@ export class MessagePersistence {
       }
 
       if (this.debug) {
-        console.log(`[MessagePersistence] Cleared all persisted messages`);
+        this.logger.debug('Cleared all persisted messages');
       }
     } catch (error) {
-      console.error('[MessagePersistence] Error clearing all messages:', error);
+      this.logger.error('Error clearing all messages', error);
       throw new Error(
         `Failed to clear messages: ${error instanceof Error ? error.message : 'Unknown error'}`,
       );
@@ -352,7 +355,7 @@ export class MessagePersistence {
       const messages = await this.loadMessages(conversationId);
       return messages.length;
     } catch (error) {
-      console.error('[MessagePersistence] Error getting message count:', error);
+      this.logger.error('Error getting message count', error);
       return 0;
     }
   }
@@ -366,7 +369,7 @@ export class MessagePersistence {
       const data = await this.storage.getItem(key);
       return data !== null;
     } catch (error) {
-      console.error('[MessagePersistence] Error checking messages:', error);
+      this.logger.error('Error checking messages', error);
       return false;
     }
   }
@@ -380,7 +383,7 @@ export class MessagePersistence {
       const serialized = messages.map((m) => this.serializeMessage(m));
       return JSON.stringify(serialized, null, 2);
     } catch (error) {
-      console.error('[MessagePersistence] Error exporting messages:', error);
+      this.logger.error('Error exporting messages', error);
       throw new Error(
         `Failed to export messages: ${error instanceof Error ? error.message : 'Unknown error'}`,
       );
@@ -411,7 +414,7 @@ export class MessagePersistence {
         return messages.length;
       }
     } catch (error) {
-      console.error('[MessagePersistence] Error importing messages:', error);
+      this.logger.error('Error importing messages', error);
       throw new Error(
         `Failed to import messages: ${error instanceof Error ? error.message : 'Unknown error'}`,
       );

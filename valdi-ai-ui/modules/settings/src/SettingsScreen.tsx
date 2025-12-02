@@ -33,6 +33,7 @@ import { Dropdown } from './components/Dropdown';
 import { getCustomProviderStore } from '../../model_config/src';
 import { AddCustomProviderView } from '../../model_config/src/AddCustomProviderView';
 import type { CustomProviderConfig } from '../../model_config/src/types';
+import { Logger } from '../../common/src/services/Logger';
 
 /**
  * SettingsScreen Props
@@ -89,6 +90,7 @@ export class SettingsScreen extends StatefulComponent<
 > {
   private apiKeyStore!: ApiKeyStore;
   private preferencesStore!: PreferencesStore;
+  private readonly logger = new Logger({ module: 'SettingsScreen' });
 
   // Cache handlers (per Valdi best practices - avoid creating new functions on render)
   private readonly providerChangeHandlers = new Map<string, () => void>();
@@ -155,7 +157,7 @@ export class SettingsScreen extends StatefulComponent<
         enableSoundEffects: preferences.enableSoundEffects ?? true,
       });
     } catch (error) {
-      console.error('Failed to load settings:', error);
+      this.logger.error('Failed to load settings', error);
     }
   };
 
@@ -241,7 +243,7 @@ export class SettingsScreen extends StatefulComponent<
         this.setState({ saveMessage: '' });
       }, 3000);
     } catch (error) {
-      console.error('Failed to save settings:', error);
+      this.logger.error('Failed to save settings', error);
       this.setState({
         isSaving: false,
         saveMessage: 'Failed to save settings',
@@ -265,7 +267,7 @@ export class SettingsScreen extends StatefulComponent<
           break;
       }
     } catch (error) {
-      console.error(`Failed to clear ${provider} API key:`, error);
+      this.logger.error(`Failed to clear ${provider} API key`, error);
     }
   };
 
@@ -295,11 +297,11 @@ export class SettingsScreen extends StatefulComponent<
     try {
       const customProviderStore = getCustomProviderStore();
       await customProviderStore.deleteProvider(provider.id);
-      console.log('Custom provider deleted:', provider.name);
+      this.logger.info('Custom provider deleted', { name: provider.name });
       // Reload custom providers
       await this.loadSettings();
     } catch (error) {
-      console.error('Failed to delete custom provider:', error);
+      this.logger.error('Failed to delete custom provider', error);
     }
   };
 
@@ -783,19 +785,19 @@ export class SettingsScreen extends StatefulComponent<
                 title="GitHub"
                 variant="outline"
                 size="small"
-                onTap={() => { console.log('Open GitHub'); }}
+                onTap={() => { this.logger.debug('Open GitHub'); }}
               />
               <Button
                 title="Documentation"
                 variant="outline"
                 size="small"
-                onTap={() => { console.log('Open docs'); }}
+                onTap={() => { this.logger.debug('Open docs'); }}
               />
               <Button
                 title="License"
                 variant="outline"
                 size="small"
-                onTap={() => { console.log('Open license'); }}
+                onTap={() => { this.logger.debug('Open license'); }}
               />
             </view>
           </view>
@@ -808,7 +810,7 @@ export class SettingsScreen extends StatefulComponent<
    * Handle settings configuration errors
    */
   private readonly handleSettingsError = (error: Error): void => {
-    console.error('Settings error:', error);
+    this.logger.error('Settings error', error);
   };
 
   override onRender() {

@@ -33,38 +33,15 @@ import {
 
 // Export all from Colors
 export * from './Colors';
-export { Colors, ColorUtils };
-export type { ColorKey } from './Colors';
 
 // Export all from Fonts
 export * from './Fonts';
-export { Fonts, FontFamilies, FontSizes, FontWeights, LineHeights };
-export type { FontStyle, FontSizeKey, FontWeightKey } from './Fonts';
 
 // Export all from Spacing
 export * from './Spacing';
-export {
-  Spacing,
-  SemanticSpacing,
-  BorderRadius,
-  ChatBorderRadius,
-  SpacingUtils,
-};
-export type {
-  SpacingKey,
-  SemanticSpacingKey,
-  BorderRadiusKey,
-} from './Spacing';
 
 // Export all from Shadows
 export * from './Shadows';
-export { Shadows, SemanticShadows, ColoredShadows, ShadowUtils };
-export type {
-  ShadowStyle,
-  ShadowKey,
-  SemanticShadowKey,
-  ColoredShadowKey,
-} from './Shadows';
 
 /**
  * Complete Theme Object

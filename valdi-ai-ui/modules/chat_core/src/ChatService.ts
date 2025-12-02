@@ -12,9 +12,7 @@ import type {
   AIProvider,
   ModelConfig} from '../../common/src';
 import {
-  MessageUtils
-} from '../../common/src';
-import {
+  MessageUtils,
   APIError,
   ErrorCode,
   handleError,
@@ -146,7 +144,10 @@ export class ChatService {
    * @param provider - Target AI provider ('openai' | 'anthropic' | 'google')
    * @returns Array of messages in provider-specific format
    */
-  private convertMessages(messages: Message[], provider: AIProvider) {
+  private convertMessages(
+    messages: Message[],
+    provider: AIProvider,
+  ): Array<{ role: string; content: string }> {
     const converted = messages
       .filter((m) => m.role !== 'system')
       .map((message) => ({

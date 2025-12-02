@@ -8,6 +8,7 @@
 import { StorageFactory } from '../../chat_core/src/StorageProvider';
 import type { StorageProvider } from '../../chat_core/src/StorageProvider';
 import type { AIProvider } from './ApiKeyStore';
+import { Logger } from '../../common/src/services/Logger';
 
 /**
  * App Preferences Interface
@@ -35,6 +36,7 @@ export interface AppPreferences {
 export class PreferencesStore {
   private readonly storage: StorageProvider;
   private readonly PREFERENCES_KEY = 'app_preferences';
+  private readonly logger = new Logger({ module: 'PreferencesStore' });
 
   constructor() {
     // Create storage with 'valdi_settings_' prefix
@@ -54,7 +56,7 @@ export class PreferencesStore {
 
       return JSON.parse(stored) as AppPreferences;
     } catch (error) {
-      console.error('Failed to load preferences:', error);
+      this.logger.error('Failed to load preferences', error);
       return {};
     }
   }
@@ -67,7 +69,7 @@ export class PreferencesStore {
       const stored = JSON.stringify(preferences);
       await this.storage.setItem(this.PREFERENCES_KEY, stored);
     } catch (error) {
-      console.error('Failed to save preferences:', error);
+      this.logger.error('Failed to save preferences', error);
       throw error;
     }
   }
@@ -81,7 +83,7 @@ export class PreferencesStore {
       const updated = { ...current, ...partial };
       await this.savePreferences(updated);
     } catch (error) {
-      console.error('Failed to update preferences:', error);
+      this.logger.error('Failed to update preferences', error);
       throw error;
     }
   }
@@ -96,7 +98,7 @@ export class PreferencesStore {
       const preferences = await this.getPreferences();
       return preferences[key];
     } catch (error) {
-      console.error(`Failed to get preference ${key}:`, error);
+      this.logger.error(`Failed to get preference ${String(key)}`, error);
       return undefined;
     }
   }
@@ -111,7 +113,7 @@ export class PreferencesStore {
     try {
       await this.updatePreferences({ [key]: value } as Partial<AppPreferences>);
     } catch (error) {
-      console.error(`Failed to set preference ${key}:`, error);
+      this.logger.error(`Failed to set preference ${String(key)}`, error);
       throw error;
     }
   }
@@ -123,7 +125,7 @@ export class PreferencesStore {
     try {
       await this.storage.removeItem(this.PREFERENCES_KEY);
     } catch (error) {
-      console.error('Failed to clear preferences:', error);
+      this.logger.error('Failed to clear preferences', error);
       throw error;
     }
   }

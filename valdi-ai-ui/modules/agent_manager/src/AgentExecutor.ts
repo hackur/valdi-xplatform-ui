@@ -307,7 +307,7 @@ export class AgentExecutor {
           continue;
         } else if (response.finishReason === 'error') {
           // Error occurred - propagate up
-          throw new Error(response.message.error || 'Unknown error');
+          throw new Error(response.message.error ?? 'Unknown error');
         } else if (response.finishReason === 'length') {
           // Max tokens reached, but we can continue
           // Agent may need more steps to complete task
@@ -449,6 +449,7 @@ export class AgentExecutor {
 
   /**
    * Get number of active executions
+   * @returns Number of currently active executions
    */
   getActiveCount(): number {
     return this.activeExecutions.size;
@@ -456,6 +457,7 @@ export class AgentExecutor {
 
   /**
    * Check if any executions are active
+   * @returns True if any executions are currently active
    */
   hasActiveExecutions(): boolean {
     return this.activeExecutions.size > 0;
@@ -463,6 +465,7 @@ export class AgentExecutor {
 
   /**
    * Log message if debug is enabled
+   * @param message - Message to log
    */
   private log(message: string): void {
     if (this.debug) {

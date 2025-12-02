@@ -250,9 +250,9 @@ export class LoopController {
 
   /**
    * Execute multiple loops in sequence
-   * @param agents Array of agent IDs to loop through
-   * @param context Initial context
-   * @param config Loop configuration
+   * @param agents - Array of agent IDs to loop through
+   * @param context - Initial context
+   * @param config - Loop configuration
    * @returns Array of loop states
    */
   async executeMultipleLoops(
@@ -292,10 +292,10 @@ export class LoopController {
 
   /**
    * Execute loop until a specific output is achieved
-   * @param agentId Agent ID
-   * @param context Context
-   * @param targetCondition Condition to check output against
-   * @param maxIterations Max iterations
+   * @param agentId - Agent ID
+   * @param context - Context
+   * @param targetCondition - Condition to check output against
+   * @param maxIterations - Max iterations
    * @returns Loop state
    */
   async executeUntil(
@@ -330,7 +330,7 @@ export class LoopController {
 
   /**
    * Stop a specific loop
-   * @param loopId Loop ID to stop
+   * @param loopId - Loop ID to stop
    * @returns True if loop was stopped
    */
   stopLoop(loopId: string): boolean {
@@ -382,6 +382,7 @@ export class LoopController {
 
   /**
    * Log message if debug is enabled
+   * @param message - Message to log
    */
   private log(message: string): void {
     if (this.debug) {
@@ -484,7 +485,7 @@ export function createStabilityStopCondition(
   const defaultComparator = (a: unknown, b: unknown) =>
     JSON.stringify(a) === JSON.stringify(b);
 
-  const compare = comparator || defaultComparator;
+  const compare = comparator ?? defaultComparator;
 
   return (_iteration, results) => {
     if (results.length < stableIterations) {

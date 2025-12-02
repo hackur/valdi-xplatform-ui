@@ -19,6 +19,7 @@ import {
   BorderRadius,
   ErrorBoundary,
   ErrorScreen,
+  Logger,
 } from '../../common/src/index';
 import type { ToolExecutionResult } from './ToolExecutionCard';
 import { ToolExecutionCard } from './ToolExecutionCard';
@@ -47,6 +48,8 @@ interface ToolsDemoScreenState {
  * ToolsDemo Screen Component
  */
 export class ToolsDemoScreen extends Component<{}, ToolsDemoScreenState> {
+  private readonly logger = new Logger({ module: 'ToolsDemoScreen' });
+
   // Cache handlers for tool execution (per Valdi best practices)
   private readonly toolExecuteHandlers = new Map<string, () => Promise<void>>();
 
@@ -168,7 +171,7 @@ export class ToolsDemoScreen extends Component<{}, ToolsDemoScreenState> {
    * Handle tool execution errors
    */
   private readonly handleToolError = (error: Error): void => {
-    console.error('Tool demo error:', error);
+    this.logger.error('Tool demo error', error);
   };
 
   override onRender() {

@@ -5,6 +5,10 @@
  * Follows SOLID principles with clean error handling patterns.
  */
 
+import { Logger } from '../services/Logger';
+
+const logger = new Logger({ module: 'ErrorBoundary' });
+
 /**
  * Error Info
  */
@@ -22,7 +26,7 @@ export interface ErrorInfo {
   timestamp: Date;
 
   /** Additional context */
-  context?: Record<string, any>;
+  context?: Record<string, unknown>;
 }
 
 /**
@@ -52,7 +56,7 @@ export interface ErrorBoundaryConfig {
   maxRetries?: number;
 
   /** Fallback value/component */
-  fallback?: any;
+  fallback?: unknown;
 
   /** Should log errors */
   logErrors?: boolean;
@@ -129,40 +133,46 @@ export class ErrorBoundary {
    * const failed = safeParse('invalid json'); // Returns fallback value
    * ```
    */
-  wrap<T extends (...args: any[]) => any>(fn: T): T {
-    return ((...args: any[]) => {
+  wrap<TArgs extends unknown[], TReturn>(
+    fn: (...args: TArgs) => TReturn,
+  ): (...args: TArgs) => TReturn {
+    return (...args: TArgs) => {
       try {
         const result = fn(...args);
 
         // Handle promises
         if (result instanceof Promise) {
-          return result.catch((error) => this.handleError(error, fn.name));
+          return result.catch((error) =>
+            this.handleError(error, fn.name),
+          ) as TReturn;
         }
 
         return result;
       } catch (error) {
-        return this.handleError(error as Error, fn.name);
+        return this.handleError(error as Error, fn.name) as TReturn;
       }
-    }) as T;
+    };
   }
 
   /**
    * Wrap an async function with error handling
    */
-  wrapAsync<T extends (...args: any[]) => Promise<any>>(fn: T): T {
-    return (async (...args: any[]) => {
+  wrapAsync<TArgs extends unknown[], TReturn>(
+    fn: (...args: TArgs) => Promise<TReturn>,
+  ): (...args: TArgs) => Promise<TReturn> {
+    return async (...args: TArgs) => {
       try {
         return await fn(...args);
       } catch (error) {
-        return this.handleError(error as Error, fn.name);
+        return this.handleError(error as Error, fn.name) as TReturn;
       }
-    }) as T;
+    };
   }
 
   /**
    * Handle error
    */
-  private handleError(error: Error, functionName?: string): any {
+  private handleError(error: Error, functionName?: string): unknown {
     const errorInfo: ErrorInfo = {
       message: error.message,
       stack: error.stack,
@@ -176,9 +186,8 @@ export class ErrorBoundary {
 
     // Log error
     if (this.config.logErrors) {
-      console.error(
-        `[ErrorBoundary: ${this.config.componentName}]`,
-        error,
+      logger.error(
+        `[${this.config.componentName}] ${error.message}`,
         errorInfo,
       );
     }
@@ -197,12 +206,12 @@ export class ErrorBoundary {
   /**
    * Apply recovery strategy
    */
-  private applyRecoveryStrategy(error: Error): any {
+  private applyRecoveryStrategy(error: Error): unknown {
     switch (this.config.recovery) {
       case 'retry':
         if (this.errorCount <= this.config.maxRetries) {
-          console.log(
-            `[ErrorBoundary] Retrying... (${this.errorCount}/${this.config.maxRetries})`,
+          logger.info(
+            `Retrying... (${this.errorCount}/${this.config.maxRetries})`,
           );
           // Caller should implement retry logic
           return undefined;
@@ -247,7 +256,7 @@ export class ErrorBoundary {
    */
   private defaultErrorHandler(error: Error, info: ErrorInfo): void {
     // Default: just log
-    console.error('[ErrorBoundary] Error occurred:', {
+    logger.error('Error occurred', {
       component: info.component,
       message: error.message,
       timestamp: info.timestamp,
@@ -278,13 +287,13 @@ export function withErrorBoundary(
   const boundary = createErrorBoundary(componentName, options);
 
   return function (
-    _target: any,
+    _target: unknown,
     _propertyKey: string,
     descriptor: PropertyDescriptor,
   ) {
-    const originalMethod = descriptor.value;
+    const originalMethod = descriptor.value as (...args: unknown[]) => unknown;
 
-    descriptor.value = function (...args: any[]) {
+    descriptor.value = function (...args: unknown[]) {
       try {
         const result = originalMethod.apply(this, args);
 
